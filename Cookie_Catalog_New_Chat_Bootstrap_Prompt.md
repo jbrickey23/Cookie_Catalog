@@ -12,7 +12,7 @@ Goal: help a cookie decorator find designs and compatible cutters she owns or ca
 
 Checkpoint at 2026-10-12: repository access is resolved and the initially empty repository is bootstrapped with durable files, research, and an initial conceptual data model. No database, storage, site, or seed catalog exists yet.
 
-Immediate work: infrastructure, one task per component, CC-TODO-001 through CC-TODO-007. CC-TODO-001 remains open for application source layout and release/synchronization ownership. Do not recreate the repo or redo the bootstrap. Provider selection belongs in the separate infrastructure tasks. Never claim provisioning without evidence.
+Immediate work: infrastructure, one task per component, CC-TODO-001 through CC-TODO-007. CC-TODO-001 remains open for development/review/release workflow and fresh-chat restoration verification. Single-repository layout (CC-DEC-004) and GitHub as canonical application source (CC-DEC-005) are approved; hosting integration and any required one-way sync remain validation followups under CC-TODO-004. Do not recreate the repo or redo the bootstrap. Provider selection belongs in the separate infrastructure tasks. Never claim provisioning without evidence.
 
 The user has real sample cutters but has not supplied them yet. Do not invent real inventory. Automatic new flip suggestions are deferred. Provider/stack choices remain proposals, not approved decisions.
 
