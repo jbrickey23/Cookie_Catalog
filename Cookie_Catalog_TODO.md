@@ -49,7 +49,7 @@ Purpose: durable structured records that support cutters, designs, and many-to-m
 - Drafted initial migration in `database/migrations/0001_initial.sql` and synthetic local SQLite smoke test in `tests/test_schema.py` on feature branch; execution and D1 compatibility validation still pending.
 - Local SQLite 3.46.1 smoke validation passed for 0001 (table creation, relationships, FK enforcement) and additive 0002 (size variants and multi-cutter components); D1 compatibility, full automated test integration, real samples and production migration remain pending.
 - Drafted `database/migrations/0002_variants_components.sql` on feature branch; slicer-based size recipes are guidance, not geometry transforms.
-- Added GitHub Actions SQLite smoke-test workflow and initial TypeScript D1 repository boundary on feature branch. CI run and TypeScript build have not yet been verified; authentication is required before exposing repository operations.
+- Added GitHub Actions SQLite smoke-test workflow and initial TypeScript D1 repository boundary on feature branch. CI workflow now includes TypeScript/Vite build; latest GitHub run pending verification; authentication is required before exposing repository operations.
 - Create development/production separation, schema/migrations, and application record access.
 - Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
