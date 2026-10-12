@@ -59,6 +59,7 @@ Purpose: retain photos, decorating artwork, STLs, and 3MFs alongside records.
 
 - Compare storage options; determine costs, upload limits, supported formats, and privacy.
 - Define stable attachment IDs/object keys, metadata, originals versus thumbnails, and record links.
+- Initial private R2 store interface, R2 adapter and lifecycle design committed on feature branch; actual Worker/R2 integration and authorization not yet tested. No bucket provisioned.
 - Implement authorized upload/download, missing-file handling, and deletion/orphan behavior.
 - Done when: a cutter photo, design image, and sample STL can be stored and retrieved privately, and broken links are detectable.
 
