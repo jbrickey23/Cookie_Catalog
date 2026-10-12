@@ -44,7 +44,7 @@ Purpose: durable structured records that support cutters, designs, and many-to-m
 
 - Decided (CC-DEC-008): SQLite-compatible relational database for live structured catalog records, rather than GitHub JSON. Architecture selected; provider and implementation pending. Consider edits, scale, cross-device use, portability, maintenance and cost in provider evaluation.
 - Decided (CC-DEC-009): balanced preference for managed simplicity with practical portability/export; selection criterion only, not a provider approval.
-- Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. Cloudflare D1 approved as intended provider under CC-DEC-011; not provisioned.
+- Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. Cloudflare D1 approved under CC-DEC-011. Owner confirmed development database creation on 2026-10-12; `DB` binding recorded in `app/wrangler.jsonc`. Remote migrations and runtime verification remain pending.
 - Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
 - Drafted initial migration in `database/migrations/0001_initial.sql` and synthetic local SQLite smoke test in `tests/test_schema.py` on feature branch; execution and D1 compatibility validation still pending.
 - Local SQLite 3.46.1 smoke validation passed for 0001 (table creation, relationships, FK enforcement) and additive 0002 (size variants and multi-cutter components); D1 compatibility, full automated test integration, real samples and production migration remain pending.
@@ -59,7 +59,7 @@ Purpose: retain photos, decorating artwork, STLs, and 3MFs alongside records.
 
 - Compare storage options; determine costs, upload limits, supported formats, and privacy.
 - Define stable attachment IDs/object keys, metadata, originals versus thumbnails, and record links.
-- Initial private R2 store interface, R2 adapter and lifecycle design committed on feature branch; actual Worker/R2 integration and authorization not yet tested. No bucket provisioned.
+- Initial private R2 store interface, R2 adapter and lifecycle design committed on feature branch; actual Worker/R2 integration and authorization not yet tested. Owner confirmed R2 subscription activation after reviewing included usage and overage billing, then creation of `cookie-catalog-dev-private` with instructed private access and Standard storage on 2026-10-12. `FILES` binding is recorded in `app/wrangler.jsonc`; actual privacy settings and runtime access remain unverified.
 - Implement authorized upload/download, missing-file handling, and deletion/orphan behavior.
 - Done when: a cutter photo, design image, and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -70,7 +70,7 @@ Purpose: a private working interface reachable on the devices used in the busine
 - Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
 - Select stack and connect source, database, and storage; validate deployment from canonical GitHub repository (CC-DEC-005). If hosting-managed source is unavoidable, document one-way sync and prevent competing edits.
 - Initial React/Vite/Workers runtime scaffold, disabled API boundary, placeholder Wrangler configuration, and Git ignore rules committed on feature branch. Dependency installation, TypeScript and Vite build passed in GitHub Actions run #51; deployed runtime and Cloudflare service integration remain unverified.
-- Deployment runbook added at `docs/Deployment_Runbook.md`, covering isolated dev/prod resources, authorization gates, CI and code/data rollback. No Cloudflare resources created.
+- Deployment runbook added at `docs/Deployment_Runbook.md`, covering isolated dev/prod resources, authorization gates, CI and code/data rollback. Owner has provisioned development D1 and R2 resources; bindings are configured on the feature branch. No Worker deployment or production resources. User configures Cloudflare manually; assistant prepares and verifies GitHub changes and provides dashboard instructions.
 - Establish local/development preview, repeatable deployment from `main` after feature-branch review (CC-DEC-006), pre-merge checks, appropriate branch protection, configuration/secrets, environment separation, and code rollback procedure.
 - Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
 
