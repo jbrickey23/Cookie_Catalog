@@ -78,6 +78,7 @@ Purpose: a private working interface reachable on the devices used in the busine
 Purpose: make the private catalog usable by Jay's wife and any explicitly allowed collaborators.
 
 - Determine owner/editor/viewer needs and whether the chosen private hosting actually permits the wife's access.
+- Drafted Cloudflare Access candidate design with server-side signed-JWT verification requirement, application owner/editor/viewer roles, deny-by-default identity boundary, and negative test cases. Actual identity provider choice and configuration require explicit provisioning approval; authentication is not active.
 - Select authentication and enforce record/file authorization on the server.
 - Establish account recovery and secret handling.
 - Done when: the intended users can access their catalog, unauthorized access is rejected, and roles/recovery are documented. Do not assume owner-private deployment grants access to another person.
