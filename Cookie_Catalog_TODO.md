@@ -19,7 +19,12 @@ Purpose: make the repository a verified durable source of project truth.
 - Completed: repository resolved as `jbrickey23/Cookie_Catalog`, default branch main, public, read/write permissions confirmed.
 - Completed: contents/ref checks confirmed an empty repository before initialization; no existing files or repository agent instructions. Assess any release/protection requirements when choosing the development workflow.
 - Completed: seven bootstrap files committed on main and read back; all contents match the prepared package.
-- Decide source layout and the relationship to any hosting-managed source repo; document synchronization/release ownership.
+- Decided: single repository for application and durable project notes; logical layout `docs/`, `app/`, `database/`, `samples/`, with core durable files at root (CC-DEC-004).
+- Followup: create folders as content becomes available; confirm physical app paths against the selected stack. Layout approval does not mean application scaffolding exists.
+- Followup (coordinate with 004): verify hosting can use this repo; if it requires managed source elsewhere, document canonical ownership and synchronization before creating duplicate code. Revisit repository separation only for a demonstrated constraint.
+- Pending user decision: canonical source ownership and handling of hosting-managed source.
+- Pending user decision: development/review/release workflow.
+- Followup: validate fresh-chat restoration from current remote files.
 - Completed: read/write verified using the actual bootstrap writes and readback.
 - Done when: remote bootstrap is verified, restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear.
 
