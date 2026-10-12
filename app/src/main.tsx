@@ -8,12 +8,12 @@ function App() {
   const [busy, setBusy] = useState(false);
   const [backupBusy, setBackupBusy] = useState(false);
   const [backupResult, setBackupResult] = useState("");
-  async function downloadBackup() {
+  async function downloadBackup(recoveryCheck = false) {
     setBackupBusy(true);
-    setBackupResult("Preparing your development backup…");
+    setBackupResult(recoveryCheck ? "Creating temporary recovery examples, backing them up and removing them…" : "Preparing your development backup…");
     try {
-      const response = await fetch("/api/dev/backup", {
-        method: "POST", cache: "no-store", headers: { "X-Cookie-Catalog-Check": "backup" }
+      const response = await fetch(recoveryCheck ? "/api/dev/recovery-check" : "/api/dev/backup", {
+        method: "POST", cache: "no-store", headers: { "X-Cookie-Catalog-Check": recoveryCheck ? "recovery" : "backup" }
       });
       if (!response.ok) {
         const body = await response.json() as { error?: string };
@@ -32,7 +32,9 @@ function App() {
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
-      setBackupResult("Backup download started. Keep this file in a private folder. Live recovery validation is still pending.");
+      setBackupResult(recoveryCheck
+        ? "Recovery test download started. Temporary records and files were removed and cleanup verified. The saved package still needs a restore check."
+        : "Backup download started. Keep this file in a private folder.");
     } catch {
       setBackupResult("The backup could not complete. Sign in again and retry.");
     } finally {
@@ -94,10 +96,15 @@ function App() {
     <hr />
     <h2>Development backup</h2>
     <p>Download the current demonstration catalog and its registered files. Keep the download private.</p>
-    <button onClick={downloadBackup} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
+    <button onClick={() => downloadBackup()} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download development backup"}
     </button>
     <p role="status" aria-live="polite">{backupResult}</p>
+    <h3>File recovery test</h3>
+    <p>Creates an invented cutter, design, location, tiny photo and sample STL. Downloads their backup, then removes the temporary examples before returning the file.</p>
+    <button onClick={() => downloadBackup(true)} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
+      {backupBusy ? "Preparing…" : "Download file recovery test"}
+    </button>
     <p>Catalog entry and file uploads will be enabled after the remaining infrastructure checks.</p>
   </main>;
 }

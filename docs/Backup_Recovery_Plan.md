@@ -1,6 +1,14 @@
 # CC-TODO-006 — Backup, export and recovery
 
-Status: browser development tool implemented and locally validated; live download/restore and operational backup policy remain pending.
+Status: live database download restored locally; live attachment recovery and operational backup policy remain pending.
+
+## Actual live evidence
+
+Live package cookie-catalog-dev-2026-10-12T22-53-46-644Z.json (7,834 bytes; SHA-256 724b645b1a4582ea4bc08499376a0fc072efc018c081a47194421390618d0149) passed payload checksum verification and restored into a new disposable local directory on 2026-10-12. Recovered 16 tables and 6 rows: both migration entries, one design, shape, cutter and link. Confirmed DEMO Holiday tree → DEMO Evergreen tree at 90 × 100 mm, SQLite integrity_check=ok and no foreign-key violations. Zero file objects matches the empty live bucket; this package does not prove live attachment recovery. The uploaded package and restored database are private and are not committed to public Git.
+
+## Next file recovery check
+
+Next browser action: refresh https://cookie-catalog-dev.j-brickey.workers.dev and choose Download file recovery test. This owner-only same-origin POST /api/dev/recovery-check creates unique, disposable synthetic cutter/design/location records plus PNG/STL originals and metadata, exports them, then deletes only its request-scoped data and verifies cleanup before returning the download. Attach that saved recovery JSON for actual file/relationship restoration. Local D1/R2 binding integration tests, real SQLite restore, failure-path cleanup, preservation of existing data, all 20 Node tests and TypeScript/Vite frontend/Worker build passed. Live recovery-test execution remains pending; CC-TODO-006 is still open for file recovery, Cloudflare-side restoration and backup destination/retention/scheduling.
 
 ## Current development route
 
@@ -28,14 +36,14 @@ The target must not already exist. Payload and every object's checksums, size, m
 
 ## Verified locally
 
-All 16 Node tests and TypeScript/Vite frontend/Worker build passed. Integration tests use the actual SQLite migrations: a cutter/design link, location, both migration entries and two synthetic files survive export and restore into a fresh directory. Tests reject altered payloads, missing files, corrupted originals, orphan objects, changed schema, excessive rows, broken relationships, duplicate destinations, unauthenticated/editor/viewer access and cross-origin requests. Existing SQLite schema/import checks passed.
+All 20 Node tests and TypeScript/Vite frontend/Worker build passed. Integration tests use the actual SQLite migrations: a cutter/design link, location, both migration entries and two synthetic files survive export and restore into a fresh directory. Tests reject altered payloads, missing files, corrupted originals, orphan objects, changed schema, excessive rows, broken relationships, duplicate destinations, unauthenticated/editor/viewer access and cross-origin requests. Existing SQLite schema/import checks passed.
 
 These results do not prove live Cloudflare export, live R2 attachment recovery, or intended-user recovery access. The live development bucket was owner-confirmed empty after its earlier smoke check.
 
 ## Remaining acceptance
 
-1. Download the live development package in the browser.
-2. Restore that actual package into a disposable local directory on an available suitable machine and verify expected demonstration rows.
+1. Completed: owner downloaded the live package and attached it for validation.
+2. Completed: actual package restored locally, with the expected demonstration link/dimensions, migrations, counts, checksums and SQLite/FK integrity.
 3. Exercise persistent synthetic attachment metadata and originals in an isolated environment; verify their live export/restore.
 4. Validate live Cloudflare import/restore separately from code rollback.
 5. Approve an independently controlled private backup destination, cadence and retention before activation.
