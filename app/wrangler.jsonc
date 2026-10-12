@@ -4,6 +4,7 @@
   "compatibility_date": "2026-10-01",
   "assets": { "directory": "./dist/client", "binding": "ASSETS" },
   // Development only. Database provisioned by the owner; remote migrations remain pending.
-  "d1_databases": [{ "binding": "DB", "database_name": "cookie-catalog-dev", "database_id": "5f55c974-16a0-4252-a0b7-34e2a915b1d2", "migrations_dir": "../database/migrations" }]
-  // Private R2 binding will be added after the owner confirms bucket creation.
+  "d1_databases": [{ "binding": "DB", "database_name": "cookie-catalog-dev", "database_id": "5f55c974-16a0-4252-a0b7-34e2a915b1d2", "migrations_dir": "../database/migrations" }],
+  // Owner confirmed private development bucket creation; runtime verification remains pending.
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "cookie-catalog-dev-private" }]
 }
