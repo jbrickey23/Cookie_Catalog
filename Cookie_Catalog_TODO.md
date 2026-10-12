@@ -37,7 +37,8 @@ Purpose: make the repository a verified durable source of project truth.
 Purpose: durable structured records that support cutters, designs, and many-to-many reuse.
 
 - Decided (CC-DEC-008): SQLite-compatible relational database for live structured catalog records, rather than GitHub JSON. Architecture selected; provider and implementation pending. Consider edits, scale, cross-device use, portability, maintenance and cost in provider evaluation.
-- Select provider/runtime compatibility; D1 is one candidate, not a decision.
+- Decided (CC-DEC-009): balanced preference for managed simplicity with practical portability/export; selection criterion only, not a provider approval.
+- Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. No provider selected yet.
 - Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
 - Create development/production separation, schema/migrations, and application record access.
 - Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
