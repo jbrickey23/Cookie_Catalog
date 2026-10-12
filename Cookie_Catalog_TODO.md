@@ -36,7 +36,7 @@ Purpose: make the repository a verified durable source of project truth.
 
 - Approved: research and recommend the integrated database, storage, hosting, identity, backup and deployment architecture together; prefer stable maintainable interfaces, practical migration/export/restore, and a little upfront overhead to avoid future refactoring.
 - Assistant may decide/document routine reversible engineering details; require explicit user approval for material tradeoffs, costs, provisioning, hard-to-reverse commitments and production changes.
-- Preserve component task IDs and acceptance checks. Architecture research is not provisioning or task completion. Next checkpoint: consolidated researched architecture proposal and material approval gate; provider remains unselected.
+- Preserve component task IDs and acceptance checks. Architecture research is not provisioning or task completion. CC-DEC-011 approves Cloudflare Workers + D1 + private R2 and slicer-based scaling for v1. Draft migration and infrastructure contracts are in feature/cc-infrastructure-foundation; validate before merge or provisioning.
 
 ## CC-TODO-002 — Understand, devise, and create database infrastructure
 
@@ -44,7 +44,7 @@ Purpose: durable structured records that support cutters, designs, and many-to-m
 
 - Decided (CC-DEC-008): SQLite-compatible relational database for live structured catalog records, rather than GitHub JSON. Architecture selected; provider and implementation pending. Consider edits, scale, cross-device use, portability, maintenance and cost in provider evaluation.
 - Decided (CC-DEC-009): balanced preference for managed simplicity with practical portability/export; selection criterion only, not a provider approval.
-- Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. No provider selected yet.
+- Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. Cloudflare D1 approved as intended provider under CC-DEC-011; not provisioned.
 - Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
 - Create development/production separation, schema/migrations, and application record access.
 - Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
@@ -93,6 +93,10 @@ Purpose: test real workflows with a small representative collection before bulk 
 - Define an import manifest/template, validate files/relationships, and prevent duplicate creation on reruns.
 - Separate demonstration fixtures from real inventory; track source and unknown information.
 - Done when: authorized samples import reproducibly and support Christmas/tree search, cutter-to-design browsing, physical/file retrieval, and known flip instructions.
+
+## V1 scaling boundary (CC-DEC-011)
+
+- Store original printable assets, dimensions in millimeters, and optional target size/scale guidance. The slicer performs scaling and printer setup in v1. Preserve the ability to add derived STL/3MF generation later without requiring it now.
 
 ## Later product work
 
