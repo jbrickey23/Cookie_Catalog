@@ -2,6 +2,14 @@
 
 Newest first. Record selection separately from implementation and validation.
 
+## 2026-10-12 — Checkpoint reconciliation (existing decisions; no new approval)
+
+Development checkpoint (2026-10-12): active branch `feature/cc-infrastructure-foundation`, draft PR #1; `main` remains the earlier bootstrap/release branch. Cloudflare development Worker and D1 `cookie-catalog-dev`, private R2 `cookie-catalog-dev-private`, and Access application are provisioned. Owner reported successful login/session, synthetic D1 create/link/edit/read (90 × 100 mm), and three-file R2 round-trip/cleanup. R2 screenshot recorded Public Access Disabled and an empty bucket afterward. CI run #79 passed for `d012da6`. These checks do not complete general catalog CRUD, persistent attachments, collaborator access, backup/restore, or production readiness.
+
+The live alternate-email denial test is deferred at the owner's request; failed code delivery is inconclusive. No production deployment or additional paid resources are authorized. Next work: CC-TODO-006 backup/export/recovery preparation; the last user-side setup issue was PowerShell not finding Node.js. Installation has not been verified. Do not redo passed checks or resume the deferred access test automatically.
+
+Later development provisioning authorization supersedes the original architecture-only limitation in CC-DEC-011 for the approved development environment. Its production and cost limits remain. Historical entries below describe their state at the time; the current checkpoint/TODO supersedes outdated implementation status. Initialization read main and the active PR branch, confirmed permissions and CI #79, and identified stale restoration notes. History assistance was used, so CC-TODO-001's strict independent test remains pending.
+
 ## 2026-10-12 — CC-DEC-011 — Cloudflare infrastructure and slicer-based scaling
 
 Status: user approved architecture direction, not resource provisioning. Use Cloudflare Workers for the application/API, Cloudflare D1 as the SQLite-compatible operational database, and Cloudflare R2 for private images, STL/3MF files and other attachments. GitHub remains canonical application source with feature-branch development and main releases. Prefer clean data/storage interfaces, portable migrations and independent full export/restore; validate security, identity, GitHub deployment, cost and recovery before production. User approved slicer-based scaling for v1: catalog stores original models, physical dimensions/units and optional target-size/scale metadata, while a slicer applies geometry transformations and printer settings. Preserve a modular future path to derived 3MF/STL generation or print preparation, but do not implement it in v1. Uniform scaling affects wall thickness and cutter height, so do not assume every model scales safely. No Cloudflare resources, paid plans or production deployments have been created or authorized by this decision.

@@ -1,19 +1,15 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
-Paste the following into a fresh conversation:
+Continue Cookie_Catalog. Repository: jbrickey23/Cookie_Catalog, default/release branch main. Verify current permissions, branch heads and open PRs before changes.
 
----
+Read README.md, Cookie_Catalog_Context.md, Cookie_Catalog_TODO.md, Cookie_Catalog_Decision_Log.md, this file and applicable AGENTS.md. Main can lag active development: draft PR #1 and feature/cc-infrastructure-foundation contain the current development checkpoint. Fetch their latest contents; never rely on this snapshot if newer repository evidence exists.
 
-Continue the Cookie_Catalog project. Repository: jbrickey23/Cookie_Catalog, default branch main. Verify current access and latest state.
+Development checkpoint (2026-10-12): active branch `feature/cc-infrastructure-foundation`, draft PR #1; `main` remains the earlier bootstrap/release branch. Cloudflare development Worker and D1 `cookie-catalog-dev`, private R2 `cookie-catalog-dev-private`, and Access application are provisioned. Owner reported successful login/session, synthetic D1 create/link/edit/read (90 × 100 mm), and three-file R2 round-trip/cleanup. R2 screenshot recorded Public Access Disabled and an empty bucket afterward. CI run #79 passed for `d012da6`. These checks do not complete general catalog CRUD, persistent attachments, collaborator access, backup/restore, or production readiness.
 
-Read the latest README.md, Cookie_Catalog_Context.md, Cookie_Catalog_TODO.md, Cookie_Catalog_Decision_Log.md, this bootstrap file, and applicable AGENTS.md before any project changes. Reconstruct approved decisions, open tasks and next work; report inconsistencies/incomplete writes rather than guessing; never redo completed bootstrap steps. Read additional project records only as needed. GitHub is authoritative for project state/code once initialized; the selected database/file store are authoritative for operational catalog data. Chat history is a working record.
+The live alternate-email denial test is deferred at the owner's request; failed code delivery is inconclusive. No production deployment or additional paid resources are authorized. Next work: CC-TODO-006 backup/export/recovery preparation; the last user-side setup issue was PowerShell not finding Node.js. Installation has not been verified. Do not redo passed checks or resume the deferred access test automatically.
 
-Goal: help a cookie decorator find designs and compatible cutters she owns or can print, including known cutter flips, with physical storage locations and printable files.
+Goal: help Jay's wife find decorating designs, owned/printable compatible cutters, physical locations, files and known flips. Scaling happens in the slicer in v1. Real samples have not been supplied; synthetic fixtures are not inventory.
 
-Checkpoint at 2026-10-12: repository access is resolved and the initially empty repository is bootstrapped with durable files, research, and an initial conceptual data model. No database, storage, site, or seed catalog exists yet.
+Proactively advance authorized routine reversible work until the user says done. Explain unfamiliar setup choices briefly. Do not create additional paid resources or deploy production without separate approval. Preserve deferred tests. Keep private assets/credentials out of this public repository.
 
-Immediate work: infrastructure, one task per component, CC-TODO-001 through CC-TODO-007. CC-TODO-001 remains open only for independent fresh-conversation restoration validation; this fresh conversation can serve as that test. GitHub-first restoration is approved (CC-DEC-007), and an in-session remote-file recovery check has passed. If this conversation successfully reconstructs the current state without relying on prior chat, record evidence, close CC-TODO-001, and reconcile the files. Feature branches for development and `main` for releases (CC-DEC-006) are approved but automated checks/deployment/rollback are not yet configured. Single-repository layout (CC-DEC-004) and GitHub as canonical application source (CC-DEC-005) are approved; hosting integration and any required one-way sync remain validation followups under CC-TODO-004. Do not recreate the repo or redo the bootstrap. Provider selection belongs in the separate infrastructure tasks. Never claim provisioning without evidence.
-
-The user has real sample cutters but has not supplied them yet. Do not invent real inventory. Automatic new flip suggestions are deferred. Provider/stack choices remain proposals, not approved decisions.
-
-Before handoff, reconcile completed work, open tasks, decisions, and continuation state into the current repository; verify writes and cross-file consistency. Do not claim a fresh-chat test succeeded until actually performed in a separate conversation. Use stable IDs; next unused task ID is CC-TODO-008 unless latest state says otherwise.
+CC-TODO-001 still requires a fresh-chat restoration without history assistance. The 2026-10-12 initialization used repository reads plus history and therefore does not close that strict acceptance check. Reconcile meaningful progress across durable files on the active feature branch, verify remote writes, and keep release work separate. Next unused task ID: CC-TODO-008.
