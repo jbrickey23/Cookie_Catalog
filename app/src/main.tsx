@@ -6,6 +6,39 @@ function App() {
   const [storageResult, setStorageResult] = useState<string>("");
   const [storageBusy, setStorageBusy] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [backupBusy, setBackupBusy] = useState(false);
+  const [backupResult, setBackupResult] = useState("");
+  async function downloadBackup() {
+    setBackupBusy(true);
+    setBackupResult("Preparing your development backup…");
+    try {
+      const response = await fetch("/api/dev/backup", {
+        method: "POST", cache: "no-store", headers: { "X-Cookie-Catalog-Check": "backup" }
+      });
+      if (!response.ok) {
+        const body = await response.json() as { error?: string };
+        setBackupResult(body.error ?? "The backup could not complete.");
+        return;
+      }
+      if (!response.headers.get("content-disposition")?.startsWith("attachment;")) {
+        setBackupResult("Sign in again before downloading your backup.");
+        return;
+      }
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = /filename="([^"]+)"/.exec(response.headers.get("content-disposition") ?? "")?.[1] ?? "cookie-catalog-dev-backup.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setBackupResult("Backup download started. Keep this file in a private folder. Live recovery validation is still pending.");
+    } catch {
+      setBackupResult("The backup could not complete. Sign in again and retry.");
+    } finally {
+      setBackupBusy(false);
+    }
+  }
   async function checkDatabase() {
     setBusy(true);
     setResult("Checking the development database…");
@@ -49,16 +82,24 @@ function App() {
   return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
     <h1>Cookie Catalog</h1>
     <p>Development infrastructure checks use invented demonstration records.</p>
-    <button onClick={checkDatabase} disabled={busy} style={{ padding: "0.7rem 1rem", cursor: busy ? "wait" : "pointer" }}>
+    <button onClick={checkDatabase} disabled={busy || backupBusy || storageBusy} style={{ padding: "0.7rem 1rem", cursor: busy ? "wait" : "pointer" }}>
       {busy ? "Checking…" : "Check development database"}
     </button>
     <p role="status" aria-live="polite">{result}</p>
-    <button onClick={checkStorage} disabled={storageBusy || busy} style={{ padding: "0.7rem 1rem", cursor: storageBusy ? "wait" : "pointer" }}>
+    <button onClick={checkStorage} disabled={storageBusy || busy || backupBusy} style={{ padding: "0.7rem 1rem", cursor: storageBusy ? "wait" : "pointer" }}>
       {storageBusy ? "Checking…" : "Check private file storage"}
     </button>
     <p>Uses three tiny invented files and removes them after verification.</p>
     <p role="status" aria-live="polite">{storageResult}</p>
+    <hr />
+    <h2>Development backup</h2>
+    <p>Download the current demonstration catalog and its registered files. Keep the download private.</p>
+    <button onClick={downloadBackup} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
+      {backupBusy ? "Preparing…" : "Download development backup"}
+    </button>
+    <p role="status" aria-live="polite">{backupResult}</p>
     <p>Catalog entry and file uploads will be enabled after the remaining infrastructure checks.</p>
   </main>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);
+

@@ -12,6 +12,10 @@ Updated: 2026-10-12. First workstream: understand, devise, and create infrastruc
 | CC-TODO-006 | Backup, export, and recovery | Open | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open | 002/003/005 |
 
+## Latest continuation
+
+2026-10-12 continuation: Node.js v24.21.0 and npm.cmd 11.19.0 work. This formerly managed PC still reports Defender for Endpoint enrollment (OnboardingState=1) and tamper protection; event 1126 blocks node.exe at registry.npmjs.org. Audit-mode change did not take effect, so Wrangler login was never retried. Previous IT is unavailable. Park local PC remediation; no reset/reinstallation is authorized. CC-TODO-006 now provides an owner-only browser development download at POST /api/dev/backup plus a disposable local restore tool. Local schema, linked-record and two-file restoration, negative authorization/integrity cases, all 16 Node tests, SQLite smoke/import and TypeScript/Vite frontend/Worker build passed. Live export/restore, independent backup destination, retention and scheduling remain pending; no production deployment or paid resources were added.
+
 ## Current continuation
 
 Development checkpoint (2026-10-12): active branch `feature/cc-infrastructure-foundation`, draft PR #1; `main` remains the earlier bootstrap/release branch. Cloudflare development Worker and D1 `cookie-catalog-dev`, private R2 `cookie-catalog-dev-private`, and Access application are provisioned. Owner reported successful login/session, synthetic D1 create/link/edit/read (90 × 100 mm), and three-file R2 round-trip/cleanup. R2 screenshot recorded Public Access Disabled and an empty bucket afterward. CI run #79 passed for `d012da6`. These checks do not complete general catalog CRUD, persistent attachments, collaborator access, backup/restore, or production readiness.
@@ -100,7 +104,7 @@ Purpose: make the private catalog usable by Jay's wife and any explicitly allowe
 
 Purpose: preserve catalog data independently of provider or app availability.
 
-- Drafted provider-neutral backup manifest and recovery plan on feature branch; no backup executed, scheduled or verified, and destination/retention remain unapproved.
+- Provider-neutral backup/recovery design now includes a bounded owner-only browser development package (records, schema, migration metadata and registered R2 bytes/checksums) plus tools/restore_development_backup.py. The local synthetic export/restore test recovered relationships and two files into a new directory; corruption, omissions, unknown schema, excess records and unauthorized requests fail. All 16 Node tests and frontend/Worker build passed. Live export/restore, independent destination, retention, scheduling and production recovery remain unverified.
 - Specify complete export of records, relationships, metadata, and original attachments with stable IDs.
 - Define snapshot/backup retention and ownership; keep sensitive/purchased assets out of public Git history.
 - Implement export/import or restore and distinguish code rollback from database recovery.

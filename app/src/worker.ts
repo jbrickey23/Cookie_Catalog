@@ -1,4 +1,5 @@
 import { checkDevelopmentStorage } from "./server/development-storage-check";
+import { BackupError, createDevelopmentBackup } from "./server/development-backup";
 import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
 
 export interface Env extends AccessConfiguration { ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
@@ -11,6 +12,25 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   const user = await verifier.verify(request);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if (pathname === "/api/dev/backup") {
+    if (user.role !== "owner") return json({ error: "Owner access required" }, 403);
+    if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+    if (request.headers.get("Origin") !== new URL(request.url).origin
+        || request.headers.get("X-Cookie-Catalog-Check") !== "backup") {
+      return json({ error: "Same-origin backup request required" }, 403);
+    }
+    if (!database || !files) return json({ error: "Development backup resources unavailable" }, 503);
+    try {
+      const document = await createDevelopmentBackup(database, files);
+      return new Response(document, { headers: {
+        "content-type": "application/json", "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "content-disposition": `attachment; filename="cookie-catalog-dev-${new Date().toISOString().replace(/[:.]/g, "-")}.json"`
+      } });
+    } catch (error) {
+      return json({ error: error instanceof BackupError ? error.message : "Development backup failed. No download was created." }, 503);
+    }
+  }
   if (pathname === "/api/session") {
     if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
     return json({ authenticated: true, email: user.email, role: user.role });
@@ -64,3 +84,4 @@ export default {
     return env.ASSETS.fetch(request);
   }
 } satisfies ExportedHandler<Env>;
+
