@@ -83,6 +83,7 @@ Purpose: make the private catalog usable by Jay's wife and any explicitly allowe
 
 - Determine owner/editor/viewer needs and whether the chosen private hosting actually permits the wife's access.
 - Drafted Cloudflare Access candidate design with server-side signed-JWT verification requirement, application owner/editor/viewer roles, deny-by-default identity boundary, and negative test cases. Development Access is configured and owner login reported successful. Server-side verifier and read-only session endpoint added; local cryptographic negative tests and TypeScript/Vite build passed. Owner confirmed `OWNER_EMAIL` secret setup and successful live `/api/session` response (`authenticated: true`, `role: owner`) on 2026-10-12. GitHub Actions runs #64 and #65 passed for auth commit `a3ceb37`; D1 membership, collaborator access, negative edge tests and recovery remain open.
+- Live alternate-email Access denial test deferred at owner request on 2026-10-12. Initial attempt used an inaccessible inbox; subsequent code delivery was not observed. Neither attempt proves policy denial. Automated forged/expired/wrong-audience/unknown-owner tests passed; live unapproved-user denial remains pending.
 - Select authentication and enforce record/file authorization on the server.
 - Establish account recovery and secret handling.
 - Done when: the intended users can access their catalog, unauthorized access is rejected, and roles/recovery are documented. Do not assume owner-private deployment grants access to another person.
