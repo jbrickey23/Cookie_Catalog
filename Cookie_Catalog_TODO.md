@@ -12,6 +12,10 @@ Updated: 2026-10-12. First workstream: understand, devise, and create infrastruc
 | CC-TODO-006 | Backup, export, and recovery | Open | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open | 002/003/005 |
 
+## Backup location selection
+
+Owner selected an existing private cloud folder for independent backup storage on 2026-10-12. Provider and exact folder are not yet specified or verified. Suggested layout: Cookie_Catalog/Backups for normal catalog packages, with recovery-test packages kept separately as test evidence. The latest-7 manual development retention policy remains proposed; no cloud transfer, automated pruning or recurring backup has been configured.
+
 ## Live file recovery passed; storage decision pending
 
 Live file recovery verified on 2026-10-12: owner supplied cookie-catalog-dev-recovery-2026-10-12T23-06-58-377Z.json (11,830 bytes; SHA-256 7824069a2faa5db5193818607d5662bcc6f113791a66505bb245f65486da3794). Payload and both original-file checksums passed. A new disposable local restore recovered 16 tables, 17 rows and 2 objects: a readable 1 × 1 PNG (68 bytes) and ASCII STL (111 bytes). Confirmed the synthetic design/cutter/location link at 90 × 100 mm, two shape attachments, one design image and one printable STL association. SQLite integrity and foreign keys passed. The download reports cleanupVerified=true; server code only returns after request-scoped D1/R2 cleanup checks succeed. No real inventory or backup payload was committed to public Git. Code commit 40ab108 passed CI #97.
