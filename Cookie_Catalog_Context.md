@@ -15,6 +15,7 @@ Updated: 2026-10-12 (America/Los_Angeles).
 
 - Bootstrap the project using the durable ChatGPT/GitHub workflow.
 - GitHub-first fresh-chat restoration is approved (CC-DEC-007). Read latest durable files before changes, reconcile conflicts and verify writes. In-session recovery check passed; independent fresh-chat validation remains pending.
+- CC-DEC-009 approved: balanced provider-selection preference—simple managed infrastructure with practical export and migration; no provider selected.
 - CC-DEC-008 approved: use a SQLite-compatible relational database for operational catalog records; provider selection and provisioning remain pending.
 - Establish infrastructure first, with separate actionable TODOs for each component.
 - Feature branches are used for development/review; `main` is the release branch (CC-DEC-006). Actual CI, branch protection, deployment, and rollback remain to be implemented and verified.
@@ -50,7 +51,7 @@ Repository metadata confirms the exact target, default branch, public visibility
 
 ## Continuation
 
-CC-DEC-004 through CC-DEC-008 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next infrastructure design task is CC-TODO-002 (database), which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
+CC-DEC-004 through CC-DEC-009 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next infrastructure design task is CC-TODO-002 (database), which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
 
 ## Operating rules
 
