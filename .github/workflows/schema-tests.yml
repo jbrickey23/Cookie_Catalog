@@ -12,4 +12,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run SQLite schema tests
-        run: python tests/test_schema.py
+        run: |
+          python tests/test_schema.py
+          python samples/import_synthetic.py
