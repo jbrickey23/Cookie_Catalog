@@ -2,6 +2,10 @@
 
 Newest first. Record selection separately from implementation and validation.
 
+## 2026-10-12 — CC-DEC-010 — Accelerated architecture-by-exception governance
+
+Status: user approved. Prioritize long-term stability, functionality, maintainability, and practical portability over minimum initial setup. Delegate routine, reversible technical decisions to the assistant, documenting rationale and verification in GitHub. Seek user approval for material functionality/cost tradeoffs, hard-to-reverse commitments, external provisioning and production changes. Evaluate database, file storage, hosting, identity, backup and deployment as one coherent architecture rather than approving each provider in isolation. Present a researched consolidated architecture with explicit risks, costs, migration/export/restore plans and only material approval questions. Do not infer authorization to provision external services or incur costs. Keep existing CC-TODO component acceptance criteria and preserve CC-DEC-008/009. CC-DEC-010 is governance, not database-provider selection.
+
 ## 2026-10-12 — CC-DEC-009 — Balanced managed infrastructure and portability
 
 Status: user approved as a provider-selection criterion, not a provider selection. Prefer simple, managed infrastructure while preserving practical migration, export, and recovery paths. Avoid unnecessary vendor-specific coupling, but do not add significant operational complexity solely for theoretical portability. Under CC-TODO-002, compare SQLite-compatible providers (including Cloudflare D1 and Turso) on integration, actual export/restore, pricing, privacy, and maintenance before approving one. Coordinate file storage and hosting choices with CC-TODO-003/004. No provider or resource has been selected/provisioned by this decision.
