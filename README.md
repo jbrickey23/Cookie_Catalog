@@ -8,6 +8,8 @@ A visual catalog for a cookie decorating business: find decorating designs, the 
 
 Current phase: establish infrastructure, one durable task per component. GitHub is the approved canonical application code source (CC-DEC-005); feature branches are for development/review and `main` is the release branch (CC-DEC-006); hosting deployment integration is pending verification. No site, database, file store, or sample catalog has been provisioned.
 
+GitHub-first fresh-chat restoration is approved (CC-DEC-007). In-session remote-file recovery has been checked; an independent new-conversation test is still needed before closing CC-TODO-001. Next infrastructure design work: CC-TODO-002 database and schema.
+
 ## Restore order
 
 1. This README
