@@ -2,6 +2,13 @@
 
 Newest first. Record selection separately from implementation and validation.
 
+## 2026-10-12 — CC-DEC-006 — Feature branches and main release branch
+
+Status: user approved; branch protection, CI and deployment automation not yet configured. Prepare application changes on feature branches; review and validate before merging; use `main` as the release branch. Once hosting is configured, deployment should follow approved merges to `main`. Preserve a known-good commit for rollback; document the actual deployment and rollback procedure under CC-TODO-004. Do not claim branch protections or deployment are operational yet.
+
+Followups: CC-TODO-001 records the agreed workflow and validates fresh-chat restoration. CC-TODO-004 implements and verifies GitHub-connected deployments, pre-merge checks, branch protection as appropriate, and rollback. Database migration rollback/recovery must be handled separately under CC-TODO-002/006.
+
+
 ## 2026-10-12 — CC-DEC-005 — GitHub is canonical application source
 
 Status: user approved; deployment integration not yet validated. `jbrickey23/Cookie_Catalog` is the single authoritative source for application code and versioned configuration. Hosting should deploy from this repository, not independently maintain competing application code. If a hosting provider requires managed source, document the exception and a one-way synchronization/deployment mechanism before adoption; do not silently introduce a second editable source.
