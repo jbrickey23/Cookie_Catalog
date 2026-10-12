@@ -32,6 +32,12 @@ Purpose: make the repository a verified durable source of project truth.
 - Completed: read/write verified using the actual bootstrap writes and readback.
 - Done when: remote bootstrap is verified, independent fresh-chat restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear. All checks except independent fresh-chat test are satisfied.
 
+## Accelerated infrastructure governance (CC-DEC-010)
+
+- Approved: research and recommend the integrated database, storage, hosting, identity, backup and deployment architecture together; prefer stable maintainable interfaces, practical migration/export/restore, and a little upfront overhead to avoid future refactoring.
+- Assistant may decide/document routine reversible engineering details; require explicit user approval for material tradeoffs, costs, provisioning, hard-to-reverse commitments and production changes.
+- Preserve component task IDs and acceptance checks. Architecture research is not provisioning or task completion. Next checkpoint: consolidated researched architecture proposal and material approval gate; provider remains unselected.
+
 ## CC-TODO-002 — Understand, devise, and create database infrastructure
 
 Purpose: durable structured records that support cutters, designs, and many-to-many reuse.
