@@ -69,6 +69,7 @@ Purpose: a private working interface reachable on the devices used in the busine
 
 - Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
 - Select stack and connect source, database, and storage; validate deployment from canonical GitHub repository (CC-DEC-005). If hosting-managed source is unavoidable, document one-way sync and prevent competing edits.
+- Initial React/Vite/Workers runtime scaffold, disabled API boundary, placeholder Wrangler configuration, and Git ignore rules committed on feature branch. Dependency installation, build, Cloudflare plugin compatibility, runtime and deployment have not been validated.
 - Establish local/development preview, repeatable deployment from `main` after feature-branch review (CC-DEC-006), pre-merge checks, appropriate branch protection, configuration/secrets, environment separation, and code rollback procedure.
 - Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
 
