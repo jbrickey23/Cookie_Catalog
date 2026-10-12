@@ -49,7 +49,7 @@ Purpose: durable structured records that support cutters, designs, and many-to-m
 - Drafted initial migration in `database/migrations/0001_initial.sql` and synthetic local SQLite smoke test in `tests/test_schema.py` on feature branch; execution and D1 compatibility validation still pending.
 - Local SQLite 3.46.1 smoke validation passed for 0001 (table creation, relationships, FK enforcement) and additive 0002 (size variants and multi-cutter components); D1 compatibility, full automated test integration, real samples and production migration remain pending.
 - Drafted `database/migrations/0002_variants_components.sql` on feature branch; slicer-based size recipes are guidance, not geometry transforms.
-- Added GitHub Actions SQLite smoke-test workflow and initial TypeScript D1 repository boundary on feature branch. CI workflow now includes TypeScript/Vite build; latest GitHub run pending verification; authentication is required before exposing repository operations.
+- Added GitHub Actions SQLite smoke-test workflow and initial TypeScript D1 repository boundary on feature branch. CI run #51 verified passing for SQLite fixtures, synthetic import, TypeScript type-check and Vite build; authentication is required before exposing repository operations.
 - Create development/production separation, schema/migrations, and application record access.
 - Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
@@ -69,7 +69,8 @@ Purpose: a private working interface reachable on the devices used in the busine
 
 - Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
 - Select stack and connect source, database, and storage; validate deployment from canonical GitHub repository (CC-DEC-005). If hosting-managed source is unavoidable, document one-way sync and prevent competing edits.
-- Initial React/Vite/Workers runtime scaffold, disabled API boundary, placeholder Wrangler configuration, and Git ignore rules committed on feature branch. Dependency installation, build, Cloudflare plugin compatibility, runtime and deployment have not been validated.
+- Initial React/Vite/Workers runtime scaffold, disabled API boundary, placeholder Wrangler configuration, and Git ignore rules committed on feature branch. Dependency installation, TypeScript and Vite build passed in GitHub Actions run #51; deployed runtime and Cloudflare service integration remain unverified.
+- Deployment runbook added at `docs/Deployment_Runbook.md`, covering isolated dev/prod resources, authorization gates, CI and code/data rollback. No Cloudflare resources created.
 - Establish local/development preview, repeatable deployment from `main` after feature-branch review (CC-DEC-006), pre-merge checks, appropriate branch protection, configuration/secrets, environment separation, and code rollback procedure.
 - Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
 
