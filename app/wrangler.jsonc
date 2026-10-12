@@ -1,0 +1,9 @@
+{
+  "name": "cookie-catalog-dev",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist/client", "binding": "ASSETS" },
+  // Bindings must be configured only after explicit Cloudflare provisioning approval.
+  // "d1_databases": [{ "binding": "DB", "database_name": "cookie-catalog-dev", "database_id": "REPLACE_AFTER_PROVISION", "migrations_dir": "../database/migrations" }],
+  // "r2_buckets": [{ "binding": "FILES", "bucket_name": "cookie-catalog-dev-private" }]
+}
