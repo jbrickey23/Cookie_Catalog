@@ -2,6 +2,10 @@
 
 Newest first. Record selection separately from implementation and validation.
 
+## 2026-10-12 — CC-DEC-009 — Balanced managed infrastructure and portability
+
+Status: user approved as a provider-selection criterion, not a provider selection. Prefer simple, managed infrastructure while preserving practical migration, export, and recovery paths. Avoid unnecessary vendor-specific coupling, but do not add significant operational complexity solely for theoretical portability. Under CC-TODO-002, compare SQLite-compatible providers (including Cloudflare D1 and Turso) on integration, actual export/restore, pricing, privacy, and maintenance before approving one. Coordinate file storage and hosting choices with CC-TODO-003/004. No provider or resource has been selected/provisioned by this decision.
+
 ## 2026-10-12 — CC-DEC-008 — SQLite-compatible relational database architecture
 
 Status: user approved; architecture selected, provider and implementation pending. Use a SQLite-compatible relational database as the operational source of structured catalog records (cutters, designs, physical instances, tags, locations, and many-to-many mappings). GitHub JSON files are not the primary live catalog database. Preserve portable schema/migrations and stable IDs. Evaluate hosting/provider, costs, backup, access and runtime compatibility under CC-TODO-002 before provisioning. Cloudflare D1 is a candidate, not an approved provider.
