@@ -18,9 +18,9 @@ Purpose: make the repository a verified durable source of project truth.
 
 - Completed: repository resolved as `jbrickey23/Cookie_Catalog`, default branch main, public, read/write permissions confirmed.
 - Completed: contents/ref checks confirmed an empty repository before initialization; no existing files or repository agent instructions. Assess any release/protection requirements when choosing the development workflow.
-- Bootstrap package: README, Context, TODO, Decision Log, Bootstrap Prompt, initial model, and research notes. Persist and verify this package before handoff.
+- Completed: seven bootstrap files committed on main and read back; all contents match the prepared package.
 - Decide source layout and the relationship to any hosting-managed source repo; document synchronization/release ownership.
-- Verify read/write with the actual bootstrap commit and readback.
+- Completed: read/write verified using the actual bootstrap writes and readback.
 - Done when: remote bootstrap is verified, restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear.
 
 ## CC-TODO-002 — Understand, devise, and create database infrastructure
