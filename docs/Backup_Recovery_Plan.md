@@ -1,65 +1,62 @@
-# CC-TODO-006 — Backup, export and recovery
+# CC-TODO-006 — Backup and recovery
 
-## Current storage plan and handoff
+Updated: 2026-10-12 UTC. Development sample export/local recovery verified; operational durability and production recovery remain incomplete.
 
-2026-10-12 storage plan: owner asked for simple folders and date/time filenames, considered GitHub backups, and indicated OneDrive is available while raising source-version traceability. Recommended full backups in an existing private OneDrive/Cookie_Catalog/Backups folder, with code/migrations/recovery instructions remaining canonical and versioned in GitHub. Current application repo was rechecked and is public. Both uploaded packages were inspected and contain only synthetic demonstration records/files, but no payloads were committed to GitHub. Prepared a portable archive containing byte-identical UTC-named JSON snapshots, a manifest of hashes/sizes/migrations/verified restore results linked to validation commit 40ab108aa6cf17f943d4671d6f2ca2bdf973ac9f, and recovery instructions. Exporting deployment commit was not independently attested by the original downloads; the manifest states that limitation. Owner placement into OneDrive and exact account/folder access remain unverified. No automated transfer, scheduled backup, pruning, new subscription or production deployment was activated.
+## Storage and traceability
 
+GitHub is canonical for code, migrations and recovery instructions. This repository is public; full backup payloads, real photos and purchased originals stay private.
 
-Status: actual live database and two-file packages restored locally; independent backup location/policy and Cloudflare-side restoration remain pending.
+Owner supplied the extracted personal OneDrive folder:
+`Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z`.
 
-## Verified live attachment recovery
+The archive contains Backups/20261012T225346644Z.json, Backups/20261012T230657659Z-recovery-test.json, manifest.json and README.md. Both JSON files are byte-identical to the actual downloads. The manifest records UTC export times, sizes, hashes, migrations, restored counts and validation branch/commit 40ab108. It explicitly does not attest the exact exporting deployment commit.
 
-Live file recovery verified on 2026-10-12: owner supplied cookie-catalog-dev-recovery-2026-10-12T23-06-58-377Z.json (11,830 bytes; SHA-256 7824069a2faa5db5193818607d5662bcc6f113791a66505bb245f65486da3794). Payload and both original-file checksums passed. A new disposable local restore recovered 16 tables, 17 rows and 2 objects: a readable 1 × 1 PNG (68 bytes) and ASCII STL (111 bytes). Confirmed the synthetic design/cutter/location link at 90 × 100 mm, two shape attachments, one design image and one printable STL association. SQLite integrity and foreign keys passed. The download reports cleanupVerified=true; server code only returns after request-scoped D1/R2 cleanup checks succeed. No real inventory or backup payload was committed to public Git. Code commit 40ab108 passed CI #97.
+Local placement is owner-reported; the archive was shown in personal OneDrive. Cloud sync completion is not confirmed. Confirm an independent cloud copy before treating this as off-device durability. Latest-seven normal snapshots after meaningful changes/before imports is a proposal only; no recurring transfer, pruning, new subscription or production deployment was activated. The recovery-test package contains temporary synthetic fixtures and is separate test evidence, not the current live catalog state.
 
-## Concrete development policy proposal
+## Actual downloaded evidence
 
-Proposed development backup policy (awaiting owner storage preference): owner-triggered download after meaningful catalog changes and before bulk import/migration; keep the latest 7 completed packages in an independently controlled private location outside Cloudflare/public GitHub. This is a manual development policy, not an activated recurring automation. Restore-check after schema/export changes. Real-asset volume and production recovery needs must inform production frequency/retention and scalable exports. No new storage subscription, paid resource, scheduled task or production deployment is authorized. Next required input: identify an existing private backup location the owner can use; Cloudflare-side restore is still an additional validation followup.
+| Package | Bytes | Local restore | Exported at |
+| --- | ---: | --- | --- |
+| cookie-catalog-dev-2026-10-12T22-53-46-644Z.json | 7,834 | 16 tables, 6 rows, 0 objects | 2026-10-12T22:53:46.644Z |
+| cookie-catalog-dev-recovery-2026-10-12T23-06-58-377Z.json | 11,830 | 16 tables, 17 rows, 2 objects | 2026-10-12T23:06:57.659Z |
 
-## Actual live evidence
+SHA-256 of full original packages:
 
-Live package cookie-catalog-dev-2026-10-12T22-53-46-644Z.json (7,834 bytes; SHA-256 724b645b1a4582ea4bc08499376a0fc072efc018c081a47194421390618d0149) passed payload checksum verification and restored into a new disposable local directory on 2026-10-12. Recovered 16 tables and 6 rows: both migration entries, one design, shape, cutter and link. Confirmed DEMO Holiday tree → DEMO Evergreen tree at 90 × 100 mm, SQLite integrity_check=ok and no foreign-key violations. Zero file objects matches the empty live bucket; this package does not prove live attachment recovery. The uploaded package and restored database are private and are not committed to public Git.
+- Normal: `724b645b1a4582ea4bc08499376a0fc072efc018c081a47194421390618d0149`
+- Recovery test: `7824069a2faa5db5193818607d5662bcc6f113791a66505bb245f65486da3794`
 
-## Next file recovery check
+Both restored SQLite integrity/foreign keys and migrations 0001/0002. Normal snapshot retained the synthetic design/shape/cutter/link at 90 × 100 mm; zero files matched the empty bucket. Recovery snapshot retained design/cutter/location and attachment associations, a readable 1 × 1 PNG (68 bytes) and ASCII STL (111 bytes), with original hashes:
 
-Next browser action: refresh https://cookie-catalog-dev.j-brickey.workers.dev and choose Download file recovery test. This owner-only same-origin POST /api/dev/recovery-check creates unique, disposable synthetic cutter/design/location records plus PNG/STL originals and metadata, exports them, then deletes only its request-scoped data and verifies cleanup before returning the download. Attach that saved recovery JSON for actual file/relationship restoration. Local D1/R2 binding integration tests, real SQLite restore, failure-path cleanup, preservation of existing data, all 20 Node tests and TypeScript/Vite frontend/Worker build passed. Live recovery-test execution remains pending; CC-TODO-006 is still open for file recovery, Cloudflare-side restoration and backup destination/retention/scheduling.
+- PNG: `e6807d65d442417605321d31741f0b50abfc2f1f4fb819a40df62f873803c5e4`
+- STL: `ffbc8ebbe3d181026a1e97f5422795de981870b52492f667cdd95095bb8dccbf`
 
-## Current development route
+Recovery envelope reported filesVerified=2 and cleanupVerified=true. Server code only returns after request-scoped D1/R2 cleanup verification. This is server-reported cleanup evidence, not an additional later bucket inspection. All inspected content was synthetic; no payloads were committed to GitHub.
 
-Local CLI login is blocked by the owner's former organizational Defender enrollment. An owner-only browser download uses the existing private development Worker/D1/R2 bindings. No admin token is placed in the browser and no additional resource is created.
+## Browser export
 
-Open the signed-in Cookie Catalog development page, refresh after its feature-branch deployment, then choose **Download development backup**. Keep the resulting JSON in a private folder outside this public repository. Never upload real catalog backups to GitHub.
+At https://cookie-catalog-dev.j-brickey.workers.dev, the authenticated owner can select:
 
-POST /api/dev/backup requires verified owner identity, same-origin Origin and X-Cookie-Catalog-Check: backup. The response uses attachment disposition and no-store. One D1 batch captures the 15 catalog tables, d1_migrations, schema/index definitions and foreign-key validation. Registered R2 objects are included as base64 with computed SHA-256, size and content type. Disposable dev-checks objects are excluded; any other unregistered object makes export fail rather than silently losing it.
+- Download development backup: same-origin POST /api/dev/backup with X-Cookie-Catalog-Check: backup.
+- Download file recovery test: same-origin POST /api/dev/recovery-check with X-Cookie-Catalog-Check: recovery. Creates unique disposable linked rows plus PNG/STL originals, exports them and removes only that request's fixtures; cleanup failure produces an error rather than a successful download.
 
-## Development limits and consistency
+Server validates signed Access JWT and owner role. Responses are no-store attachments. Envelope format cookie-catalog-development-backup, version 1, contains exportedAt, payloadJson and payloadSha256. The package captures schema/indexes, rows, migration metadata and registered original R2 objects with hashes/sizes/types. D1 snapshot uses a transactional batch; R2 has no shared transaction. Export while development is idle.
 
-The tool is intentionally bounded: 1,000 rows per table, 25 registered objects, 4 MiB total original bytes and 12 MiB download. Unknown schema, unsupported values, unsafe integers, missing files, checksum/size differences and relationship failures stop the download. It is not a general production backup service or a native D1 SQL export.
+Limits: 1000 rows/table, 25 objects, 4 MiB original bytes total and 12 MiB package. Unknown schema/views/triggers, unsupported values/unsafe integers, missing/corrupt registered files and orphans fail; disposable dev-checks/ objects are excluded. This bounded sample tool does not constitute scalable production backup or native D1 SQL export. SHA-256 detects corruption, not authenticity.
 
-D1's batch is transactional; D1 and R2 do not share a transaction. Use an idle catalog with no simultaneous uploads, edits or cleanup during export. General persistent writes are not enabled in the current foundation. A coordinated write lock or reconciliation protocol is required before adopting this route for a mutable production catalog. SHA-256 detects corruption; it is not a signature proving who created a backup.
+## Trusted local restoration
 
-## Disposable local recovery
+Use the current feature-branch tool and a new, nonexistent output directory:
 
-Restore ONLY a trusted download generated by this application. This creates a new local SQLite database and original files, never modifies Cloudflare resources:
-
-```sh
-python3 tools/restore_development_backup.py PRIVATE_BACKUP.json NEW_PRIVATE_DIRECTORY
+```text
+python tools/restore_development_backup.py <trusted-backup.json> <new-output-directory>
 ```
 
-The target must not already exist. Payload and every object's checksums, size, metadata, object-key paths, table counts and foreign keys are verified. Output: catalog.sqlite plus objects/attachments/... . Failures remove only the newly created restore directory; existing destinations are refused. The tool executes schema SQL from the trusted package; do not use it on untrusted or edited downloads.
+The tool verifies payload/object hashes, sizes, metadata, schema/table counts and foreign keys, then creates catalog.sqlite and objects/attachments/... with original bytes. It refuses existing output and cleans up only its newly created directory on failure. Schema SQL is executed; use only trusted application-generated backups.
 
-## Verified locally
+Restore checks should include both migration entries, expected record counts/relationships, SQLite integrity and foreign keys, and every object's bytes/hash. Preserve the source package until checks pass. Code rollback and data restoration are separate operations.
 
-All 20 Node tests and TypeScript/Vite frontend/Worker build passed. Integration tests use the actual SQLite migrations: a cutter/design link, location, both migration entries and two synthetic files survive export and restore into a fresh directory. Tests reject altered payloads, missing files, corrupted originals, orphan objects, changed schema, excessive rows, broken relationships, duplicate destinations, unauthenticated/editor/viewer access and cross-origin requests. Existing SQLite schema/import checks passed.
+## Validation and remaining work
 
-These results do not prove live Cloudflare export, live R2 attachment recovery, or intended-user recovery access. The live development bucket was owner-confirmed empty after its earlier smoke check.
+Code 40ab108 passed CI #97: 20 Node tests, SQLite schema/import checks and frontend/Worker build. Actual Miniflare D1/R2 tests exercised existing-data preservation, export failure cleanup, cleanup failure and negative authorization; actual downloaded packages were restored independently afterward.
 
-## Remaining acceptance
-
-1. Completed: owner downloaded the live package and attached it for validation.
-2. Completed: actual package restored locally, with the expected demonstration link/dimensions, migrations, counts, checksums and SQLite/FK integrity.
-3. Completed for development: live temporary PNG/STL originals and attachment metadata exported together, restored locally with all associations intact; server reports cleanup verified. General user upload lifecycle remains CC-TODO-003.
-4. Validate live Cloudflare import/restore separately from code rollback.
-5. Approve an independently controlled private backup destination, cadence and retention before activation.
-6. Add coordinated consistency handling and scalable exports before production.
-
-Code rollback remains separate from records/file recovery. D1 Time Travel does not protect deleted R2 originals. CC-TODO-006 remains open.
+Remaining: confirm OneDrive cloud sync; agree manual cadence/retention/ownership; restore into separate Cloudflare D1/R2 without touching existing development; design scalable export/import and cross-service consistency; define production recovery objectives, encryption/access and recovery drill. Real asset volumes are unknown. CC-TODO-006 stays open; do not repeat the completed sample recovery test without a new reason.

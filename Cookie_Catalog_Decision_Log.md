@@ -1,14 +1,28 @@
 # Cookie_Catalog — Decision Log
 
-Newest first. Record selection separately from implementation and validation.
+Updated: 2026-10-12 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
 
-## 2026-10-12 — Checkpoint reconciliation (existing decisions; no new approval)
+## Current implementation reconciliation
 
-Development checkpoint (2026-10-12): active branch `feature/cc-infrastructure-foundation`, draft PR #1; `main` remains the earlier bootstrap/release branch. Cloudflare development Worker and D1 `cookie-catalog-dev`, private R2 `cookie-catalog-dev-private`, and Access application are provisioned. Owner reported successful login/session, synthetic D1 create/link/edit/read (90 × 100 mm), and three-file R2 round-trip/cleanup. R2 screenshot recorded Public Access Disabled and an empty bucket afterward. CI run #79 passed for `d012da6`. These checks do not complete general catalog CRUD, persistent attachments, collaborator access, backup/restore, or production readiness.
+CC-DEC-011 selected Cloudflare Workers, D1 and private R2. The owner subsequently explicitly authorized and completed development provisioning, R2 activation and Access configuration. The initial architecture-only/no-resources statements below describe the earlier moment; they do not negate subsequent development authorization. Production and additional paid resources remain separately gated.
 
-The live alternate-email denial test is deferred at the owner's request; failed code delivery is inconclusive. No production deployment or additional paid resources are authorized. Next work: CC-TODO-006 backup/export/recovery preparation; the last user-side setup issue was PowerShell not finding Node.js. Installation has not been verified. Do not redo passed checks or resume the deferred access test automatically.
+CC-DEC-004/005: the single source repository/layout is implemented, and GitHub-connected development deployment is evidenced. CC-DEC-006: feature branch/PR and CI exist; main-release protection, deployment and rollback acceptance remain open. CC-DEC-007: remote restoration/readback passed with history assistance; a strict independent fresh-chat test remains pending.
 
-Later development provisioning authorization supersedes the original architecture-only limitation in CC-DEC-011 for the approved development environment. Its production and cost limits remain. Historical entries below describe their state at the time; the current checkpoint/TODO supersedes outdated implementation status. Initialization read main and the active PR branch, confirmed permissions and CI #79, and identified stale restoration notes. History assistance was used, so CC-TODO-001's strict independent test remains pending.
+Owner access, synthetic database/storage checks and actual browser export/local restoration passed. Code 40ab108 passed CI #97 with 20 Node tests plus SQLite/type-check/build; pre-reconciliation head 330ca8a passed CI #105. General CRUD, persistent attachments, collaborator access, Cloudflare-side restore and production readiness are unfinished. Real samples have not been supplied. The owner deferred live alternate-email denial testing and parked residual Windows Defender remediation.
+
+## 2026-10-12 — CC-DEC-012 — Private dated backup handoff
+
+User requested simple folders and date/time filenames, considered GitHub and offered OneDrive. Keep code, migrations and recovery instructions versioned in GitHub; keep full backup payloads private. The application repository is public.
+
+Prepared two byte-identical UTC-named JSON snapshots, a checksum/size/migration/restore manifest and instructions in Cookie_Catalog_Backups_20261012T231810Z.zip. Owner supplied its extracted location under personal OneDrive: Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Local placement is owner-reported; completed cloud sync is not yet verified. Exact exporting deployment commit was not independently attested; validation commit 40ab108 is traceability evidence, not export provenance.
+
+Latest-seven normal snapshots after meaningful changes/before imports remains proposed, not an approved or activated pruning/scheduling policy. No automatic transfer, new subscription or production change was activated. See docs/Backup_Recovery_Plan.md.
+
+Next unused decision ID: CC-DEC-013.
+
+## Historical decisions
+
+The following entries record approval and implementation status at the time of each decision. Read them together with the current reconciliation above, Context and TODO.
 
 ## 2026-10-12 — CC-DEC-011 — Cloudflare infrastructure and slicer-based scaling
 
@@ -66,7 +80,3 @@ Status: user direction. The user has sample cutters to seed development. Samples
 ## 2026-10-12 — CC-DEC-001 — Project identity and durable bootstrap
 
 Status: user approved. Name the project Cookie_Catalog and bootstrap its already-created GitHub repository. Repository verified as jbrickey23/Cookie_Catalog, default branch main. Initial repository was empty. Follow the established Context/TODO/Decision Log/New Chat Bootstrap Prompt convention.
-
-## Architecture proposals awaiting evaluation
-
-GitHub for source and durable project state; an approved SQLite-compatible relational database for live catalog records; object storage for assets; a private site for interaction. Sites/D1/R2 and alternatives remain candidates. No provider selection or resource provisioning has occurred.

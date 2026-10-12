@@ -1,161 +1,93 @@
 # Cookie_Catalog — TODO
 
-## Backup folder placement
+Updated: 2026-10-12 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
 
-Owner supplied the extracted timestamped backup-folder location under personal OneDrive: Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Screenshot shows the correct archive and its two dated JSON snapshots, manifest and README under Jay - Personal / Cookie_Catalog / Backups. This is owner-reported local placement; remote OneDrive sync completion is not yet evidenced. Keep this valid timestamped folder layout; no further renaming or flattening is needed. Next check: OneDrive reports Up to date (or the archive/folder is visible in the OneDrive web account). Automatic backups/pruning remain unconfigured.
-
-## Current storage plan and handoff
-
-2026-10-12 storage plan: owner asked for simple folders and date/time filenames, considered GitHub backups, and indicated OneDrive is available while raising source-version traceability. Recommended full backups in an existing private OneDrive/Cookie_Catalog/Backups folder, with code/migrations/recovery instructions remaining canonical and versioned in GitHub. Current application repo was rechecked and is public. Both uploaded packages were inspected and contain only synthetic demonstration records/files, but no payloads were committed to GitHub. Prepared a portable archive containing byte-identical UTC-named JSON snapshots, a manifest of hashes/sizes/migrations/verified restore results linked to validation commit 40ab108aa6cf17f943d4671d6f2ca2bdf973ac9f, and recovery instructions. Exporting deployment commit was not independently attested by the original downloads; the manifest states that limitation. Owner placement into OneDrive and exact account/folder access remain unverified. No automated transfer, scheduled backup, pruning, new subscription or production deployment was activated.
-
-
-Updated: 2026-10-12. First workstream: understand, devise, and create infrastructure. One task per component; the acceptance checklist inside each task defines its completion.
-
-| ID | Component | Status | Depends on |
+| ID | Component | Current status | Depends on |
 | --- | --- | --- | --- |
-| CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat validation pending | — |
-| CC-TODO-002 | Database and catalog schema | Open | 001 for implementation |
-| CC-TODO-003 | File and image storage | Open | 001; coordinate with 002 |
-| CC-TODO-004 | Site runtime, hosting, and deployment | Open | 001; coordinate with 002/003 |
-| CC-TODO-005 | Identity and access | Open | 004 architecture |
-| CC-TODO-006 | Backup, export, and recovery | Open | 002/003 |
-| CC-TODO-007 | Sample import and seed workflow | Open | 002/003/005 |
+| CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
+| CC-TODO-002 | Database and catalog schema | In progress: dev schema/linked smoke passed | 001 |
+| CC-TODO-003 | File and image storage | In progress: next engineering task | 001/002 |
+| CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
+| CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
+| CC-TODO-006 | Backup, export and recovery | In progress: live sample exports restored locally | 002/003 |
+| CC-TODO-007 | Sample import and seed workflow | Open: synthetic importer verified; real samples absent | 002/003/005 |
 
-## Backup location selection
+## CC-TODO-001 — Repository infrastructure
 
-Owner selected an existing private cloud folder for independent backup storage on 2026-10-12. Provider and exact folder are not yet specified or verified. Suggested layout: Cookie_Catalog/Backups for normal catalog packages, with recovery-test packages kept separately as test evidence. The latest-7 manual development retention policy remains proposed; no cloud transfer, automated pruning or recurring backup has been configured.
+Purpose: make the repository a verified durable source of truth.
 
-## Live file recovery passed; storage decision pending
+Verified: public `jbrickey23/Cookie_Catalog`, read/write access, bootstrap committed/read back, single-repository source ownership, populated app/database/docs/samples/tools/tests layout and GitHub-connected development. Active branch `feature/cc-infrastructure-foundation`, draft PR #1; main is release and lags development. No AGENTS.md found at this checkpoint.
 
-Live file recovery verified on 2026-10-12: owner supplied cookie-catalog-dev-recovery-2026-10-12T23-06-58-377Z.json (11,830 bytes; SHA-256 7824069a2faa5db5193818607d5662bcc6f113791a66505bb245f65486da3794). Payload and both original-file checksums passed. A new disposable local restore recovered 16 tables, 17 rows and 2 objects: a readable 1 × 1 PNG (68 bytes) and ASCII STL (111 bytes). Confirmed the synthetic design/cutter/location link at 90 × 100 mm, two shape attachments, one design image and one printable STL association. SQLite integrity and foreign keys passed. The download reports cleanupVerified=true; server code only returns after request-scoped D1/R2 cleanup checks succeed. No real inventory or backup payload was committed to public Git. Code commit 40ab108 passed CI #97.
+Remaining: a genuinely new, history-independent conversation must read current GitHub state, inspect the open PR and reconstruct the correct next task. This history-assisted session does not satisfy that test. Coordinate release protections/rollback with 004.
 
-Proposed development backup policy (awaiting owner storage preference): owner-triggered download after meaningful catalog changes and before bulk import/migration; keep the latest 7 completed packages in an independently controlled private location outside Cloudflare/public GitHub. This is a manual development policy, not an activated recurring automation. Restore-check after schema/export changes. Real-asset volume and production recovery needs must inform production frequency/retention and scalable exports. No new storage subscription, paid resource, scheduled task or production deployment is authorized. Next required input: identify an existing private backup location the owner can use; Cloudflare-side restore is still an additional validation followup.
+Done when: remote bootstrap is verified, independent fresh-chat restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear.
 
-## Verified live download restoration
+## CC-TODO-002 — Database infrastructure
 
-Live package cookie-catalog-dev-2026-10-12T22-53-46-644Z.json (7,834 bytes; SHA-256 724b645b1a4582ea4bc08499376a0fc072efc018c081a47194421390618d0149) passed payload checksum verification and restored into a new disposable local directory on 2026-10-12. Recovered 16 tables and 6 rows: both migration entries, one design, shape, cutter and link. Confirmed DEMO Holiday tree → DEMO Evergreen tree at 90 × 100 mm, SQLite integrity_check=ok and no foreign-key violations. Zero file objects matches the empty live bucket; this package does not prove live attachment recovery. The uploaded package and restored database are private and are not committed to public Git.
+Purpose: durable structured records supporting cutters, designs and many-to-many reuse.
 
-Next browser action: refresh https://cookie-catalog-dev.j-brickey.workers.dev and choose Download file recovery test. This owner-only same-origin POST /api/dev/recovery-check creates unique, disposable synthetic cutter/design/location records plus PNG/STL originals and metadata, exports them, then deletes only its request-scoped data and verifies cleanup before returning the download. Attach that saved recovery JSON for actual file/relationship restoration. Local D1/R2 binding integration tests, real SQLite restore, failure-path cleanup, preservation of existing data, all 20 Node tests and TypeScript/Vite frontend/Worker build passed. Live recovery-test execution remains pending; CC-TODO-006 is still open for file recovery, Cloudflare-side restoration and backup destination/retention/scheduling.
+Verified: D1 selected/provisioned for development; DB binding configured. Both migrations applied/tracked; 15 catalog tables plus migration metadata. SQLite schema, foreign-key, size-variant/component and synthetic import tests pass. Owner confirmed demonstration create/link/edit/read across sessions at 90 × 100 mm; live exports retained those records.
 
-## Browser checkpoint
+Remaining: refine required/optional fields, ownership, deletion and known/proposed mappings with real samples; implement general application create/edit/search/retrieve; preserve reproducible migrations, units and stable IDs; plan production separation and migrations. Choice/cost rationale is in architecture notes.
 
-Owner reported the browser backup flow worked on 2026-10-12 after opening https://cookie-catalog-dev.j-brickey.workers.dev. Code commit 8eb666a passed GitHub CI #93. Obtain the downloaded JSON for actual checksum/contents inspection and disposable restoration; live package recovery is not yet verified. Keep downloads and any catalog content outside public GitHub.
+Done when: a sample cutter and design can be created, linked, edited, searched and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
-## Latest continuation
+## CC-TODO-003 — File/image infrastructure
 
-2026-10-12 continuation: Node.js v24.21.0 and npm.cmd 11.19.0 work. This formerly managed PC still reports Defender for Endpoint enrollment (OnboardingState=1) and tamper protection; event 1126 blocks node.exe at registry.npmjs.org. Audit-mode change did not take effect, so Wrangler login was never retried. Previous IT is unavailable. Park local PC remediation; no reset/reinstallation is authorized. CC-TODO-006 now provides an owner-only browser development download at POST /api/dev/backup plus a disposable local restore tool. Local schema, linked-record and two-file restoration, negative authorization/integrity cases, all 16 Node tests, SQLite smoke/import and TypeScript/Vite frontend/Worker build passed. Live export/restore, independent backup destination, retention and scheduling remain pending; no production deployment or paid resources were added.
+Purpose: retain photos, artwork, STL and 3MF originals alongside records.
 
-## Current continuation
+Verified: private R2 provisioned, FILES binding and adapter/lifecycle design implemented. Owner's three-file smoke test passed with cleanup; screenshot showed public access disabled and empty bucket afterward. Actual recovery export/local restore verified a tiny PNG and STL with metadata and record links.
 
-Development checkpoint (2026-10-12): active branch `feature/cc-infrastructure-foundation`, draft PR #1; `main` remains the earlier bootstrap/release branch. Cloudflare development Worker and D1 `cookie-catalog-dev`, private R2 `cookie-catalog-dev-private`, and Access application are provisioned. Owner reported successful login/session, synthetic D1 create/link/edit/read (90 × 100 mm), and three-file R2 round-trip/cleanup. R2 screenshot recorded Public Access Disabled and an empty bucket afterward. CI run #79 passed for `d012da6`. These checks do not complete general catalog CRUD, persistent attachments, collaborator access, backup/restore, or production readiness.
+Next: implement persistent authorized upload/download, stable attachment IDs/keys/metadata, supported formats/limits, originals versus thumbnails, missing-file detection, deletion and orphan handling. Disposable server-generated smoke fixtures do not establish general user attachment support. Preserve privacy, cost and portability rationale.
 
-The live alternate-email denial test is deferred at the owner's request; failed code delivery is inconclusive. No production deployment or additional paid resources are authorized. Next work: CC-TODO-006 backup/export/recovery preparation; owner confirmed Node.js v24.21.0 and npm 11.19.0 working in PowerShell on 2026-10-12. This supersedes earlier installation-unverified snapshots in other documents. Owner screenshot confirms `npx.cmd wrangler@4 login` failed while downloading Wrangler from `https://registry.npmjs.org/wrangler` with `ERR_SSL_SSL/TLS_ALERT_HANDSHAKE_FAILURE` (SSL alert 40), accompanied by a reported non-interactive security popup and “Content blocked by ITADMIN”. Cloudflare login was not reached. Node/npm.cmd work; plain npm.ps1 is blocked by PowerShell execution policy. Owner found no Export option in D1 dashboard. Owner states this is an older formerly managed computer that should now be personal. Access work or school screenshot shows no connected account; SecurityCenter2 lists only Windows Defender. Subsequent screenshot confirms EnableNetworkProtection=1 and Defender Operational event 1126 at 2026-10-12 15:21:43 local, blocking node.exe to https://registry.npmjs.org. Defender network protection is the evidenced cause. Owner attempted the Administrator PowerShell audit-mode test; the effective setting did not become AuditMode, and the script stopped before retrying Wrangler. Subsequent screenshot shows IsTamperProtected=True and OnboardingState=0x1, so the machine still reports Defender for Endpoint onboarding despite no connected work/school account. Supported organization offboarding is the next remediation; local setting changes alone did not work. CLI login/export remain blocked and unverified. Do not claim backup completion or retry the blocked flow without resolving the restriction. Do not redo passed checks or resume the deferred access test automatically.
+Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
-Initialization reconciled stale root notes against the active development TODO and PR. This was history-assisted recovery, not the strict independent test; CC-TODO-001 remains open.
+## CC-TODO-004 — Runtime/deployment infrastructure
 
-## CC-TODO-001 — Understand, devise, and establish repository infrastructure
+Purpose: a private working interface reachable on business devices.
 
-Purpose: make the repository a verified durable source of project truth.
+Verified: React/Vite/Workers development scaffold deployed from canonical feature branch; D1/R2/frontend bindings configured. Build root app, build npm run build, deploy npx wrangler deploy. Owner log confirms deployment of 8122a92; later downloaded packages prove newer backup routes were live, although their exact exporting commit was not independently attested. Code 40ab108 passed CI #97 (20 Node tests, SQLite schema/import, type-check/build); pre-reconciliation head 330ca8a passed CI #105.
 
-- Completed: repository resolved as `jbrickey23/Cookie_Catalog`, default branch main, public, read/write permissions confirmed.
-- Completed: contents/ref checks confirmed an empty repository before initialization; no existing files or repository agent instructions. Assess any release/protection requirements when choosing the development workflow.
-- Completed: seven bootstrap files committed on main and read back; all contents match the prepared package.
-- Decided: single repository for application and durable project notes; logical layout `docs/`, `app/`, `database/`, `samples/`, with core durable files at root (CC-DEC-004).
-- Followup: create folders as content becomes available; confirm physical app paths against the selected stack. Layout approval does not mean application scaffolding exists.
-- Followup (coordinate with 004): verify hosting can use this repo; if it requires managed source elsewhere, document canonical ownership and synchronization before creating duplicate code. Revisit repository separation only for a demonstrated constraint.
-- Decided (CC-DEC-005): GitHub repository is canonical for application code; hosting deploys from GitHub. Any hosting-managed source must use documented one-way synchronization rather than competing edits.
-- Followup (CC-TODO-004): verify actual provider GitHub integration, synchronization/deployment and rollback; not yet validated.
-- Decided (CC-DEC-006): develop on feature branches; review/validate before merging; `main` is the release branch. Deployment from `main` begins only once configured and verified.
-- Decided (CC-DEC-007): GitHub-first fresh-chat restoration; read latest durable files, reconcile conflicts, avoid redoing completed work, verify remote writes.
-- Verified: current conversation independently retrieved the remote durable files and reconstructed the correct decisions/open tasks (in-session recovery check).
-- Pending acceptance: start a genuinely new conversation using the bootstrap prompt and verify correct restoration and next task without relying on prior chat. Only then close CC-TODO-001.
-- Followup (CC-TODO-004): implement/verify pre-merge checks, appropriate branch protection, deployment from `main`, known-good release identification and rollback.
-- Completed: read/write verified using the actual bootstrap writes and readback.
-- Done when: remote bootstrap is verified, independent fresh-chat restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear. All checks except independent fresh-chat test are satisfied.
+Remaining: intended-device/browser validation, persistent product paths, build-project naming/preview review, appropriate branch protection/pre-merge checks, approved main-release deployment, known-good release and code rollback verification. Production resources are separate and unprovisioned.
 
-## Accelerated infrastructure governance (CC-DEC-010)
+Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This proves infrastructure; full catalog UX follows later.
 
-- Approved: research and recommend the integrated database, storage, hosting, identity, backup and deployment architecture together; prefer stable maintainable interfaces, practical migration/export/restore, and a little upfront overhead to avoid future refactoring.
-- Assistant may decide/document routine reversible engineering details; require explicit user approval for material tradeoffs, costs, provisioning, hard-to-reverse commitments and production changes.
-- Preserve component task IDs and acceptance checks. Architecture research is not provisioning or task completion. CC-DEC-011 approves Cloudflare Workers + D1 + private R2 and slicer-based scaling for v1. Draft migration and infrastructure contracts are in feature/cc-infrastructure-foundation; validate before merge or provisioning.
+## CC-TODO-005 — Identity/access infrastructure
 
-## CC-TODO-002 — Understand, devise, and create database infrastructure
+Purpose: access for Jay's wife and explicitly allowed collaborators.
 
-Purpose: durable structured records that support cutters, designs, and many-to-many reuse.
+Verified: Cloudflare Access/PIN and owner session; server-side signed JWT validation and owner-only endpoint guards; local forged/expired/wrong-audience/unknown-owner and origin checks. OWNER_EMAIL is a secret with required-secret deployment validation.
 
-- Decided (CC-DEC-008): SQLite-compatible relational database for live structured catalog records, rather than GitHub JSON. Architecture selected; provider and implementation pending. Consider edits, scale, cross-device use, portability, maintenance and cost in provider evaluation.
-- Decided (CC-DEC-009): balanced preference for managed simplicity with practical portability/export; selection criterion only, not a provider approval.
-- Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. Cloudflare D1 approved under CC-DEC-011. Owner confirmed development database creation on 2026-10-12; `DB` binding recorded in `app/wrangler.jsonc`. Owner applied migrations `0001_initial.sql` and `0002_variants_components.sql` through the D1 console on 2026-10-12; table-list results confirm all 15 catalog tables, and `d1_migrations` records both files at approximately 21:31 UTC. Dashboard flattened line comments caused empty-query errors; comment-free SQL succeeded. Owner confirmed synthetic D1 create/link/read for `design_dev_tree`, `shape_dev_tree` and `cutter_dev_tree`, followed by an edit/read returning 90 × 100 mm. Added authenticated read-only `/api/dev/database-check` and foundation-page button scoped to these exact synthetic IDs. Nine local auth/database-boundary tests and TypeScript/Vite build passed; Owner reported the deployed database check fixed and good to go after restoring `OWNER_EMAIL` as a Secret on 2026-10-12. Required-secret validation is now configured to block deployment when `OWNER_EMAIL` is absent.
-- Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
-- Drafted initial migration in `database/migrations/0001_initial.sql` and synthetic local SQLite smoke test in `tests/test_schema.py` on feature branch; local/CI schema validation and owner-reported development D1 application are now evidenced.
-- Local SQLite 3.46.1 smoke validation passed for 0001 (table creation, relationships, FK enforcement) and additive 0002 (size variants and multi-cutter components); development D1 application and automated tests are evidenced; full application CRUD, real samples and production migration remain pending.
-- Drafted `database/migrations/0002_variants_components.sql` on feature branch; slicer-based size recipes are guidance, not geometry transforms.
-- Added GitHub Actions SQLite smoke-test workflow and initial TypeScript D1 repository boundary on feature branch. CI run #51 verified passing for SQLite fixtures, synthetic import, TypeScript type-check and Vite build; authentication is required before exposing repository operations.
-- Create development/production separation, schema/migrations, and application record access.
-- Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
+Remaining: intended owner/editor/viewer needs, wife/collaborator access, D1 membership/roles, record/file authorization, account recovery and live negative-edge validation. Owner deferred the live alternate-email denial test; absent email codes are inconclusive. Do not resume that test automatically.
 
-## CC-TODO-003 — Understand, devise, and create file storage infrastructure
+Done when: intended users can access their catalog, unauthorized access is rejected, and roles/recovery are documented.
 
-Purpose: retain photos, decorating artwork, STLs, and 3MFs alongside records.
+## CC-TODO-006 — Backup/export/recovery infrastructure
 
-- Compare storage options; determine costs, upload limits, supported formats, and privacy.
-- Define stable attachment IDs/object keys, metadata, originals versus thumbnails, and record links.
-- Initial private R2 store interface, R2 adapter and lifecycle design committed on feature branch; initial implementation preceded the live owner-authenticated R2 smoke check recorded below; general attachment operations remain incomplete. Owner confirmed R2 subscription activation after reviewing included usage and overage billing, then creation of `cookie-catalog-dev-private` with instructed private access and Standard storage on 2026-10-12. `FILES` binding is recorded in `app/wrangler.jsonc`; the subsequent screenshot and smoke check below provide privacy/runtime evidence.
-- Added owner-authenticated, same-origin POST `/api/dev/storage-check` and foundation-page button. Uses three tiny server-generated synthetic fixtures (cutter PNG, design PNG, STL), verifies retrieved bytes and media types, deletes only this request's disposable keys, and verifies cleanup. Thirteen local auth/database/storage tests and TypeScript/Vite build passed; owner reported the live R2 check passed on 2026-10-12: three synthetic fixtures round-tripped and cleanup verified. Owner screenshot confirms `cookie-catalog-dev-private` uses Standard storage, Public Access Disabled, bucket size 0 B and an empty object listing after the smoke check on 2026-10-12. This smoke check does not implement persistent attachment metadata, general user uploads/downloads or orphan recovery.
-- Implement authorized upload/download, missing-file handling, and deletion/orphan behavior.
-- Done when: a cutter photo, design image, and sample STL can be stored and retrieved privately, and broken links are detectable.
+Purpose: preserve catalog data independently of provider/app availability.
 
-## CC-TODO-004 — Understand, devise, and create site/deployment infrastructure
+Verified: owner-only bounded browser export and disposable recovery-test endpoint, strict local restore tool, integrity/authorization/failure-cleanup tests. Actual normal package restored 16 tables/6 rows/0 objects; actual recovery package restored 16 tables/17 rows/2 objects with original bytes and relationships intact. See docs/Backup_Recovery_Plan.md for hashes and instructions.
 
-Purpose: a private working interface reachable on the devices used in the business.
+Owner placed dated packages/manifest/instructions in personal OneDrive at Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Local placement confirmed by owner; cloud sync not confirmed. Latest-seven normal snapshots after meaningful changes/before imports remains proposed; no schedule, transfer or pruning activated.
 
-- Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
-- Select stack and connect source, database, and storage; validate deployment from canonical GitHub repository (CC-DEC-005). If hosting-managed source is unavoidable, document one-way sync and prevent competing edits.
-- Initial React/Vite/Workers runtime scaffold, disabled API boundary, development Wrangler configuration, and Git ignore rules committed on feature branch. Dependency installation, TypeScript and Vite build passed in GitHub Actions run #51; foundation deployment confirmed by Cloudflare build log; synthetic database/file smoke checks are evidenced below; full product operations remain incomplete.
-- Deployment runbook added at `docs/Deployment_Runbook.md`, covering isolated dev/prod resources, authorization gates, CI and code/data rollback. Owner has provisioned development D1 and R2 resources; bindings are configured on the feature branch. Development Worker deployment succeeded from commit `8122a92` at 2026-10-12T20:38:58Z, confirmed by owner-supplied build log; D1 `DB`, R2 `FILES` and frontend bindings uploaded. No production environment configured. User configures Cloudflare manually; assistant prepares and verifies GitHub changes and provides dashboard instructions.
-- Owner confirmed Zero Trust Free plan, one-time PIN provider and saved Access application `Cookie Catalog Dev`, targeting development Worker and its regular/preview URLs. Owner reported emailed-code login followed by the home screen. Team domain confirmed as `cookie-catalog-jbrickey.cloudflareaccess.com`; AUD supplied and recorded in development config.
-- Cloudflare build settings: feature branch `feature/cc-infrastructure-foundation`, root `app`, build `npm run build`, deploy `npx wrangler deploy`. Repeated failures cloned `main`; fresh feature commit built successfully and deployed `cookie-catalog-dev` despite build-project dashboard label `cookie-catalog`. Align/review build project naming and preview behavior later; do not retry old main builds.
-- Establish local/development preview, repeatable deployment from `main` after feature-branch review (CC-DEC-006), pre-merge checks, appropriate branch protection, configuration/secrets, environment separation, and code rollback procedure.
-- Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
+Remaining: verify independent cloud copy, settle retention/cadence/ownership, restore into isolated Cloudflare D1/R2, production-scale export/import and consistency across D1/R2. Current sample local-restore acceptance passed; the broader component remains open.
 
-## CC-TODO-005 — Understand, devise, and create identity/access infrastructure
+Done when: a sample backup restores into a clean test environment with relationships and attachments intact, and recovery instructions are recorded. This demonstrated sample gate does not replace the remaining durability/operational work.
 
-Purpose: make the private catalog usable by Jay's wife and any explicitly allowed collaborators.
+## CC-TODO-007 — Sample import/seed infrastructure
 
-- Determine owner/editor/viewer needs and whether the chosen private hosting actually permits the wife's access.
-- Drafted Cloudflare Access candidate design with server-side signed-JWT verification requirement, application owner/editor/viewer roles, deny-by-default identity boundary, and negative test cases. Development Access is configured and owner login reported successful. Server-side verifier and read-only session endpoint added; local cryptographic negative tests and TypeScript/Vite build passed. Owner confirmed `OWNER_EMAIL` secret setup and successful live `/api/session` response (`authenticated: true`, `role: owner`) on 2026-10-12. GitHub Actions runs #64 and #65 passed for auth commit `a3ceb37`; D1 membership, collaborator access, negative edge tests and recovery remain open.
-- Live alternate-email Access denial test deferred at owner request on 2026-10-12. Initial attempt used an inaccessible inbox; subsequent code delivery was not observed. Neither attempt proves policy denial. Automated forged/expired/wrong-audience/unknown-owner tests passed; live unapproved-user denial remains pending.
-- Select authentication and enforce record/file authorization on the server.
-- Establish account recovery and secret handling.
-- Done when: the intended users can access their catalog, unauthorized access is rejected, and roles/recovery are documented. Do not assume owner-private deployment grants access to another person.
+Purpose: evaluate real workflows before bulk cataloging.
 
-## CC-TODO-006 — Understand, devise, and create backup/export/recovery infrastructure
+Verified: public-safe synthetic fixture, disposable SQLite importer and CI validation. All current catalog content is demonstration data.
 
-Purpose: preserve catalog data independently of provider or app availability.
+Remaining: obtain authorized real purchased/printed cutters, an unprinted STL, size variants, multiple designs per cutter and a known flip; define/validate import manifests and duplicate-safe reruns; retain sources and unknowns.
 
-- Verified: actual live database-only package and subsequent two-file recovery package restored locally with records, relationships, original bytes, checksums and migration metadata intact. Server reported verified synthetic cleanup. Backup location and development retention policy await owner selection; scheduling and production recovery remain unactivated.
-- Provider-neutral backup/recovery design now includes a bounded owner-only browser development package (records, schema, migration metadata and registered R2 bytes/checksums) plus tools/restore_development_backup.py. The local synthetic export/restore test recovered relationships and two files into a new directory; corruption, omissions, unknown schema, excess records and unauthorized requests fail. All 16 Node tests and frontend/Worker build passed. Live export/restore, independent destination, retention, scheduling and production recovery remain unverified.
-- Specify complete export of records, relationships, metadata, and original attachments with stable IDs.
-- Define snapshot/backup retention and ownership; keep sensitive/purchased assets out of public Git history.
-- Implement export/import or restore and distinguish code rollback from database recovery.
-- Done when: a sample backup restores into a clean test environment with relationships and attachments intact, and recovery instructions are recorded.
+Done when: authorized samples import reproducibly and support Christmas/tree search, cutter-to-design browsing, physical/file retrieval and known flip instructions.
 
-## CC-TODO-007 — Understand, devise, and create sample import/seed infrastructure
+## Scope and continuation
 
-Purpose: test real workflows with a small representative collection before bulk cataloging.
+Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
 
-- Added public-safe synthetic fixture, disposable SQLite importer, and CI test command; GitHub CI execution is evidenced, including passing run #79 for d012da6. Real sample import and full workflow acceptance are pending.
-- Obtain user samples: purchased/printed cutters, unprinted STL, size variants, multiple designs per cutter, and at least one known flip.
-- Define an import manifest/template, validate files/relationships, and prevent duplicate creation on reruns.
-- Separate demonstration fixtures from real inventory; track source and unknown information.
-- Done when: authorized samples import reproducibly and support Christmas/tree search, cutter-to-design browsing, physical/file retrieval, and known flip instructions.
+Continue CC-TODO-003. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
 
-## V1 scaling boundary (CC-DEC-011)
-
-- Store original printable assets, dimensions in millimeters, and optional target size/scale guidance. The slicer performs scaling and printer setup in v1. Preserve the ability to add derived STL/3MF generation later without requiring it now.
-
-## Later product work
-
-After infrastructure tasks and real samples, create separate product TODOs for catalog entry, design linking, visual search, and usability iteration. Automatic new flip suggestions remain deferred.
-
-Next unused task ID: CC-TODO-008.
+Next unused task ID: **CC-TODO-008**.

@@ -1,33 +1,44 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
-Status: development deployed; production and rollback acceptance remain pending.
+Updated: 2026-10-12 UTC. Development deployed; production and rollback acceptance pending.
 
-Development checkpoint (2026-10-12): active branch `feature/cc-infrastructure-foundation`, draft PR #1; `main` remains the earlier bootstrap/release branch. Cloudflare development Worker and D1 `cookie-catalog-dev`, private R2 `cookie-catalog-dev-private`, and Access application are provisioned. Owner reported successful login/session, synthetic D1 create/link/edit/read (90 × 100 mm), and three-file R2 round-trip/cleanup. R2 screenshot recorded Public Access Disabled and an empty bucket afterward. CI run #79 passed for `d012da6`. These checks do not complete general catalog CRUD, persistent attachments, collaborator access, backup/restore, or production readiness.
+## Current development configuration
 
-The live alternate-email denial test is deferred at the owner's request; failed code delivery is inconclusive. No production deployment or additional paid resources are authorized. Next work: CC-TODO-006 backup/export/recovery preparation; the last user-side setup issue was PowerShell not finding Node.js. Installation has not been verified. Do not redo passed checks or resume the deferred access test automatically.
+Canonical source jbrickey23/Cookie_Catalog; active feature/cc-infrastructure-foundation, draft PR #1. Main remains the earlier bootstrap/release branch.
 
-## Environments and release rules
-- Feature branch: development only; draft PR #1. Do not deploy real catalog content from it.
-- Development Cloudflare environment: isolated D1 database and private R2 bucket, separate Access app and test identities.
-- Production: separate Worker name, D1 database, R2 bucket, Access app/audience and credentials. Deploy only reviewed main commits.
-- Never commit Cloudflare account tokens, private Access JWTs, real D1 IDs tied to secrets, purchased assets or exports to public Git.
-- Only provision after explicit owner authorization. Use least-privilege deploy credentials.
+- URL: https://cookie-catalog-dev.j-brickey.workers.dev
+- Worker/D1: cookie-catalog-dev; private R2: cookie-catalog-dev-private.
+- Root app; build npm run build; deploy npx wrangler deploy.
+- Wrangler bindings DB and FILES; D1 migrations 0001_initial.sql and 0002_variants_components.sql applied/tracked.
+- Access app Cookie Catalog Dev; team cookie-catalog-jbrickey.cloudflareaccess.com; audience configured in app/wrangler.jsonc. Owner configured regular and preview coverage.
+- OWNER_EMAIL must remain a Worker Secret; required-secret validation blocks deployment when absent. Server verifies signed Access JWTs and fails closed.
 
-## Remaining deployment gates (preserve completed development evidence)
-1. Development authorization and provisioning are evidenced. Obtain separate approval before production or additional paid resources.
-2. Keep existing development resources isolated; production resources remain unprovisioned and require separate approval. Bind D1 as `DB` and R2 as `FILES` after recording actual IDs and bucket names in appropriate environment configuration.
-3. Enable Cloudflare Access with intended identities, then implement and test server-side JWT validation and role authorization. Owner session and development smoke endpoints are implemented; unsupported/general API operations remain incomplete.
-4. Validate D1 migrations against isolated development D1. Verify SQLite foreign keys, record CRUD and relationship queries.
-5. Test private R2 upload/download/cleanup with synthetic content, deny unauthenticated and cross-record access.
-6. Validate build output and deployed routes. Set deployment to approved main commit only after gates pass.
-7. Document DNS, custom domain, secret injection and break-glass access in private operator notes, not this repository.
+Owner build log proved development deployment of 8122a92 at 2026-10-12T20:38:58Z. Later actual downloads prove newer backup/recovery routes were live, but the exact exporting deployment commit was not independently recorded. Old failed retries cloned main; use current feature-branch builds. Build-project label/preview behavior still needs review.
 
-## Rollback
-- Identify the last known-good main commit and corresponding Worker deployment.
-- Roll back code through the Cloudflare-supported deployment rollback mechanism or redeploy that verified commit.
-- Database schema/data rollback is separate: additive migrations should be preferred; restore from verified database export when needed.
-- Restore R2 objects independently from backup manifest and checksums. Do not mistake code rollback for data recovery.
-- Verify authenticated read and write paths after rollback.
+Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. General catalog CRUD and persistent user attachments remain unfinished.
 
-## Current automated gates
-GitHub Actions runs Python SQLite schema tests, synthetic import, TypeScript type-check and Vite build. CI success does not prove deployment, Cloudflare D1 compatibility, private R2 access, authentication, or recovery.
+## Automated validation
+
+Code 40ab108 passed CI #97: 20 Node tests, Python SQLite schema/import, TypeScript type-check and Vite frontend/Worker build. Pre-reconciliation head 330ca8a passed CI #105. CI cannot establish live deployment, intended-user access, production recovery or rollback by itself.
+
+## Release boundaries and remaining gates
+
+Development provisioning was explicitly authorized. No production deployment or extra paid resources are authorized. Production requires separate Worker, D1, private R2, Access audience and credentials; deploy reviewed main commits only after approval and verified gates.
+
+Remaining: intended devices/browsers, wife/collaborator roles and recovery, persistent authorized file paths, live negative-edge authorization, pre-merge checks/appropriate branch protection, main-release integration, known-good release/deployment mapping and rollback drill. Owner deferred alternate-email denial testing; do not resume automatically.
+
+Keep secrets, tokens, JWTs, operational backup payloads and purchased assets out of public Git/client code. Public configuration IDs are not secrets. Avoid competing hosting-managed source; GitHub is canonical.
+
+## Rollback procedure to validate
+
+1. Record a known-good reviewed main commit and corresponding Worker deployment.
+2. Revert code through the provider deployment rollback mechanism or redeploy that verified commit.
+3. Handle schema/data separately: prefer additive migrations; use verified data recovery when needed.
+4. Restore R2 originals with manifest/checksum verification, independent of code rollback.
+5. Verify authenticated reads/writes and file authorization afterward.
+
+No production known-good release or completed rollback drill is recorded. Cloudflare-side full D1/R2 restore remains open under CC-TODO-006.
+
+## Local setup limitation
+
+Owner Windows Node v24.21.0 and npm.cmd 11.19.0 work, but Defender blocks registry.npmjs.org before Wrangler login. Plain npm.ps1 is execution-policy blocked. Park residual management remediation; no PC reset/reinstall authorized. Current development browser/dashboard workflow does not require resolving this first.
