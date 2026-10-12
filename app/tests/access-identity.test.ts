@@ -113,3 +113,26 @@ test("database check handles missing fixtures and query failures without leaking
   assert.equal(response.status, 503);
   assert.ok(!(await response.text()).includes("private database detail"));
 });
+
+test("storage mutation requires a verified owner, POST, origin and custom header", async () => {
+  let writes = 0;
+  const files = { put: async () => { writes++; throw new Error("synthetic stop"); },
+    delete: async () => {}, head: async () => null } as unknown as R2Bucket;
+  const url = "https://catalog.example.test/api/dev/storage-check";
+  assert.equal((await handleApiRequest(new Request(url, { method: "POST" }), verifier, undefined, files)).status, 401);
+  const jwt = await token();
+  for (const headers of [
+    { Origin: "https://other.example.test", "X-Cookie-Catalog-Check": "storage" },
+    { Origin: "https://catalog.example.test" }
+  ]) {
+    const req = new Request(url, { method: "POST", headers: { ...headers, "Cf-Access-Jwt-Assertion": jwt } });
+    assert.equal((await handleApiRequest(req, verifier, undefined, files)).status, 403);
+  }
+  assert.equal(writes, 0);
+  const req = new Request(url, { method: "POST", headers: {
+    Origin: "https://catalog.example.test", "X-Cookie-Catalog-Check": "storage", "Cf-Access-Jwt-Assertion": jwt
+  } });
+  assert.equal((await handleApiRequest(req, verifier, undefined, files)).status, 503);
+  assert.equal(writes, 1);
+  assert.equal((await handleApiRequest(request(jwt, "/api/dev/storage-check"), verifier, undefined, files)).status, 405);
+});

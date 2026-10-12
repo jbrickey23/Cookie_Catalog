@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 
 function App() {
   const [result, setResult] = useState<string>("");
+  const [storageResult, setStorageResult] = useState<string>("");
+  const [storageBusy, setStorageBusy] = useState(false);
   const [busy, setBusy] = useState(false);
   async function checkDatabase() {
     setBusy(true);
@@ -27,6 +29,23 @@ function App() {
       setBusy(false);
     }
   }
+  async function checkStorage() {
+    setStorageBusy(true);
+    setStorageResult("Checking private storage…");
+    try {
+      const response = await fetch("/api/dev/storage-check", {
+        method: "POST", cache: "no-store", headers: { "X-Cookie-Catalog-Check": "storage" }
+      });
+      const body = await response.json() as { storageConnected?: boolean; filesVerified?: number; cleanupVerified?: boolean; error?: string };
+      setStorageResult(response.ok && body.storageConnected && body.filesVerified === 3 && body.cleanupVerified
+        ? "Passed: cutter photo, design image and sample STL saved, read back, verified and removed."
+        : body.error ?? "The storage check could not complete.");
+    } catch {
+      setStorageResult("The storage check could not complete. Sign in again and retry.");
+    } finally {
+      setStorageBusy(false);
+    }
+  }
   return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
     <h1>Cookie Catalog</h1>
     <p>Development infrastructure checks use invented demonstration records.</p>
@@ -34,6 +53,11 @@ function App() {
       {busy ? "Checking…" : "Check development database"}
     </button>
     <p role="status" aria-live="polite">{result}</p>
+    <button onClick={checkStorage} disabled={storageBusy || busy} style={{ padding: "0.7rem 1rem", cursor: storageBusy ? "wait" : "pointer" }}>
+      {storageBusy ? "Checking…" : "Check private file storage"}
+    </button>
+    <p>Uses three tiny invented files and removes them after verification.</p>
+    <p role="status" aria-live="polite">{storageResult}</p>
     <p>Catalog entry and file uploads will be enabled after the remaining infrastructure checks.</p>
   </main>;
 }

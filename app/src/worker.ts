@@ -1,12 +1,13 @@
+import { checkDevelopmentStorage } from "./server/development-storage-check";
 import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
 
-export interface Env extends AccessConfiguration { ASSETS: Fetcher; DB: D1Database }
+export interface Env extends AccessConfiguration { ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
 function json(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), {
     status, headers: { "content-type": "application/json", "cache-control": "no-store", "x-content-type-options": "nosniff" }
   });
 }
-export async function handleApiRequest(request: Request, verifier: IdentityVerifier, database?: D1Database): Promise<Response> {
+export async function handleApiRequest(request: Request, verifier: IdentityVerifier, database?: D1Database, files?: R2Bucket): Promise<Response> {
   const user = await verifier.verify(request);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
@@ -37,6 +38,19 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       return json({ error: "Development database check failed" }, 503);
     }
   }
+  if (pathname === "/api/dev/storage-check") {
+    if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+    if (request.headers.get("Origin") !== new URL(request.url).origin
+        || request.headers.get("X-Cookie-Catalog-Check") !== "storage") {
+      return json({ error: "Same-origin check required" }, 403);
+    }
+    if (!files) return json({ error: "Development storage unavailable" }, 503);
+    try {
+      return json(await checkDevelopmentStorage(files));
+    } catch {
+      return json({ error: "Development storage verification or cleanup failed" }, 503);
+    }
+  }
   // No catalog or attachment operation is enabled by the authentication smoke test.
   return json({ error: "Catalog API unavailable until membership and storage validation are complete" }, 503);
 }
@@ -45,7 +59,7 @@ export default {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       if (!accessIsConfigured(env)) return json({ error: "Authentication configuration incomplete" }, 503);
-      return handleApiRequest(request, new AccessIdentityVerifier(env), env.DB);
+      return handleApiRequest(request, new AccessIdentityVerifier(env), env.DB, env.FILES);
     }
     return env.ASSETS.fetch(request);
   }
