@@ -6,7 +6,7 @@ A visual catalog for a cookie decorating business: find decorating designs, the 
 
 2026-10-12: Durable bootstrap initialized in `jbrickey23/Cookie_Catalog`, default branch `main`. The repository was empty before initialization; no existing work was replaced. Repository metadata confirms read/write permissions.
 
-Current phase: establish infrastructure, one durable task per component. No site, database, file store, or sample catalog has been provisioned.
+Current phase: establish infrastructure, one durable task per component. GitHub is the approved canonical application code source (CC-DEC-005); hosting deployment integration is pending verification. No site, database, file store, or sample catalog has been provisioned.
 
 ## Restore order
 
