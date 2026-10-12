@@ -2,6 +2,10 @@
 
 Newest first. Record selection separately from implementation and validation.
 
+## 2026-10-12 — CC-DEC-008 — SQLite-compatible relational database architecture
+
+Status: user approved; architecture selected, provider and implementation pending. Use a SQLite-compatible relational database as the operational source of structured catalog records (cutters, designs, physical instances, tags, locations, and many-to-many mappings). GitHub JSON files are not the primary live catalog database. Preserve portable schema/migrations and stable IDs. Evaluate hosting/provider, costs, backup, access and runtime compatibility under CC-TODO-002 before provisioning. Cloudflare D1 is a candidate, not an approved provider.
+
 ## 2026-10-12 — CC-DEC-007 — GitHub-first fresh-chat restoration
 
 Status: user approved; in-session remote-file recovery check completed; independent fresh-conversation test pending. Every new Cookie_Catalog conversation must fetch current GitHub README, Context, TODO, Decision Log, bootstrap prompt and any applicable AGENTS.md before project changes. Reconstruct decisions, open tasks, and current work; identify conflicts or incomplete writes before proceeding; never repeat completed bootstrap work. Reconcile meaningful decisions and work back to GitHub and verify remote reads before handoff. GitHub is authoritative for code/project state; operational catalog data and attachments belong to their future database/object store.
@@ -45,4 +49,4 @@ Status: user approved. Name the project Cookie_Catalog and bootstrap its already
 
 ## Architecture proposals awaiting evaluation
 
-GitHub for source and durable project state; a relational database for live catalog records; object storage for assets; a private site for interaction. Sites/D1/R2 and alternatives remain candidates. No provider selection or resource provisioning has occurred.
+GitHub for source and durable project state; an approved SQLite-compatible relational database for live catalog records; object storage for assets; a private site for interaction. Sites/D1/R2 and alternatives remain candidates. No provider selection or resource provisioning has occurred.
