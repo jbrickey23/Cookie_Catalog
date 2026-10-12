@@ -15,6 +15,7 @@ Updated: 2026-10-12 (America/Los_Angeles).
 
 - Bootstrap the project using the durable ChatGPT/GitHub workflow.
 - GitHub-first fresh-chat restoration is approved (CC-DEC-007). Read latest durable files before changes, reconcile conflicts and verify writes. In-session recovery check passed; independent fresh-chat validation remains pending.
+- CC-DEC-011 approved: Cloudflare Workers + D1 + private R2 as intended infrastructure, with slicer-based scaling in v1; future derived-model/3MF processing remains modular and deferred. No services provisioned or costs incurred.
 - CC-DEC-010 approved: accelerated architecture-by-exception governance; assistant handles routine reversible engineering decisions and records evidence, while user approves material tradeoffs, costs, external provisioning and production changes. Evaluate infrastructure as a coherent stack, emphasizing long-term stability, maintainability and practical portability.
 - CC-DEC-009 approved: balanced provider-selection preference—simple managed infrastructure with practical export and migration; no provider selected.
 - CC-DEC-008 approved: use a SQLite-compatible relational database for operational catalog records; provider selection and provisioning remain pending.
@@ -24,13 +25,13 @@ Updated: 2026-10-12 (America/Los_Angeles).
 - Keep application code and durable notes in one repository (CC-DEC-004): root durable files plus `docs/`, `app/`, `database/`, and `samples/`. Folder creation awaits useful content/stack selection. Revisit separation only for a demonstrated requirement.
 - Use real sample cutters from the user to seed and evaluate the eventual workflow. Samples have not yet been supplied.
 
-## Architecture (partly selected; nothing provisioned)
+## Architecture (selected direction; nothing provisioned)
 
 - GitHub: source code, requirements, durable project state, schema/migrations, and reproducible sample data.
 - Structured database: SQLite-compatible relational architecture approved (CC-DEC-008) for operational cutters, physical instances, designs, tags, locations, and relationships; provider not selected.
 - File storage: photos, sketches, STL/3MF attachments.
 - Private site: search, browse, add/edit records, and connect designs to cutters.
-- Sites with D1/R2 is a candidate, not an approved implementation. Database/provider choice remains open. Resolve source ownership/synchronization between the user's GitHub repo and Sites-managed source if Sites is selected.
+- Approved direction (CC-DEC-011): Cloudflare Workers for application/API, D1 for relational records, private R2 for attachments. Confirm identity, cost, recovery, deployment and export/restore before production; no resources created. Slicer applies STL/3MF scaling in v1; catalog records dimensions and sizing guidance, preserving a future modular print-preparation path.
 
 ## First useful workflow
 
@@ -52,7 +53,7 @@ Repository metadata confirms the exact target, default branch, public visibility
 
 ## Continuation
 
-CC-DEC-004 through CC-DEC-010 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next work is a consolidated infrastructure architecture recommendation across CC-TODO-002 through 006, beginning with database/runtime/storage compatibility, which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
+CC-DEC-004 through CC-DEC-011 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next work is a consolidated infrastructure architecture recommendation across CC-TODO-002 through 006, beginning with database/runtime/storage compatibility, which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
 
 ## Operating rules
 
