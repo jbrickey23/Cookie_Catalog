@@ -15,16 +15,17 @@ Updated: 2026-10-12 (America/Los_Angeles).
 
 - Bootstrap the project using the durable ChatGPT/GitHub workflow.
 - GitHub-first fresh-chat restoration is approved (CC-DEC-007). Read latest durable files before changes, reconcile conflicts and verify writes. In-session recovery check passed; independent fresh-chat validation remains pending.
+- CC-DEC-008 approved: use a SQLite-compatible relational database for operational catalog records; provider selection and provisioning remain pending.
 - Establish infrastructure first, with separate actionable TODOs for each component.
 - Feature branches are used for development/review; `main` is the release branch (CC-DEC-006). Actual CI, branch protection, deployment, and rollback remain to be implemented and verified.
 - GitHub is canonical for application source (CC-DEC-005); hosting deploys from the repository. Any hosting-managed source exception requires explicit one-way synchronization and documented ownership; provider integration is not yet validated.
 - Keep application code and durable notes in one repository (CC-DEC-004): root durable files plus `docs/`, `app/`, `database/`, and `samples/`. Folder creation awaits useful content/stack selection. Revisit separation only for a demonstrated requirement.
 - Use real sample cutters from the user to seed and evaluate the eventual workflow. Samples have not yet been supplied.
 
-## Proposed architecture (not selected or provisioned)
+## Architecture (partly selected; nothing provisioned)
 
 - GitHub: source code, requirements, durable project state, schema/migrations, and reproducible sample data.
-- Structured database: operational cutters, physical instances, designs, tags, locations, and relationships.
+- Structured database: SQLite-compatible relational architecture approved (CC-DEC-008) for operational cutters, physical instances, designs, tags, locations, and relationships; provider not selected.
 - File storage: photos, sketches, STL/3MF attachments.
 - Private site: search, browse, add/edit records, and connect designs to cutters.
 - Sites with D1/R2 is a candidate, not an approved implementation. Database/provider choice remains open. Resolve source ownership/synchronization between the user's GitHub repo and Sites-managed source if Sites is selected.
@@ -49,7 +50,7 @@ Repository metadata confirms the exact target, default branch, public visibility
 
 ## Continuation
 
-CC-DEC-004 through CC-DEC-007 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next infrastructure design task is CC-TODO-002 (database), which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
+CC-DEC-004 through CC-DEC-008 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next infrastructure design task is CC-TODO-002 (database), which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
 
 ## Operating rules
 
