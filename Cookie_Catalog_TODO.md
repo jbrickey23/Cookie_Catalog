@@ -87,6 +87,7 @@ Purpose: make the private catalog usable by Jay's wife and any explicitly allowe
 
 Purpose: preserve catalog data independently of provider or app availability.
 
+- Drafted provider-neutral backup manifest and recovery plan on feature branch; no backup executed, scheduled or verified, and destination/retention remain unapproved.
 - Specify complete export of records, relationships, metadata, and original attachments with stable IDs.
 - Define snapshot/backup retention and ownership; keep sensitive/purchased assets out of public Git history.
 - Implement export/import or restore and distinguish code rollback from database recovery.
