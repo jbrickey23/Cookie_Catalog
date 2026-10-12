@@ -36,7 +36,7 @@ Purpose: make the repository a verified durable source of project truth.
 
 Purpose: durable structured records that support cutters, designs, and many-to-many reuse.
 
-- Compare GitHub JSON and a relational database against edits, scale, cross-device use, portability, maintenance, and cost.
+- Decided (CC-DEC-008): SQLite-compatible relational database for live structured catalog records, rather than GitHub JSON. Architecture selected; provider and implementation pending. Consider edits, scale, cross-device use, portability, maintenance and cost in provider evaluation.
 - Select provider/runtime compatibility; D1 is one candidate, not a decision.
 - Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
 - Create development/production separation, schema/migrations, and application record access.
