@@ -15,6 +15,7 @@ Updated: 2026-10-12 (America/Los_Angeles).
 
 - Bootstrap the project using the durable ChatGPT/GitHub workflow.
 - Establish infrastructure first, with separate actionable TODOs for each component.
+- GitHub is canonical for application source (CC-DEC-005); hosting deploys from the repository. Any hosting-managed source exception requires explicit one-way synchronization and documented ownership; provider integration is not yet validated.
 - Keep application code and durable notes in one repository (CC-DEC-004): root durable files plus `docs/`, `app/`, `database/`, and `samples/`. Folder creation awaits useful content/stack selection. Revisit separation only for a demonstrated requirement.
 - Use real sample cutters from the user to seed and evaluate the eventual workflow. Samples have not yet been supplied.
 
@@ -46,7 +47,7 @@ Repository metadata confirms the exact target, default branch, public visibility
 
 ## Continuation
 
-Continue CC-TODO-001 one decision at a time with the user. Single repository and logical source layout approved (CC-DEC-004). Next resolve canonical source ownership and handling of any hosting-managed repository; then release workflow and restoration verification. Record each answer and followup tasks. Bootstrap persistence is established; the larger repository infrastructure task remains open until source ownership/release workflow is defined. Then select database, file storage, and hosting in their separate tasks.
+Continue CC-TODO-001 one decision at a time with the user. Single repository and logical source layout approved (CC-DEC-004). Canonical application source ownership is approved (CC-DEC-005). Next decide development/review/release workflow, then restoration verification. Hosting integration and any managed-source exception are validation followups in CC-TODO-004. Record each answer and followup tasks. Bootstrap persistence is established; the larger repository infrastructure task remains open until source ownership/release workflow is defined. Then select database, file storage, and hosting in their separate tasks.
 
 ## Operating rules
 
