@@ -1,0 +1,56 @@
+{
+  "notice": "Synthetic demonstration data only. No real purchased assets.",
+  "shapes": [
+    {
+      "id": "shape_tree_demo",
+      "name": "Evergreen tree"
+    },
+    {
+      "id": "shape_heart_demo",
+      "name": "Heart"
+    }
+  ],
+  "locations": [
+    {
+      "id": "loc_bin_demo",
+      "label": "DEMO bin A"
+    }
+  ],
+  "physicalCutters": [
+    {
+      "id": "cutter_tree_demo",
+      "shapeId": "shape_tree_demo",
+      "locationId": "loc_bin_demo",
+      "widthMm": 80,
+      "heightMm": 100,
+      "quantity": 1
+    }
+  ],
+  "designs": [
+    {
+      "id": "design_holiday_demo",
+      "name": "Winter woodland tree"
+    }
+  ],
+  "designLinks": [
+    {
+      "id": "link_tree_demo",
+      "designId": "design_holiday_demo",
+      "shapeId": "shape_tree_demo",
+      "status": "proposed",
+      "useType": "standard"
+    }
+  ],
+  "tags": [
+    {
+      "id": "tag_christmas_demo",
+      "label": "Christmas"
+    }
+  ],
+  "designTags": [
+    {
+      "designId": "design_holiday_demo",
+      "tagId": "tag_christmas_demo"
+    }
+  ]
+}
