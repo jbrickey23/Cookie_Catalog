@@ -1,6 +1,14 @@
 # CC-TODO-006 — Backup, export and recovery
 
-Status: live database download restored locally; live attachment recovery and operational backup policy remain pending.
+Status: actual live database and two-file packages restored locally; independent backup location/policy and Cloudflare-side restoration remain pending.
+
+## Verified live attachment recovery
+
+Live file recovery verified on 2026-10-12: owner supplied cookie-catalog-dev-recovery-2026-10-12T23-06-58-377Z.json (11,830 bytes; SHA-256 7824069a2faa5db5193818607d5662bcc6f113791a66505bb245f65486da3794). Payload and both original-file checksums passed. A new disposable local restore recovered 16 tables, 17 rows and 2 objects: a readable 1 × 1 PNG (68 bytes) and ASCII STL (111 bytes). Confirmed the synthetic design/cutter/location link at 90 × 100 mm, two shape attachments, one design image and one printable STL association. SQLite integrity and foreign keys passed. The download reports cleanupVerified=true; server code only returns after request-scoped D1/R2 cleanup checks succeed. No real inventory or backup payload was committed to public Git. Code commit 40ab108 passed CI #97.
+
+## Concrete development policy proposal
+
+Proposed development backup policy (awaiting owner storage preference): owner-triggered download after meaningful catalog changes and before bulk import/migration; keep the latest 7 completed packages in an independently controlled private location outside Cloudflare/public GitHub. This is a manual development policy, not an activated recurring automation. Restore-check after schema/export changes. Real-asset volume and production recovery needs must inform production frequency/retention and scalable exports. No new storage subscription, paid resource, scheduled task or production deployment is authorized. Next required input: identify an existing private backup location the owner can use; Cloudflare-side restore is still an additional validation followup.
 
 ## Actual live evidence
 
@@ -44,7 +52,7 @@ These results do not prove live Cloudflare export, live R2 attachment recovery, 
 
 1. Completed: owner downloaded the live package and attached it for validation.
 2. Completed: actual package restored locally, with the expected demonstration link/dimensions, migrations, counts, checksums and SQLite/FK integrity.
-3. Exercise persistent synthetic attachment metadata and originals in an isolated environment; verify their live export/restore.
+3. Completed for development: live temporary PNG/STL originals and attachment metadata exported together, restored locally with all associations intact; server reports cleanup verified. General user upload lifecycle remains CC-TODO-003.
 4. Validate live Cloudflare import/restore separately from code rollback.
 5. Approve an independently controlled private backup destination, cadence and retention before activation.
 6. Add coordinated consistency handling and scalable exports before production.
