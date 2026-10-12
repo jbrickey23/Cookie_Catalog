@@ -1,5 +1,9 @@
 # Cookie_Catalog — TODO
 
+## Backup folder placement
+
+Owner supplied the extracted timestamped backup-folder location under personal OneDrive: Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Screenshot shows the correct archive and its two dated JSON snapshots, manifest and README under Jay - Personal / Cookie_Catalog / Backups. This is owner-reported local placement; remote OneDrive sync completion is not yet evidenced. Keep this valid timestamped folder layout; no further renaming or flattening is needed. Next check: OneDrive reports Up to date (or the archive/folder is visible in the OneDrive web account). Automatic backups/pruning remain unconfigured.
+
 ## Current storage plan and handoff
 
 2026-10-12 storage plan: owner asked for simple folders and date/time filenames, considered GitHub backups, and indicated OneDrive is available while raising source-version traceability. Recommended full backups in an existing private OneDrive/Cookie_Catalog/Backups folder, with code/migrations/recovery instructions remaining canonical and versioned in GitHub. Current application repo was rechecked and is public. Both uploaded packages were inspected and contain only synthetic demonstration records/files, but no payloads were committed to GitHub. Prepared a portable archive containing byte-identical UTC-named JSON snapshots, a manifest of hashes/sizes/migrations/verified restore results linked to validation commit 40ab108aa6cf17f943d4671d6f2ca2bdf973ac9f, and recovery instructions. Exporting deployment commit was not independently attested by the original downloads; the manifest states that limitation. Owner placement into OneDrive and exact account/folder access remain unverified. No automated transfer, scheduled backup, pruning, new subscription or production deployment was activated.
