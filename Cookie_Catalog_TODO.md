@@ -97,6 +97,7 @@ Purpose: preserve catalog data independently of provider or app availability.
 
 Purpose: test real workflows with a small representative collection before bulk cataloging.
 
+- Added public-safe synthetic fixture, disposable SQLite importer, and CI test command; GitHub execution remains unverified. Real sample import and full workflow acceptance are pending.
 - Obtain user samples: purchased/printed cutters, unprinted STL, size variants, multiple designs per cutter, and at least one known flip.
 - Define an import manifest/template, validate files/relationships, and prevent duplicate creation on reruns.
 - Separate demonstration fixtures from real inventory; track source and unknown information.
