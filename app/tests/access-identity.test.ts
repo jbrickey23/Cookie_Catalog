@@ -80,3 +80,36 @@ test("key rotation can validate either trusted signing key", async () => {
   assert.ok(await rotationVerifier.verify(request(await token())));
   assert.ok(await rotationVerifier.verify(request(await token({}, rotated.privateKey, "key-2"))));
 });
+
+test("deployed database check authenticates before querying and scopes the fixture", async () => {
+  let calls = 0;
+  const database = {
+    prepare(sql: string) {
+      calls++;
+      assert.ok(sql.includes("c.id = ?"));
+      return {
+        bind(...ids: string[]) {
+          assert.deepEqual(ids, ["design_dev_tree", "shape_dev_tree", "cutter_dev_tree", "link_dev_tree"]);
+          return { first: async () => ({ design: "DEMO Holiday tree", shape: "DEMO Evergreen tree", width_mm: 90, height_mm: 100 }) };
+        }
+      };
+    }
+  } as unknown as D1Database;
+  assert.equal((await handleApiRequest(request(undefined, "/api/dev/database-check"), verifier, database)).status, 401);
+  assert.equal(calls, 0);
+  const response = await handleApiRequest(request(await token(), "/api/dev/database-check"), verifier, database);
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).fixtureMatches, true);
+  assert.equal(calls, 1);
+  assert.equal((await handleApiRequest(request(await token(), "/api/dev/database-check", "POST"), verifier, database)).status, 405);
+  assert.equal(calls, 1);
+});
+test("database check handles missing fixtures and query failures without leaking details", async () => {
+  const missing = { prepare: () => ({ bind: () => ({ first: async () => null }) }) } as unknown as D1Database;
+  const broken = { prepare: () => { throw new Error("private database detail"); } } as unknown as D1Database;
+  const jwt = await token();
+  assert.equal((await handleApiRequest(request(jwt, "/api/dev/database-check"), verifier, missing)).status, 404);
+  const response = await handleApiRequest(request(jwt, "/api/dev/database-check"), verifier, broken);
+  assert.equal(response.status, 503);
+  assert.ok(!(await response.text()).includes("private database detail"));
+});
