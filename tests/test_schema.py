@@ -7,6 +7,7 @@ SCHEMA = Path(__file__).resolve().parents[1] / "database/migrations/0001_initial
 def test_schema():
     db = sqlite3.connect(":memory:")
     db.executescript(SCHEMA.read_text(encoding="utf-8"))
+    db.executescript((SCHEMA.parent / "0002_variants_components.sql").read_text(encoding="utf-8"))
     db.execute("PRAGMA foreign_keys = ON")
     db.execute("INSERT INTO shapes(id,name) VALUES (?,?)", ("shape-1","Generic tree"))
     db.execute("INSERT INTO locations(id,label) VALUES (?,?)", ("loc-1","Test bin"))
@@ -38,6 +39,13 @@ def test_schema():
         pass
     else:
         raise AssertionError("Invalid status was accepted")
+    db.execute("INSERT INTO shape_size_variants(id,shape_id,label,target_width_mm) VALUES (?,?,?,?)", ("size-1","shape-1","80mm",80))
+    db.execute("INSERT INTO design_components(id,design_id,shape_id,role_label) VALUES (?,?,?,?)", ("part-1","design-1","shape-1","base"))
+    db.execute("INSERT INTO attachments(id,storage_key,filename) VALUES (?,?,?)", ("att-1","test/file.stl","file.stl"))
+    db.execute("INSERT INTO printable_assets(id,shape_id,attachment_id,format,modeled_width_mm) VALUES (?,?,?,?,?)", ("asset-1","shape-1","att-1","stl",100))
+    db.execute("INSERT INTO printable_size_recipes(id,printable_asset_id,label,target_width_mm,scale_percent) VALUES (?,?,?,?,?)", ("recipe-1","asset-1","80mm",80,80))
+    assert db.execute("SELECT COUNT(*) FROM design_components").fetchone()[0] == 1
+    assert db.execute("SELECT scale_percent FROM printable_size_recipes").fetchone()[0] == 80
     db.close()
 
 if __name__ == "__main__":
