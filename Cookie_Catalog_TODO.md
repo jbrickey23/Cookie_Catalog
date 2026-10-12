@@ -24,8 +24,9 @@ Purpose: make the repository a verified durable source of project truth.
 - Followup (coordinate with 004): verify hosting can use this repo; if it requires managed source elsewhere, document canonical ownership and synchronization before creating duplicate code. Revisit repository separation only for a demonstrated constraint.
 - Decided (CC-DEC-005): GitHub repository is canonical for application code; hosting deploys from GitHub. Any hosting-managed source must use documented one-way synchronization rather than competing edits.
 - Followup (CC-TODO-004): verify actual provider GitHub integration, synchronization/deployment and rollback; not yet validated.
-- Pending user decision: development/review/release workflow.
+- Decided (CC-DEC-006): develop on feature branches; review/validate before merging; `main` is the release branch. Deployment from `main` begins only once configured and verified.
 - Followup: validate fresh-chat restoration from current remote files.
+- Followup (CC-TODO-004): implement/verify pre-merge checks, appropriate branch protection, deployment from `main`, known-good release identification and rollback.
 - Completed: read/write verified using the actual bootstrap writes and readback.
 - Done when: remote bootstrap is verified, restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear.
 
@@ -54,7 +55,7 @@ Purpose: a private working interface reachable on the devices used in the busine
 
 - Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
 - Select stack and connect source, database, and storage; validate deployment from canonical GitHub repository (CC-DEC-005). If hosting-managed source is unavoidable, document one-way sync and prevent competing edits.
-- Establish local/development preview, repeatable deployment, configuration/secrets, environment separation, and code rollback procedure.
+- Establish local/development preview, repeatable deployment from `main` after feature-branch review (CC-DEC-006), pre-merge checks, appropriate branch protection, configuration/secrets, environment separation, and code rollback procedure.
 - Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
 
 ## CC-TODO-005 — Understand, devise, and create identity/access infrastructure
