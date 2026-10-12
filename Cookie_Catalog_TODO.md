@@ -4,7 +4,7 @@ Updated: 2026-10-12. First workstream: understand, devise, and create infrastruc
 
 | ID | Component | Status | Depends on |
 | --- | --- | --- | --- |
-| CC-TODO-001 | Repository and durable project state | Open: bootstrap established | — |
+| CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat validation pending | — |
 | CC-TODO-002 | Database and catalog schema | Open | 001 for implementation |
 | CC-TODO-003 | File and image storage | Open | 001; coordinate with 002 |
 | CC-TODO-004 | Site runtime, hosting, and deployment | Open | 001; coordinate with 002/003 |
@@ -25,10 +25,12 @@ Purpose: make the repository a verified durable source of project truth.
 - Decided (CC-DEC-005): GitHub repository is canonical for application code; hosting deploys from GitHub. Any hosting-managed source must use documented one-way synchronization rather than competing edits.
 - Followup (CC-TODO-004): verify actual provider GitHub integration, synchronization/deployment and rollback; not yet validated.
 - Decided (CC-DEC-006): develop on feature branches; review/validate before merging; `main` is the release branch. Deployment from `main` begins only once configured and verified.
-- Followup: validate fresh-chat restoration from current remote files.
+- Decided (CC-DEC-007): GitHub-first fresh-chat restoration; read latest durable files, reconcile conflicts, avoid redoing completed work, verify remote writes.
+- Verified: current conversation independently retrieved the remote durable files and reconstructed the correct decisions/open tasks (in-session recovery check).
+- Pending acceptance: start a genuinely new conversation using the bootstrap prompt and verify correct restoration and next task without relying on prior chat. Only then close CC-TODO-001.
 - Followup (CC-TODO-004): implement/verify pre-merge checks, appropriate branch protection, deployment from `main`, known-good release identification and rollback.
 - Completed: read/write verified using the actual bootstrap writes and readback.
-- Done when: remote bootstrap is verified, restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear.
+- Done when: remote bootstrap is verified, independent fresh-chat restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear. All checks except independent fresh-chat test are satisfied.
 
 ## CC-TODO-002 — Understand, devise, and create database infrastructure
 
