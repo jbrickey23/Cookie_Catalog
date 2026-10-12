@@ -22,7 +22,8 @@ Purpose: make the repository a verified durable source of project truth.
 - Decided: single repository for application and durable project notes; logical layout `docs/`, `app/`, `database/`, `samples/`, with core durable files at root (CC-DEC-004).
 - Followup: create folders as content becomes available; confirm physical app paths against the selected stack. Layout approval does not mean application scaffolding exists.
 - Followup (coordinate with 004): verify hosting can use this repo; if it requires managed source elsewhere, document canonical ownership and synchronization before creating duplicate code. Revisit repository separation only for a demonstrated constraint.
-- Pending user decision: canonical source ownership and handling of hosting-managed source.
+- Decided (CC-DEC-005): GitHub repository is canonical for application code; hosting deploys from GitHub. Any hosting-managed source must use documented one-way synchronization rather than competing edits.
+- Followup (CC-TODO-004): verify actual provider GitHub integration, synchronization/deployment and rollback; not yet validated.
 - Pending user decision: development/review/release workflow.
 - Followup: validate fresh-chat restoration from current remote files.
 - Completed: read/write verified using the actual bootstrap writes and readback.
@@ -52,7 +53,7 @@ Purpose: retain photos, decorating artwork, STLs, and 3MFs alongside records.
 Purpose: a private working interface reachable on the devices used in the business.
 
 - Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
-- Select stack and connect source, database, and storage; resolve CC-TODO-001 source ownership.
+- Select stack and connect source, database, and storage; validate deployment from canonical GitHub repository (CC-DEC-005). If hosting-managed source is unavoidable, document one-way sync and prevent competing edits.
 - Establish local/development preview, repeatable deployment, configuration/secrets, environment separation, and code rollback procedure.
 - Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
 
