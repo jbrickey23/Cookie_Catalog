@@ -1,25 +1,24 @@
-# CC-TODO-005 — Identity and access
+# CC-TODO-005 — Development identity and access
 
-Status: architecture design only. No identity provider provisioned or authenticated production access.
+## Verified setup (2026-10-12)
+The owner created the Zero Trust Free organization, email one-time PIN provider, and Access application `Cookie Catalog Dev`. A screenshot confirms the destination `cookie-catalog-dev` and attached owner allow policy. The owner reported reaching the foundation home page after the emailed-code login test. The team domain and application audience are recorded as non-secret Wrangler variables.
 
-## Proposed direction
-Cloudflare Access protects the private application at the edge, with an allowlist of the wife's and any approved collaborators' identities. The Worker must independently verify signed Access JWTs against the configured team's JWKS and audience; merely trusting identity headers, email text, or network location is insufficient. An application-level membership/role record maps a verified stable subject to owner/editor/viewer permissions. No self-service signup or public registration in v1.
+## Server-side boundary
+`AccessIdentityVerifier` uses jose to verify RS256 JWTs from `Cf-Access-Jwt-Assertion`. It fetches keys only from the configured team's HTTPS JWKS endpoint, caches them with bounded refresh/cooldown, and validates signature, issuer, audience, subject, expiry, issued-at and any not-before claim. Unknown keys, forged tokens and JWKS failures fail closed. Email headers alone never establish identity.
 
-## Authorization
-- Viewer: browse authorized catalog records and download linked private attachments.
-- Editor: viewer plus create/edit cutters, designs, locations, tags, and upload files.
-- Owner: editor plus membership administration, export, and destructive operations.
-- Unauthenticated, unknown subject, expired/invalid token: deny.
-- No client-supplied object key grants access. Validate attachment ownership/association before R2 operations.
-- Apply checks to every API operation, including searches, direct-ID lookups and exports.
+Initial development bootstrap additionally requires the signed email to match the private `OWNER_EMAIL` configuration. This grants only access to the read-only `GET /api/session` smoke test. It does not implement durable D1 membership or enable catalog/file operations. Owner/editor/viewer membership by verified stable subject remains a required follow-up before CRUD.
 
-## Implementation gates
-1. Obtain explicit approval before creating Cloudflare Access applications or adding identity users.
-2. Confirm supported login provider(s), intended users, recovery path, domain and account prerequisites.
-3. Configure Access app/audience and verify JWT signature, issuer, audience, expiry and key rotation.
-4. Implement role lookup in D1 and deny-by-default middleware; use synthetic identity fixtures for tests.
-5. Test owner/editor/viewer and unauthorized paths, expired/forged JWT, and direct attachment URL denial.
-6. Keep recovery owner and second-factor setup documented outside public repository; no credentials in Git.
+## Owner configuration and deployed check
+1. Open **Workers & Pages → cookie-catalog-dev → Settings → Variables and Secrets**.
+2. Add a **Secret** named `OWNER_EMAIL`, containing the exact email allowed by the Access policy. Save/apply it to this development Worker only. Never commit real user email or credentials to public GitHub.
+3. After the development build completes, open `/api/session` on the development hostname in the authenticated browser.
+4. Expected: status 200 with `authenticated: true` and `role: "owner"`. Missing configuration returns 503; missing, invalid or unapproved identity returns 401. Responses are not cached.
+5. Test an unapproved identity separately before claiming negative edge-policy acceptance. Preview URLs must remain covered by Access. Do not change the team domain or recreate the application without updating issuer/audience configuration.
 
-## Current safe state
-The API remains disabled in `app/src/worker.ts`. `DenyAllIdentityVerifier` is a safe placeholder; it is not a production authenticator. No real user identity has been collected.
+The home page remains the foundation screen. All other API routes remain disabled after authentication. No production environment, real asset uploads or database mutations are introduced.
+
+## Validation
+`npm run test:auth` uses synthetic signing keys and identities: signed owner success, spoofed headers, wrong audience/issuer, expired and future tokens, missing claims, unknown owner/service tokens, forged signatures, unknown keys, JWKS failure, key rotation, read-only session and disabled catalog routes.
+TypeScript and Vite build passed locally. Live session verification after secret setup is pending. Recovery, D1 membership, collaborators, negative edge tests and authenticated attachment retrieval remain open.
+
+Reference: https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/
