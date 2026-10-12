@@ -2,6 +2,13 @@
 
 Newest first. Record selection separately from implementation and validation.
 
+## 2026-10-12 — CC-DEC-005 — GitHub is canonical application source
+
+Status: user approved; deployment integration not yet validated. `jbrickey23/Cookie_Catalog` is the single authoritative source for application code and versioned configuration. Hosting should deploy from this repository, not independently maintain competing application code. If a hosting provider requires managed source, document the exception and a one-way synchronization/deployment mechanism before adoption; do not silently introduce a second editable source.
+
+Followups: under CC-TODO-001, define development/review/release workflow and validate fresh-chat restoration; under CC-TODO-004, verify GitHub integration, deployment/rollback and source synchronization behavior with the selected hosting provider. Operational catalog records and purchased assets remain outside public Git history.
+
+
 ## 2026-10-12 — CC-DEC-004 — Single repository and logical source layout
 
 Status: user approved; folder implementation pending application stack selection. Keep application code and durable project notes together in `jbrickey23/Cookie_Catalog` for simpler maintenance. Proposed layout approved: `docs/` for requirements, research, infrastructure and recovery documentation; `app/` for website code; `database/` for schema and migrations; `samples/` for shareable test records and import examples. Keep README, TODO, Decision Log, Context and New Chat Bootstrap Prompt at the root. Live catalog records and private/purchased attachments belong in the operational database/file store rather than public Git history.
