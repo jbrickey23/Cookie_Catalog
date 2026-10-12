@@ -12,6 +12,10 @@ Updated: 2026-10-12. First workstream: understand, devise, and create infrastruc
 | CC-TODO-006 | Backup, export, and recovery | Open | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open | 002/003/005 |
 
+## Browser checkpoint
+
+Owner reported the browser backup flow worked on 2026-10-12 after opening https://cookie-catalog-dev.j-brickey.workers.dev. Code commit 8eb666a passed GitHub CI #93. Obtain the downloaded JSON for actual checksum/contents inspection and disposable restoration; live package recovery is not yet verified. Keep downloads and any catalog content outside public GitHub.
+
 ## Latest continuation
 
 2026-10-12 continuation: Node.js v24.21.0 and npm.cmd 11.19.0 work. This formerly managed PC still reports Defender for Endpoint enrollment (OnboardingState=1) and tamper protection; event 1126 blocks node.exe at registry.npmjs.org. Audit-mode change did not take effect, so Wrangler login was never retried. Previous IT is unavailable. Park local PC remediation; no reset/reinstallation is authorized. CC-TODO-006 now provides an owner-only browser development download at POST /api/dev/backup plus a disposable local restore tool. Local schema, linked-record and two-file restoration, negative authorization/integrity cases, all 16 Node tests, SQLite smoke/import and TypeScript/Vite frontend/Worker build passed. Live export/restore, independent backup destination, retention and scheduling remain pending; no production deployment or paid resources were added.
