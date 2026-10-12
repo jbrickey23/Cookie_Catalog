@@ -1,0 +1,85 @@
+# Cookie_Catalog — TODO
+
+Updated: 2026-10-12. First workstream: understand, devise, and create infrastructure. One task per component; the acceptance checklist inside each task defines its completion.
+
+| ID | Component | Status | Depends on |
+| --- | --- | --- | --- |
+| CC-TODO-001 | Repository and durable project state | Open: bootstrap established | — |
+| CC-TODO-002 | Database and catalog schema | Open | 001 for implementation |
+| CC-TODO-003 | File and image storage | Open | 001; coordinate with 002 |
+| CC-TODO-004 | Site runtime, hosting, and deployment | Open | 001; coordinate with 002/003 |
+| CC-TODO-005 | Identity and access | Open | 004 architecture |
+| CC-TODO-006 | Backup, export, and recovery | Open | 002/003 |
+| CC-TODO-007 | Sample import and seed workflow | Open | 002/003/005 |
+
+## CC-TODO-001 — Understand, devise, and establish repository infrastructure
+
+Purpose: make the repository a verified durable source of project truth.
+
+- Completed: repository resolved as `jbrickey23/Cookie_Catalog`, default branch main, public, read/write permissions confirmed.
+- Completed: contents/ref checks confirmed an empty repository before initialization; no existing files or repository agent instructions. Assess any release/protection requirements when choosing the development workflow.
+- Bootstrap package: README, Context, TODO, Decision Log, Bootstrap Prompt, initial model, and research notes. Persist and verify this package before handoff.
+- Decide source layout and the relationship to any hosting-managed source repo; document synchronization/release ownership.
+- Verify read/write with the actual bootstrap commit and readback.
+- Done when: remote bootstrap is verified, restoration works from latest GitHub contents, actual branch is recorded, and source ownership is clear.
+
+## CC-TODO-002 — Understand, devise, and create database infrastructure
+
+Purpose: durable structured records that support cutters, designs, and many-to-many reuse.
+
+- Compare GitHub JSON and a relational database against edits, scale, cross-device use, portability, maintenance, and cost.
+- Select provider/runtime compatibility; D1 is one candidate, not a decision.
+- Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
+- Create development/production separation, schema/migrations, and application record access.
+- Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
+
+## CC-TODO-003 — Understand, devise, and create file storage infrastructure
+
+Purpose: retain photos, decorating artwork, STLs, and 3MFs alongside records.
+
+- Compare storage options; determine costs, upload limits, supported formats, and privacy.
+- Define stable attachment IDs/object keys, metadata, originals versus thumbnails, and record links.
+- Implement authorized upload/download, missing-file handling, and deletion/orphan behavior.
+- Done when: a cutter photo, design image, and sample STL can be stored and retrieved privately, and broken links are detectable.
+
+## CC-TODO-004 — Understand, devise, and create site/deployment infrastructure
+
+Purpose: a private working interface reachable on the devices used in the business.
+
+- Establish device/browser needs; compare suitable runtimes/hosting and record expected costs.
+- Select stack and connect source, database, and storage; resolve CC-TODO-001 source ownership.
+- Establish local/development preview, repeatable deployment, configuration/secrets, environment separation, and code rollback procedure.
+- Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This task proves infrastructure; full catalog UX follows later.
+
+## CC-TODO-005 — Understand, devise, and create identity/access infrastructure
+
+Purpose: make the private catalog usable by Jay's wife and any explicitly allowed collaborators.
+
+- Determine owner/editor/viewer needs and whether the chosen private hosting actually permits the wife's access.
+- Select authentication and enforce record/file authorization on the server.
+- Establish account recovery and secret handling.
+- Done when: the intended users can access their catalog, unauthorized access is rejected, and roles/recovery are documented. Do not assume owner-private deployment grants access to another person.
+
+## CC-TODO-006 — Understand, devise, and create backup/export/recovery infrastructure
+
+Purpose: preserve catalog data independently of provider or app availability.
+
+- Specify complete export of records, relationships, metadata, and original attachments with stable IDs.
+- Define snapshot/backup retention and ownership; keep sensitive/purchased assets out of public Git history.
+- Implement export/import or restore and distinguish code rollback from database recovery.
+- Done when: a sample backup restores into a clean test environment with relationships and attachments intact, and recovery instructions are recorded.
+
+## CC-TODO-007 — Understand, devise, and create sample import/seed infrastructure
+
+Purpose: test real workflows with a small representative collection before bulk cataloging.
+
+- Obtain user samples: purchased/printed cutters, unprinted STL, size variants, multiple designs per cutter, and at least one known flip.
+- Define an import manifest/template, validate files/relationships, and prevent duplicate creation on reruns.
+- Separate demonstration fixtures from real inventory; track source and unknown information.
+- Done when: authorized samples import reproducibly and support Christmas/tree search, cutter-to-design browsing, physical/file retrieval, and known flip instructions.
+
+## Later product work
+
+After infrastructure tasks and real samples, create separate product TODOs for catalog entry, design linking, visual search, and usability iteration. Automatic new flip suggestions remain deferred.
+
+Next unused task ID: CC-TODO-008.
