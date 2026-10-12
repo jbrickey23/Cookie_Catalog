@@ -15,3 +15,11 @@ jobs:
         run: |
           python tests/test_schema.py
           python samples/import_synthetic.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate application TypeScript and build
+        working-directory: app
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
