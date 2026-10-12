@@ -46,6 +46,7 @@ Purpose: durable structured records that support cutters, designs, and many-to-m
 - Decided (CC-DEC-009): balanced preference for managed simplicity with practical portability/export; selection criterion only, not a provider approval.
 - Select provider/runtime compatibility; compare D1, Turso and other appropriate SQLite-compatible choices on integration, export/restore, privacy, costs, and maintenance. Cloudflare D1 approved as intended provider under CC-DEC-011; not provisioned.
 - Refine the initial model using representative examples; define stable IDs, size units, required/optional fields, ownership, deletion behavior, and known-versus-proposed mappings.
+- Drafted initial migration in `database/migrations/0001_initial.sql` and synthetic local SQLite smoke test in `tests/test_schema.py` on feature branch; execution and D1 compatibility validation still pending.
 - Create development/production separation, schema/migrations, and application record access.
 - Done when: a sample cutter and design can be created, linked, edited, searched, and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
