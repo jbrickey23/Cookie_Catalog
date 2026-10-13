@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-type Row = Record<string,string|number|null>;
+type SearchHit = {field:string;label:string;snippet:string;start:number;length:number};
+type Row = Record<string,string|number|null> & {searchHits?:SearchHit[]};
 type Field = { key:string; label:string; type?: "number"|"textarea"|"url"; choices?: string[]; lookup?: "shapes"|"designs"|"locations"; required?:boolean };
 const sections: Record<string,{label:string;fields:Field[]}> = {
   shapes:{label:"Cutter shapes",fields:[{key:"name",label:"Shape name",required:true},{key:"maker",label:"Maker"},{key:"source_url",label:"Source link",type:"url"},{key:"notes",label:"Notes / themes",type:"textarea"}]},
@@ -64,7 +65,7 @@ export function Catalog({onSaved}:{onSaved:()=>void}) {
     <p>Add a cutter shape and design, record where a physical cutter lives, then map designs to compatible shapes. Sizes are in millimeters.</p>
     <label>Browse <select disabled={busy} value={kind} onChange={event=>switchSection(event.target.value)}>{Object.entries(sections).map(([key,section])=><option value={key} key={key}>{section.label}</option>)}</select></label>
     <form onSubmit={event=>search(event)} style={{margin:"12px 0"}}>
-      <label>Search names and notes <input value={query} maxLength={120} disabled={busy} onChange={event=>setQuery(event.target.value)} /></label>{" "}
+      <label>Search record metadata <input value={query} maxLength={120} disabled={busy} onChange={event=>setQuery(event.target.value)} /></label>{" "}
       <button disabled={busy}>Search</button>
     </form>
     <ul>{rows.map(row=><li key={String(row.id)} style={{margin:"10px 0"}}>
@@ -73,6 +74,13 @@ export function Catalog({onSaved}:{onSaved:()=>void}) {
       {kind==="design_shape_links" && <span> → {row.shape_name}; {row.status} {row.use_type}</span>}
       {(row.notes || row.instructions) && <span> — {row.notes??row.instructions}</span>}{" "}
       <button disabled={busy} onClick={()=>edit(row)}>Edit</button>
+      {!!row.searchHits?.length && <div style={{margin:"5px 0 8px 16px",fontSize:"0.95rem"}}>
+        <span>Matched fields:</span>
+        <ul>{row.searchHits.map(hit=><li key={hit.field}>
+          <strong>{hit.label}:</strong>{" "}{hit.snippet.slice(0,hit.start)}
+          <mark>{hit.snippet.slice(hit.start,hit.start+hit.length)}</mark>{hit.snippet.slice(hit.start+hit.length)}
+        </li>)}</ul>
+      </div>}
     </li>)}</ul>
     {!busy && rows.length===0 && <p>No matching records.</p>}
     {nextOffset!==null && <button disabled={busy} onClick={()=>search(undefined,nextOffset)}>Next page</button>}

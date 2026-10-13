@@ -62,15 +62,34 @@ async function body(request: Request): Promise<unknown> {
   for(const part of parts){bytes.set(part,offset);offset+=part.length;}
   try {return JSON.parse(new TextDecoder().decode(bytes));}catch{throw new InputError("Invalid JSON record.");}
 }
-function selection(kind: Kind): { sql: string; search: string; order: string } {
+type SearchField = { column:string; field:string; label:string };
+function selection(kind: Kind): { sql: string; fields: SearchField[]; order: string } {
   if(kind==="physical_cutters")return {
     sql:"SELECT c.*,s.name AS shape_name,l.label AS location_label FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id",
-    search:"s.name || ' ' || COALESCE(l.label,'') || ' ' || COALESCE(c.notes,'')",order:"s.name,c.id"};
+    fields:[{column:"s.name",field:"shape_name",label:"Cutter shape name"},{column:"l.label",field:"location_label",label:"Storage location"},{column:"c.notes",field:"notes",label:"Cutter notes"},{column:"c.origin",field:"origin",label:"Origin"},{column:"c.width_mm",field:"width_mm",label:"Width (mm)"},{column:"c.height_mm",field:"height_mm",label:"Height (mm)"},{column:"c.quantity",field:"quantity",label:"Quantity"}],order:"s.name,c.id"};
   if(kind==="design_shape_links")return {
     sql:"SELECT l.*,d.name AS design_name,s.name AS shape_name FROM design_shape_links l JOIN designs d ON d.id=l.design_id JOIN shapes s ON s.id=l.shape_id",
-    search:"d.name || ' ' || s.name || ' ' || l.use_type || ' ' || COALESCE(l.instructions,'')",order:"d.name,s.name,l.id"};
+    fields:[{column:"d.name",field:"design_name",label:"Design name"},{column:"s.name",field:"shape_name",label:"Cutter shape name"},{column:"l.use_type",field:"use_type",label:"Use type"},{column:"l.status",field:"status",label:"Compatibility status"},{column:"l.instructions",field:"instructions",label:"Mapping instructions"}],order:"d.name,s.name,l.id"};
   const name=kind==="locations" ? "label":"name";
-  return {sql:"SELECT * FROM "+kind,search:name+" || ' ' || COALESCE(notes,'')",order:name+",id"};
+  const fields=[{column:name,field:name,label:kind==="locations"?"Location label":kind==="shapes"?"Shape name":"Design name"},{column:"notes",field:"notes",label:"Notes / themes"}];
+  if(kind==="shapes")fields.push({column:"maker",field:"maker",label:"Maker"});
+  if(kind==="shapes" || kind==="designs")fields.push({column:"source_url",field:"source_url",label:"Source link"});
+  return {sql:"SELECT * FROM "+kind,fields,order:name+",id"};
+}
+// Match SQLite's built-in lower(): ASCII case-insensitive, literal for other text.
+function fold(value:string) { return value.replace(/[A-Z]/g,letter=>letter.toLowerCase()); }
+function explain(row:Record<string,unknown>, fields:SearchField[],query:string) {
+  const hits=[];
+  for(let i=0;i<fields.length;i++) {
+    const text=String(row["__search"+i]??"");
+    delete row["__search"+i];
+    const index=query?fold(text).indexOf(fold(query)):-1;
+    if(index<0)continue;
+    const from=Math.max(0,index-55),to=Math.min(text.length,index+query.length+55);
+    const prefix=from>0?"…":"",suffix=to<text.length?"…":"";
+    hits.push({field:fields[i].field,label:fields[i].label,snippet:prefix+text.slice(from,to)+suffix,start:prefix.length+index-from,length:query.length});
+  }
+  return {...row,searchHits:hits};
 }
 export async function handleCatalog(request: Request, database: D1Database): Promise<Response> {
   const url=new URL(request.url);
@@ -88,9 +107,12 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
       const offset=Number(url.searchParams.get("offset")??"0");
       if(!Number.isSafeInteger(offset)||offset<0||offset>100000)return json({error:"Invalid page offset."},400);
       const select=selection(kind);
-      // instr gives literal substring matching rather than interpreting SQL wildcard input.
-      const result=await database.prepare(select.sql+" WHERE instr(lower("+select.search+"),lower(?))>0 ORDER BY "+select.order+" LIMIT 201 OFFSET ?").bind(q,offset).all();
-      return json({records:result.results.slice(0,200),nextOffset:result.results.length>200 ? offset+200:null});
+      const expressions=select.fields.map(field=>"COALESCE(CAST("+field.column+" AS TEXT),'')");
+      const sql=select.sql.replace("SELECT ","SELECT "+expressions.map((expression,i)=>expression+" AS __search"+i).join(",")+", ");
+      // Separate field predicates prevent a phrase from matching across unrelated values.
+      const where=expressions.map(expression=>"instr(lower("+expression+"),lower(?))>0").join(" OR ");
+      const result=await database.prepare(sql+" WHERE ("+where+") ORDER BY "+select.order+" LIMIT 201 OFFSET ?").bind(...expressions.map(()=>q),offset).all<Record<string,unknown>>();
+      return json({records:result.results.slice(0,200).map(row=>explain(row,select.fields,q)),query:q,nextOffset:result.results.length>200 ? offset+200:null});
     }
     if((request.method==="POST" && id) || (request.method==="PUT" && !id) || !["POST","PUT"].includes(request.method))return json({error:"Method not allowed."},405);
     const values=validate(kind,await body(request));

@@ -14,9 +14,9 @@ The owner placed the timestamped backup folder under personal OneDrive: `Cookie_
 
 CC-TODO-003 now implements owner-only persistent attachment upload/download and metadata/link deletion, missing-file detection, and manual orphan audit/cleanup. Browser controls select existing shapes/designs; no new migration is needed. Local validation passed: 27 Node tests, SQLite schema/import and frontend/Worker build. Live owner photo upload/persistence/download passed; deletion and design/STL flows remain unconfirmed. Use small synthetic files; maximum 4 MiB per file, while the current backup tool allows only 4 MiB of originals total.
 
-Owner-only catalog creation/editing/search now covers cutter shapes, designs, locations, physical cutters and compatibility mappings. Local 32 tests and application build passed; live catalog acceptance pending.
+Owner-only catalog creation/editing/search now covers cutter shapes, designs, locations, physical cutters and compatibility mappings. Owner confirmed live shape create/edit/refresh/search. Search now shows matched field labels and highlighted excerpts; local 35 tests and build passed, live highlighting pending.
 
-Next gate: create a test shape, edit it and retrieve it after refresh/search. CC-TODO-006 scalable backups and larger uploads remain next before real inventory. Real samples, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
+Next gate: verify Matched fields after a search; physical cutter/location/mapping live acceptance remains open. CC-TODO-006 scalable backups and larger uploads remain next before real inventory. Real samples, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
 
 ## Restore project context
 

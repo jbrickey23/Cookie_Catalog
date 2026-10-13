@@ -103,3 +103,53 @@ test("literal search resists injection/wildcards and pages without skipping rows
     assert.equal((await handleApiRequest(new Request(origin+"/api/catalog/shapes?offset=-1"),owner,db)).status,400);
   }finally{await runtime.dispose();}
 });
+test("search explains each matching metadata field and preserves the original matched text",async()=>{
+  const {runtime,db}=await env();
+  try {
+    for(const name of ["Tree","Christmas tree","Tree house"])await create(db,"shapes",{name});
+    const hidden=await create(db,"shapes",{name:"TEST Gnome",notes:"A Christmas tree cutter can flip into a gnome.",maker:"Tree Workshop"});
+    const response=await handleApiRequest(new Request(origin+"/api/catalog/shapes?q=tree"),owner,db);
+    const body=await response.json() as any;
+    assert.equal(body.records.length,4);
+    for(const row of body.records) {
+      assert.ok(row.searchHits.length);
+      assert.ok(!Object.keys(row).some(key=>key.startsWith("__search")));
+      for(const hit of row.searchHits)assert.equal(hit.snippet.slice(hit.start,hit.start+hit.length).toLowerCase(),"tree");
+    }
+    const gnome=body.records.find((row:any)=>row.id===hidden.id);
+    assert.deepEqual(gnome.searchHits.map((hit:any)=>hit.field),["notes","maker"]);
+    assert.equal(gnome.searchHits[0].label,"Notes / themes");
+    const all=await handleApiRequest(new Request(origin+"/api/catalog/shapes"),owner,db);
+    assert.ok((await all.json() as any).records.every((row:any)=>row.searchHits.length===0));
+  }finally{await runtime.dispose();}
+});
+test("phrases cannot match across field boundaries; long note hits show bounded safe context",async()=>{
+  const {runtime,db}=await env();
+  try {
+    await create(db,"shapes",{name:"Christmas",notes:"tree"});
+    await create(db,"shapes",{name:"TEST note",notes:"x".repeat(300)+"<script>TrEe</script>"+"y".repeat(300)});
+    const spanning=await handleApiRequest(new Request(origin+"/api/catalog/shapes?q=Christmas%20tree"),owner,db);
+    assert.equal((await spanning.json() as any).records.length,0);
+    const response=await handleApiRequest(new Request(origin+"/api/catalog/shapes?q=tree"),owner,db);
+    const rows=(await response.json() as any).records;
+    const hit=rows.find((row:any)=>row.name==="TEST note").searchHits[0];
+    assert.ok(hit.snippet.length<130);assert.equal(hit.snippet.slice(hit.start,hit.start+hit.length),"TrEe");
+    assert.ok(hit.snippet.startsWith("…"));assert.ok(hit.snippet.endsWith("…"));
+  }finally{await runtime.dispose();}
+});
+test("physical dimensions/location/origin and mapping status explain their own matches",async()=>{
+  const {runtime,db}=await env();
+  try {
+    const shape=await create(db,"shapes",{name:"TEST star"});
+    const design=await create(db,"designs",{name:"TEST holiday"});
+    const location=await create(db,"locations",{label:"Tree drawer"});
+    await create(db,"physical_cutters",{shape_id:shape.id,location_id:location.id,width_mm:90,height_mm:100,quantity:1,origin:"printed"});
+    await create(db,"design_shape_links",{shape_id:shape.id,design_id:design.id,status:"tested",use_type:"flip",mirrored:0});
+    for(const [kind,query,field] of [["physical_cutters","90.0","width_mm"],["physical_cutters","tree","location_label"],["physical_cutters","printed","origin"],["design_shape_links","tested","status"]]) {
+      const response=await handleApiRequest(new Request(origin+"/api/catalog/"+kind+"?q="+query),owner,db);
+      const row=(await response.json() as any).records[0];assert.ok(row);
+      assert.equal(row.searchHits[0].field,field);
+      const hit=row.searchHits[0];assert.equal(hit.snippet.slice(hit.start,hit.start+hit.length).toLowerCase(),query);
+    }
+  }finally{await runtime.dispose();}
+});

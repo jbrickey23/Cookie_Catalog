@@ -5,7 +5,7 @@ Updated: 2026-10-13 UTC. Infrastructure first; stable component IDs and acceptan
 | ID | Component | Current status | Depends on |
 | --- | --- | --- | --- |
 | CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
-| CC-TODO-002 | Database and catalog schema | In progress: core create/edit/search locally verified; live gate pending | 001 |
+| CC-TODO-002 | Database and catalog schema | In progress: live shape create/edit/search passed; search explanations added | 001 |
 | CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; deletion/other types pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
@@ -28,9 +28,9 @@ Purpose: durable structured records supporting cutters, designs and many-to-many
 
 Verified: D1 selected/provisioned for development; DB binding configured. Both migrations applied/tracked; 15 catalog tables plus migration metadata. SQLite schema, foreign-key, size-variant/component and synthetic import tests pass. Owner confirmed demonstration create/link/edit/read across sessions at 90 × 100 mm; live exports retained those records.
 
-Implemented 2026-10-13: Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live catalog deployment and create/edit/search across refresh still need owner acceptance. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
+Implemented 2026-10-13: Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live shape creation/edit/search now owner-confirmed; physical cutter/location/mapping acceptance remains open. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
 
-Remaining: owner verifies new create/edit/search after refresh; refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
+Owner confirmed shape create/edit/refresh/search passed. Search explanations and broader metadata predicates implemented with 35 local tests/build passed; live highlighting pending. Remaining: live physical cutter/location/mapping checks; refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
 
 Done when: a sample cutter and design can be created, linked, edited, searched and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
@@ -92,6 +92,6 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
 
-Verify new CC-TODO-002 create/edit/search live and complete pending CC-TODO-003 deletion/design/STL gates. Continue CC-TODO-006 scalable backups/larger uploads before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
+Verify CC-TODO-002 Matched fields highlighting and remaining physical cutter/location/mapping checks; complete pending CC-TODO-003 deletion/design/STL gates. Continue CC-TODO-006 scalable backups/larger uploads before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
 
 Next unused task ID: **CC-TODO-008**.
