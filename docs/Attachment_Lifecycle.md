@@ -1,6 +1,6 @@
 # CC-TODO-003 — Private attachment lifecycle
 
-Updated: 2026-10-13. Implemented and locally validated with existing D1/R2 schema; live owner acceptance pending.
+Updated: 2026-10-13. Implemented and locally validated with existing D1/R2 schema; live owner photo upload/read verified; deletion/other formats pending.
 
 ## Authorization and browser use
 
@@ -32,4 +32,6 @@ GET /api/attachment-orphans scans 100 objects per page with cursor. Only generat
 
 27 local Node tests passed, including real Miniflare D1/R2 integration: shape photo, design image and STL upload/exact-byte retrieval/link deletion; non-owner/unauthenticated/origin guards; invalid/oversized uploads; missing/corrupt originals; failed object deletion; upload compensation; old/recent/linked orphan handling and pagination; derived-original protection and size-recipe cleanup. SQLite schema/import and TypeScript/Vite frontend/Worker build also passed.
 
-Remaining live gate: after development deployment, owner selects a small synthetic cutter photo/design image/STL, uploads, refreshes/retrieves privately and removes the originals; record actual results. Do not repeat the earlier disposable smoke/recovery checks without a new reason. CC-TODO-003 remains open for that gate and remaining format/quotas/thumbnails/collaborator work.
+Live evidence, 2026-10-13: owner screenshot shows the Private files section deployed, a 2,946,752-byte JPEG linked to DEMO Evergreen tree and present after refresh. Owner confirmed the downloaded photo opens. This verifies owner upload/persistence/retrieval; live deletion, design-image/STL workflows and negative-edge access remain unconfirmed. The photograph was user-provided; do not assume it is a synthetic or licensed-shareable fixture. No photograph or new backup payload is committed to GitHub.
+
+Remaining live gate: design image/STL upload/retrieval and original deletion/refresh, plus denied-access behavior. Record actual results. Do not repeat the earlier disposable smoke/recovery checks without a new reason. CC-TODO-003 remains open for that gate and remaining format/quotas/thumbnails/collaborator work.

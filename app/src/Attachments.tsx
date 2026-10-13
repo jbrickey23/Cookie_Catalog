@@ -89,7 +89,7 @@ export function Attachments() {
   return <section>
     <h2>Private files</h2>
     <p>Choose a cutter shape or design, then keep its photo or original printable file here.</p>
-    <p>Existing records are demonstration examples. Use small test files while development continues.</p>
+    <p>Use small test files while development continues.</p>
     <label>Record type <select value={kind} disabled={busy} onChange={event => select(event.target.value,"")}>
       <option value="shape">Cutter shape</option><option value="design">Decorating design</option>
     </select></label>{" "}

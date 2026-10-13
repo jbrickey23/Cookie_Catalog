@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
+import { Catalog } from "./Catalog";
 
 function App() {
+  const [catalogVersion,setCatalogVersion] = useState(0);
   const [result, setResult] = useState<string>("");
   const [storageResult, setStorageResult] = useState<string>("");
   const [storageBusy, setStorageBusy] = useState(false);
@@ -84,7 +86,9 @@ function App() {
   }
   return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
     <h1>Cookie Catalog</h1>
-    <Attachments />
+    <Catalog onSaved={() => setCatalogVersion(version => version + 1)} />
+    <hr />
+    <Attachments key={catalogVersion} />
     <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>
     <button onClick={checkDatabase} disabled={busy || backupBusy || storageBusy} style={{ padding: "0.7rem 1rem", cursor: busy ? "wait" : "pointer" }}>
@@ -108,7 +112,7 @@ function App() {
     <button onClick={() => downloadBackup(true)} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download file recovery test"}
     </button>
-    <p>General catalog entry and collaborator access remain under development.</p>
+    <p>Collaborator access and production release remain under development.</p>
   </main>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);

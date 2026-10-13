@@ -15,7 +15,7 @@ Canonical source jbrickey23/Cookie_Catalog; active feature/cc-infrastructure-fou
 
 Owner build log proved development deployment of 8122a92 at 2026-10-12T20:38:58Z. Later actual downloads prove newer backup/recovery routes were live, but the exact exporting deployment commit was not independently recorded. Old failed retries cloned main; use current feature-branch builds. Build-project label/preview behavior still needs review.
 
-Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. General catalog CRUD remains unfinished. Owner-only persistent attachment routes and browser controls were implemented 2026-10-13, reusing existing schema/bindings. No migration or resource provisioning required. Local 27 Node tests, SQLite schema/import and type-check/build passed; live deployment and user-upload acceptance still need confirmation.
+Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. Core catalog create/update/read/search implemented locally 2026-10-13; live gate pending. Owner-only persistent attachment routes and browser controls were implemented 2026-10-13, reusing existing schema/bindings. No migration or resource provisioning required. Local 27 Node tests, SQLite schema/import and type-check/build passed; owner screenshot and download confirmation prove photo upload/read deployment; deletion/design/STL remain unconfirmed.
 
 ## Automated validation
 

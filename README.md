@@ -12,9 +12,11 @@ Cloudflare Workers, D1 and private R2 are provisioned for development. Owner aut
 
 The owner placed the timestamped backup folder under personal OneDrive: `Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z`. Cloud sync completion is not yet confirmed. Manual retention of the latest seven normal snapshots remains proposed.
 
-CC-TODO-003 now implements owner-only persistent attachment upload/download and metadata/link deletion, missing-file detection, and manual orphan audit/cleanup. Browser controls select existing shapes/designs; no new migration is needed. Local validation passed: 27 Node tests, SQLite schema/import and frontend/Worker build. Live deployment and owner upload/download/delete acceptance are still pending. Use small synthetic files; maximum 4 MiB per file, while the current backup tool allows only 4 MiB of originals total.
+CC-TODO-003 now implements owner-only persistent attachment upload/download and metadata/link deletion, missing-file detection, and manual orphan audit/cleanup. Browser controls select existing shapes/designs; no new migration is needed. Local validation passed: 27 Node tests, SQLite schema/import and frontend/Worker build. Live owner photo upload/persistence/download passed; deletion and design/STL flows remain unconfirmed. Use small synthetic files; maximum 4 MiB per file, while the current backup tool allows only 4 MiB of originals total.
 
-Next gate: verify this new attachment flow on the development site, then continue CC-TODO-002 general catalog record operations. Real samples, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
+Owner-only catalog creation/editing/search now covers cutter shapes, designs, locations, physical cutters and compatibility mappings. Local 32 tests and application build passed; live catalog acceptance pending.
+
+Next gate: create a test shape, edit it and retrieve it after refresh/search. CC-TODO-006 scalable backups and larger uploads remain next before real inventory. Real samples, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
 
 ## Restore project context
 

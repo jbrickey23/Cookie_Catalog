@@ -1,5 +1,6 @@
 import { checkDevelopmentStorage } from "./server/development-storage-check";
 import { handleAttachments } from "./server/attachments";
+import { handleCatalog } from "./server/catalog";
 import { BackupError, createDevelopmentBackup } from "./server/development-backup";
 import { createDevelopmentRecoveryCheck } from "./server/development-recovery-check";
 import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
@@ -14,6 +15,14 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   const user = await verifier.verify(request);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if (pathname.startsWith("/api/catalog/")) {
+    if (user.role !== "owner") return json({ error: "Owner access required" }, 403);
+    if (!["GET","POST","PUT"].includes(request.method)) return json({ error: "Method not allowed" }, 405);
+    if (request.method !== "GET" && (request.headers.get("Origin") !== new URL(request.url).origin
+        || request.headers.get("X-Cookie-Catalog-Check") !== "catalog")) return json({ error: "Same-origin catalog request required" },403);
+    if (!database) return json({ error: "Catalog database unavailable" },503);
+    return handleCatalog(request,database);
+  }
   if (pathname === "/api/attachment-targets" || pathname === "/api/attachments" || pathname.startsWith("/api/attachments/")
       || pathname === "/api/attachment-orphans" || pathname.startsWith("/api/attachment-orphans/")) {
     // Current catalog has one owner. Collaborator authorization is not enabled.

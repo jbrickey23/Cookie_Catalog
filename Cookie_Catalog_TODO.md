@@ -5,8 +5,8 @@ Updated: 2026-10-13 UTC. Infrastructure first; stable component IDs and acceptan
 | ID | Component | Current status | Depends on |
 | --- | --- | --- | --- |
 | CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
-| CC-TODO-002 | Database and catalog schema | In progress: dev schema/linked smoke passed | 001 |
-| CC-TODO-003 | File and image storage | In progress: persistent operations locally validated; live acceptance pending | 001/002 |
+| CC-TODO-002 | Database and catalog schema | In progress: core create/edit/search locally verified; live gate pending | 001 |
+| CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; deletion/other types pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
 | CC-TODO-006 | Backup, export and recovery | In progress: live sample exports restored locally | 002/003 |
@@ -28,7 +28,9 @@ Purpose: durable structured records supporting cutters, designs and many-to-many
 
 Verified: D1 selected/provisioned for development; DB binding configured. Both migrations applied/tracked; 15 catalog tables plus migration metadata. SQLite schema, foreign-key, size-variant/component and synthetic import tests pass. Owner confirmed demonstration create/link/edit/read across sessions at 90 × 100 mm; live exports retained those records.
 
-Remaining: refine required/optional fields, ownership, deletion and known/proposed mappings with real samples; implement general application create/edit/search/retrieve; preserve reproducible migrations, units and stable IDs; plan production separation and migrations. Choice/cost rationale is in architecture notes.
+Implemented 2026-10-13: Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live catalog deployment and create/edit/search across refresh still need owner acceptance. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
+
+Remaining: owner verifies new create/edit/search after refresh; refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
 
 Done when: a sample cutter and design can be created, linked, edited, searched and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
@@ -40,7 +42,7 @@ Verified: private R2 provisioned, FILES binding and adapter/lifecycle design imp
 
 Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; maximum 4 MiB/file with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
 
-Remaining: verify development deployment and owner-selected photo/design/STL upload, refresh/retrieval, deletion and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Backup tool still caps originals at 4 MiB total/25 objects. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
+Verified live owner photo upload/refresh/download on 2026-10-13; deletion is still unconfirmed. Remaining: design/STL flows, deletion and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Backup tool still caps originals at 4 MiB total/25 objects. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
 
 Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -90,6 +92,6 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
 
-Verify new CC-TODO-003 persistent operations live, then continue CC-TODO-002 general record CRUD. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
+Verify new CC-TODO-002 create/edit/search live and complete pending CC-TODO-003 deletion/design/STL gates. Continue CC-TODO-006 scalable backups/larger uploads before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
 
 Next unused task ID: **CC-TODO-008**.

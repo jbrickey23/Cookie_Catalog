@@ -2,6 +2,14 @@
 
 Updated: 2026-10-13 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
 
+## 2026-10-13 — Catalog continuation and live photo evidence (routine engineering)
+
+Live evidence, 2026-10-13: owner screenshot shows the Private files section deployed, a 2,946,752-byte JPEG linked to DEMO Evergreen tree and present after refresh. Owner confirmed the downloaded photo opens. This verifies owner upload/persistence/retrieval; live deletion, design-image/STL workflows and negative-edge access remain unconfirmed. The photograph was user-provided; do not assume it is a synthetic or licensed-shareable fixture. No photograph or new backup payload is committed to GitHub.
+
+Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live catalog deployment and create/edit/search across refresh still need owner acceptance. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
+
+The 4 MiB total/25-object development backup cap and 4 MiB/file upload cap are temporary application limits, not intended catalog capacity. Scalable backup/upload engineering remains required before real inventory; no paid resource or production change approved by this continuation.
+
 ## 2026-10-13 — Routine engineering continuation (no new architecture approval)
 
 Reinitialized from current GitHub main and draft PR #1; main is stale bootstrap, active development head was 3afb30d. No AGENTS.md found. Same-conversation/history-assisted restoration does not close CC-TODO-001. User explicitly requested continuation.
