@@ -1,6 +1,6 @@
 # CC-TODO-006 — Backup and recovery
 
-Updated: 2026-10-12 UTC. Development sample export/local recovery verified; operational durability and production recovery remain incomplete.
+Updated: 2026-10-13 UTC. Development sample export/local recovery verified; operational durability and production recovery remain incomplete.
 
 ## Storage and traceability
 
@@ -31,6 +31,10 @@ Both restored SQLite integrity/foreign keys and migrations 0001/0002. Normal sna
 - STL: `ffbc8ebbe3d181026a1e97f5422795de981870b52492f667cdd95095bb8dccbf`
 
 Recovery envelope reported filesVerified=2 and cleanupVerified=true. Server code only returns after request-scoped D1/R2 cleanup verification. This is server-reported cleanup evidence, not an additional later bucket inspection. All inspected content was synthetic; no payloads were committed to GitHub.
+
+## Attachment continuation — 2026-10-13
+
+Persistent owner attachment uploads are implemented with existing schema and generated keys, so registered originals are included by this exporter. Live user-upload export/restore acceptance is not yet recorded. Per-file upload limit is 4 MiB, but this bounded backup still allows 4 MiB originals total and 25 objects: do not assume any accepted catalog upload guarantees a complete backup will fit. Export only while mutations are idle; pending/missing uploads deliberately cause export failure rather than an incomplete successful package. Retain a private backup before removing originals. Local regression validation now passes 27 Node tests plus schema/import/type-check/build.
 
 ## Browser export
 

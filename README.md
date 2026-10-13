@@ -2,7 +2,7 @@
 
 A private catalog for a cookie decorating business: find designs by theme, identify compatible cutters, and retrieve physical locations or original printable files. Known flips and many-to-many design/cutter mappings are part of the intended workflow.
 
-## Current checkpoint — 2026-10-12
+## Current checkpoint — 2026-10-13
 
 Canonical source: [jbrickey23/Cookie_Catalog](https://github.com/jbrickey23/Cookie_Catalog). The repository is public; operational data, purchased originals, credentials and full backups stay private.
 
@@ -12,7 +12,9 @@ Cloudflare Workers, D1 and private R2 are provisioned for development. Owner aut
 
 The owner placed the timestamped backup folder under personal OneDrive: `Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z`. Cloud sync completion is not yet confirmed. Manual retention of the latest seven normal snapshots remains proposed.
 
-Next engineering work: **CC-TODO-003**, persistent private attachment upload/download, metadata and deletion/orphan handling. Real samples, general catalog CRUD, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
+CC-TODO-003 now implements owner-only persistent attachment upload/download and metadata/link deletion, missing-file detection, and manual orphan audit/cleanup. Browser controls select existing shapes/designs; no new migration is needed. Local validation passed: 27 Node tests, SQLite schema/import and frontend/Worker build. Live deployment and owner upload/download/delete acceptance are still pending. Use small synthetic files; maximum 4 MiB per file, while the current backup tool allows only 4 MiB of originals total.
+
+Next gate: verify this new attachment flow on the development site, then continue CC-TODO-002 general catalog record operations. Real samples, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
 
 ## Restore project context
 

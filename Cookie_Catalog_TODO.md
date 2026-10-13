@@ -1,12 +1,12 @@
 # Cookie_Catalog — TODO
 
-Updated: 2026-10-12 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
+Updated: 2026-10-13 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
 
 | ID | Component | Current status | Depends on |
 | --- | --- | --- | --- |
 | CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
 | CC-TODO-002 | Database and catalog schema | In progress: dev schema/linked smoke passed | 001 |
-| CC-TODO-003 | File and image storage | In progress: next engineering task | 001/002 |
+| CC-TODO-003 | File and image storage | In progress: persistent operations locally validated; live acceptance pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
 | CC-TODO-006 | Backup, export and recovery | In progress: live sample exports restored locally | 002/003 |
@@ -38,7 +38,9 @@ Purpose: retain photos, artwork, STL and 3MF originals alongside records.
 
 Verified: private R2 provisioned, FILES binding and adapter/lifecycle design implemented. Owner's three-file smoke test passed with cleanup; screenshot showed public access disabled and empty bucket afterward. Actual recovery export/local restore verified a tiny PNG and STL with metadata and record links.
 
-Next: implement persistent authorized upload/download, stable attachment IDs/keys/metadata, supported formats/limits, originals versus thumbnails, missing-file detection, deletion and orphan handling. Disposable server-generated smoke fixtures do not establish general user attachment support. Preserve privacy, cost and portability rationale.
+Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; maximum 4 MiB/file with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
+
+Remaining: verify development deployment and owner-selected photo/design/STL upload, refresh/retrieval, deletion and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Backup tool still caps originals at 4 MiB total/25 objects. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
 
 Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -88,6 +90,6 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
 
-Continue CC-TODO-003. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
+Verify new CC-TODO-003 persistent operations live, then continue CC-TODO-002 general record CRUD. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
 
 Next unused task ID: **CC-TODO-008**.

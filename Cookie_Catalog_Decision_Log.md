@@ -1,6 +1,12 @@
 # Cookie_Catalog — Decision Log
 
-Updated: 2026-10-12 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
+Updated: 2026-10-13 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
+
+## 2026-10-13 — Routine engineering continuation (no new architecture approval)
+
+Reinitialized from current GitHub main and draft PR #1; main is stale bootstrap, active development head was 3afb30d. No AGENTS.md found. Same-conversation/history-assisted restoration does not close CC-TODO-001. User explicitly requested continuation.
+
+Implemented owner-only persistent attachments with existing schema, generated keys, exact-byte/hash downloads, same-origin mutations, confirmed deletion and retryable cleanup. Metadata-first upload and a bounded manual audit address interrupted operations; unlinked generated objects younger than 24 hours are protected. File limit four MiB, lightweight format headers, owner-wide catalog permission until collaborator roles exist. Existing backup cap remains four MiB total; no production or extra resources. Local 27 tests plus schema/import/type-check/build passed; live acceptance remains pending. See Attachment_Lifecycle and TODO for remaining checks.
 
 ## Current implementation reconciliation
 
@@ -8,7 +14,7 @@ CC-DEC-011 selected Cloudflare Workers, D1 and private R2. The owner subsequentl
 
 CC-DEC-004/005: the single source repository/layout is implemented, and GitHub-connected development deployment is evidenced. CC-DEC-006: feature branch/PR and CI exist; main-release protection, deployment and rollback acceptance remain open. CC-DEC-007: remote restoration/readback passed with history assistance; a strict independent fresh-chat test remains pending.
 
-Owner access, synthetic database/storage checks and actual browser export/local restoration passed. Code 40ab108 passed CI #97 with 20 Node tests plus SQLite/type-check/build; pre-reconciliation head 330ca8a passed CI #105. General CRUD, persistent attachments, collaborator access, Cloudflare-side restore and production readiness are unfinished. Real samples have not been supplied. The owner deferred live alternate-email denial testing and parked residual Windows Defender remediation.
+Owner access, synthetic database/storage checks and actual browser export/local restoration passed. Code 40ab108 passed CI #97 with 20 Node tests plus SQLite/type-check/build; pre-reconciliation head 330ca8a passed CI #105. General CRUD, collaborator access, Cloudflare-side restore and production readiness are unfinished. Persistent owner attachments are now implemented and locally tested; live acceptance remains pending. Real samples have not been supplied. The owner deferred live alternate-email denial testing and parked residual Windows Defender remediation.
 
 ## 2026-10-12 — CC-DEC-012 — Private dated backup handoff
 

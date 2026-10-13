@@ -1,4 +1,5 @@
 import { checkDevelopmentStorage } from "./server/development-storage-check";
+import { handleAttachments } from "./server/attachments";
 import { BackupError, createDevelopmentBackup } from "./server/development-backup";
 import { createDevelopmentRecoveryCheck } from "./server/development-recovery-check";
 import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
@@ -13,6 +14,18 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   const user = await verifier.verify(request);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if (pathname === "/api/attachment-targets" || pathname === "/api/attachments" || pathname.startsWith("/api/attachments/")
+      || pathname === "/api/attachment-orphans" || pathname.startsWith("/api/attachment-orphans/")) {
+    // Current catalog has one owner. Collaborator authorization is not enabled.
+    if (user.role !== "owner") return json({ error: "Owner access required" }, 403);
+    if (!["GET", "POST", "DELETE"].includes(request.method)) return json({ error: "Method not allowed" }, 405);
+    if (request.method !== "GET" && (request.headers.get("Origin") !== new URL(request.url).origin
+        || request.headers.get("X-Cookie-Catalog-Check") !== "attachments")) {
+      return json({ error: "Same-origin attachment request required" }, 403);
+    }
+    if (!database || !files) return json({ error: "Attachment resources unavailable" }, 503);
+    return handleAttachments(request, database, files);
+  }
   if (pathname === "/api/dev/backup" || pathname === "/api/dev/recovery-check") {
     const recoveryCheck = pathname === "/api/dev/recovery-check";
     if (user.role !== "owner") return json({ error: "Owner access required" }, 403);
@@ -74,7 +87,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       return json({ error: "Development storage verification or cleanup failed" }, 503);
     }
   }
-  // No catalog or attachment operation is enabled by the authentication smoke test.
+  // General catalog CRUD and collaborator membership remain unavailable.
   return json({ error: "Catalog API unavailable until membership and storage validation are complete" }, 503);
 }
 export default {
@@ -87,4 +100,3 @@ export default {
     return env.ASSETS.fetch(request);
   }
 } satisfies ExportedHandler<Env>;
-

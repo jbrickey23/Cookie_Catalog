@@ -1,6 +1,6 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
-Updated: 2026-10-12 UTC. Development deployed; production and rollback acceptance pending.
+Updated: 2026-10-13 UTC. Development deployed; production and rollback acceptance pending.
 
 ## Current development configuration
 
@@ -15,7 +15,7 @@ Canonical source jbrickey23/Cookie_Catalog; active feature/cc-infrastructure-fou
 
 Owner build log proved development deployment of 8122a92 at 2026-10-12T20:38:58Z. Later actual downloads prove newer backup/recovery routes were live, but the exact exporting deployment commit was not independently recorded. Old failed retries cloned main; use current feature-branch builds. Build-project label/preview behavior still needs review.
 
-Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. General catalog CRUD and persistent user attachments remain unfinished.
+Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. General catalog CRUD remains unfinished. Owner-only persistent attachment routes and browser controls were implemented 2026-10-13, reusing existing schema/bindings. No migration or resource provisioning required. Local 27 Node tests, SQLite schema/import and type-check/build passed; live deployment and user-upload acceptance still need confirmation.
 
 ## Automated validation
 

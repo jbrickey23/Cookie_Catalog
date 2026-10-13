@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
+import { Attachments } from "./Attachments";
 
 function App() {
   const [result, setResult] = useState<string>("");
@@ -83,6 +84,8 @@ function App() {
   }
   return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
     <h1>Cookie Catalog</h1>
+    <Attachments />
+    <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>
     <button onClick={checkDatabase} disabled={busy || backupBusy || storageBusy} style={{ padding: "0.7rem 1rem", cursor: busy ? "wait" : "pointer" }}>
       {busy ? "Checking…" : "Check development database"}
@@ -105,8 +108,7 @@ function App() {
     <button onClick={() => downloadBackup(true)} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download file recovery test"}
     </button>
-    <p>Catalog entry and file uploads will be enabled after the remaining infrastructure checks.</p>
+    <p>General catalog entry and collaborator access remain under development.</p>
   </main>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);
-
