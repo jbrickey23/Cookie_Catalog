@@ -6,6 +6,7 @@ import { BackupError, createDevelopmentBackup } from "./server/development-backu
 import { createDevelopmentRecoveryCheck } from "./server/development-recovery-check";
 import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
 import {inspectInfrastructure} from "./server/infrastructure-check";
+import {checkMissingFileRecovery} from "./server/development-missing-file-check";
 
 export interface Env extends AccessConfiguration { ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
 function json(value: unknown, status = 200): Response {
@@ -17,6 +18,14 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   const user = await verifier.verify(request);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if(pathname === "/api/dev/missing-file-check") {
+    if(user.role!=="owner")return json({error:"Owner access required"},403);
+    if(request.method!=="POST")return json({error:"Method not allowed"},405);
+    if(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="missing-file")return json({error:"Same-origin check required"},403);
+    if(!database||!files)return json({error:"Development bindings unavailable"},503);
+    try{return json(await checkMissingFileRecovery(database,files));}
+    catch{return json({error:"Missing-file test or fixture cleanup failed. Stop testing and review development fixtures."},503);}
+  }
   if(pathname === "/api/dev/infrastructure-check") {
     if(user.role !== "owner")return json({error:"Owner access required"},403);
     if(request.method !== "GET")return json({error:"Method not allowed"},405);
