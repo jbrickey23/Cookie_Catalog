@@ -8,7 +8,7 @@ Status: prepared, not executed. Local original-containing archive restoration an
 
 Proposed dedicated targets: D1 `cookie-catalog-recovery-20261014` and private R2 `cookie-catalog-recovery-20261014-private`. These are proposals, not existing/verified resources. Inventory account capacity and obtain the separate new-resource authorization before creation. No Worker or credential needs to be created for the data/object comparison gate. Do not change the running development Worker's bindings. Keep targets for review; do not auto-delete them.
 
-The current browser reaches Cloudflare sign-in; no signed-in inventory is available yet. This supersedes the earlier 403 observation below without claiming successful authentication. No Cloudflare plugin was returned by the integration directory search. Existing owner Windows Wrangler remediation remains parked.
+The browser reached Cloudflare sign-in, then the secure sign-in attempt returned API Request Failed: POST /api/v4/login (403). No authenticated inventory is available; stop this browser attempt. Both GitHub Actions runs 38645828796 and 38645836608 passed for tooling commit 15302ec. No Cloudflare plugin was returned by the integration directory search. Existing owner Windows Wrangler remediation remains parked.
 
 ### Prepare privately
 
