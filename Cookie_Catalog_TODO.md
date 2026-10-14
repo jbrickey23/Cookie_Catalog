@@ -1,12 +1,18 @@
 # Cookie_Catalog — TODO
 
+## Current checkpoint — 2026-10-14, 19:35 UTC
+
+Controlled missing-original recovery passed live on ec8f864: 200 → missing 409 with metadata/link retained → restored 200 with matching bytes → verified fixture cleanup. Existing catalog counts and the retained 5.4 MB STL stayed unchanged. 49 tests/build, GitHub CI and Workers Builds passed.
+
+Next: CC-TODO-004 development code-rollback/intended-device acceptance; checklist prepared, drill not run. Cloudflare-side full restore, collaborator access and representative samples remain open. Keep OneNote/photo/Canva deferred and the alternate-email test parked. Details: docs/Missing_File_Recovery_Check.md and docs/Development_Rollback_Acceptance.md.
+
 ## Latest acceptance — 2026-10-14
 
 Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
 
 Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
 
-Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+The controlled live missing-original detection/recovery gate subsequently passed using a unique disposable fixture; see current acceptance above. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
 
 Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
 
@@ -14,7 +20,7 @@ Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptan
 | --- | --- | --- | --- |
 | CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
 | CC-TODO-002 | Database and catalog schema | In progress: live shape create/edit/search passed; search explanations added | 001 |
-| CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; design/STL retrieval and approved deletion passed; controlled missing-original gate pending | 001/002 |
+| CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; design/STL retrieval and approved deletion passed; controlled missing-original recovery passed | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
 | CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing/original-file gate pending | 002/003 |
@@ -50,7 +56,7 @@ Verified: private R2 provisioned, FILES binding and adapter/lifecycle design imp
 
 Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; initial 4 MiB/file limit (now increased to 25 MiB) with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
 
-Verified live owner photo upload/refresh/download on 2026-10-13; approved synthetic deletion passed 2026-10-14; controlled missing-original gate remains. Live synthetic design PNG and 5400084-byte STL upload/refresh/download passed byte-identically on 2026-10-14. Remaining: controlled live missing-original acceptance and private denial behavior; approved synthetic deletion passed; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/retrieval passed; original-containing TAR local restore passed; Cloudflare restore pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
+Verified live owner photo upload/refresh/download on 2026-10-13; approved synthetic deletion passed 2026-10-14; controlled missing-original gate remains. Live synthetic design PNG and 5400084-byte STL upload/refresh/download passed byte-identically on 2026-10-14. Controlled missing-original live acceptance and approved synthetic deletion passed. Remaining: intended collaborator/private-denial behavior; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/retrieval passed; original-containing TAR local restore passed; Cloudflare restore pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
 
 Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -104,7 +110,7 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 1. CC-TODO-004 current deployment proof passed: deployed 2939565 matched GitHub; current D1/R2 report passed. Preserve broader release/rollback/intended-device gates.
 2. CC-TODO-002 synthetic location/physical cutter/design/mapping create/edit/refresh/search/retrieve passed. Preserve broader real-sample/field/schema acceptance.
-3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Next: controlled missing-original live detection/recovery with metadata retained.
+3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Controlled missing-original live detection/recovery subsequently passed. Next: CC-TODO-004 development rollback/intended-device acceptance.
 4. Then continue CC-TODO-006 isolated Cloudflare restore/operational durability, 005 intended collaborator readiness and 007 representative samples.
 5. Only afterward resume deferred 008–011. No OneNote export/access, image extraction or Canva integration is the current prerequisite.
 
@@ -151,3 +157,7 @@ Status: Deferred; discovery/prototype; depends on example Canva design and cutte
 - Done when one sample outline has a reviewed, dimensioned SVG and a documented viable or rejected integration route.
 
 Next unused task ID: CC-TODO-012. These tasks do not precede CC-TODO-002/003/004 acceptance.
+
+## Ongoing user documentation
+
+Maintain docs/User_Companion.md alongside user-visible changes. First version is implemented, linked from README and reviewed against current controls/server search fields. Keep technical evidence/runbooks distinct, avoid promising unavailable features, and include owner review/intended-device usability in acceptance. This is continuing documentation within existing component tasks, not a replacement priority or a new task ID.

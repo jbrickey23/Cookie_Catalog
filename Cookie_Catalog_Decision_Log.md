@@ -1,12 +1,22 @@
 # Cookie_Catalog — Decision Log
 
+## Current acceptance — 2026-10-14, 19:35 UTC
+
+The controlled missing-original live gate now passed on deployed commit ec8f8640799bbdb2f3df4153f8fe4fca582443df. A unique synthetic photo returned 200 initially, 409 after only its R2 bytes were removed, and 200 after trusted bytes were restored. Listing marked it unavailable during loss; attachment metadata, checksum and shape link survived. Its record, metadata/link and object were then removed and cleanup verified. Existing catalog records and originals were preserved.
+
+Post-test authenticated verification: both migrations, 16 tables, zero foreign-key violations; original catalog counts stayed 2 shapes/2 designs/2 physical cutters/2 mappings; one original remained in R2. The retained 5400084-byte test STL downloaded with its unchanged SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7. The earlier approved two attachment identities remain deleted; no new missing-test fixture remains.
+
+49 Node tests, TypeScript/frontend/Worker build, GitHub Actions 38624720682/38624732060 and Workers Builds passed for ec8f864. Live result, scope and cleanup behavior: docs/Missing_File_Recovery_Check.md; sanitized runtime evidence: docs/evidence/Infrastructure_20261014_missing_recovery.json.
+
+Current next prerequisite is CC-TODO-004 development code-rollback acceptance and intended-device checks. A development-only rollback checklist is prepared in docs/Development_Rollback_Acceptance.md; no rollback or production release has run. CC-TODO-006 isolated Cloudflare restore/operational durability, 005 intended-user access and 007 representative samples remain open. OneNote 008/009, photo extraction 010 and Canva 011 remain deferred. No new resources/cost/security changes; preserve the deferred alternate-email test.
+
 ## Latest acceptance — 2026-10-14
 
 Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
 
 Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
 
-Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+The controlled live missing-original detection/recovery gate subsequently passed using a unique disposable fixture; see current acceptance above. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
 
 Updated: 2026-10-14 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
 
@@ -126,3 +136,7 @@ Status: user direction. The user has sample cutters to seed development. Samples
 ## 2026-10-12 — CC-DEC-001 — Project identity and durable bootstrap
 
 Status: user approved. Name the project Cookie_Catalog and bootstrap its already-created GitHub repository. Repository verified as jbrickey23/Cookie_Catalog, default branch main. Initial repository was empty. Follow the established Context/TODO/Decision Log/New Chat Bootstrap Prompt convention.
+
+## 2026-10-14 — User documentation companion (routine documentation)
+
+Owner asked whether a user-facing documentation companion was being generated. Existing documents were technical/runbook-oriented, so docs/User_Companion.md was added and linked from README. It covers current catalog terms/workflows, search matches and metadata boundaries, files/removal/missing originals, backup choices/recovery, development controls and unavailable future work. Maintain it alongside user-visible changes; no new architecture decision/task ID, resources or costs.

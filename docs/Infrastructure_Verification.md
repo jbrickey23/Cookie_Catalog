@@ -1,5 +1,15 @@
 # CC-TODO-002/003/004 — Development verification
 
+## Current acceptance — 2026-10-14, 19:35 UTC
+
+The controlled missing-original live gate now passed on deployed commit ec8f8640799bbdb2f3df4153f8fe4fca582443df. A unique synthetic photo returned 200 initially, 409 after only its R2 bytes were removed, and 200 after trusted bytes were restored. Listing marked it unavailable during loss; attachment metadata, checksum and shape link survived. Its record, metadata/link and object were then removed and cleanup verified. Existing catalog records and originals were preserved.
+
+Post-test authenticated verification: both migrations, 16 tables, zero foreign-key violations; original catalog counts stayed 2 shapes/2 designs/2 physical cutters/2 mappings; one original remained in R2. The retained 5400084-byte test STL downloaded with its unchanged SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7. The earlier approved two attachment identities remain deleted; no new missing-test fixture remains.
+
+49 Node tests, TypeScript/frontend/Worker build, GitHub Actions 38624720682/38624732060 and Workers Builds passed for ec8f864. Live result, scope and cleanup behavior: docs/Missing_File_Recovery_Check.md; sanitized runtime evidence: docs/evidence/Infrastructure_20261014_missing_recovery.json.
+
+Current next prerequisite is CC-TODO-004 development code-rollback acceptance and intended-device checks. A development-only rollback checklist is prepared in docs/Development_Rollback_Acceptance.md; no rollback or production release has run. CC-TODO-006 isolated Cloudflare restore/operational durability, 005 intended-user access and 007 representative samples remain open. OneNote 008/009, photo extraction 010 and Canva 011 remain deferred. No new resources/cost/security changes; preserve the deferred alternate-email test.
+
 ## Latest acceptance — 2026-10-14, 19:27 UTC
 
 User explicitly approved removal of the two TEST_ONLY originals. Both original attachment identities (synthetic design PNG and 5400084-byte STL) were removed through the confirmed UI; success was reported and both record file lists stayed empty after reload. Server deletion confirms R2 object absence before removing metadata; current report at that point sampled zero originals. A direct old-download navigation was blocked by this browser client, so it does not independently prove an HTTP 404. Live detection of an unexpectedly missing R2 object while metadata remains is still untested; Miniflare tests cover the missing/corrupt/failed-delete cases.
@@ -12,7 +22,7 @@ Implementation 1ea5c0eb28f6b57078ddd90bd055627610fbf1fd passed 45 local Node tes
 
 Live small-TAR download and clean local restore passed: Cookie_Catalog_Recovery_20261014T192755Z.tar, 5413888 archive bytes, SHA-256 7b1b84faa65c55deff0ee29673083e118b9f0371bd5c8513cacaeb2be88b1577. Restored 16 tables, 14 rows, one 5400084-byte original; SQLite integrity/FKs, completion receipt, exact original bytes and shape/printable-asset relationships passed. Original SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7. Private recovery archive retained separately; no payload/database/original is in GitHub. CC-TODO-006 stays open for independent cloud sync/retention, isolated Cloudflare restore and operational recovery/scale.
 
-Next unmet CC-TODO-003 live gate: controlled missing-original detection/recovery with metadata retained. No live fault-injection route or independent R2-console session is available; do not delete owner files or infer it passed from successful normal deletion. Preserve owner-deferred alternate-email testing. Then continue intended-user/release/representative-sample and Cloudflare recovery gates. OneNote 008/009, photo extraction 010 and Canva 011 remain deferred.
+The subsequent controlled CC-TODO-003 missing-original live check passed; see current acceptance above. Normal deletion was not substituted for that evidence. Preserve owner-deferred alternate-email testing. Then continue intended-user/release/representative-sample and Cloudflare recovery gates. OneNote 008/009, photo extraction 010 and Canva 011 remain deferred.
 
 Updated 2026-10-14. Current priority; OneNote 008/009, photo extraction 010 and Canva 011 remain deferred.
 
@@ -21,7 +31,7 @@ Updated 2026-10-14. Current priority; OneNote 008/009, photo extraction 010 and 
 | GitHub | Canonical public repo, active draft PR/branch, source writes/readbacks, CI | Passed: deployed 2939565 matched GitHub; later code deployments need their own report |
 | Workers/Access | Owner login/session, live UI/routes/downloads; fresh owner-authenticated report | Passed: owner-authenticated report; broader release/rollback gates remain |
 | D1 | Migrations 0001/0002, 16 tables, synthetic linked edit/read, live shape UI and archive restoration | Passed: fresh migrations/FKs and synthetic location/physical cutter/design/mapping UI |
-| R2 | Public Access Disabled screenshot, disposable round-trip/cleanup, live photo upload/download | Passed: two originals sampled, PNG/STL byte-identical retrieval; approved deletion passed; controlled missing-original live gate remains |
+| R2 | Public Access Disabled screenshot, disposable round-trip/cleanup, live photo upload/download | Passed: two originals sampled, PNG/STL byte-identical retrieval; approved deletion and controlled missing-original live recovery passed |
 | Owner Windows | Node v24.21.0, npm.cmd 11.19.0 | Local Wrangler registry download still Defender-blocked; parked, not a prerequisite for dashboard/GitHub flow |
 | Assistant runtime | Linux Node v24.19.0, local tests/build | Does not verify owner PC |
 
@@ -37,7 +47,7 @@ Compare reported commit with the exact feature-branch commit intended for deploy
 
 1. Preserve the passed exact deployment and current read-only report for commit 2939565.
 2. Preserve the passed synthetic catalog UI and persistent PNG/STL checks below.
-3. Approved synthetic deletion passed. Next: CC-TODO-003 controlled live missing-original detection/recovery with metadata retained; leave owner content intact.
+3. Approved synthetic deletion passed. Controlled live missing-original detection/recovery passed; continue CC-TODO-004 development rollback/intended-device acceptance.
 4. Original-containing TAR local restore/larger upload passed. Continue isolated Cloudflare restore and operational durability under 006, intended collaborator readiness under 005 and representative samples under 007.
 5. Defer 008–011 until these foundations are accepted.
 
@@ -45,7 +55,7 @@ Live acceptance 2026-10-14: owner-authenticated browser report at 19:20:11.841Z 
 
 Live browser 2026-10-14: created and edited labelled TEST Infrastructure 20261014 location, design, physical cutter and proposed flip mapping, then reloaded/searched/retrieved them. Cutter retained 91 x 101 mm, quantity 3, printed origin and linked test shelf. Mapping retained design/shape, proposed flip, edited instructions, rotation 180, mirror Yes, width 90–95 mm. Search identified the matching notes/instructions. Existing demonstration records were preserved. Test records remain in development; record deletion is unavailable.
 
-Live persistent file acceptance 2026-10-14: synthetic design PNG (1944 bytes, SHA-256 b176ff52e49f3b96495aebeae0a546b5b9fe8ce7ff47d6560438a28d618ced71) and synthetic STL (5400084 bytes, SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7) uploaded, survived full refresh, and downloaded byte-identically. This passes live >4 MiB upload/retrieval, not original-containing TAR recovery. The original two synthetic attachment identities were subsequently deleted with approval; one newly uploaded STL remains for successful TAR recovery evidence. Controlled missing-original live acceptance remains open.
+Live persistent file acceptance 2026-10-14: synthetic design PNG (1944 bytes, SHA-256 b176ff52e49f3b96495aebeae0a546b5b9fe8ce7ff47d6560438a28d618ced71) and synthetic STL (5400084 bytes, SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7) uploaded, survived full refresh, and downloaded byte-identically. This passes live >4 MiB upload/retrieval, not original-containing TAR recovery. The original two synthetic attachment identities were subsequently deleted with approval; one newly uploaded STL remains for successful TAR recovery evidence. Controlled missing-original live acceptance subsequently passed.
 
 Local 43 tests and application build passed, including real Miniflare preservation/missing-migration/missing-file and owner/method guards. Read-only report saved at docs/evidence/Infrastructure_20261014.json. Synthetic metadata/files remain in development; no payload is committed to GitHub.
 
