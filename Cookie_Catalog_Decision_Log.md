@@ -1,6 +1,56 @@
 # Cookie_Catalog — Decision Log
 
-Newest first. Record selection separately from implementation and validation.
+Updated: 2026-10-14 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
+
+## 2026-10-14 — CC-DEC-013 — Restore infrastructure acceptance as current priority
+
+User explicitly directed reconciliation of the October 14 handoff: OneNote migration (008/009), photo metadata extraction (010) and Canva (011) are future work. Preserve their original IDs/criteria from main, defer them, and resume CC-TODO-002/003/004. The main TODO's 008 NEXT label was sequencing drift, not authorization to abandon infrastructure acceptance.
+
+Preserve completed development provisioning/checks. Earliest unverified checkpoint is exact deployed source provenance/current authenticated Worker-D1-R2 report, followed by remaining linked cutter/design/location and persistent file acceptance. Existing owner Windows Node/npm.cmd verification stands; Defender-blocked Wrangler remediation remains parked. Browser/GitHub deployment is usable. Original-containing TAR recovery remains followup, not immediate priority.
+
+Prepared read-only owner infrastructure report and build source SHA; 43 local tests/build passed. Remote browser currently at Access sign-in; live authenticated report and current deployed commit are unverified. Main receives only reconciled durable notes, not application merge/release. No costs/resources/production/security changes authorized. Broader privacy and deferred access-test boundaries remain.
+
+## 2026-10-14 — Larger development recovery and verified highlighting (routine engineering)
+
+2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+
+Free Worker CPU/subrequest limits informed browser archive assembly and separate original requests. Existing D1/R2 and owner authorization reused; no provisioning or plan upgrade. Practical larger recovery remains development-gated until live saving/restoration passes. CC-TODO-006 is not closed; storage/sync/retention and production consistency require further verification.
+
+## 2026-10-13 — Catalog continuation and live photo evidence (routine engineering)
+
+Live evidence, 2026-10-13: owner screenshot shows the Private files section deployed, a 2,946,752-byte JPEG linked to DEMO Evergreen tree and present after refresh. Owner confirmed the downloaded photo opens. This verifies owner upload/persistence/retrieval; live deletion, design-image/STL workflows and negative-edge access remain unconfirmed. The photograph was user-provided; do not assume it is a synthetic or licensed-shareable fixture. No photograph or new backup payload is committed to GitHub.
+
+Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live catalog deployment and create/edit/search across refresh still need owner acceptance. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
+
+The 4 MiB total/25-object development backup cap and 4 MiB/file upload cap are temporary application limits, not intended catalog capacity. Scalable backup/upload engineering remains required before real inventory; no paid resource or production change approved by this continuation.
+
+## 2026-10-13 — Routine engineering continuation (no new architecture approval)
+
+Reinitialized from current GitHub main and draft PR #1; main is stale bootstrap, active development head was 3afb30d. No AGENTS.md found. Same-conversation/history-assisted restoration does not close CC-TODO-001. User explicitly requested continuation.
+
+Implemented owner-only persistent attachments with existing schema, generated keys, exact-byte/hash downloads, same-origin mutations, confirmed deletion and retryable cleanup. Metadata-first upload and a bounded manual audit address interrupted operations; unlinked generated objects younger than 24 hours are protected. File limit four MiB, lightweight format headers, owner-wide catalog permission until collaborator roles exist. Existing backup cap remains four MiB total; no production or extra resources. Local 27 tests plus schema/import/type-check/build passed; live acceptance remains pending. See Attachment_Lifecycle and TODO for remaining checks.
+
+## Current implementation reconciliation
+
+CC-DEC-011 selected Cloudflare Workers, D1 and private R2. The owner subsequently explicitly authorized and completed development provisioning, R2 activation and Access configuration. The initial architecture-only/no-resources statements below describe the earlier moment; they do not negate subsequent development authorization. Production and additional paid resources remain separately gated.
+
+CC-DEC-004/005: the single source repository/layout is implemented, and GitHub-connected development deployment is evidenced. CC-DEC-006: feature branch/PR and CI exist; main-release protection, deployment and rollback acceptance remain open. CC-DEC-007: remote restoration/readback passed with history assistance; a strict independent fresh-chat test remains pending.
+
+Owner access, synthetic database/storage checks and actual browser export/local restoration passed. Code 40ab108 passed CI #97 with 20 Node tests plus SQLite/type-check/build; pre-reconciliation head 330ca8a passed CI #105. General CRUD, collaborator access, Cloudflare-side restore and production readiness are unfinished. Persistent owner attachments are now implemented and locally tested; live acceptance remains pending. Real samples have not been supplied. The owner deferred live alternate-email denial testing and parked residual Windows Defender remediation.
+
+## 2026-10-12 — CC-DEC-012 — Private dated backup handoff
+
+User requested simple folders and date/time filenames, considered GitHub and offered OneDrive. Keep code, migrations and recovery instructions versioned in GitHub; keep full backup payloads private. The application repository is public.
+
+Prepared two byte-identical UTC-named JSON snapshots, a checksum/size/migration/restore manifest and instructions in Cookie_Catalog_Backups_20261012T231810Z.zip. Owner supplied its extracted location under personal OneDrive: Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Local placement is owner-reported; completed cloud sync is not yet verified. Exact exporting deployment commit was not independently attested; validation commit 40ab108 is traceability evidence, not export provenance.
+
+Latest-seven normal snapshots after meaningful changes/before imports remains proposed, not an approved or activated pruning/scheduling policy. No automatic transfer, new subscription or production change was activated. See docs/Backup_Recovery_Plan.md.
+
+Next unused decision ID: CC-DEC-014.
+
+## Historical decisions
+
+The following entries record approval and implementation status at the time of each decision. Read them together with the current reconciliation above, Context and TODO.
 
 ## 2026-10-12 — CC-DEC-011 — Cloudflare infrastructure and slicer-based scaling
 
@@ -58,7 +108,3 @@ Status: user direction. The user has sample cutters to seed development. Samples
 ## 2026-10-12 — CC-DEC-001 — Project identity and durable bootstrap
 
 Status: user approved. Name the project Cookie_Catalog and bootstrap its already-created GitHub repository. Repository verified as jbrickey23/Cookie_Catalog, default branch main. Initial repository was empty. Follow the established Context/TODO/Decision Log/New Chat Bootstrap Prompt convention.
-
-## Architecture proposals awaiting evaluation
-
-GitHub for source and durable project state; an approved SQLite-compatible relational database for live catalog records; object storage for assets; a private site for interaction. Sites/D1/R2 and alternatives remain candidates. No provider selection or resource provisioning has occurred.

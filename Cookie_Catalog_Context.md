@@ -1,66 +1,44 @@
 # Cookie_Catalog — Context
 
-Updated: 2026-10-12 (America/Los_Angeles).
+Updated 2026-10-14 UTC. Current handoff supersedes older implementation snapshots.
 
-## Identity and purpose
+## Identity and goal
 
-- Project: `Cookie_Catalog`.
-- Repository: `jbrickey23/Cookie_Catalog`.
-- Default branch: `main`; repository visibility: public.
-- Repository access resolved; initial repository was empty, with read/write permissions confirmed.
-- Primary user: Jay's wife, who runs a cookie decorating business and owns hundreds or potentially thousands of purchased and 3D-printed cutters, plus purchased STLs.
-- Goal: search a requested theme/subject, see available decorating designs and compatible cutters, and retrieve the physical cutter or printable file. Record known flips rather than losing them in scattered photos or memory.
+Jay's wife's cookie decorating business needs theme/design photos, compatible physical/printable cutters, locations, dimensions and known flips. Many designs can reuse a shape; designs may use multiple cutters. GitHub jbrickey23/Cookie_Catalog is public and canonical for source, migrations and durable state; private D1/R2 hold records/originals. Do not label synthetic fixtures as inventory or publish real/purchased content.
 
-## Approved direction
+V1 scaling happens in the slicer; store original assets, dimensions and optional sizing guidance. Automatic flip suggestions, derived model generation and order/invoicing remain deferred.
 
-- Bootstrap the project using the durable ChatGPT/GitHub workflow.
-- GitHub-first fresh-chat restoration is approved (CC-DEC-007). Read latest durable files before changes, reconcile conflicts and verify writes. In-session recovery check passed; independent fresh-chat validation remains pending.
-- CC-DEC-011 approved: Cloudflare Workers + D1 + private R2 as intended infrastructure, with slicer-based scaling in v1; future derived-model/3MF processing remains modular and deferred. No services provisioned or costs incurred.
-- CC-DEC-010 approved: accelerated architecture-by-exception governance; assistant handles routine reversible engineering decisions and records evidence, while user approves material tradeoffs, costs, external provisioning and production changes. Evaluate infrastructure as a coherent stack, emphasizing long-term stability, maintainability and practical portability.
-- CC-DEC-009 approved: balanced provider-selection preference—simple managed infrastructure with practical export and migration; no provider selected.
-- CC-DEC-008 approved: use a SQLite-compatible relational database for operational catalog records; provider selection and provisioning remain pending.
-- Establish infrastructure first, with separate actionable TODOs for each component.
-- Feature branches are used for development/review; `main` is the release branch (CC-DEC-006). Actual CI, branch protection, deployment, and rollback remain to be implemented and verified.
-- GitHub is canonical for application source (CC-DEC-005); hosting deploys from the repository. Any hosting-managed source exception requires explicit one-way synchronization and documented ownership; provider integration is not yet validated.
-- Keep application code and durable notes in one repository (CC-DEC-004): root durable files plus `docs/`, `app/`, `database/`, and `samples/`. Folder creation awaits useful content/stack selection. Revisit separation only for a demonstrated requirement.
-- Use real sample cutters from the user to seed and evaluate the eventual workflow. Samples have not yet been supplied.
+## Branch/source ownership
 
-## Architecture (selected direction; nothing provisioned)
+Active application branch feature/cc-infrastructure-foundation, open draft PR #1. Main is release and retains bootstrap application state; current durable notes are synchronized onto main without merging the app. Read the PR branch before engineering. No AGENTS.md found in its complete tree. New OneNote tasks had been added to main's older TODO, incorrectly labelled next; preserve their IDs/criteria but defer them.
 
-- GitHub: source code, requirements, durable project state, schema/migrations, and reproducible sample data.
-- Structured database: SQLite-compatible relational architecture approved (CC-DEC-008) for operational cutters, physical instances, designs, tags, locations, and relationships; provider not selected.
-- File storage: photos, sketches, STL/3MF attachments.
-- Private site: search, browse, add/edit records, and connect designs to cutters.
-- Approved direction (CC-DEC-011): Cloudflare Workers for application/API, D1 for relational records, private R2 for attachments. Confirm identity, cost, recovery, deployment and export/restore before production; no resources created. Slicer applies STL/3MF scaling in v1; catalog records dimensions and sizing guidance, preserving a future modular print-preparation path.
+## Verified infrastructure
 
-## First useful workflow
+- Development Worker and D1 cookie-catalog-dev; R2 cookie-catalog-dev-private with DB/FILES bindings. R2 screenshot showed Public Access Disabled after original storage check.
+- URL https://cookie-catalog-dev.j-brickey.workers.dev. GitHub-connected development builds use app root, npm run build, npx wrangler deploy, feature branch. Owner supplied original deployment log; later live UI/downloads prove subsequent routes deployed, but exact current source SHA was not independently attested.
+- D1 migrations 0001_initial.sql and 0002_variants_components.sql applied/tracked: 15 catalog tables plus d1_migrations. Linked synthetic design/shape/cutter create/edit/read at 90 x 100 mm passed; exports retained relationships.
+- Access Cookie Catalog Dev, emailed PIN, team cookie-catalog-jbrickey.cloudflareaccess.com. Signed JWT/audience/owner-secret verifier fails closed. Owner session passed; intended collaborator roles/access/recovery remain open.
+- Private photo upload/refresh/download passed. Shape UI create/edit/refresh/search and Matched fields highlighting owner-confirmed. General location/physical cutter/mapping UI acceptance, design-image/STL private retrieval and live deletion remain unconfirmed.
+- Existing owner-only JSON export/recovery restored 16 tables/17 rows/2 original fixtures with hashes/FKs valid. Live larger TAR dated 2026-10-14 restored 16 tables/7 rows/0 originals; it proves database-only archive recovery, not current original-file recovery or intentional deletion.
+- Larger browser TAR code is implemented: 25 MiB/file, 1000 originals/1 GiB total, 10000 rows/table, 16 MiB manifest. Local 5.25 MB and 26-original tests passed. These are ceilings, not live production throughput.
+- Prior code d8b67ac passed CI #115; notes head e6a5bb1 passed CI #116/117. New read-only infrastructure report/build provenance locally passed 43 tests and type-check/build; live result pending.
 
-Search `Christmas + tree` → browse design photos → select a design → identify compatible cutter size → retrieve its physical location or printable file. Also open a cutter and see every saved design that uses it.
+## Earliest unmet prerequisite and action
 
-Support physical-ready, available-to-print, and inspiration-only states. Record whether a reuse mapping is tested or proposed. One cutter can support multiple designs; one design can fit multiple cutters.
+CC-TODO-002/003/004 are current priority. First close deployment traceability/current-runtime verification: owner-authenticated report must identify the actual deployed commit and query real D1 migrations/FKs plus R2 listing/sampled originals. The check is read-only, owner-only, no-store; contains counts/build metadata, no raw keys/filenames/account/token data. Build commit comes from WORKERS_CI_COMMIT_SHA (Workers Builds) or GITHUB_SHA (CI); absent provenance stays explicitly unknown. Build Node is not the owner's Windows Node.
 
-## Scope and unresolved inputs
+On 2026-10-14 this agent's remote browser reached Cloudflare Access email sign-in, not an authenticated application session. That edge observation does not independently verify Worker execution/bindings. Secure owner sign-in is needed for this browser's remaining live checks. Do not bypass Access, request secrets in chat, or claim report success from CI alone.
 
-First-version candidates: cutter/design entry, photos, tags, sizes, locations, printable files, known flip mappings, visual search, export. These are a starting scope to refine with samples, not a finished specification.
+Then complete the remaining cutter/design/location UI and persistent file gates, preserving earlier passes. CC-TODO-006 original-containing TAR/larger-file recovery is a later recorded gate, not the immediate sequencing driver. Continue 005 collaborator readiness and 007 authorized representative samples after foundations. OneNote 008/009, photo extraction 010 and Canva 011 are future work; no connector/account access or bulk import is currently requested.
 
-Deferred: automatic new flip suggestions and broad bakery order/invoicing management.
+## Owner local setup and boundaries
 
-Unknown: wife's devices, existing design tools, storage layout, existing file archive, sharing needs, sample records, and budget. Do not block repository preparation on these; resolve them in the appropriate infrastructure task.
+Windows Node v24.21.0 and npm.cmd 11.19.0 were verified; plain npm.ps1 is execution-policy blocked. Wrangler package download was blocked by Defender event 1126 for node.exe -> registry.npmjs.org before Cloudflare login. Audit setting did not change; tamper protection/OnboardingState=1 indicate residual enrollment. Previous IT unavailable; remediation parked, no reset/reinstall/security bypass authorized. Node installation is not missing and local Wrangler is not required for the working dashboard/GitHub flow.
 
-## Current evidence
+Optional tools/verify_windows_setup.ps1 only reads versions/policy and never touches registry/network/security. It is prepared, not executed on the owner's PC. If execution policy blocks script files, paste its reviewed contents into an existing PowerShell session; do not disable policy. The assistant's Linux runtime Node v24.19.0 is separately observed and does not verify Windows.
 
-Repository metadata confirms the exact target, default branch, public visibility, and pull/push permissions. Contents/ref queries confirmed an empty repository before bootstrap. Core durable files, research notes, and initial model form the initial remote bootstrap. No application infrastructure has been provisioned.
+## Recovery/privacy/governance
 
-## Continuation
+Owner OneDrive folder Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z recorded; cloud sync/latest-seven proposed manual retention unconfirmed. Generated test STL is synthetic test-only, not inventory. Never put full archives/DBs/photos/purchased models in this public repo.
 
-CC-DEC-004 through CC-DEC-011 are approved: single repository, canonical GitHub source, feature branches/main releases, and GitHub-first restoration. Repository bootstrap and in-session remote-file recovery checks have passed. CC-TODO-001 awaits an independent fresh-conversation restoration test before closure; do not label that test complete. The next work is a consolidated infrastructure architecture recommendation across CC-TODO-002 through 006, beginning with database/runtime/storage compatibility, which can be discussed while the restoration test remains pending. Hosting integration, CI, deployment and rollback are followups under CC-TODO-004.
-
-## Operating rules
-
-- Fetch current repository state before relying on chat history.
-- Use stable CC-TODO IDs; preserve proposed/selected/provisioned/validated distinctions.
-- Keep meaningful decisions and next work reconciled across the core files.
-- Preserve existing work; verify remote writes before claiming completion.
-- Keep credentials out of repository files and client code.
-- Catalogue purchased assets privately unless sharing rights are established.
-- Do not fabricate sample cutters or silently treat demonstration records as real inventory.
+Architecture/governance decisions 001–012 preserved; development provisioning was later explicitly authorized. Routine reversible work autonomous. Material tradeoffs, new cost/provisioning and production need separate approval; no new services/paid plan/production authorized. Owner deferred alternate-email denial test: do not restart it; missing codes were inconclusive. No independent history-free fresh-chat test occurred here, so 001 stays open.
