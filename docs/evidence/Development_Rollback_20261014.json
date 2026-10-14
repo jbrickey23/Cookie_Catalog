@@ -1,0 +1,222 @@
+{
+  "scope": "Development-only GitHub-driven compatible code redeployment rollback and roll-forward; provider-native rollback and production release were not exercised.",
+  "baseline": {
+    "source": "489ed640d4e4fe14178e63e5aec5deca224818b6",
+    "report": {
+      "checkedAt": "2026-10-14T20:10:10.649Z",
+      "mode": "read-only",
+      "environment": "development",
+      "worker": {
+        "reachable": true,
+        "build": {
+          "commit": "489ed640d4e4fe14178e63e5aec5deca224818b6",
+          "branch": "feature/cc-infrastructure-foundation",
+          "source": "cloudflare-workers-builds",
+          "buildNode": "v24.21.0",
+          "builtAt": "2026-10-14T19:38:55.974Z"
+        },
+        "sourceCommitAvailable": true
+      },
+      "database": {
+        "queryPassed": true,
+        "schemaTables": 16,
+        "missingTables": [],
+        "migrations": [
+          "0001_initial.sql",
+          "0002_variants_components.sql"
+        ],
+        "requiredMigrationsApplied": true,
+        "foreignKeyViolations": 0,
+        "recordCounts": {
+          "shapes": 2,
+          "designs": 2,
+          "physicalCutters": 2,
+          "mappings": 2
+        }
+      },
+      "storage": {
+        "bindingReadable": true,
+        "objectsOnFirstPage": 1,
+        "listingTruncated": false,
+        "sampledAttachments": 1,
+        "missingOriginals": 0,
+        "sizeMismatches": 0
+      },
+      "checksPassed": true,
+      "limits": [
+        "Read-only binding checks do not replace create/edit/retrieve or private-file acceptance.",
+        "R2 public-access configuration requires dashboard evidence.",
+        "Build Node is the deployment build environment, not the owner's Windows PC.",
+        "Exact GitHub deployment is confirmed only after comparing the reported commit to the expected branch head."
+      ]
+    },
+    "archive": {
+      "bytes": 5413888,
+      "sha256": "5c4b42140e6306805f9e739ac467d6c3e545b0448f055fd6cd2578a43787febd"
+    }
+  },
+  "previous": {
+    "source": "26c2425e3c400cecf6105078ba827a48d39413c3",
+    "applicationFrom": "1ea5c0eb28f6b57078ddd90bd055627610fbf1fd",
+    "sameValueSavePassed": true,
+    "dataAndOriginalsEqualBaseline": true,
+    "report": {
+      "checkedAt": "2026-10-14T20:12:05.071Z",
+      "mode": "read-only",
+      "environment": "development",
+      "worker": {
+        "reachable": true,
+        "build": {
+          "commit": "26c2425e3c400cecf6105078ba827a48d39413c3",
+          "branch": "feature/cc-infrastructure-foundation",
+          "source": "cloudflare-workers-builds",
+          "buildNode": "v24.21.0",
+          "builtAt": "2026-10-14T20:11:43.878Z"
+        },
+        "sourceCommitAvailable": true
+      },
+      "database": {
+        "queryPassed": true,
+        "schemaTables": 16,
+        "missingTables": [],
+        "migrations": [
+          "0001_initial.sql",
+          "0002_variants_components.sql"
+        ],
+        "requiredMigrationsApplied": true,
+        "foreignKeyViolations": 0,
+        "recordCounts": {
+          "shapes": 2,
+          "designs": 2,
+          "physicalCutters": 2,
+          "mappings": 2
+        }
+      },
+      "storage": {
+        "bindingReadable": true,
+        "objectsOnFirstPage": 1,
+        "listingTruncated": false,
+        "sampledAttachments": 1,
+        "missingOriginals": 0,
+        "sizeMismatches": 0
+      },
+      "checksPassed": true,
+      "limits": [
+        "Read-only binding checks do not replace create/edit/retrieve or private-file acceptance.",
+        "R2 public-access configuration requires dashboard evidence.",
+        "Build Node is the deployment build environment, not the owner's Windows PC.",
+        "Exact GitHub deployment is confirmed only after comparing the reported commit to the expected branch head."
+      ]
+    },
+    "ci": [
+      {
+        "id": 38629957882,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 38629951178,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "archive": {
+      "bytes": 5413888,
+      "sha256": "2839bdbc9de3ff5fbb29d9a86475f4066e83dbfc71aa63202d37575a77d695f9"
+    }
+  },
+  "restoredCurrent": {
+    "source": "0a6138938e0a8a872732c925afb38e49a9766b38",
+    "applicationFrom": "489ed640d4e4fe14178e63e5aec5deca224818b6",
+    "sameValueSavePassed": true,
+    "dataAndOriginalsEqualBaseline": true,
+    "report": {
+      "checkedAt": "2026-10-14T20:14:22.913Z",
+      "mode": "read-only",
+      "environment": "development",
+      "worker": {
+        "reachable": true,
+        "build": {
+          "commit": "0a6138938e0a8a872732c925afb38e49a9766b38",
+          "branch": "feature/cc-infrastructure-foundation",
+          "source": "cloudflare-workers-builds",
+          "buildNode": "v24.21.0",
+          "builtAt": "2026-10-14T20:13:55.247Z"
+        },
+        "sourceCommitAvailable": true
+      },
+      "database": {
+        "queryPassed": true,
+        "schemaTables": 16,
+        "missingTables": [],
+        "migrations": [
+          "0001_initial.sql",
+          "0002_variants_components.sql"
+        ],
+        "requiredMigrationsApplied": true,
+        "foreignKeyViolations": 0,
+        "recordCounts": {
+          "shapes": 2,
+          "designs": 2,
+          "physicalCutters": 2,
+          "mappings": 2
+        }
+      },
+      "storage": {
+        "bindingReadable": true,
+        "objectsOnFirstPage": 1,
+        "listingTruncated": false,
+        "sampledAttachments": 1,
+        "missingOriginals": 0,
+        "sizeMismatches": 0
+      },
+      "checksPassed": true,
+      "limits": [
+        "Read-only binding checks do not replace create/edit/retrieve or private-file acceptance.",
+        "R2 public-access configuration requires dashboard evidence.",
+        "Build Node is the deployment build environment, not the owner's Windows PC.",
+        "Exact GitHub deployment is confirmed only after comparing the reported commit to the expected branch head."
+      ]
+    },
+    "ci": [
+      {
+        "id": 38630250482,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 38630242972,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "archive": {
+      "bytes": 5413888,
+      "sha256": "8527e0348ff26612d77ea576ddf5cbf1dccc1f860fe206347d55ee79c133e679"
+    }
+  },
+  "comparison": {
+    "tables": 16,
+    "records": 14,
+    "originals": 1,
+    "originalBytes": 5400084,
+    "schemaSha256": "a2387bfffe1db18bdfefbc848a7500f727940db6358570c32154d4b4d778bae8",
+    "rowsSha256": "b56f9e0b9078488e6e99e318a0bbb3181c6eb5130479ffa573b0a3b2efe0151d",
+    "originalSha256": "44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7",
+    "sqliteIntegrity": "ok",
+    "foreignKeyViolations": 0
+  },
+  "repositorySafeguardsObserved": {
+    "mainProtected": false,
+    "developmentBranchProtected": false,
+    "rulesets": [],
+    "configurationChanged": false
+  },
+  "limits": [
+    "Same schema/migrations in both code versions; no reverse migrations, D1 overwrite or R2 restore executed.",
+    "Signed-in owner reads/same-value writes and exact-byte attachment retrieval passed on both deployed versions.",
+    "All successful phase archives restored into new local directories and matched by schema, canonical full-row and original hashes; different archive-envelope timestamps produce different TAR hashes.",
+    "Two intermediate browser downloads were not materialized; standalone retries supplied the archives actually restored. Missing transfers were not counted as valid backups.",
+    "Intended-device/collaborator acceptance, main-release safeguards, provider-native/production rollback and isolated Cloudflare data/object restore remain open."
+  ]
+}

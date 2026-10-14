@@ -2,48 +2,26 @@
 
 Start here: [User Companion](docs/User_Companion.md) — plain-language catalog, search, files, backups and development-check instructions.
 
-## Current checkpoint — 2026-10-14, 19:35 UTC
+Private catalog for a cookie decorating business: find designs, compatible owned/printable cutters, physical locations, known flips and original files.
 
-Controlled missing-original recovery passed live on ec8f864: 200 → missing 409 with metadata/link retained → restored 200 with matching bytes → verified fixture cleanup. Existing catalog counts and the retained 5.4 MB STL stayed unchanged. 49 tests/build, GitHub CI and Workers Builds passed.
+## Current checkpoint — 2026-10-14, 20:15 UTC
 
-Next: CC-TODO-004 development code-rollback/intended-device acceptance; checklist prepared, drill not run. Cloudflare-side full restore, collaborator access and representative samples remain open. Keep OneNote/photo/Canva deferred and the alternate-email test parked. Details: docs/Missing_File_Recovery_Check.md and docs/Development_Rollback_Acceptance.md.
+The development code rollback and roll-forward drill passed. Exact deployed sources: baseline 489ed640 → compatible previous app redeployment 26c2425e → restored current app 0a613893. Signed-in owner reads, same-value synthetic-location saves, exact-byte original downloads and restored phase archives passed. All phases retained identical schema, all 14 rows across 16 tables, and the one 5400084-byte STL; integrity/FKs passed. CI and Workers Builds passed. No migration, data restore, resource/security change or production release occurred.
 
-## Latest acceptance — 2026-10-14
+Next CC-TODO-004 prerequisites: intended-device acceptance and main-release safeguards. Read-only GitHub inspection found main and development branches unprotected with no rulesets; no settings were changed. CC-TODO-006 isolated Cloudflare restore/cloud sync/retention, 005 intended-user roles and 007 real samples stay open. Preserve deferred alternate-email testing and Windows remediation. OneNote/photo/Canva remain future work. See docs/Development_Rollback_Acceptance.md and docs/evidence/Development_Rollback_20261014.json.
 
-Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
+## Source and current development
 
-Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+GitHub JBrickey23/Cookie_Catalog is authoritative and public. Operational records, originals, full backups and credentials remain private. Application code is on feature/cc-infrastructure-foundation, draft PR #1. Main holds current durable notes and the user companion; the application has not been merged or released to production.
 
-The controlled live missing-original detection/recovery gate subsequently passed using a unique disposable fixture; see current acceptance above. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+Development site: https://cookie-catalog-dev.j-brickey.workers.dev/ . Existing Worker/D1 cookie-catalog-dev, private R2 cookie-catalog-dev-private and Access are provisioned. Migrations 0001/0002, owner authentication, catalog shape/design/location/physical-cutter/mapping workflows, matched-field search, private PNG/STL retrieval, approved synthetic deletion and isolated missing-original recovery passed. Live TAR/local recovery passed with original bytes and relationships. The earlier code had 45 Node tests; current code has 49; relevant CI also validates SQLite/schema/import and application build.
 
-Private catalog for a cookie decorating business: find designs, compatible owned/printable cutters, physical locations and original files, including known flips.
+No component closes from a single smoke check. Broader release, roles, device, representative-sample and operational-recovery gates remain in TODO. OneNote 008/009, photo metadata 010 and Canva 011 are deferred; next unused task ID is 012.
 
-## Current checkpoint — 2026-10-14
+## Local setup and continuity
 
-GitHub jbrickey23/Cookie_Catalog is authoritative. Repository is public: operational records, originals, full backups and credentials stay private.
+Owner Windows Node v24.21.0/npm.cmd 11.19.0 already verified. Use npm.cmd; npm.ps1 is policy-blocked. Defender blocks local Wrangler package download; remediation remains parked and does not block the working GitHub deployment path. Cloud build Node is a separate environment.
 
-Application development: feature/cc-infrastructure-foundation, draft PR #1. Main is the release branch; only its durable notes are being reconciled, without merging the application or deploying production. Inspect the active PR for code and newest validation.
+Read Context, TODO, Decision Log, New Chat Bootstrap Prompt and applicable AGENTS.md, then inspect current branches/PRs. No AGENTS.md was found in the latest inspected tree. Independent history-free fresh-chat restoration remains open.
 
-Development site: https://cookie-catalog-dev.j-brickey.workers.dev. Owner-authorized Worker/D1 cookie-catalog-dev, private R2 cookie-catalog-dev-private and Access are provisioned. Migrations 0001/0002 applied; owner session, synthetic linked D1 records, R2 smoke, live photo upload/download, shape create/edit/search and highlighting passed. Actual JSON recovery restored linked PNG/STL fixtures. Actual TAR restored 16 tables/7 rows/0 originals; live original-containing TAR and larger upload/retrieval now passed.
-
-## Immediate sequence
-
-Resume CC-TODO-002/003/004 infrastructure acceptance. Exact GitHub-to-Worker deployment and fresh D1/R2 checks passed on 2026-10-14 for commit 2939565; 43 local tests/build and its GitHub CI passed.
-
-Location, physical cutter, design and proposed flip mapping create/edit/refresh/search/retrieve passed using labelled synthetic records. Design PNG and 5400084-byte STL uploaded, survived refresh and downloaded byte-identically. Prior owner shape/photo passes are preserved.
-
-Approved synthetic-file deletion and live original-containing TAR restore now passed. A 32 MiB TAR download option handles browsers without direct folder saving; 45 tests/build and CI passed. The two approved attachment identities are deleted; one newly uploaded synthetic STL remains solely as recovery evidence.
-
-Controlled live missing-original detection/recovery now passed. Next: CC-TODO-004 development rollback/intended-device acceptance. Cloudflare restore, cloud sync/retention and remaining access/release/sample readiness stay open. Components stay open for broader acceptance. See docs/Infrastructure_Verification.md.
-
-OneNote audit/import (008/009), photo metadata extraction (010) and Canva (011) are deferred future work. Next unused task ID: 012.
-
-## Local setup
-
-Owner Windows Node v24.21.0 and npm.cmd 11.19.0 already passed. Plain npm.ps1 is policy-blocked; Defender blocked registry.npmjs.org before Wrangler login. Remediation remains parked. Use existing browser deployment; no reinstall, security disabling, new provisioning, paid resource or production authorization.
-
-## Restore project state
-
-Read README, Context, TODO, Decision Log, New Chat Bootstrap Prompt and applicable AGENTS.md, then inspect open PRs/branch heads. No AGENTS.md found in the active tree. This session used visible history; independent fresh-chat acceptance remains open.
-
-See docs/Infrastructure_Verification.md, docs/Deployment_Runbook.md and recovery plans. OneDrive backup placement is recorded; completed sync/manual retention still need confirmation. Continue reversible engineering autonomously, verify remote writes, and preserve task IDs/evidence.
+[Deployment runbook](docs/Deployment_Runbook.md) · [Rollback acceptance](docs/Development_Rollback_Acceptance.md) · [Infrastructure evidence](docs/Infrastructure_Verification.md) · [Backup recovery](docs/Backup_Recovery_Plan.md)

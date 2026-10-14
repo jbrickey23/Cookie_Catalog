@@ -1,10 +1,16 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
-## Current checkpoint — 2026-10-14, 19:35 UTC
+## Current checkpoint — 2026-10-14, 20:15 UTC
+
+The development code rollback and roll-forward drill passed. Exact deployed sources: baseline 489ed640 → compatible previous app redeployment 26c2425e → restored current app 0a613893. Signed-in owner reads, same-value synthetic-location saves, exact-byte original downloads and restored phase archives passed. All phases retained identical schema, all 14 rows across 16 tables, and the one 5400084-byte STL; integrity/FKs passed. CI and Workers Builds passed. No migration, data restore, resource/security change or production release occurred.
+
+Next CC-TODO-004 prerequisites: intended-device acceptance and main-release safeguards. Read-only GitHub inspection found main and development branches unprotected with no rulesets; no settings were changed. CC-TODO-006 isolated Cloudflare restore/cloud sync/retention, 005 intended-user roles and 007 real samples stay open. Preserve deferred alternate-email testing and Windows remediation. OneNote/photo/Canva remain future work. See docs/Development_Rollback_Acceptance.md and docs/evidence/Development_Rollback_20261014.json.
+
+## Earlier checkpoint — 2026-10-14, 19:35 UTC
 
 Controlled missing-original recovery passed live on ec8f864: 200 → missing 409 with metadata/link retained → restored 200 with matching bytes → verified fixture cleanup. Existing catalog counts and the retained 5.4 MB STL stayed unchanged. 49 tests/build, GitHub CI and Workers Builds passed.
 
-Next: CC-TODO-004 development code-rollback/intended-device acceptance; checklist prepared, drill not run. Cloudflare-side full restore, collaborator access and representative samples remain open. Keep OneNote/photo/Canva deferred and the alternate-email test parked. Details: docs/Missing_File_Recovery_Check.md and docs/Development_Rollback_Acceptance.md.
+Development code rollback/roll-forward subsequently passed; intended-device and main-release safeguards remain. Cloudflare-side full restore, collaborator access and representative samples remain open. Keep OneNote/photo/Canva deferred and the alternate-email test parked. Details: docs/Missing_File_Recovery_Check.md and docs/Development_Rollback_Acceptance.md.
 
 ## Latest acceptance — 2026-10-14
 
@@ -14,7 +20,7 @@ Download small TAR archive now supports complete archives up to 32 MiB when dire
 
 The controlled live missing-original detection/recovery gate subsequently passed using a unique disposable fixture; see current acceptance above. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
 
-Updated: 2026-10-14 UTC. Development deployed; production and rollback acceptance pending.
+Updated: 2026-10-14 UTC. Development compatible-code rollback/roll-forward passed; production and provider-native rollback acceptance remain pending.
 
 ## Latest development recovery update
 
@@ -49,15 +55,11 @@ Remaining: intended devices/browsers, wife/collaborator roles and recovery, pers
 
 Keep secrets, tokens, JWTs, operational backup payloads and purchased assets out of public Git/client code. Public configuration IDs are not secrets. Avoid competing hosting-managed source; GitHub is canonical.
 
-## Rollback procedure to validate
+## Verified development rollback route
 
-1. Record a known-good reviewed main commit and corresponding Worker deployment.
-2. Revert code through the provider deployment rollback mechanism or redeploy that verified commit.
-3. Handle schema/data separately: prefer additive migrations; use verified data recovery when needed.
-4. Restore R2 originals with manifest/checksum verification, independent of code rollback.
-5. Verify authenticated reads/writes and file authorization afterward.
+The compatible GitHub redeployment drill completed backward and forward on 2026-10-14 with exact-source attestation, owner reads/same-value writes and original retrieval. Three restored phase archives had identical schema, all 14 rows and one 5400084-byte original. CI/Workers Builds passed. No D1/R2 data rollback occurred. Exact commits, hashes and reusable procedure: docs/Development_Rollback_Acceptance.md.
 
-No production known-good release or completed rollback drill is recorded. Cloudflare-side full D1/R2 restore remains open under CC-TODO-006.
+Provider-native and production rollback remain untested; the application is not merged/released to production. Current next gates are intended-device use and main-release safeguards. Both branches are currently unprotected and no rulesets were returned; settings were not changed.
 
 ## Local setup limitation
 

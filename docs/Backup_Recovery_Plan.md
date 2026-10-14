@@ -1,6 +1,10 @@
 # CC-TODO-006 — Backup and recovery
 
-## Current checkpoint — 2026-10-14, 19:35 UTC
+## Fresh pre-rollback checkpoint — 2026-10-14
+
+Cookie_Catalog_Before_Rollback_20261014T201056Z.tar was downloaded, privately retained and restored before code changes. It contains 16 tables/14 rows/one 5400084-byte STL; archive size 5413888 and SHA-256 5c4b42140e6306805f9e739ac467d6c3e545b0448f055fd6cd2578a43787febd. Previous/current deployment phase archives restored with identical complete schema, rows and original bytes. See docs/Development_Rollback_Acceptance.md. This proves preservation through compatible code redeployment; isolated Cloudflare data/object restore and verified off-device sync/retention still remain open.
+
+## Earlier checkpoint — 2026-10-14, 19:35 UTC
 
 Controlled missing-original recovery passed live on ec8f864: 200 → missing 409 with metadata/link retained → restored 200 with matching bytes → verified fixture cleanup. Existing catalog counts and the retained 5.4 MB STL stayed unchanged. 49 tests/build, GitHub CI and Workers Builds passed.
 
