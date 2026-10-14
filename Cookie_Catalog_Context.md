@@ -1,5 +1,11 @@
 # Cookie_Catalog — Context
 
+## 2026-10-14, 23:17 UTC — Sample isolated data/original restore passed with MIME limitation
+
+Owner confirmed that only the 5.4 MB original remains after deliberately removing the two zero-byte dashboard folder markers. Combined with the earlier flat root listing, complete cloud database JSON comparison and exact downloaded-original hash, this passes the sample isolated D1 record/schema/relationship and R2 key/byte recovery check. Preserve the separately created recovery database/bucket for review; do not delete resources. The R2 HTTP Content-Type mismatch (application/octet-stream versus model/stl) is an explicitly recorded limitation, not a metadata-restoration pass. No recovery application runtime was deployed, so browser/application reads against recovery are untested. Existing development remains unchanged.
+
+Next CC-TODO-006 work: independent private cloud-copy verification, then owner-approved retention/cadence/ownership. Latest-seven snapshots remains a proposal; no automatic sync, transfer, schedule or pruning is activated. Guide owner to place the fresh 22:44:32.792Z TAR in private OneDrive, verify it through OneDrive web, and ideally download the cloud copy for checksum comparison to archive SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d. Local placement/sync icon alone is not completed cloud verification. CC-TODO-006 remains open for these operational criteria, metadata fidelity and scale/consistency. Preserve intended-device, intended-user roles and real-sample gates plus deferred alternate-email and OneNote/photo/Canva work.
+
 ## 2026-10-14, 23:11 UTC — Isolated cloud record/original readback matched
 
 The owner ran the validated import in separate D1 cookie-catalog-recovery-20261014 after an empty-table check. Returned console output lists all 16 expected tables; nine nonempty-table counts match 14 total rows; foreign_key_check returned no violations and owner reports quick_check=ok. The assistant's first UNION count query exceeded D1's compound-SELECT limit; scalar subqueries worked. PRAGMA integrity_check is rejected by remote D1 (SQLITE_AUTH); use documented quick_check remotely, retaining full integrity_check for local SQLite.

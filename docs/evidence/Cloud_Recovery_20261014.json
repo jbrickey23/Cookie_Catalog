@@ -25,7 +25,10 @@
   "publicAccess": "Disabled in owner screenshots",
   "expectedContentType": "model/stl",
   "observedContentType": "application/octet-stream",
-  "fullBucketInventory": "pending; inspect dashboard folder markers",
+  "fullBucketInventory": "Flat root screenshot showed original plus two 0-byte markers; owner subsequently confirmed marker deletion and only 5.4 MB original remains",
   "runtimeRecovery": "not deployed/tested",
-  "fullComponentClosed": false
+  "fullComponentClosed": false,
+  "sampleDataOriginalGate": "passed with recorded HTTP Content-Type limitation",
+  "next": "Independent private cloud-copy verification, approved backup cadence/retention/ownership",
+  "markerCleanupEvidence": "owner report"
 }
