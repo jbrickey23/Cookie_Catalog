@@ -118,6 +118,8 @@ GitHub holds application source and instructions. Full catalog archives and orig
 
 Keep edits, uploads and deletions idle while creating a backup.
 
+Approved backup routine: Jay saves a complete TAR to private OneDrive after meaningful catalog changes and before imports or bulk edits/deletions. Keep the latest seven normal backups plus a protected pre-change backup until the changes and recoverability are verified. Retention is manual; automatic deletion is not enabled. A PowerShell helper is planned under CC-TODO-012 and is not yet available.
+
 | Control | When to use it |
 | --- | --- |
 | Save catalog archive | Save a TAR directly to a chosen private folder in compatible desktop Chrome or Edge; supports the larger archive path |

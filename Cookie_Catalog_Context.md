@@ -1,5 +1,11 @@
 # Cookie_Catalog — Context
 
+## 2026-10-14, 23:25 UTC — Approved manual backup policy and scripting follow-up
+
+Owner approved the proposed policy: Jay is responsible for complete private TAR backups in OneDrive Cookie_Catalog/Backups after meaningful catalog changes and before imports or bulk edits/deletions. Retain the latest seven normal backups plus a protected pre-change backup until the changed state is verified and recoverability established. This is the current manual operating policy; no scheduled export, automatic transfer or automatic deletion/pruning has been enabled. Earlier statements that the policy is merely proposed are historical.
+
+Owner requested a TODO to script the workflow, accepting PowerShell even when it only automates the manual parts. CC-TODO-012 is created as an open follow-up under CC-TODO-006. It is not implemented or running and does not replace the remaining access/device/sample sequence. Preserve validated restore/cloud-copy passes, R2 MIME limitation and all parked/deferred boundaries.
+
 ## 2026-10-14, 23:21 UTC — Owner-mediated independent cloud-copy checksum passed
 
 Following instructions to copy the fresh TAR into private OneDrive Cookie_Catalog/Backups, locate it in OneDrive web and download it, the owner supplied Cookie_Catalog_2026-10-14T22-44-32-792Z(1).tar. It is 5413888 bytes with SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d, byte-identical to the original validated TAR. This passes the owner-mediated cloud-copy return/checksum check; OneDrive path/account/sync were not independently inspected by the assistant. No need to repeat unchanged-archive restore tests. Preserve the previous isolated D1 records/schema and R2 original-byte passes, with documented MIME limitation.

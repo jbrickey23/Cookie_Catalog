@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## 2026-10-14, 23:25 UTC — Approved manual backup policy and scripting follow-up
+
+Owner approved the proposed policy: Jay is responsible for complete private TAR backups in OneDrive Cookie_Catalog/Backups after meaningful catalog changes and before imports or bulk edits/deletions. Retain the latest seven normal backups plus a protected pre-change backup until the changed state is verified and recoverability established. This is the current manual operating policy; no scheduled export, automatic transfer or automatic deletion/pruning has been enabled. Earlier statements that the policy is merely proposed are historical.
+
+Owner requested a TODO to script the workflow, accepting PowerShell even when it only automates the manual parts. CC-TODO-012 is created as an open follow-up under CC-TODO-006. It is not implemented or running and does not replace the remaining access/device/sample sequence. Preserve validated restore/cloud-copy passes, R2 MIME limitation and all parked/deferred boundaries.
+
 ## 2026-10-14, 23:11 UTC — Isolated cloud record/original readback matched
 
 The owner ran the validated import in separate D1 cookie-catalog-recovery-20261014 after an empty-table check. Returned console output lists all 16 expected tables; nine nonempty-table counts match 14 total rows; foreign_key_check returned no violations and owner reports quick_check=ok. The assistant's first UNION count query exceeded D1's compound-SELECT limit; scalar subqueries worked. PRAGMA integrity_check is rejected by remote D1 (SQLITE_AUTH); use documented quick_check remotely, retaining full integrity_check for local SQLite.
@@ -30,7 +36,7 @@ Current priority remains infrastructure acceptance, not OneNote/photo/Canva. Pre
 
 Latest drill: baseline 489ed640 -> backward code deployment 26c2425e (app from 1ea5c0e) -> restored current code 0a613893 (same app as ec8f864). All source SHAs were attested by authenticated live reports; CI/Workers Builds passed. Each phase archive restored into a new local directory. All 16 tables/14 rows/schema and one 5400084-byte STL were unchanged; signed-in same-value synthetic-location saves and file downloads passed on both versions. This tested GitHub-driven code redeployment, not provider-native rollback or Cloudflare-side data/object restoration. No migrations/resources/security changes/production release occurred. See docs/Development_Rollback_Acceptance.md and its evidence JSON.
 
-Next unmet CC-TODO-004 prerequisites: intended-device acceptance and main-release safeguards. Main/development currently report protected=false and no repository rulesets were returned; settings were not changed. CC-TODO-005 intended user roles/recovery, 006 isolated Cloudflare restore/cloud sync/retention/operational scale and 007 representative real samples remain open. Do not resume owner-deferred alternate-email denial testing. OneNote 008/009, photo extraction 010 and Canva 011 are future work. Next unused task ID 012.
+Next unmet CC-TODO-004 prerequisites: intended-device acceptance and main-release safeguards. Main/development currently report protected=false and no repository rulesets were returned; settings were not changed. CC-TODO-005 intended user roles/recovery, 006 isolated Cloudflare restore/cloud sync/retention/operational scale and 007 representative real samples remain open. Do not resume owner-deferred alternate-email denial testing. OneNote 008/009, photo extraction 010 and Canva 011 are future work. Next unused task ID 013.
 
 Both migrations, 16 tables, existing private D1/R2/Worker and Access are verified. Current app has 49 tests; the previous compatible app has 45. A 32 MiB bounded TAR download supplements the direct-save larger path; legacy JSON caps remain. Do not confuse archive method limits with overall catalog capacity. One retained synthetic STL remains as recovery evidence; no missing-test fixture remains. Never commit private payloads, credentials or purchased originals.
 

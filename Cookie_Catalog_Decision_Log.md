@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## 2026-10-14 — CC-DEC-014 — Manual backup cadence, retention and owner
+
+Status: explicitly approved by owner. Jay maintains complete TAR backups in private OneDrive after meaningful changes and before imports/bulk edits/deletions. Keep latest seven normal snapshots plus protected pre-change snapshots until changed-state checks and recoverability are verified. No automatic deletion/transfer/scheduling is enabled. User also requested scripting follow-up CC-TODO-012, accepting PowerShell for manual-step assistance. Scripting is a TODO, not an implemented backup service. Preserve owner-mediated verified cloud-copy and isolated data/original recovery evidence and the separately recorded metadata/runtime/scale limitations.
+
 ## 2026-10-14 — Isolated recovery import tooling prepared
 
 CC-TODO-006 now has offline TAR-to-D1 SQL preparation and exact recovery comparison in tools/prepare_cloudflare_restore.py. Generated private output is refused inside git checkouts; existing destinations are preserved. Eight Python tests plus the expanded large-original local D1 integration pass; full 49 Node tests, schema/import and type-check/frontend/Worker build passed. Generated SQL imports into a separate local Miniflare D1 with all 16 tables/complete records retained. No remote restore is claimed, no private archive was used in this session, and no Cloudflare resources/settings were changed.
@@ -78,7 +82,7 @@ Prepared two byte-identical UTC-named JSON snapshots, a checksum/size/migration/
 
 Latest-seven normal snapshots after meaningful changes/before imports remains proposed, not an approved or activated pruning/scheduling policy. No automatic transfer, new subscription or production change was activated. See docs/Backup_Recovery_Plan.md.
 
-Next unused decision ID: CC-DEC-014.
+Next unused decision ID: CC-DEC-015.
 
 ## 2026-10-14 — Infrastructure acceptance evidence (routine engineering)
 

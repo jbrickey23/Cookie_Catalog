@@ -1,5 +1,11 @@
 # Cookie_Catalog — TODO
 
+## 2026-10-14, 23:25 UTC — Approved manual backup policy and scripting follow-up
+
+Owner approved the proposed policy: Jay is responsible for complete private TAR backups in OneDrive Cookie_Catalog/Backups after meaningful catalog changes and before imports or bulk edits/deletions. Retain the latest seven normal backups plus a protected pre-change backup until the changed state is verified and recoverability established. This is the current manual operating policy; no scheduled export, automatic transfer or automatic deletion/pruning has been enabled. Earlier statements that the policy is merely proposed are historical.
+
+Owner requested a TODO to script the workflow, accepting PowerShell even when it only automates the manual parts. CC-TODO-012 is created as an open follow-up under CC-TODO-006. It is not implemented or running and does not replace the remaining access/device/sample sequence. Preserve validated restore/cloud-copy passes, R2 MIME limitation and all parked/deferred boundaries.
+
 ## 2026-10-14, 23:21 UTC — Owner-mediated independent cloud-copy checksum passed
 
 Following instructions to copy the fresh TAR into private OneDrive Cookie_Catalog/Backups, locate it in OneDrive web and download it, the owner supplied Cookie_Catalog_2026-10-14T22-44-32-792Z(1).tar. It is 5413888 bytes with SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d, byte-identical to the original validated TAR. This passes the owner-mediated cloud-copy return/checksum check; OneDrive path/account/sync were not independently inspected by the assistant. No need to repeat unchanged-archive restore tests. Preserve the previous isolated D1 records/schema and R2 original-byte passes, with documented MIME limitation.
@@ -213,7 +219,23 @@ Status: Deferred; discovery/prototype; depends on example Canva design and cutte
 - Preserve v1 slicer-based scaling decision; derived geometry remains an optional later capability.
 - Done when one sample outline has a reviewed, dimensioned SVG and a documented viable or rejected integration route.
 
-Next unused task ID: CC-TODO-012. These tasks do not precede CC-TODO-002/003/004 acceptance.
+Next unused task ID: CC-TODO-013. These tasks do not precede CC-TODO-002/003/004 acceptance.
+
+## CC-TODO-012 — Script the manual backup workflow (PowerShell acceptable)
+
+Status: Open; owner-requested October 14. Operational follow-up to CC-TODO-006; not implemented, scheduled or activated. Keep routine manual backups working while the helper is prepared. Next unused task ID: CC-TODO-013.
+
+Purpose: reduce the manual download, naming, copying, verification and retention steps under the approved policy without depending on a security bypass or creating new paid resources.
+
+Scope and acceptance:
+
+- Provide a documented Windows PowerShell helper. It may open the existing authenticated app and guide browser export/file selection when unattended export is unavailable; clearly state which steps still require the owner. Never collect sign-in codes/passwords, scrape browser sessions, or embed credentials in scripts, logs or GitHub.
+- Accept/configure the private OneDrive backup folder; validate the path before use, use UTC timestamp filenames, refuse unintended overwrite and distinguish normal versus protected pre-change backups. Keep originals/private exports out of the public source checkout.
+- Validate completed archives with the existing restore/checksum workflow (or a reviewed equivalent), retain byte size/SHA-256 and completion/verification receipts, and fail clearly on partial/corrupt files. Document any dependency; do not assume Python is installed or require unblocking the parked Windows Wrangler download.
+- Copy safely to the private backup destination and verify the destination checksum. A successful local OneDrive-folder copy is not verified remote sync. Guide a OneDrive web download/checksum check, or use an explicitly authorized supported remote verification method; report pending sync honestly.
+- Implement latest-seven retention as a review/dry-run report initially. Exclude protected pre-change and failed/unverified backups from automatic pruning; preserve the pre-change snapshot until changes/recoverability are verified. No automatic deletion or scheduler is authorized by this TODO. Any later activation needs explicit authorization and a concrete reviewed implementation.
+- Meaningful synthetic verification covers success, spaces/Unicode paths, absent/unavailable OneDrive folder, interrupted/corrupt export, checksum mismatch, duplicate filenames, and preservation of protected snapshots. Never prune real backups to test retention.
+- Done when a reviewed helper and plain-language instructions are committed, an owner Windows run demonstrates the supported manual workflow and trustworthy receipts/failure reporting, and the remaining manual cloud verification steps are explicit. A scheduled/unattended backup service is separate future scope.
 
 ## Ongoing user documentation
 
