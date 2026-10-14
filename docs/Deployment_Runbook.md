@@ -1,10 +1,18 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
+## Latest acceptance — 2026-10-14
+
+Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
+
+Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+
+Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+
 Updated: 2026-10-14 UTC. Development deployed; production and rollback acceptance pending.
 
 ## Latest development recovery update
 
-2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger upload/retrieval and original-containing TAR local restore now passed; direct folder saving is denied in this cloud browser, which uses the bounded 32 MiB download instead. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
 
 Archive manifest/file routes reuse existing signed owner identity, DB/FILES bindings and schema. No migration or secret change. Live new routes/file-picker saving remain unverified. Keep separate production approval gates.
 
@@ -19,9 +27,9 @@ Canonical source jbrickey23/Cookie_Catalog; active feature/cc-infrastructure-fou
 - Access app Cookie Catalog Dev; team cookie-catalog-jbrickey.cloudflareaccess.com; audience configured in app/wrangler.jsonc. Owner configured regular and preview coverage.
 - OWNER_EMAIL must remain a Worker Secret; required-secret validation blocks deployment when absent. Server verifies signed Access JWTs and fails closed.
 
-Owner build log proved development deployment of 8122a92 at 2026-10-12T20:38:58Z. Later actual downloads prove newer backup/recovery routes were live, but the exact exporting deployment commit was not independently recorded. Old failed retries cloned main; use current feature-branch builds. Build-project label/preview behavior still needs review.
+Owner build log proved development deployment of 8122a92 at 2026-10-12T20:38:58Z. Later actual downloads prove newer backup/recovery routes were live, but earlier exporting commits were not attested, but deployed 2939565 and 1ea5c0e were independently matched to GitHub on 2026-10-14. Old failed retries cloned main; use current feature-branch builds. Build-project label/preview behavior still needs review.
 
-Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. Core catalog create/update/read/search implemented locally 2026-10-13; live gate pending. Owner-only persistent attachment routes and browser controls were implemented 2026-10-13, reusing existing schema/bindings. No migration or resource provisioning required. Local 27 Node tests, SQLite schema/import and type-check/build passed; owner screenshot and download confirmation prove photo upload/read deployment; deletion/design/STL remain unconfirmed.
+Owner session and synthetic database/storage checks passed. Actual browser packages restored locally, including original PNG/STL bytes. Core catalog create/update/read/search implemented locally 2026-10-13; live gate pending. Owner-only persistent attachment routes and browser controls were implemented 2026-10-13, reusing existing schema/bindings. No migration or resource provisioning required. Local 27 Node tests, SQLite schema/import and type-check/build passed; owner screenshot and download confirmation prove photo upload/read deployment; synthetic design/STL retrieval, approved deletion and original-containing TAR local restore subsequently passed; see latest evidence above.
 
 ## Automated validation
 

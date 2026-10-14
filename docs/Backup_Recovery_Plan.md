@@ -1,18 +1,26 @@
 # CC-TODO-006 — Backup and recovery
 
+## Latest acceptance — 2026-10-14
+
+Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
+
+Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+
+Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+
 Updated: 2026-10-14 UTC. Development sample export/local recovery verified; operational durability and production recovery remain incomplete.
 
 ## Actual live TAR recovery — 2026-10-14
 
-Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Next: add a test original (preferably above 4 MiB), save another TAR and verify actual bytes/relationships. No payload or database is committed to public Git.
+Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. That followup subsequently passed with a 5400084-byte original-containing TAR; see latest acceptance above. No payload or database is committed to public Git.
 
 Archive size: 10,752 bytes. Full archive SHA-256: 5e034293f86fed14c8f413041e7428fa5b741c7fd671661bec78f6899eaacec7. Manifest export timestamp: 2026-10-14T15:48:08.665Z (file-picker filename timestamp is earlier). Table counts: 2 shapes, 1 physical cutter, 1 design, 1 design/shape link, 2 migration rows; other tables empty. Original byte count zero. Completion receipt and strict member/length validation passed. Exact exporting deployment commit is not independently attested by this payload; validation used the d8b67ac tool implementation.
 
 ## Current larger archive flow
 
-2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore passed; original-containing TAR and larger-upload acceptance remain pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore passed; original-containing TAR local restore and larger upload/retrieval now passed. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
 
-Use Save catalog archive for larger collections. See docs/Archive_Backup.md for protocol and trusted TAR restore. Legacy JSON flow below remains supported with its original limits. Live database-only TAR verification passed; original-containing TAR/larger-upload verification remains pending.
+Use Save catalog archive for larger collections. See docs/Archive_Backup.md for protocol and trusted TAR restore. Legacy JSON flow below remains supported with its original limits. Live database-only TAR verification passed; original-containing TAR local restore/larger-upload verification now passed.
 
 ## Storage and traceability
 
@@ -46,7 +54,7 @@ Recovery envelope reported filesVerified=2 and cleanupVerified=true. Server code
 
 ## Attachment continuation — 2026-10-13
 
-Persistent owner attachment uploads are implemented with existing schema and generated keys, so registered originals are included by this exporter. Live owner photo upload/read has passed; user-upload export/restore acceptance is not yet recorded. Per-file upload limit is 4 MiB, but this bounded backup still allows 4 MiB originals total and 25 objects: do not assume any accepted catalog upload guarantees a complete backup will fit. Export only while mutations are idle; pending/missing uploads deliberately cause export failure rather than an incomplete successful package. Retain a private backup before removing originals. Local regression validation now passes 27 Node tests plus schema/import/type-check/build.
+Persistent owner attachment uploads are implemented with existing schema and generated keys, so registered originals are included by this exporter. Live owner photo upload/read has passed; user-upload export/restore acceptance is not yet recorded. Per-file upload limit is now 25 MiB, but this bounded backup still allows 4 MiB originals total and 25 objects: do not assume any accepted catalog upload guarantees a complete backup will fit. Export only while mutations are idle; pending/missing uploads deliberately cause export failure rather than an incomplete successful package. Retain a private backup before removing originals. Local regression validation now passes 27 Node tests plus schema/import/type-check/build.
 
 ## Browser export
 
