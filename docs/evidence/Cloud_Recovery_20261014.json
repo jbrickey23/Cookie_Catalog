@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-10-14T23:11:00Z",
+  "scope": "Owner-mediated separate recovery D1/R2; no active development rebind/overwrite",
+  "archiveSha256": "93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d",
+  "database": "cookie-catalog-recovery-20261014",
+  "bucket": "cookie-catalog-recovery-20261014-private",
+  "tables": 16,
+  "records": 14,
+  "schemaObjects": 21,
+  "completeRowsMatch": true,
+  "completeSchemaTokensMatch": true,
+  "reviewedWhitespaceOnlyTables": [
+    "d1_migrations",
+    "design_components",
+    "printable_size_recipes",
+    "shape_size_variants"
+  ],
+  "remoteForeignKeyViolations": 0,
+  "remoteQuickCheck": "owner-reported ok",
+  "remoteIntegrityCheck": "SQLITE_AUTH; unsupported here",
+  "localReconstructionIntegrity": "ok",
+  "originalBytes": 5400084,
+  "originalSha256": "44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7",
+  "downloadedOriginalMatch": true,
+  "publicAccess": "Disabled in owner screenshots",
+  "expectedContentType": "model/stl",
+  "observedContentType": "application/octet-stream",
+  "fullBucketInventory": "pending; inspect dashboard folder markers",
+  "runtimeRecovery": "not deployed/tested",
+  "fullComponentClosed": false
+}

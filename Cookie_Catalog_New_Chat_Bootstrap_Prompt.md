@@ -1,5 +1,15 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## 2026-10-14, 23:11 UTC — Isolated cloud record/original readback matched
+
+The owner ran the validated import in separate D1 cookie-catalog-recovery-20261014 after an empty-table check. Returned console output lists all 16 expected tables; nine nonempty-table counts match 14 total rows; foreign_key_check returned no violations and owner reports quick_check=ok. The assistant's first UNION count query exceeded D1's compound-SELECT limit; scalar subqueries worked. PRAGMA integrity_check is rejected by remote D1 (SQLITE_AUTH); use documented quick_check remotely, retaining full integrity_check for local SQLite.
+
+Owner supplied a complete JSON recovery_snapshot readback. Programmatic comparison confirms every row in all 16 tables (including seven empty tables), both migration entries and all 21 schema objects match the trusted 22:44:32.792Z archive. Four CREATE TABLE SQL strings differ only in spaces; quote-preserving lexical review verified identical tokens, and local reconstruction from returned cloud schema/rows passed full SQLite integrity and foreign keys. The existing strict comparator was not silently weakened. Raw readback remains private; only sanitized comparison evidence is committed.
+
+Owner uploaded the original to recovery R2 at attachments/file_77f92535c7654231854cfd600bab0eb8/original. Screenshots show the exact path, 5.4 MB file and Public Access Disabled. The owner downloaded it from the recovery object page and supplied that file; its 5400084 bytes and SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7 match the archive exactly. This is owner-mediated cloud readback evidence, not direct authenticated assistant API access.
+
+Remaining before the full isolated restore gate: audit a complete flat recovery bucket listing (including any folder-marker objects from dashboard Add folder) and address/document R2 HTTP Content-Type application/octet-stream versus archived model/stl. The object-details screen has no visible metadata editor. Do not delete/re-upload automatically. No recovery Worker was created; app/browser runtime recovery, provider-native restore, cloud sync/retention and operational scale remain separate. CC-TODO-006 stays open. Existing development data/bindings remain untouched, and the assistant browser login 403 remains parked. Next user step: recovery bucket root, clear prefix, uncheck View prefixes as folders, screenshot full listing.
+
 ## 2026-10-14 — Isolated recovery import tooling prepared
 
 CC-TODO-006 now has offline TAR-to-D1 SQL preparation and exact recovery comparison in tools/prepare_cloudflare_restore.py. Generated private output is refused inside git checkouts; existing destinations are preserved. Eight Python tests plus the expanded large-original local D1 integration pass; full 49 Node tests, schema/import and type-check/frontend/Worker build passed. Generated SQL imports into a separate local Miniflare D1 with all 16 tables/complete records retained. No remote restore is claimed, no private archive was used in this session, and no Cloudflare resources/settings were changed.
