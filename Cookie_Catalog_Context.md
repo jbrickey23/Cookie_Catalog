@@ -1,5 +1,11 @@
 # Cookie_Catalog — Context
 
+## Owner sequencing clarification — 2026-10-14
+
+Keep building the base application infrastructure under CC-TODO-002/003/004. Preserve the completed D1/R2, deployment, rollback and main-protection passes. Next actionable infrastructure follow-up: inspect the failed Cloudflare Workers Builds check on documentation-only PR #2 and review build/preview branch selection; diagnose before changing deployment settings. Continue the existing infrastructure/recovery/access/sample sequence below. No browser compatibility implementation is started by recording these requirements.
+
+Browser/device backlog within CC-TODO-004: support Chrome and Microsoft Edge on Windows, plus Safari on iPhone. Interpret the owner's “Edge/Explorer” as modern Edge; legacy Internet Explorer support is not added. Before release, verify sign-in, record/search/form usability, private file upload/download, responsive layout and the appropriate backup path on those targets. Desktop direct-folder saving and the bounded TAR fallback have different capabilities; keep limitations explicit. Actual Edge/iPhone outcomes remain pending. This acceptance work follows the current base-infrastructure prerequisites; it does not replace them or introduce a new task ID.
+
 ## Current continuation — Main protection active
 
 Main-branch protection was created and read back on 2026-10-14 after owner sign-in. The exact main rule requires a pull request, sqlite from GitHub Actions, an up-to-date branch and resolved conversations, and applies to administrators. Mandatory approvals are disabled for the current single-owner workflow; force pushes/deletions are disabled. The branch API reports main protected=true and development protected=false. Detailed protection API access is unavailable to the integration (403); persisted checkbox/source selections were verified in the signed-in GitHub UI.
@@ -31,7 +37,7 @@ JBrickey23/Cookie_Catalog is public and canonical for application source, migrat
 
 ## Current next action and operational boundaries
 
-Verify intended devices/users and configure appropriate pre-merge/main-release safeguards before any separately approved release. Both branches currently report protected=false; no rulesets exist. CI workflow Schema smoke tests uses job sqlite for schema/import, Node tests, type-check and build. Release/protection changes and device/role acceptance are not proven by CI.
+Main protection is active as recorded above. Review the Cloudflare docs-only build failure and build/preview branch selection next, preserving base-infrastructure priority. Chrome/Edge on Windows and Safari on iPhone are queued acceptance targets before a separately approved release; do not start compatibility implementation ahead of the infrastructure sequence. CI workflow Schema smoke tests uses job sqlite for schema/import, Node tests, type-check and build. Release/protection changes and device/role acceptance are not proven by CI.
 
 CC-TODO-006 still needs isolated Cloudflare-side data/object restore, independent sync, retention/cadence/ownership and production consistency/scale. CC-TODO-007 needs authorized representative real samples. Keep stable task IDs and future 008–011 deferred. Routine reversible engineering is autonomous; new resources, material cost, production changes and security weakening require separate authorization. No such scope expansion occurred.
 
