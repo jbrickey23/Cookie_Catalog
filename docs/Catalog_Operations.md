@@ -12,13 +12,13 @@ All routes require verified owner identity; POST/PUT additionally require exact 
 
 Choose Cutter shapes; create TEST tree with notes Christmas. Search for Christmas, edit its name/notes, then reload and search again. Create a design and optional storage location. Add a physical cutter by choosing its shape, location, dimensions, quantity and origin. In Design/cutter mappings choose design and shape, record proposed/tested compatibility and standard/flip/combination instructions. Photo/original links are managed separately under Private files and target choices refresh after a record save.
 
-Keep development examples distinct from real inventory. The temporary backup permits only 4 MiB of originals total/25 objects; scalable backup and larger uploads remain required before importing real assets.
+Keep development examples distinct from real inventory. Larger TAR archives now permit up to 1 GiB originals total/1000 files and 25 MiB/file; legacy JSON remains 4 MiB total/25 objects. Live larger archive/recovery and production needs must be verified before real assets.
 
 ## Evidence and remaining acceptance
 
 35 Node tests passed, including actual Miniflare D1 create/link/edit/retrieve/search, FK checks, missing/duplicate links, invalid enums/dimensions/URLs/body/fields, auth/origin enforcement, literal SQL-safe search and 201-row pagination; TypeScript/Vite frontend/Worker build passed. No migration changes; earlier SQLite schema/import validation remains applicable.
 
-Owner live shape creation/edit/search across refresh passed; live hit explanations and remaining location/physical-cutter/mapping workflows are pending. Remaining: deletion, tags/visual browse/search, multiple-component/sizing UX, representative real samples, import, collaborator roles, usable large-catalog selectors, concurrency/version conflict handling and production acceptance.
+Owner live shape creation/edit/search across refresh passed; live hit explanations passed; remaining location/physical-cutter/mapping workflows are pending. Remaining: deletion, tags/visual browse/search, multiple-component/sizing UX, representative real samples, import, collaborator roles, usable large-catalog selectors, concurrency/version conflict handling and production acceptance.
 
 ## Metadata boundary
 

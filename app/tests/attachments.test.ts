@@ -63,7 +63,7 @@ test("owner-only and same-origin guards reject before touching storage",async()=
 test("reject malformed files, unknown records, design models and oversized bodies with no writes",async()=>{
   const {runtime,db,bucket}=await env();
   try {
-    for(const [request,status] of [[upload(new Uint8Array([1,2,3]),"bad.png"),415],[upload(png,"photo.png","shape","absent"),404],[upload(stl,"test.stl","design","design_test"),415],[upload(new Uint8Array(4*1024*1024+1),"big.png"),413]] as const)
+    for(const [request,status] of [[upload(new Uint8Array([1,2,3]),"bad.png"),415],[upload(png,"photo.png","shape","absent"),404],[upload(stl,"test.stl","design","design_test"),415],[upload(new Uint8Array(25*1024*1024+1),"big.png"),413]] as const)
       assert.equal((await handleApiRequest(request,owner,db,bucket)).status,status);
     assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM attachments").first<any>())?.n,0);
     assert.equal((await bucket.list()).objects.length,0);

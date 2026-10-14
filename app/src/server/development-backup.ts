@@ -26,11 +26,11 @@ function checkedRows(result: D1Result<unknown> | undefined): Row[] {
   if (!result?.success || !Array.isArray(result.results)) throw new BackupError("Database snapshot failed.");
   return result.results as Row[];
 }
-export async function createDevelopmentBackup(database: D1Database, files: R2Bucket): Promise<string> {
+export async function createDatabaseSnapshot(database: D1Database, maxRows = MAX_ROWS) {
   // D1 batch is transactional. All table rows, schema and integrity checks share one snapshot.
   const results = await database.batch([
     database.prepare("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE substr(name,1,7) != 'sqlite_' AND substr(name,1,4) != '_cf_' ORDER BY type, name"),
-    ...BACKUP_TABLES.map(table => database.prepare(`SELECT * FROM "${table}" LIMIT ${MAX_ROWS + 1}`)),
+    ...BACKUP_TABLES.map(table => database.prepare(`SELECT * FROM "${table}" LIMIT ${maxRows + 1}`)),
     database.prepare("PRAGMA foreign_key_check")
   ]);
   if (results.length !== BACKUP_TABLES.length + 2) throw new BackupError("Database snapshot incomplete.");
@@ -46,7 +46,7 @@ export async function createDevelopmentBackup(database: D1Database, files: R2Buc
   const tables: Record<string, Row[]> = {};
   for (let i = 0; i < BACKUP_TABLES.length; i++) {
     const rows = checkedRows(results[i + 1]);
-    if (rows.length > MAX_ROWS) throw new BackupError("Development backup too large. Use an operator export.");
+    if (rows.length > maxRows) throw new BackupError("Database snapshot exceeds the record limit. Use an operator export.");
     for (const row of rows) for (const value of Object.values(row)) {
       if (value !== null && typeof value !== "string" && typeof value !== "number") {
         throw new BackupError("Unsupported database value.");
@@ -58,6 +58,10 @@ export async function createDevelopmentBackup(database: D1Database, files: R2Buc
     tables[BACKUP_TABLES[i]] = rows;
   }
   if (checkedRows(results.at(-1)).length) throw new BackupError("Database relationships failed validation.");
+  return { schema, tables };
+}
+export async function createDevelopmentBackup(database: D1Database, files: R2Bucket): Promise<string> {
+  const { schema, tables } = await createDatabaseSnapshot(database);
   const attachments = tables.attachments;
   if (attachments.length > MAX_OBJECTS) throw new BackupError("Development backup has too many files. Use an operator export.");
   const keys = new Set<string>();

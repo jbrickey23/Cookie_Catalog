@@ -1,4 +1,5 @@
-const MAX_FILE = 4 * 1024 * 1024;
+import { ARCHIVE_FILE_LIMIT } from "./archive-backup";
+const MAX_FILE = ARCHIVE_FILE_LIMIT;
 const MAX_REQUEST = MAX_FILE + 16384;
 const ID = /^[a-zA-Z0-9_-]{1,128}$/;
 interface Attachment { id: string; storage_key: string; filename: string; media_type: string; byte_size: number; sha256: string }
@@ -103,7 +104,7 @@ export async function handleAttachments(request: Request, database: D1Database, 
       }
       const object = await bucket.get(row.storage_key);
       if (!object) return json({ error: "Original file is missing. Metadata is retained for recovery." }, 409);
-      if (object.size > MAX_FILE) return json({ error: "Original exceeds the current 4 MiB download limit." }, 413);
+      if (object.size > MAX_FILE) return json({ error: "Original exceeds the current 25 MiB download limit." }, 413);
       const bytes = await object.arrayBuffer();
       const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
       const hash = Array.from(digest, n => n.toString(16).padStart(2,"0")).join("");
@@ -128,18 +129,18 @@ export async function handleAttachments(request: Request, database: D1Database, 
     if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
     if (!request.headers.get("content-type")?.startsWith("multipart/form-data;")) return json({ error: "Multipart upload required" }, 415);
     const declared = Number(request.headers.get("content-length"));
-    if (declared > MAX_REQUEST) return json({ error: "Maximum file size is 4 MiB." }, 413);
+    if (declared > MAX_REQUEST) return json({ error: "Maximum file size is 25 MiB." }, 413);
     let form: FormData;
     try {
       const body = await boundedBody(request);
       form = await new Response(body.buffer as ArrayBuffer, { headers: { "content-type": request.headers.get("content-type")! } }).formData();
-    } catch { return json({ error: "Invalid upload or request exceeds the 4 MiB file limit." }, 413); }
+    } catch { return json({ error: "Invalid upload or request exceeds the 25 MiB file limit." }, 413); }
     const kind = form.get("kind");
     const id = form.get("recordId");
     const t = target(typeof kind === "string" ? kind : null);
     const file = form.get("file");
     if (!t || typeof id !== "string" || !ID.test(id) || typeof file === "string" || !file) return json({ error: "Choose a record and file." }, 400);
-    if (file.size === 0 || file.size > MAX_FILE) return json({ error: "File must contain bytes and be at most 4 MiB." }, 413);
+    if (file.size === 0 || file.size > MAX_FILE) return json({ error: "File must contain bytes and be at most 25 MiB." }, 413);
     const filename = file.name.normalize("NFC").replace(/[\\/\x00-\x1f\x7f]/g, "_").slice(0,160);
     const bytes = new Uint8Array(await file.arrayBuffer());
     const type = media(filename, bytes);

@@ -60,7 +60,7 @@ export function Attachments() {
     event.preventDefault();
     const formElement = event.currentTarget;
     if (!recordId || !file) return;
-    if (file.size > 4 * 1024 * 1024) { setStatus("Choose a file no larger than 4 MiB."); return; }
+    if (file.size > 25 * 1024 * 1024) { setStatus("Choose a file no larger than 25 MiB."); return; }
     setBusy(true); setStatus("Saving your original privately…");
     try {
       const form = new FormData();
@@ -98,7 +98,7 @@ export function Attachments() {
     </select></label>
     <form onSubmit={upload} style={{ marginTop: 16 }}>
       <label>Original file <input type="file" disabled={busy || !recordId} accept={kind === "shape" ? ".png,.jpg,.jpeg,.webp,.stl,.3mf" : ".png,.jpg,.jpeg,.webp"} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>
-      <p>PNG, JPEG and WebP photos; cutter shapes also accept STL and 3MF. Maximum 4 MiB per file.</p>
+      <p>PNG, JPEG and WebP photos; cutter shapes also accept STL and 3MF. Maximum 25 MiB per file.</p>
       {kind === "shape" && <label>Printable file license/source notes (optional)<br /><textarea maxLength={2000} value={notes} disabled={busy} onChange={event => setNotes(event.target.value)} /></label>}
       <p><button disabled={busy || !recordId || !file} type="submit">{busy ? "Working…" : "Save private file"}</button></p>
     </form>
@@ -113,7 +113,7 @@ export function Attachments() {
         <button disabled={busy} onClick={() => remove(item.id)}>Delete original</button>{" "}
         <button disabled={busy} onClick={() => setConfirmId("")}>Cancel</button></p>}
     </li>)}</ul>
-    <p>Current development backup limit: 4 MiB of originals total and 25 files. A larger catalog needs the upcoming scalable backup flow.</p>
+    <p>Use Catalog archive below for larger backups: up to 1 GiB of originals and 1,000 files. The older small JSON backup remains limited to 4 MiB total and 25 files.</p>
     <h3>Storage cleanup</h3>
     <p>Check for originals left without catalog metadata after an interrupted operation. Cleanup is manual; files younger than 24 hours are kept.</p>
     <button disabled={busy} onClick={() => scanOrphans()}>Check unlinked files</button>{" "}

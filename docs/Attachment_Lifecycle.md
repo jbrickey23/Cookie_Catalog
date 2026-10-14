@@ -8,9 +8,9 @@ Only the verified owner can access the current catalog attachment routes. All ca
 
 Browser Private files section chooses an existing cutter shape or design. Select a PNG/JPEG/WebP original, or an STL/3MF for shapes; optional source/license notes apply to printable assets. Upload, refresh and download preserve originals. Removal requires explicit browser confirmation and removes all attachment links/printable size recipes. Derived printable relationships block deletion before touching bytes.
 
-Current file limit 4 MiB; multipart body limited to 4 MiB plus 16 KiB overhead even without Content-Length. Type is derived from filename plus lightweight signature/structure, not trusted client MIME. This is not comprehensive model/image validation or malware scanning. 3MF ZIP container validation does not establish package contents; the slicer validates models. SVG/HTML are excluded; originals download as application/octet-stream with attachment disposition and sanitized UTF-8 filename, never inline. No thumbnail generation yet.
+Current file limit 25 MiB; multipart body limited to 25 MiB plus 16 KiB overhead even without Content-Length. Type is derived from filename plus lightweight signature/structure, not trusted client MIME. This is not comprehensive model/image validation or malware scanning. 3MF ZIP container validation does not establish package contents; the slicer validates models. SVG/HTML are excluded; originals download as application/octet-stream with attachment disposition and sanitized UTF-8 filename, never inline. No thumbnail generation yet.
 
-Development backup has a separate 4 MiB total originals/25-object cap. Keep test assets small until scalable backup exists. No production durability claim.
+Larger TAR archive supports 1 GiB originals total/1000 files, with 25 MiB/original. Legacy JSON keeps a separate 4 MiB total/25-object cap. Local larger recovery passed; live larger-upload/save/restore and production performance remain unverified. No production durability claim.
 
 ## Upload and compensation
 
@@ -28,9 +28,13 @@ DELETE /api/attachments/:id checks derived relationships first, deletes/confirm-
 
 GET /api/attachment-orphans scans 100 objects per page with cursor. Only generated file_ UUID original keys without D1 metadata are returned. Browser requires explicit cleanup confirmation. DELETE /api/attachment-orphans/:id rechecks metadata and permits deletion only when the R2 object is older than 24 hours. Existing linked objects and legacy/disposable keys are protected. No recurring garbage collection or pruning configured.
 
+## Larger attachment continuation
+
+2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+
 ## Evidence and acceptance
 
-27 local Node tests passed, including real Miniflare D1/R2 integration: shape photo, design image and STL upload/exact-byte retrieval/link deletion; non-owner/unauthenticated/origin guards; invalid/oversized uploads; missing/corrupt originals; failed object deletion; upload compensation; old/recent/linked orphan handling and pagination; derived-original protection and size-recipe cleanup. SQLite schema/import and TypeScript/Vite frontend/Worker build also passed.
+Latest 40 local Node tests passed, including real Miniflare D1/R2 integration: shape photo, design image and STL upload/exact-byte retrieval/link deletion; non-owner/unauthenticated/origin guards; invalid/oversized uploads; missing/corrupt originals; failed object deletion; upload compensation; old/recent/linked orphan handling and pagination; derived-original protection and size-recipe cleanup. SQLite schema/import and TypeScript/Vite frontend/Worker build also passed.
 
 Live evidence, 2026-10-13: owner screenshot shows the Private files section deployed, a 2,946,752-byte JPEG linked to DEMO Evergreen tree and present after refresh. Owner confirmed the downloaded photo opens. This verifies owner upload/persistence/retrieval; live deletion, design-image/STL workflows and negative-edge access remain unconfirmed. The photograph was user-provided; do not assume it is a synthetic or licensed-shareable fixture. No photograph or new backup payload is committed to GitHub.
 

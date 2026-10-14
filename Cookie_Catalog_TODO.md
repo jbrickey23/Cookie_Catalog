@@ -1,6 +1,6 @@
 # Cookie_Catalog — TODO
 
-Updated: 2026-10-13 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
+Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
 
 | ID | Component | Current status | Depends on |
 | --- | --- | --- | --- |
@@ -9,7 +9,7 @@ Updated: 2026-10-13 UTC. Infrastructure first; stable component IDs and acceptan
 | CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; deletion/other types pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
-| CC-TODO-006 | Backup, export and recovery | In progress: live sample exports restored locally | 002/003 |
+| CC-TODO-006 | Backup, export and recovery | In progress: larger TAR/larger-upload flow locally restored; live gate pending | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open: synthetic importer verified; real samples absent | 002/003/005 |
 
 ## CC-TODO-001 — Repository infrastructure
@@ -30,7 +30,7 @@ Verified: D1 selected/provisioned for development; DB binding configured. Both m
 
 Implemented 2026-10-13: Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live shape creation/edit/search now owner-confirmed; physical cutter/location/mapping acceptance remains open. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
 
-Owner confirmed shape create/edit/refresh/search passed. Search explanations and broader metadata predicates implemented with 35 local tests/build passed; live highlighting pending. Remaining: live physical cutter/location/mapping checks; refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
+Owner confirmed shape create/edit/refresh/search passed. Search explanations and broader metadata predicates implemented with 35 local tests/build passed; live highlighting owner-confirmed 2026-10-14. Remaining: live physical cutter/location/mapping checks; refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
 
 Done when: a sample cutter and design can be created, linked, edited, searched and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
@@ -40,9 +40,9 @@ Purpose: retain photos, artwork, STL and 3MF originals alongside records.
 
 Verified: private R2 provisioned, FILES binding and adapter/lifecycle design implemented. Owner's three-file smoke test passed with cleanup; screenshot showed public access disabled and empty bucket afterward. Actual recovery export/local restore verified a tiny PNG and STL with metadata and record links.
 
-Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; maximum 4 MiB/file with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
+Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; initial 4 MiB/file limit (now increased to 25 MiB) with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
 
-Verified live owner photo upload/refresh/download on 2026-10-13; deletion is still unconfirmed. Remaining: design/STL flows, deletion and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Backup tool still caps originals at 4 MiB total/25 objects. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
+Verified live owner photo upload/refresh/download on 2026-10-13; deletion is still unconfirmed. Remaining: design/STL flows, deletion and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/archive acceptance pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
 
 Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -70,11 +70,13 @@ Done when: intended users can access their catalog, unauthorized access is rejec
 
 Purpose: preserve catalog data independently of provider/app availability.
 
+Latest: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+
 Verified: owner-only bounded browser export and disposable recovery-test endpoint, strict local restore tool, integrity/authorization/failure-cleanup tests. Actual normal package restored 16 tables/6 rows/0 objects; actual recovery package restored 16 tables/17 rows/2 objects with original bytes and relationships intact. See docs/Backup_Recovery_Plan.md for hashes and instructions.
 
 Owner placed dated packages/manifest/instructions in personal OneDrive at Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Local placement confirmed by owner; cloud sync not confirmed. Latest-seven normal snapshots after meaningful changes/before imports remains proposed; no schedule, transfer or pruning activated.
 
-Remaining: verify independent cloud copy, settle retention/cadence/ownership, restore into isolated Cloudflare D1/R2, production-scale export/import and consistency across D1/R2. Current sample local-restore acceptance passed; the broader component remains open.
+Remaining: verify independent cloud copy, settle retention/cadence/ownership, restore into isolated Cloudflare D1/R2, live TAR/larger-file recovery, production-scale export/import and consistency across D1/R2. Current sample local-restore acceptance passed; the broader component remains open.
 
 Done when: a sample backup restores into a clean test environment with relationships and attachments intact, and recovery instructions are recorded. This demonstrated sample gate does not replace the remaining durability/operational work.
 
@@ -92,6 +94,6 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
 
-Verify CC-TODO-002 Matched fields highlighting and remaining physical cutter/location/mapping checks; complete pending CC-TODO-003 deletion/design/STL gates. Continue CC-TODO-006 scalable backups/larger uploads before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
+Matched fields highlighting passed. Verify CC-TODO-006 live TAR save/restore and larger upload, then remaining physical cutter/location/mapping and CC-TODO-003 deletion/design/STL gates. Validate production-scale backup needs before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
 
 Next unused task ID: **CC-TODO-008**.

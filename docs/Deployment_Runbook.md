@@ -1,6 +1,12 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
-Updated: 2026-10-13 UTC. Development deployed; production and rollback acceptance pending.
+Updated: 2026-10-14 UTC. Development deployed; production and rollback acceptance pending.
+
+## Latest development recovery update
+
+2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+
+Archive manifest/file routes reuse existing signed owner identity, DB/FILES bindings and schema. No migration or secret change. Live new routes/file-picker saving remain unverified. Keep separate production approval gates.
 
 ## Current development configuration
 

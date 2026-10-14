@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
 import { Catalog } from "./Catalog";
+import { ArchiveBackup } from "./ArchiveBackup";
 
 function App() {
   const [catalogVersion,setCatalogVersion] = useState(0);
@@ -90,6 +91,8 @@ function App() {
     <hr />
     <Attachments key={catalogVersion} />
     <hr />
+    <ArchiveBackup />
+    <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>
     <button onClick={checkDatabase} disabled={busy || backupBusy || storageBusy} style={{ padding: "0.7rem 1rem", cursor: busy ? "wait" : "pointer" }}>
       {busy ? "Checking…" : "Check development database"}
@@ -101,7 +104,7 @@ function App() {
     <p>Uses three tiny invented files and removes them after verification.</p>
     <p role="status" aria-live="polite">{storageResult}</p>
     <hr />
-    <h2>Development backup</h2>
+    <h2>Small JSON development backup</h2>
     <p>Download the current demonstration catalog and its registered files. Keep the download private.</p>
     <button onClick={() => downloadBackup()} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download development backup"}
