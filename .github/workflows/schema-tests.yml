@@ -1,0 +1,62 @@
+name: Schema smoke tests
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  sqlite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate repository layout and documentation
+        run: |
+          python - <<'PY'
+          import json, pathlib, re, subprocess
+          from urllib.parse import urlsplit, unquote
+          root = pathlib.Path.cwd()
+          source_dirs = ["app", "database", "samples", "tests", "tools"]
+          present = [name for name in source_dirs if (root / name).is_dir()]
+          if present and len(present) != len(source_dirs):
+              raise SystemExit("Incomplete application source layout: " + ", ".join(present))
+          if present and not (root / "app/package-lock.json").is_file():
+              raise SystemExit("Application source requires its committed dependency lockfile")
+          paths = subprocess.check_output(["git", "ls-files", "-z"], text=True).split("\0")
+          markdown = [pathlib.Path(p) for p in paths if p.endswith(".md")]
+          for path in markdown:
+              text = path.read_text(encoding="utf-8")
+              for match in re.finditer(r"\[[^\]]*\]\(([^)\s]+)\)", text):
+                  target = match.group(1)
+                  if urlsplit(target).scheme or target.startswith("#"):
+                      continue
+                  relative = unquote(target.split("#", 1)[0].split("?", 1)[0])
+                  if not relative:
+                      continue
+                  destination = (path.parent / relative).resolve()
+                  if not destination.is_relative_to(root) or not destination.exists():
+                      raise SystemExit(f"Broken local documentation link: {path}: {target}")
+          for value in paths:
+              if value.startswith("docs/") and value.endswith(".json"):
+                  json.loads(pathlib.Path(value).read_text(encoding="utf-8"))
+          print(f"Validated {len(markdown)} Markdown files and documentation JSON; application source present: {bool(present)}")
+          PY
+      - name: Run SQLite schema tests
+        if: ${{ hashFiles('app/package.json') != '' }}
+        run: |
+          python tests/test_schema.py
+          python samples/import_synthetic.py
+      - uses: actions/setup-node@v4
+        if: ${{ hashFiles('app/package.json') != '' }}
+        with:
+          node-version: "22"
+      - name: Validate application tests, TypeScript and build
+        if: ${{ hashFiles('app/package.json') != '' }}
+        working-directory: app
+        run: |
+          npm ci --no-audit --no-fund
+          npm run test:auth
+          npm run build
