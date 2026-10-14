@@ -20,6 +20,8 @@ async function env() {
     await db.batch(sql.split(";").map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));
   }
   await db.prepare("CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)").run();
+  for(const [index,name] of ["0001_initial.sql","0002_variants_components.sql"].entries())
+    await db.prepare("INSERT INTO d1_migrations(id,name,applied_at) VALUES (?,?,?)").bind(index+1,name,"2026-10-14").run();
   await db.prepare("INSERT INTO shapes(id,name) VALUES ('shape_test','TEST large original')").run();
   return {runtime,db,bucket};
 }
@@ -55,6 +57,27 @@ test("larger upload archives/restores original bytes, all tables and relationshi
     const report=JSON.parse(execFileSync("python3",["../tools/restore_archive_backup.py",source,target],{encoding:"utf8"}));
     assert.equal(report.tables,16);assert.equal(report.objects,1);assert.equal(report.originalBytes,stl.length);assert.equal(report.complete,true);
     assert.deepEqual(readFileSync(join(target,"objects",key)),Buffer.from(stl));
+    const prepared=join(directory,"cloud-prepared");
+    const preparation=JSON.parse(execFileSync("python3",["../tools/prepare_cloudflare_restore.py","prepare",source,prepared],{encoding:"utf8"}));
+    assert.equal(preparation.cloudExecuted,false);
+    assert.equal(preparation.objects,1);
+    const comparison=JSON.parse(execFileSync("python3",["../tools/prepare_cloudflare_restore.py","verify",prepared,join(target,"catalog.sqlite"),join(target,"objects")],{encoding:"utf8"}));
+    assert.equal(comparison.dataComparisonPassed,true);
+    assert.equal(comparison.cloudProvenanceVerified,false);
+    // D1 engine import, not just SQLite syntax validation. Never a remote binding.
+    const recovery=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:"isolated-recovery"}}));
+    try {
+      const recovered=await recovery.getD1Database("DB") as unknown as D1Database;
+      const statements=JSON.parse(readFileSync(join(prepared,"statements.json"),"utf8")) as string[];
+      await recovered.batch(statements.map(sql=>recovered.prepare(sql)));
+      const expected=JSON.parse(readFileSync(join(prepared,"expected.json"),"utf8"));
+      for(const [table,rows] of Object.entries(expected.database.tables)) {
+        const result=await recovered.prepare('SELECT * FROM "'+table+'"').all();
+        const canonical=(values:any[])=>values.map(value=>JSON.stringify(Object.fromEntries(Object.entries(value).sort()))).sort();
+        assert.deepEqual(canonical(result.results),canonical(rows as any[]),table);
+      }
+      assert.deepEqual((await recovered.prepare("PRAGMA foreign_key_check").all()).results,[]);
+    }finally{await recovery.dispose();}
     const downloaded=await handleApiRequest(new Request(origin+"/api/attachments/"+id),owner,db,bucket);
     assert.equal(downloaded.status,200);
     assert.equal(await sha256(new Uint8Array(await downloaded.arrayBuffer())),await sha256(stl));

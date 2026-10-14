@@ -7,3 +7,5 @@ dist/
 *.sqlite3
 *.db
 .DS_Store
+__pycache__/
+*.pyc

@@ -2,6 +2,50 @@
 
 Status: prepared, not executed. Local original-containing archive restoration and compatible code rollback already passed; preserve those results.
 
+## October 14 continuation — import preparation implemented
+
+`tools/prepare_cloudflare_restore.py` now prepares a trusted TAR entirely offline and compares independent recovery downloads. Eight Python tests cover exact text (quotes, Unicode, newlines and NUL), self-references, changed records with unchanged counts, missing/changed/extra originals, changed SQL, symlinks, missing migrations, oversized statements, corrupt archives and destination preservation. The existing large-original integration now imports generated statements into a separate local Miniflare D1 and compares every row in all 16 tables; all 49 Node tests, SQLite schema/import and TypeScript/frontend/Worker build pass. This is local D1-engine evidence, not a remote Cloudflare restore.
+
+Proposed dedicated targets: D1 `cookie-catalog-recovery-20261014` and private R2 `cookie-catalog-recovery-20261014-private`. These are proposals, not existing/verified resources. Inventory account capacity and obtain the separate new-resource authorization before creation. No Worker or credential needs to be created for the data/object comparison gate. Do not change the running development Worker's bindings. Keep targets for review; do not auto-delete them.
+
+The current browser reaches Cloudflare sign-in; no signed-in inventory is available yet. This supersedes the earlier 403 observation below without claiming successful authentication. No Cloudflare plugin was returned by the integration directory search. Existing owner Windows Wrangler remediation remains parked.
+
+### Prepare privately
+
+Run from a trusted source checkout using a private output directory **outside every git checkout**, for example an existing private backup folder. The tool refuses any existing output directory and never runs a subprocess, calls Cloudflare or provisions resources.
+
+```text
+python tools/prepare_cloudflare_restore.py prepare PRIVATE_ARCHIVE.tar NEW_PRIVATE_DIRECTORY
+```
+
+The package contains validated `catalog.sqlite`, exact original keys/bytes under `objects/`, `manifest.json`, D1-oriented `import.sql`, `statements.json` for local D1 testing, and private `expected.json` with the archive hash/time, full rows/schema, per-table counts, object descriptors and SQL hash. Source commit is explicitly unknown because this archive format does not attest it; retain an authenticated infrastructure report alongside the archive when deployed provenance is needed. Never commit these outputs.
+
+Generated SQL creates all tables before inserts, defers foreign keys, uses one INSERT per row and refuses statements over 100000 bytes. It contains no BEGIN/COMMIT, DROP, clearing or replacement commands. It expects a separate empty database with no catalog or migration tables. A local full round-trip must match before preparation succeeds. It fails rather than silently splitting an oversized record. Known migrations 0001/0002 are required. Existing migration names/timestamps/IDs are imported rather than migrations reapplied.
+
+### Cloud execution after target verification
+
+Use an authenticated environment with verified account identity, resource IDs, free-tier capacity and empty recovery targets. Prepare a standalone private Wrangler configuration containing only the confirmed recovery D1 name/UUID and account, outside the running app configuration. Check that both the target UUID and bucket differ from active development. Resource creation/import is not performed by this tool.
+
+Cloudflare's documented SQL import shape is:
+
+```text
+wrangler d1 execute CONFIRMED_RECOVERY_DATABASE --remote --config PRIVATE_RECOVERY_CONFIG --file NEW_PRIVATE_DIRECTORY/import.sql
+```
+
+For each descriptor in private `expected.json`, upload the matching `objects/<key>` using `wrangler r2 object put CONFIRMED_RECOVERY_BUCKET/<key> --remote --file PRIVATE_OBJECT_PATH --content-type CONTENT_TYPE`. Use the descriptor content type, or `application/octet-stream` when absent. Pass arguments directly, without constructing a shell command from catalog metadata. Verify bucket public development URL and custom-domain access are disabled; preserve separate evidence of content types and privacy.
+
+If any import/upload fails, record partial state and stop; never clear/retry automatically or redirect to development. Inspect before deciding whether a new isolated target is needed.
+
+Re-export the recovery D1 with `wrangler d1 export CONFIRMED_RECOVERY_DATABASE --remote --config PRIVATE_RECOVERY_CONFIG --output PRIVATE_RECOVERY_EXPORT.sql`. Restore this trusted export into a NEW local SQLite file (using a SQLite client with foreign keys enabled and a deferred transaction around statements). Download every recovery R2 object into a separate private tree retaining its exact key; establish the complete paginated remote listing independently, so a download of only expected keys cannot hide extra remote objects. Record cloud identity/source provenance before comparing:
+
+```text
+python tools/prepare_cloudflare_restore.py verify NEW_PRIVATE_DIRECTORY INDEPENDENT_RECOVERY.sqlite INDEPENDENT_DOWNLOADED_OBJECTS
+```
+
+Comparison checks every catalog row, migration row, schema object SQL, relationship/integrity result and each original's byte size/SHA-256; it rejects extra/missing downloaded keys and symlinks. Schema formatting changes in a provider export may cause a conservative failure and require review, never automatic weakening of the comparator. R2 content-type/private-access settings and complete remote listing remain separate cloud checks. Reusing the package's own local database/objects proves only local comparison, never remote recovery. `cloudProvenanceVerified` and `privateAccessVerified` deliberately remain false in the comparator result. Do not close CC-TODO-006 from a local result alone.
+
+Official references checked October 14, 2026: [D1 SQL import/export](https://developers.cloudflare.com/d1/best-practices/import-export-data/), [D1 limits](https://developers.cloudflare.com/d1/platform/limits/), [Wrangler R2 object commands](https://developers.cloudflare.com/workers/wrangler/commands/r2/). No provider-native rollback, application runtime recovery, scale/consistency guarantee, automatic backup sync or retention policy is implemented by this step.
+
 ## Purpose
 
 Prove that a trusted catalog archive can reconstruct D1 records and R2 originals in separate Cloudflare recovery targets. The existing cookie-catalog-dev database and cookie-catalog-dev-private bucket must not be imported into, rebound, cleared or overwritten during this drill.

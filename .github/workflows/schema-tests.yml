@@ -48,6 +48,7 @@ jobs:
         if: ${{ hashFiles('app/package.json') != '' }}
         run: |
           python tests/test_schema.py
+          python tests/test_cloudflare_restore.py
           python samples/import_synthetic.py
       - uses: actions/setup-node@v4
         if: ${{ hashFiles('app/package.json') != '' }}

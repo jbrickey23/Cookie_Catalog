@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## 2026-10-14 — Isolated recovery import tooling prepared
+
+CC-TODO-006 now has offline TAR-to-D1 SQL preparation and exact recovery comparison in tools/prepare_cloudflare_restore.py. Generated private output is refused inside git checkouts; existing destinations are preserved. Eight Python tests plus the expanded large-original local D1 integration pass; full 49 Node tests, schema/import and type-check/frontend/Worker build passed. Generated SQL imports into a separate local Miniflare D1 with all 16 tables/complete records retained. No remote restore is claimed, no private archive was used in this session, and no Cloudflare resources/settings were changed.
+
+Next prerequisite: authenticated read-only Cloudflare inventory, then confirmed empty separate recovery targets and free-tier capacity/new-resource authorization. Proposed names: D1 cookie-catalog-recovery-20261014 and private R2 cookie-catalog-recovery-20261014-private. These do not exist as verified targets. The current remote browser reaches Cloudflare sign-in; the earlier 403 is historical, not a current sign-in result. The plugin directory returned no Cloudflare integration. Preserve active cookie-catalog-dev and cookie-catalog-dev-private; no rebind, overwrite, paid resources, production release or automatic cleanup. See docs/Isolated_Cloudflare_Restore.md for the concrete preparation/import/download/comparison procedure and limits. Cloud execution, privacy/provenance, independent sync, retention and scale remain open. Device acceptance, roles, samples and deferred OneNote/photo/Canva sequencing are unchanged.
+
 ## Current continuation — Main protection active
 
 Main-branch protection was created and read back on 2026-10-14 after owner sign-in. The exact main rule requires a pull request, sqlite from GitHub Actions, an up-to-date branch and resolved conversations, and applies to administrators. Mandatory approvals are disabled for the current single-owner workflow; force pushes/deletions are disabled. The branch API reports main protected=true and development protected=false. Detailed protection API access is unavailable to the integration (403); persisted checkbox/source selections were verified in the signed-in GitHub UI.
