@@ -1,0 +1,40 @@
+{
+  "observedDate": "2026-10-14",
+  "repository": "JBrickey23/Cookie_Catalog",
+  "classicRuleId": 84830270,
+  "branchPattern": "main",
+  "mainProtected": true,
+  "developmentProtected": false,
+  "requirePullRequest": true,
+  "requireApprovals": false,
+  "requiredCheck": {
+    "name": "sqlite",
+    "source": "GitHub Actions"
+  },
+  "requireUpToDate": true,
+  "requireConversationResolution": true,
+  "enforceAdministrators": true,
+  "allowForcePush": false,
+  "allowDeletion": false,
+  "requireSignedCommits": false,
+  "requireLinearHistory": false,
+  "requireSuccessfulDeployments": false,
+  "lockBranch": false,
+  "verification": {
+    "ui": "Created rule, reopened its edit page and read back persisted settings and check source.",
+    "branchApi": "main protected=true; feature branch protected=false",
+    "detailedProtectionApi": "403 Resource not accessible by integration; detailed policy verified through signed-in UI instead."
+  },
+  "applicationPR": {
+    "number": 1,
+    "draft": true,
+    "merged": false
+  },
+  "protectedDocumentationPR": 2,
+  "deviceAcceptance": "Pending actual owner target-device outcomes; checklist prepared.",
+  "limits": [
+    "Configuration readback completed; no force-push/deletion or deliberate failing-code probe was attempted.",
+    "Documentation/CI-only PR is the first normal protected-main change; see its GitHub checks and merge record.",
+    "No new collaborator access, production/app merge, resource or deployment-setting changes."
+  ]
+}

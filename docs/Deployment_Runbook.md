@@ -1,10 +1,10 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
-## Current continuation — Main safeguards and devices
+## Current continuation — Main protection active
 
-Main protection is still NOT applied: readback shows main/development unprotected and no rulesets. The exact single-owner-compatible PR/check policy is prepared in docs/Main_Branch_Safeguards.md. Applying it requires owner GitHub browser sign-in; no credential values belong in project files. The current browser is at sign-in, not an authenticated settings page. No protection settings, repository permissions, deployment settings or application code changed.
+Main-branch protection was created and read back on 2026-10-14 after owner sign-in. The exact main rule requires a pull request, sqlite from GitHub Actions, an up-to-date branch and resolved conversations, and applies to administrators. Mandatory approvals are disabled for the current single-owner workflow; force pushes/deletions are disabled. The branch API reports main protected=true and development protected=false. Detailed protection API access is unavailable to the integration (403); persisted checkbox/source selections were verified in the signed-in GitHub UI.
 
-Device evidence and a short intended-device checklist are in docs/Device_Acceptance.md. Existing cloud-desktop and earlier owner workflow passes are preserved; actual target-device/browser outcomes remain pending. The next action is secure owner sign-in, then apply/read back the main rule and record actual device outcomes. Preserve the completed rollback/recovery work and all production/resource/security boundaries.
+Main updates now use documentation-only pull requests and required checks. Application PR #1 remains draft/unmerged. A validation workflow covers the notes-only main state and preserves schema/import + Node tests/type-check/build whenever app source is present; incomplete source layout fails. Intended-device outcomes remain pending in docs/Device_Acceptance.md. No application release, new access, resource, cost or deployment setting changed.
 
 ## Current checkpoint — 2026-10-14, 20:15 UTC
 
