@@ -1,5 +1,14 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
+## Preview-build correction — 2026-10-14, 21:51 UTC
+
+Diagnosed from the owner's pasted Cloudflare log for build 0b5aa3fa-6963-479b-ad5f-ec496f4caf54 (docs/cc-browser-backlog-20261014, 0816b899): preview trigger ran npx wrangler preview from repository root with no build command; it failed because no previews block was present. The owner's settings screenshots confirmed preview builds enabled, root /, no build command, and preview command npx wrangler preview. This is separate from the successful feature deployment at 6069211, Worker version 1ae89578-b6f4-4c01-9839-d8a568a4df25.
+
+Owner reported completing the instruction to disable Builds for Preview branches and check persistence after refresh. Treat the setting as owner-confirmed, not an independent API readback. Normal deployment remains feature/cc-infrastructure-foundation, root app, npm run build, npx wrangler deploy; the production-settings screenshot showed Disable builds off. Here Cloudflare's Production label means this development Worker's active deployment, not approval for business production. No previews block, credentials, access changes, paid resources or app release were added. Historical failed checks remain historical; the next documentation PR can verify no new Workers preview check is triggered.
+
+Next: CC-TODO-006 isolated Cloudflare restore preparation (docs/Isolated_Cloudflare_Restore.md), then execution only with confirmed separate recovery targets. Preserve existing development DB/R2 and all completed local restore/rollback evidence. Browser acceptance remains queued; OneNote/photo/Canva and the alternate-email test remain deferred. Dashboard automation is currently blocked by a Cloudflare login 403 in the remote browser; owner dashboard access works.
+
+
 ## Current continuation — Main protection active
 
 Main-branch protection was created and read back on 2026-10-14 after owner sign-in. The exact main rule requires a pull request, sqlite from GitHub Actions, an up-to-date branch and resolved conversations, and applies to administrators. Mandatory approvals are disabled for the current single-owner workflow; force pushes/deletions are disabled. The branch API reports main protected=true and development protected=false. Detailed protection API access is unavailable to the integration (403); persisted checkbox/source selections were verified in the signed-in GitHub UI.
