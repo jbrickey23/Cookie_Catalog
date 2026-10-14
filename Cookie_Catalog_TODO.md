@@ -98,4 +98,43 @@ Purpose: test real workflows with a small representative collection before bulk 
 
 After infrastructure tasks and real samples, create separate product TODOs for catalog entry, design linking, visual search, and usability iteration. Automatic new flip suggestions remain deferred.
 
-Next unused task ID: CC-TODO-008.
+Next unused task ID after the additions below: CC-TODO-012.
+
+
+## 2026-10-14 — Existing OneNote and Canva migration workstream
+
+These are newly scoped tasks, not claims of completed integration. Preserve existing OneNote content and never overwrite the source. Current legacy task status descriptions above require separate reconciliation against newer implementation commits/deployment; do not infer the app is unbuilt from this older checklist.
+
+### CC-TODO-008 — Audit OneNote legacy catalog (NEXT)
+Status: Open; blocked only on obtaining a representative notebook export or authorized access.
+- Determine whether the notebook is personal Outlook/OneDrive or Microsoft 365 work/school.
+- Inventory notebook/section/page structure, page titles, images, attachments, cutter outlines, decorated designs, sizes and physical locations.
+- Identify source identifiers and provenance; estimate record counts, gaps, duplicates and relationships.
+- Produce a representative extraction/mapping report before any bulk import. Do not alter source OneNote.
+- Done when representative pages are extracted, counted and mapped with unknowns explicitly recorded.
+
+### CC-TODO-009 — OneNote migration importer
+Status: Open; depends on 008 and existing import/attachment infrastructure (007/003).
+- Choose supported export or Microsoft Graph path after account type is confirmed; do not assume direct OneNote connector availability.
+- Preserve original images/files, page links/IDs, titles, hierarchy and attribution.
+- Idempotent staging import with duplicate review, error report, dry run and record-count reconciliation.
+- Keep originals private; require approval before bulk live migration.
+- Done when a representative sample imports and round-trip audit confirms records and attachments.
+
+### CC-TODO-010 — Photo-assisted metadata extraction
+Status: Open; depends on representative source photos from 008.
+- Propose name, category, aliases, tags, shape description, symmetry and complexity from cutter-outline or decorated-cookie photos.
+- Track per-field source, confidence and unknowns; require human review for uncertain values.
+- Support search match explanations (name/tag/alias/description) without replacing existing search behavior.
+- Never infer verified physical dimensions, ownership, location or manufacturing data from unscaled photos.
+- Done when sample photo records can be reviewed, corrected, searched and traced to source.
+
+### CC-TODO-011 — Canva artwork and cutter-outline interoperability
+Status: Open; discovery/prototype; depends on example Canva design and cutter image.
+- Validate actual Canva connector capabilities and vector export; do not assume editable SVG paths are available through API.
+- Prototype photo/artwork to clean closed SVG contour; retain original artwork separately from geometric cutter outline.
+- Require known dimension/reference scale and geometry validation before generating STL/3MF.
+- Preserve v1 slicer-based scaling decision; derived geometry remains an optional later capability.
+- Done when one sample outline has a reviewed, dimensioned SVG and a documented viable or rejected integration route.
+
+Next recommended action: CC-TODO-008 — obtain a representative OneNote export/sample and inspect structure before choosing migration implementation.
