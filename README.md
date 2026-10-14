@@ -8,15 +8,15 @@ GitHub jbrickey23/Cookie_Catalog is authoritative. Repository is public: operati
 
 Application development: feature/cc-infrastructure-foundation, draft PR #1. Main is the release branch; only its durable notes are being reconciled, without merging the application or deploying production. Inspect the active PR for code and newest validation.
 
-Development site: https://cookie-catalog-dev.j-brickey.workers.dev. Owner-authorized Worker/D1 cookie-catalog-dev, private R2 cookie-catalog-dev-private and Access are provisioned. Migrations 0001/0002 applied; owner session, synthetic linked D1 records, R2 smoke, live photo upload/download, shape create/edit/search and highlighting passed. Actual JSON recovery restored linked PNG/STL fixtures. Actual TAR restored 16 tables/7 rows/0 originals; live original-containing TAR and larger upload remain pending.
+Development site: https://cookie-catalog-dev.j-brickey.workers.dev. Owner-authorized Worker/D1 cookie-catalog-dev, private R2 cookie-catalog-dev-private and Access are provisioned. Migrations 0001/0002 applied; owner session, synthetic linked D1 records, R2 smoke, live photo upload/download, shape create/edit/search and highlighting passed. Actual JSON recovery restored linked PNG/STL fixtures. Actual TAR restored 16 tables/7 rows/0 originals; live original-containing TAR remains pending; larger upload/retrieval now passed.
 
 ## Immediate sequence
 
-Resume CC-TODO-002/003/004 infrastructure acceptance. Earliest current verification gap: establish the exact deployed GitHub commit and a fresh authenticated D1/R2 report. A new read-only Verify development infrastructure control reports build commit, migrations, FK checks and sampled original existence/size. Local 43 tests and build passed; its live result is not yet verified.
+Resume CC-TODO-002/003/004 infrastructure acceptance. Exact GitHub-to-Worker deployment and fresh D1/R2 checks passed on 2026-10-14 for commit 2939565; 43 local tests/build and its GitHub CI passed.
 
-The remote verification browser reaches Cloudflare Access sign-in; owner authentication is required before it can inspect the app. This proves the Access edge route, not the current Worker binding results. Preserve completed checks.
+Location, physical cutter, design and proposed flip mapping create/edit/refresh/search/retrieve passed using labelled synthetic records. Design PNG and 5400084-byte STL uploaded, survived refresh and downloaded byte-identically. Prior owner shape/photo passes are preserved.
 
-Next complete the remaining linked cutter/design/location UI acceptance and persistent design-image/STL retrieval/deletion gates. CC-TODO-006 original-containing TAR recovery remains recorded followup; migration/integration work does not take priority.
+Next unmet gate: CC-TODO-003 live deliberate deletion/missing-file handling using only synthetic originals with retained copies. Then CC-TODO-006 original-containing TAR restore and remaining access/release/sample readiness. Components stay open for broader acceptance. See docs/Infrastructure_Verification.md.
 
 OneNote audit/import (008/009), photo metadata extraction (010) and Canva (011) are deferred future work. Next unused task ID: 012.
 

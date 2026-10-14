@@ -9,7 +9,7 @@ Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptan
 | CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; deletion/other types pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
-| CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing/larger-upload gate pending | 002/003 |
+| CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing/original-file gate pending | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open: synthetic importer verified; real samples absent | 002/003/005 |
 
 ## CC-TODO-001 — Repository infrastructure
@@ -30,7 +30,7 @@ Verified: D1 selected/provisioned for development; DB binding configured. Both m
 
 Implemented 2026-10-13: Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Live shape creation/edit/search now owner-confirmed; physical cutter/location/mapping acceptance remains open. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
 
-Owner confirmed shape create/edit/refresh/search passed. Search explanations and broader metadata predicates implemented with 35 local tests/build passed; live highlighting owner-confirmed 2026-10-14. Remaining: live physical cutter/location/mapping checks; refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
+Owner confirmed shape create/edit/refresh/search passed. Search explanations and broader metadata predicates implemented with 35 local tests/build passed; live highlighting owner-confirmed 2026-10-14. Live synthetic location/physical cutter/design/mapping create/edit/refresh/search/retrieve passed 2026-10-14, including dimensions/location/proposed flip metadata. Remaining: refine required/optional fields, ownership and known/proposed mappings using real samples; record deletion safeguards, tags/visual search, import, intended-device usability and production separation/migrations. Choice/cost rationale is in architecture notes.
 
 Done when: a sample cutter and design can be created, linked, edited, searched and retrieved across sessions; migrations are reproducible and choice/cost documented.
 
@@ -42,7 +42,7 @@ Verified: private R2 provisioned, FILES binding and adapter/lifecycle design imp
 
 Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; initial 4 MiB/file limit (now increased to 25 MiB) with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
 
-Verified live owner photo upload/refresh/download on 2026-10-13; deletion is still unconfirmed. Remaining: design/STL flows, deletion and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/archive acceptance pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
+Verified live owner photo upload/refresh/download on 2026-10-13; deletion is still unconfirmed. Live synthetic design PNG and 5400084-byte STL upload/refresh/download passed byte-identically on 2026-10-14. Remaining: deletion/missing-file acceptance and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/retrieval passed; original-containing TAR acceptance pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
 
 Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -72,13 +72,13 @@ Purpose: preserve catalog data independently of provider/app availability.
 
 Verified live: Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Recorded CC-TODO-006 followup after current 002/003/004 gates: add a test original above 4 MiB, save another TAR and verify bytes/relationships. No payload or database is committed to public Git.
 
-Latest implementation: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore passed; original-containing TAR and larger-upload acceptance remain pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+Latest implementation: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore and >4 MiB persistent upload/retrieval passed; original-containing TAR acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
 
 Verified: owner-only bounded browser export and disposable recovery-test endpoint, strict local restore tool, integrity/authorization/failure-cleanup tests. Actual normal package restored 16 tables/6 rows/0 objects; actual recovery package restored 16 tables/17 rows/2 objects with original bytes and relationships intact. See docs/Backup_Recovery_Plan.md for hashes and instructions.
 
 Owner placed dated packages/manifest/instructions in personal OneDrive at Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z. Local placement confirmed by owner; cloud sync not confirmed. Latest-seven normal snapshots after meaningful changes/before imports remains proposed; no schedule, transfer or pruning activated.
 
-Remaining: verify independent cloud copy, settle retention/cadence/ownership, restore into isolated Cloudflare D1/R2, live TAR/larger-file recovery, production-scale export/import and consistency across D1/R2. Current sample local-restore acceptance passed; the broader component remains open.
+Remaining: verify independent cloud copy, settle retention/cadence/ownership, restore into isolated Cloudflare D1/R2, live original-containing TAR recovery, production-scale export/import and consistency across D1/R2. Current sample local-restore acceptance passed; the broader component remains open.
 
 Done when: a sample backup restores into a clean test environment with relationships and attachments intact, and recovery instructions are recorded. This demonstrated sample gate does not replace the remaining durability/operational work.
 
@@ -94,15 +94,15 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 ## Current sequencing — October 14 correction
 
-1. CC-TODO-004: match actual deployed source commit to the feature head and read current authenticated D1/R2 checks. Remote browser is at Access sign-in. New owner-only read-only check is locally validated; live result pending.
-2. CC-TODO-002: complete remaining location/physical cutter/design mapping UI acceptance across refresh/search; preserve prior schema, synthetic linked record and shape UI passes.
-3. CC-TODO-003: complete persistent design-image/STL retrieval and deletion/missing-file acceptance; preserve live photo and earlier disposable R2 passes.
+1. CC-TODO-004 current deployment proof passed: deployed 2939565 matched GitHub; current D1/R2 report passed. Preserve broader release/rollback/intended-device gates.
+2. CC-TODO-002 synthetic location/physical cutter/design/mapping create/edit/refresh/search/retrieve passed. Preserve broader real-sample/field/schema acceptance.
+3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Next: live deletion/missing-file acceptance with synthetic originals and retained copies.
 4. Then continue CC-TODO-006 original-containing TAR/larger-file recovery, 005 intended collaborator readiness and 007 representative samples.
 5. Only afterward resume deferred 008–011. No OneNote export/access, image extraction or Canva integration is the current prerequisite.
 
 Node v24.21.0/npm.cmd 11.19.0 on owner Windows already passed; Defender blocks local Wrangler download, not Node itself. Remediation parked; browser deployment path remains usable. Assistant Linux Node v24.19.0 is a separate environment. Optional read-only Windows version helper prepared, not owner-executed.
 
-New verification: GET /api/dev/infrastructure-check (owner, no-store, no writes), build SHA from Workers Builds/CI, D1 migrations/FKs and R2 listing/sampled file existence/size. Local 43 tests and build passed; exact deployed SHA/live report pending. See docs/Infrastructure_Verification.md.
+New verification: GET /api/dev/infrastructure-check (owner, no-store, no writes), build SHA from Workers Builds/CI, D1 migrations/FKs and R2 listing/sampled file existence/size. Local 43 tests/build and GitHub CI passed; exact deployed SHA/live report passed for 2939565. See docs/Infrastructure_Verification.md.
 
 Slicer scaling remains v1. Production, new paid resources, security bypass, PC reset and automatic pruning are not authorized. Preserve deferred live alternate-email test. Independent fresh-chat test remains open.
 
