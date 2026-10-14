@@ -4,7 +4,7 @@ import { handleCatalog } from "./server/catalog";
 import { createArchiveManifest, archiveOriginal } from "./server/archive-backup";
 import { BackupError, createDevelopmentBackup } from "./server/development-backup";
 import { createDevelopmentRecoveryCheck } from "./server/development-recovery-check";
-import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
+import { AccessIdentityVerifier, accessIsConfigured, mayRead, mayWrite, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
 import {inspectInfrastructure} from "./server/infrastructure-check";
 import {checkMissingFileRecovery} from "./server/development-missing-file-check";
 
@@ -16,8 +16,11 @@ function json(value: unknown, status = 200): Response {
 }
 export async function handleApiRequest(request: Request, verifier: IdentityVerifier, database?: D1Database, files?: R2Bucket): Promise<Response> {
   const user = await verifier.verify(request);
+  if (!mayRead(user)) return json({ error: "Unauthorized" }, 401);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  // Maintenance, archive/export and synthetic fixtures are owner-only.
+  if(pathname.startsWith("/api/dev/") && user.role!=="owner")return json({error:"Owner access required"},403);
   if(pathname === "/api/dev/missing-file-check") {
     if(user.role!=="owner")return json({error:"Owner access required"},403);
     if(request.method!=="POST")return json({error:"Method not allowed"},405);
@@ -45,7 +48,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     }catch(error){return json({error:error instanceof BackupError?error.message:"Archive preparation failed."},503);}
   }
   if (pathname.startsWith("/api/catalog/")) {
-    if (user.role !== "owner") return json({ error: "Owner access required" }, 403);
+    if(request.method!=="GET"&&!mayWrite(user))return json({error:"Editing access required"},403);
     if (!["GET","POST","PUT"].includes(request.method)) return json({ error: "Method not allowed" }, 405);
     if (request.method !== "GET" && (request.headers.get("Origin") !== new URL(request.url).origin
         || request.headers.get("X-Cookie-Catalog-Check") !== "catalog")) return json({ error: "Same-origin catalog request required" },403);
@@ -54,8 +57,9 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   }
   if (pathname === "/api/attachment-targets" || pathname === "/api/attachments" || pathname.startsWith("/api/attachments/")
       || pathname === "/api/attachment-orphans" || pathname.startsWith("/api/attachment-orphans/")) {
-    // Current catalog has one owner. Collaborator authorization is not enabled.
-    if (user.role !== "owner") return json({ error: "Owner access required" }, 403);
+    const maintenance=pathname.startsWith("/api/attachment-orphans");
+    if((maintenance||request.method==="DELETE")&&user.role!=="owner")return json({error:"Owner access required"},403);
+    if(request.method!=="GET"&&!mayWrite(user))return json({error:"Editing access required"},403);
     if (!["GET", "POST", "DELETE"].includes(request.method)) return json({ error: "Method not allowed" }, 405);
     if (request.method !== "GET" && (request.headers.get("Origin") !== new URL(request.url).origin
         || request.headers.get("X-Cookie-Catalog-Check") !== "attachments")) {

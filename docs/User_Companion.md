@@ -118,7 +118,7 @@ GitHub holds application source and instructions. Full catalog archives and orig
 
 Keep edits, uploads and deletions idle while creating a backup.
 
-Approved backup routine: Jay saves a complete TAR to private OneDrive after meaningful catalog changes and before imports or bulk edits/deletions. Keep the latest seven normal backups plus a protected pre-change backup until the changes and recoverability are verified. Retention is manual; automatic deletion is not enabled. A PowerShell helper is planned under CC-TODO-012 and is not yet available.
+Approved backup routine: Jay saves a complete TAR to private OneDrive after meaningful catalog changes and before imports or bulk edits/deletions. Keep the latest seven normal backups plus a protected pre-change backup until the changes and recoverability are verified. Retention is manual; automatic deletion is not enabled. A backup helper with an optional PowerShell launcher is implemented under CC-TODO-012 and awaits Windows acceptance. See [Backup helper](Backup_Helper.md). It validates/copies TARs, writes receipts and reviews retention without deleting backups.
 
 | Control | When to use it |
 | --- | --- |

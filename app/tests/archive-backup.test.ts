@@ -54,6 +54,8 @@ test("larger upload archives/restores original bytes, all tables and relationshi
     });
     const bytes=Buffer.from(await new Response(packed).arrayBuffer());
     const source=join(directory,"backup.tar"),target=join(directory,"restored");writeFileSync(source,bytes);
+    const helperReport=JSON.parse(execFileSync(process.execPath,["../tools/backup-helper.mjs","validate",source],{encoding:"utf8"}));
+    assert.equal(helperReport.tables,16);assert.equal(helperReport.objects,1);assert.equal(helperReport.originalBytes,stl.length);assert.equal(helperReport.complete,true);
     const report=JSON.parse(execFileSync("python3",["../tools/restore_archive_backup.py",source,target],{encoding:"utf8"}));
     assert.equal(report.tables,16);assert.equal(report.objects,1);assert.equal(report.originalBytes,stl.length);assert.equal(report.complete,true);
     assert.deepEqual(readFileSync(join(target,"objects",key)),Buffer.from(stl));

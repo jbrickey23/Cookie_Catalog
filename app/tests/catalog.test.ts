@@ -47,12 +47,12 @@ test("owner creates linked catalog records, edits dimensions, and retrieves/sear
     assert.equal((await db.prepare("PRAGMA foreign_key_check").all()).results.length,0);
   }finally{await runtime.dispose();}
 });
-test("catalog mutations and reads require owner identity; cross-origin writes and unsupported methods fail before DB access",async()=>{
+test("catalog requires verified identity; viewer writes, cross-origin writes and unsupported methods fail before DB access",async()=>{
   const db={prepare(){throw Error("Must not touch DB");}} as unknown as D1Database;
   const none:IdentityVerifier={verify:async()=>null};
-  const editor:IdentityVerifier={verify:async()=>({subject:"editor",email:"editor@example.test",role:"editor"})};
+  const viewer:IdentityVerifier={verify:async()=>({subject:"viewer",email:"viewer@example.test",role:"viewer"})};
   assert.equal((await handleApiRequest(write("shapes",{name:"test"}),none,db)).status,401);
-  assert.equal((await handleApiRequest(new Request(origin+"/api/catalog/shapes"),editor,db)).status,403);
+  assert.equal((await handleApiRequest(new Request(origin+"/api/catalog/shapes",{method:"POST"}),viewer,db)).status,403);
   assert.equal((await handleApiRequest(new Request(origin+"/api/catalog/shapes",{method:"POST",headers:{Origin:"https://other.test","X-Cookie-Catalog-Check":"catalog"}}),owner,db)).status,403);
   assert.equal((await handleApiRequest(new Request(origin+"/api/catalog/shapes",{method:"POST",headers:{Origin:origin}}),owner,db)).status,403);
   assert.equal((await handleApiRequest(new Request(origin+"/api/catalog/shapes/test",{method:"DELETE"}),owner,db)).status,405);

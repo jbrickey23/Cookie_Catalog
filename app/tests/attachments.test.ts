@@ -56,7 +56,7 @@ test("owner-only and same-origin guards reject before touching storage",async()=
   const none: IdentityVerifier={verify:async()=>null};
   const editor: IdentityVerifier={verify:async()=>({subject:"editor",email:"editor@example.test",role:"editor"})};
   assert.equal((await handleApiRequest(upload(),none,noAccess,bucket)).status,401);
-  assert.equal((await handleApiRequest(new Request(origin+"/api/attachments/secret"),editor,noAccess,bucket)).status,403);
+  assert.equal((await handleApiRequest(new Request(origin+"/api/attachments/secret",{method:"DELETE"}),editor,noAccess,bucket)).status,403);
   assert.equal((await handleApiRequest(new Request(origin+"/api/attachments",{method:"POST",headers:{Origin:"https://other.test","X-Cookie-Catalog-Check":"attachments"}}),owner,noAccess,bucket)).status,403);
   assert.equal((await handleApiRequest(new Request(origin+"/api/attachments",{method:"POST",headers:{Origin:origin}}),owner,noAccess,bucket)).status,403);
 });

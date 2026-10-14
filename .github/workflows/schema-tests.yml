@@ -53,7 +53,10 @@ jobs:
       - uses: actions/setup-node@v4
         if: ${{ hashFiles('app/package.json') != '' }}
         with:
-          node-version: "22"
+          node-version: "24"
+      - name: Validate offline backup helper
+        if: ${{ hashFiles('app/package.json') != '' }}
+        run: node --test tools/tests/*.test.mjs
       - name: Validate application tests, TypeScript and build
         if: ${{ hashFiles('app/package.json') != '' }}
         working-directory: app

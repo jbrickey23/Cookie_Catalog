@@ -81,6 +81,28 @@ test("key rotation can validate either trusted signing key", async () => {
   assert.ok(await rotationVerifier.verify(request(await token({}, rotated.privateKey, "key-2"))));
 });
 
+test("optional membership uses only verified subject/email, rejects claimed roles and observes revocation",async()=>{
+  let active=true,calls=0;
+  const memberVerifier=new AccessIdentityVerifier(config,keys,{resolve:async(subject,email)=>{
+    calls++;return active&&subject==="member-subject"&&email==="member@example.test"?"editor":null;
+  }});
+  const memberToken=await token({sub:"member-subject",email:"Member@Example.Test",role:"owner"});
+  assert.equal((await memberVerifier.verify(request(memberToken)))?.role,"editor");
+  active=false;assert.equal(await memberVerifier.verify(request(memberToken)),null);
+  assert.equal(await memberVerifier.verify(request(await token({sub:"other",email:"member@example.test"}))),null);
+  const before=calls;
+  assert.equal(await memberVerifier.verify(request(await token({sub:"member-subject",email:"member@example.test",aud:["wrong"]}))),null);
+  assert.equal(calls,before,"membership must not run before JWT validation");
+  assert.equal(await verifier.verify(request(memberToken)),null,"runtime without resolver remains owner-only");
+});
+test("membership outages and invalid resolver roles fail closed while owner bootstrap stays available",async()=>{
+  const broken=new AccessIdentityVerifier(config,keys,{resolve:async()=>{throw Error("membership unavailable");}});
+  assert.equal(await broken.verify(request(await token({sub:"member",email:"member@example.test"}))),null);
+  assert.equal((await broken.verify(request(await token())))?.role,"owner");
+  const invalid=new AccessIdentityVerifier(config,keys,{resolve:async()=>"owner" as never});
+  assert.equal(await invalid.verify(request(await token({sub:"member",email:"member@example.test"}))),null);
+});
+
 test("deployed database check authenticates before querying and scopes the fixture", async () => {
   let calls = 0;
   const database = {

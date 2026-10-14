@@ -1,5 +1,9 @@
 # CC-TODO-006 — Backup and recovery
 
+## Backup helper implementation
+
+CC-TODO-012 is implemented and automatically tested, with owner Windows acceptance pending. See [Backup helper](Backup_Helper.md) for the exact acceptance checklist and scope. It uses installed Node 24.10+ and built-in SQLite; PowerShell is an optional launcher. There are no external package downloads, automatic deletions, credentials, scheduling or unattended cloud transfers. Cloud-copy receipts record an owner-supplied independently downloaded match, not a direct provider audit. Existing manually verified recovery/cloud-copy evidence stands.
+
 ## 2026-10-14, 23:25 UTC — Approved manual backup policy and scripting follow-up
 
 Owner approved the proposed policy: Jay is responsible for complete private TAR backups in OneDrive Cookie_Catalog/Backups after meaningful catalog changes and before imports or bulk edits/deletions. Retain the latest seven normal backups plus a protected pre-change backup until the changed state is verified and recoverability established. This is the current manual operating policy; no scheduled export, automatic transfer or automatic deletion/pruning has been enabled. Earlier statements that the policy is merely proposed are historical.

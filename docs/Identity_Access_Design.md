@@ -1,5 +1,15 @@
 # CC-TODO-005 — Development identity and access
 
+## October 14 — Tested role foundation, activation remains pending
+
+The backend now enforces a shared-catalog permission matrix: owners retain all current controls; authenticated editors may read/create/update catalog records and upload/download files; viewers may search/read/download. Deleting originals, orphan cleanup, all `/api/dev/` diagnostics and full exports remain owner-only. Origin/method/input guards are retained. These roles refer to one shared business catalog, not separate per-user inventories.
+
+`AccessIdentityVerifier` supports an optional trusted server-side membership resolver after JWT signature/issuer/audience/subject/email verification. The adapter receives verified subject and normalized email; it may return editor/viewer only, never owner. It is called on each request, so no stale membership cache survives revocation. JWT custom role claims do not grant permissions; resolver errors, unknown members and invalid roles fail closed. The configured bootstrap owner's path remains available during a membership-store outage.
+
+**No resolver is wired into the deployed Worker.** The default verifier still accepts only the existing owner. No new email, user, D1 table/migration, secret, Access policy or permission was added. Role-aware client controls, durable membership/admin/recovery and membership export/restore must be implemented before enabling collaborators. Never grant access merely to test this foundation. Activation requires owner identification of intended accounts/roles and the existing permission review. Preserve the separately deferred alternate-email test.
+
+Signed-token membership/revocation/outage tests plus real local D1/R2 role workflows cover editor record creation/upload, viewer read/download, denied viewer writes/editor deletes and denied non-owner maintenance before resource access. Earlier owner-only statements below describe the historical setup; current owner runtime remains unchanged.
+
 ## Verified setup (2026-10-12)
 The owner created the Zero Trust Free organization, email one-time PIN provider, and Access application `Cookie Catalog Dev`. A screenshot confirms the destination `cookie-catalog-dev` and attached owner allow policy. The owner reported reaching the foundation home page after the emailed-code login test. The team domain and application audience are recorded as non-secret Wrangler variables.
 
