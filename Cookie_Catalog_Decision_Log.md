@@ -2,6 +2,14 @@
 
 Updated: 2026-10-14 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
 
+## 2026-10-14 — CC-DEC-013 — Restore infrastructure acceptance as current priority
+
+User explicitly directed reconciliation of the October 14 handoff: OneNote migration (008/009), photo metadata extraction (010) and Canva (011) are future work. Preserve their original IDs/criteria from main, defer them, and resume CC-TODO-002/003/004. The main TODO's 008 NEXT label was sequencing drift, not authorization to abandon infrastructure acceptance.
+
+Preserve completed development provisioning/checks. Earliest unverified checkpoint is exact deployed source provenance/current authenticated Worker-D1-R2 report, followed by remaining linked cutter/design/location and persistent file acceptance. Existing owner Windows Node/npm.cmd verification stands; Defender-blocked Wrangler remediation remains parked. Browser/GitHub deployment is usable. Original-containing TAR recovery remains followup, not immediate priority.
+
+Prepared read-only owner infrastructure report and build source SHA; 43 local tests/build passed. Remote browser currently at Access sign-in; live authenticated report and current deployed commit are unverified. Main receives only reconciled durable notes, not application merge/release. No costs/resources/production/security changes authorized. Broader privacy and deferred access-test boundaries remain.
+
 ## 2026-10-14 — Larger development recovery and verified highlighting (routine engineering)
 
 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
@@ -38,7 +46,7 @@ Prepared two byte-identical UTC-named JSON snapshots, a checksum/size/migration/
 
 Latest-seven normal snapshots after meaningful changes/before imports remains proposed, not an approved or activated pruning/scheduling policy. No automatic transfer, new subscription or production change was activated. See docs/Backup_Recovery_Plan.md.
 
-Next unused decision ID: CC-DEC-013.
+Next unused decision ID: CC-DEC-014.
 
 ## Historical decisions
 

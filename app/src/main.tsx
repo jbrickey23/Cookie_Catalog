@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
 import { Catalog } from "./Catalog";
 import { ArchiveBackup } from "./ArchiveBackup";
+import { InfrastructureVerification } from "./InfrastructureVerification";
 
 function App() {
   const [catalogVersion,setCatalogVersion] = useState(0);
@@ -87,6 +88,8 @@ function App() {
   }
   return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
     <h1>Cookie Catalog</h1>
+    <InfrastructureVerification />
+    <hr />
     <Catalog onSaved={() => setCatalogVersion(version => version + 1)} />
     <hr />
     <Attachments key={catalogVersion} />

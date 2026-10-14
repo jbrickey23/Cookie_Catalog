@@ -5,6 +5,7 @@ import { createArchiveManifest, archiveOriginal } from "./server/archive-backup"
 import { BackupError, createDevelopmentBackup } from "./server/development-backup";
 import { createDevelopmentRecoveryCheck } from "./server/development-recovery-check";
 import { AccessIdentityVerifier, accessIsConfigured, type AccessConfiguration, type IdentityVerifier } from "./server/access-identity";
+import {inspectInfrastructure} from "./server/infrastructure-check";
 
 export interface Env extends AccessConfiguration { ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
 function json(value: unknown, status = 200): Response {
@@ -16,6 +17,13 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   const user = await verifier.verify(request);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if(pathname === "/api/dev/infrastructure-check") {
+    if(user.role !== "owner")return json({error:"Owner access required"},403);
+    if(request.method !== "GET")return json({error:"Method not allowed"},405);
+    if(!database||!files)return json({error:"Development bindings unavailable"},503);
+    try{return json(await inspectInfrastructure(database,files));}
+    catch{return json({error:"Read-only infrastructure verification failed. Check development bindings/migrations."},503);}
+  }
   if (pathname === "/api/dev/archive" || pathname === "/api/dev/archive-file") {
     if(user.role !== "owner")return json({error:"Owner access required"},403);
     if(request.method !== "POST")return json({error:"Method not allowed"},405);

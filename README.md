@@ -1,33 +1,31 @@
 # Cookie_Catalog
 
-A private catalog for a cookie decorating business: find designs by theme, identify compatible cutters, and retrieve physical locations or original printable files. Known flips and many-to-many design/cutter mappings are part of the intended workflow.
+Private catalog for a cookie decorating business: find designs, compatible owned/printable cutters, physical locations and original files, including known flips.
 
 ## Current checkpoint — 2026-10-14
 
-Canonical source: [jbrickey23/Cookie_Catalog](https://github.com/jbrickey23/Cookie_Catalog). The repository is public; operational data, purchased originals, credentials and full backups stay private.
+GitHub jbrickey23/Cookie_Catalog is authoritative. Repository is public: operational records, originals, full backups and credentials stay private.
 
-Development is on `feature/cc-infrastructure-foundation`, [draft PR #1](https://github.com/jbrickey23/Cookie_Catalog/pull/1). `main` is the release branch and still contains the earlier bootstrap. Development site: https://cookie-catalog-dev.j-brickey.workers.dev.
+Application development: feature/cc-infrastructure-foundation, draft PR #1. Main is the release branch; only its durable notes are being reconciled, without merging the application or deploying production. Inspect the active PR for code and newest validation.
 
-Cloudflare Workers, D1 and private R2 are provisioned for development. Owner authentication and synthetic database/storage checks passed. Two actual browser exports restored locally: a database-only snapshot and a recovery test with PNG/STL originals and linked records. Code commit `40ab108` passed CI #97 (20 Node tests, SQLite schema/import checks and application build); pre-reconciliation head `330ca8a` passed CI #105.
+Development site: https://cookie-catalog-dev.j-brickey.workers.dev. Owner-authorized Worker/D1 cookie-catalog-dev, private R2 cookie-catalog-dev-private and Access are provisioned. Migrations 0001/0002 applied; owner session, synthetic linked D1 records, R2 smoke, live photo upload/download, shape create/edit/search and highlighting passed. Actual JSON recovery restored linked PNG/STL fixtures. Actual TAR restored 16 tables/7 rows/0 originals; live original-containing TAR and larger upload remain pending.
 
-The owner placed the timestamped backup folder under personal OneDrive: `Cookie_Catalog/Backups/Cookie_Catalog_Backups_20261012T231810Z`. Cloud sync completion is not yet confirmed. Manual retention of the latest seven normal snapshots remains proposed.
+## Immediate sequence
 
-CC-TODO-003 now implements owner-only persistent attachment upload/download and metadata/link deletion, missing-file detection, and manual orphan audit/cleanup. Browser controls select existing shapes/designs; no new migration is needed. Local validation passed: 27 Node tests, SQLite schema/import and frontend/Worker build. Live owner photo upload/persistence/download passed; deletion and design/STL flows remain unconfirmed. Use small synthetic files; current upload limit 25 MiB per file. Catalog archive supports up to 1 GiB originals/1000 files; old JSON backup remains 4 MiB total.
+Resume CC-TODO-002/003/004 infrastructure acceptance. Earliest current verification gap: establish the exact deployed GitHub commit and a fresh authenticated D1/R2 report. A new read-only Verify development infrastructure control reports build commit, migrations, FK checks and sampled original existence/size. Local 43 tests and build passed; its live result is not yet verified.
 
-Owner-only catalog creation/editing/search now covers cutter shapes, designs, locations, physical cutters and compatibility mappings. Owner confirmed live shape create/edit/refresh/search. Search now shows matched field labels and highlighted excerpts; latest local 40 tests/build passed; owner confirmed live highlighting.
+The remote verification browser reaches Cloudflare Access sign-in; owner authentication is required before it can inspect the app. This proves the Access edge route, not the current Worker binding results. Preserve completed checks.
 
-Live database-only TAR saved and restored: 16 tables/7 rows/0 originals. Next gate: add a test original above 4 MiB, save another TAR and verify file recovery. Physical cutter/location/mapping checks and production-scale recovery remain open. Real samples, collaborator access, Cloudflare-side restore, release protection and rollback remain open. No production deployment is authorized.
+Next complete the remaining linked cutter/design/location UI acceptance and persistent design-image/STL retrieval/deletion gates. CC-TODO-006 original-containing TAR recovery remains recorded followup; migration/integration work does not take priority.
 
-## Restore project context
+OneNote audit/import (008/009), photo metadata extraction (010) and Canva (011) are deferred future work. Next unused task ID: 012.
 
-Read this README, `Cookie_Catalog_Context.md`, `Cookie_Catalog_TODO.md`, `Cookie_Catalog_Decision_Log.md` and `Cookie_Catalog_New_Chat_Bootstrap_Prompt.md`. Inspect open PRs and read the active development branch when main lags. Read applicable AGENTS.md if present; none was found at this checkpoint. Verify current remote state before changes and verify writes afterward.
+## Local setup
 
-See `docs/Backup_Recovery_Plan.md` for recovery evidence and instructions, and `docs/Deployment_Runbook.md` for deployment boundaries.
+Owner Windows Node v24.21.0 and npm.cmd 11.19.0 already passed. Plain npm.ps1 is policy-blocked; Defender blocked registry.npmjs.org before Wrangler login. Remediation remains parked. Use existing browser deployment; no reinstall, security disabling, new provisioning, paid resource or production authorization.
 
-Source layout: `app/`, `database/`, `docs/`, `samples/`, `tools/` and `tests/`. All current catalog fixtures are synthetic; real inventory has not been supplied.
+## Restore project state
 
-## Larger recovery checkpoint
+Read README, Context, TODO, Decision Log, New Chat Bootstrap Prompt and applicable AGENTS.md, then inspect open PRs/branch heads. No AGENTS.md found in the active tree. This session used visible history; independent fresh-chat acceptance remains open.
 
-2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore passed; original-containing TAR and larger-upload acceptance remain pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
-
-See docs/Archive_Backup.md and tools/restore_archive_backup.py. Existing JSON downloads still use tools/restore_development_backup.py.
+See docs/Infrastructure_Verification.md, docs/Deployment_Runbook.md and recovery plans. OneDrive backup placement is recorded; completed sync/manual retention still need confirmation. Continue reversible engineering autonomously, verify remote writes, and preserve task IDs/evidence.

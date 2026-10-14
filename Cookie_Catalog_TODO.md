@@ -70,7 +70,7 @@ Done when: intended users can access their catalog, unauthorized access is rejec
 
 Purpose: preserve catalog data independently of provider/app availability.
 
-Verified live: Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Next: add a test original (preferably above 4 MiB), save another TAR and verify actual bytes/relationships. No payload or database is committed to public Git.
+Verified live: Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Recorded CC-TODO-006 followup after current 002/003/004 gates: add a test original above 4 MiB, save another TAR and verify bytes/relationships. No payload or database is committed to public Git.
 
 Latest implementation: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore passed; original-containing TAR and larger-upload acceptance remain pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
 
@@ -92,10 +92,54 @@ Remaining: obtain authorized real purchased/printed cutters, an unprinted STL, s
 
 Done when: authorized samples import reproducibly and support Christmas/tree search, cutter-to-design browsing, physical/file retrieval and known flip instructions.
 
-## Scope and continuation
+## Current sequencing — October 14 correction
 
-Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
+1. CC-TODO-004: match actual deployed source commit to the feature head and read current authenticated D1/R2 checks. Remote browser is at Access sign-in. New owner-only read-only check is locally validated; live result pending.
+2. CC-TODO-002: complete remaining location/physical cutter/design mapping UI acceptance across refresh/search; preserve prior schema, synthetic linked record and shape UI passes.
+3. CC-TODO-003: complete persistent design-image/STL retrieval and deletion/missing-file acceptance; preserve live photo and earlier disposable R2 passes.
+4. Then continue CC-TODO-006 original-containing TAR/larger-file recovery, 005 intended collaborator readiness and 007 representative samples.
+5. Only afterward resume deferred 008–011. No OneNote export/access, image extraction or Canva integration is the current prerequisite.
 
-Matched fields highlighting passed. Verify CC-TODO-006 original-containing TAR restore and larger upload, then remaining physical cutter/location/mapping and CC-TODO-003 deletion/design/STL gates. Validate production-scale backup needs before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
+Node v24.21.0/npm.cmd 11.19.0 on owner Windows already passed; Defender blocks local Wrangler download, not Node itself. Remediation parked; browser deployment path remains usable. Assistant Linux Node v24.19.0 is a separate environment. Optional read-only Windows version helper prepared, not owner-executed.
 
-Next unused task ID: **CC-TODO-008**.
+New verification: GET /api/dev/infrastructure-check (owner, no-store, no writes), build SHA from Workers Builds/CI, D1 migrations/FKs and R2 listing/sampled file existence/size. Local 43 tests and build passed; exact deployed SHA/live report pending. See docs/Infrastructure_Verification.md.
+
+Slicer scaling remains v1. Production, new paid resources, security bypass, PC reset and automatic pruning are not authorized. Preserve deferred live alternate-email test. Independent fresh-chat test remains open.
+
+## Deferred future integrations — CC-TODO-008 through 011
+
+These are newly scoped tasks, not claims of completed integration. Preserve existing OneNote content and never overwrite the source.
+
+### CC-TODO-008 — Audit OneNote legacy catalog (DEFERRED)
+Status: Deferred; resume after infrastructure acceptance and representative sample/import readiness. Notebook access/export is a later input, not the current blocker.
+- Determine whether the notebook is personal Outlook/OneDrive or Microsoft 365 work/school.
+- Inventory notebook/section/page structure, page titles, images, attachments, cutter outlines, decorated designs, sizes and physical locations.
+- Identify source identifiers and provenance; estimate record counts, gaps, duplicates and relationships.
+- Produce a representative extraction/mapping report before any bulk import. Do not alter source OneNote.
+- Done when representative pages are extracted, counted and mapped with unknowns explicitly recorded.
+
+### CC-TODO-009 — OneNote migration importer
+Status: Deferred; depends on 008 and existing import/attachment infrastructure (007/003).
+- Choose supported export or Microsoft Graph path after account type is confirmed; do not assume direct OneNote connector availability.
+- Preserve original images/files, page links/IDs, titles, hierarchy and attribution.
+- Idempotent staging import with duplicate review, error report, dry run and record-count reconciliation.
+- Keep originals private; require approval before bulk live migration.
+- Done when a representative sample imports and round-trip audit confirms records and attachments.
+
+### CC-TODO-010 — Photo-assisted metadata extraction
+Status: Deferred; depends on representative source photos from 008.
+- Propose name, category, aliases, tags, shape description, symmetry and complexity from cutter-outline or decorated-cookie photos.
+- Track per-field source, confidence and unknowns; require human review for uncertain values.
+- Support search match explanations (name/tag/alias/description) without replacing existing search behavior.
+- Never infer verified physical dimensions, ownership, location or manufacturing data from unscaled photos.
+- Done when sample photo records can be reviewed, corrected, searched and traced to source.
+
+### CC-TODO-011 — Canva artwork and cutter-outline interoperability
+Status: Deferred; discovery/prototype; depends on example Canva design and cutter image.
+- Validate actual Canva connector capabilities and vector export; do not assume editable SVG paths are available through API.
+- Prototype photo/artwork to clean closed SVG contour; retain original artwork separately from geometric cutter outline.
+- Require known dimension/reference scale and geometry validation before generating STL/3MF.
+- Preserve v1 slicer-based scaling decision; derived geometry remains an optional later capability.
+- Done when one sample outline has a reviewed, dimensioned SVG and a documented viable or rejected integration route.
+
+Next unused task ID: CC-TODO-012. These tasks do not precede CC-TODO-002/003/004 acceptance.
