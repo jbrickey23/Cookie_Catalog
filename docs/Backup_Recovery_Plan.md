@@ -1,5 +1,11 @@
 # CC-TODO-006 — Backup and recovery
 
+## 2026-10-14, 23:21 UTC — Owner-mediated independent cloud-copy checksum passed
+
+Following instructions to copy the fresh TAR into private OneDrive Cookie_Catalog/Backups, locate it in OneDrive web and download it, the owner supplied Cookie_Catalog_2026-10-14T22-44-32-792Z(1).tar. It is 5413888 bytes with SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d, byte-identical to the original validated TAR. This passes the owner-mediated cloud-copy return/checksum check; OneDrive path/account/sync were not independently inspected by the assistant. No need to repeat unchanged-archive restore tests. Preserve the previous isolated D1 records/schema and R2 original-byte passes, with documented MIME limitation.
+
+Next CC-TODO-006 decision: backup cadence, retention and responsibility. Proposed manual policy: Jay saves a complete TAR after meaningful catalog changes and before imports or bulk edits/deletions; keep the latest seven normal snapshots and retain a pre-change snapshot until the changed state is checked and recoverability established. No automatic deletion, scheduled export, provider transfer or pruning is enabled. The proposal still needs owner acceptance; do not count it as an approved/operational schedule. Then continue intended-user access and queued device checks before real sample import/release. CC-TODO-006 remains open for operational policy, R2 HTTP metadata fidelity and scale/consistency. Retain recovery resources; no active-development or production changes.
+
 ## Fresh pre-rollback checkpoint — 2026-10-14
 
 Cookie_Catalog_Before_Rollback_20261014T201056Z.tar was downloaded, privately retained and restored before code changes. It contains 16 tables/14 rows/one 5400084-byte STL; archive size 5413888 and SHA-256 5c4b42140e6306805f9e739ac467d6c3e545b0448f055fd6cd2578a43787febd. Previous/current deployment phase archives restored with identical complete schema, rows and original bytes. See docs/Development_Rollback_Acceptance.md. This proves preservation through compatible code redeployment; isolated Cloudflare data/object restore and verified off-device sync/retention still remain open.

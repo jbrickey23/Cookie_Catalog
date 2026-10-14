@@ -1,5 +1,11 @@
 # Cookie_Catalog — TODO
 
+## 2026-10-14, 23:21 UTC — Owner-mediated independent cloud-copy checksum passed
+
+Following instructions to copy the fresh TAR into private OneDrive Cookie_Catalog/Backups, locate it in OneDrive web and download it, the owner supplied Cookie_Catalog_2026-10-14T22-44-32-792Z(1).tar. It is 5413888 bytes with SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d, byte-identical to the original validated TAR. This passes the owner-mediated cloud-copy return/checksum check; OneDrive path/account/sync were not independently inspected by the assistant. No need to repeat unchanged-archive restore tests. Preserve the previous isolated D1 records/schema and R2 original-byte passes, with documented MIME limitation.
+
+Next CC-TODO-006 decision: backup cadence, retention and responsibility. Proposed manual policy: Jay saves a complete TAR after meaningful catalog changes and before imports or bulk edits/deletions; keep the latest seven normal snapshots and retain a pre-change snapshot until the changed state is checked and recoverability established. No automatic deletion, scheduled export, provider transfer or pruning is enabled. The proposal still needs owner acceptance; do not count it as an approved/operational schedule. Then continue intended-user access and queued device checks before real sample import/release. CC-TODO-006 remains open for operational policy, R2 HTTP metadata fidelity and scale/consistency. Retain recovery resources; no active-development or production changes.
+
 ## 2026-10-14, 23:17 UTC — Sample isolated data/original restore passed with MIME limitation
 
 Owner confirmed that only the 5.4 MB original remains after deliberately removing the two zero-byte dashboard folder markers. Combined with the earlier flat root listing, complete cloud database JSON comparison and exact downloaded-original hash, this passes the sample isolated D1 record/schema/relationship and R2 key/byte recovery check. Preserve the separately created recovery database/bucket for review; do not delete resources. The R2 HTTP Content-Type mismatch (application/octet-stream versus model/stl) is an explicitly recorded limitation, not a metadata-restoration pass. No recovery application runtime was deployed, so browser/application reads against recovery are untested. Existing development remains unchanged.
