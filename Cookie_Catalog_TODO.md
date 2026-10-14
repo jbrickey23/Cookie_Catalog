@@ -1,12 +1,20 @@
 # Cookie_Catalog — TODO
 
+## Latest acceptance — 2026-10-14
+
+Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
+
+Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+
+Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+
 Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptance criteria are preserved. No component is closed merely because its development smoke check passed.
 
 | ID | Component | Current status | Depends on |
 | --- | --- | --- | --- |
 | CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
 | CC-TODO-002 | Database and catalog schema | In progress: live shape create/edit/search passed; search explanations added | 001 |
-| CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; deletion/other types pending | 001/002 |
+| CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; design/STL retrieval and approved deletion passed; controlled missing-original gate pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
 | CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing/original-file gate pending | 002/003 |
@@ -42,7 +50,7 @@ Verified: private R2 provisioned, FILES binding and adapter/lifecycle design imp
 
 Implemented 2026-10-13: owner-only persistent uploads/downloads, generated IDs/keys, hashed metadata, shape/design relationships and printable-original entries. Browser selection/upload/list/download/delete confirmation; missing-file detection; retryable deletion and bounded paginated manual orphan audit/cleanup. Existing schema reused. Local validation passed with 27 Node tests (real Miniflare D1/R2), SQLite schema/import and application build. PNG/JPEG/WebP, shape STL/3MF; initial 4 MiB/file limit (now increased to 25 MiB) with lightweight headers rather than full format/model validation. Downloads are authenticated attachment responses with exact byte/hash verification.
 
-Verified live owner photo upload/refresh/download on 2026-10-13; deletion is still unconfirmed. Live synthetic design PNG and 5400084-byte STL upload/refresh/download passed byte-identically on 2026-10-14. Remaining: deletion/missing-file acceptance and private denial behavior; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/retrieval passed; original-containing TAR acceptance pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
+Verified live owner photo upload/refresh/download on 2026-10-13; approved synthetic deletion passed 2026-10-14; controlled missing-original gate remains. Live synthetic design PNG and 5400084-byte STL upload/refresh/download passed byte-identically on 2026-10-14. Remaining: controlled live missing-original acceptance and private denial behavior; approved synthetic deletion passed; full format validation/quotas, thumbnails and collaborator roles. Larger TAR supports 1 GiB originals/1000 files; old JSON retains its 4 MiB total/25-object cap. Larger live upload/retrieval passed; original-containing TAR local restore passed; Cloudflare restore pending. No general real asset import yet. Lifecycle details in docs/Attachment_Lifecycle.md.
 
 Done when: a cutter photo, design image and sample STL can be stored and retrieved privately, and broken links are detectable.
 
@@ -70,7 +78,7 @@ Done when: intended users can access their catalog, unauthorized access is rejec
 
 Purpose: preserve catalog data independently of provider/app availability.
 
-Verified live: Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Recorded CC-TODO-006 followup after current 002/003/004 gates: add a test original above 4 MiB, save another TAR and verify bytes/relationships. No payload or database is committed to public Git.
+Verified live: Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. This earlier database-only TAR gate was followed by the successful 5400084-byte original-containing TAR local restore documented in the latest checkpoint. No payload or database is committed to public Git.
 
 Latest implementation: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore and >4 MiB persistent upload/retrieval passed; original-containing TAR acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
 
@@ -96,8 +104,8 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 1. CC-TODO-004 current deployment proof passed: deployed 2939565 matched GitHub; current D1/R2 report passed. Preserve broader release/rollback/intended-device gates.
 2. CC-TODO-002 synthetic location/physical cutter/design/mapping create/edit/refresh/search/retrieve passed. Preserve broader real-sample/field/schema acceptance.
-3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Next: live deletion/missing-file acceptance with synthetic originals and retained copies.
-4. Then continue CC-TODO-006 original-containing TAR/larger-file recovery, 005 intended collaborator readiness and 007 representative samples.
+3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Next: controlled missing-original live detection/recovery with metadata retained.
+4. Then continue CC-TODO-006 isolated Cloudflare restore/operational durability, 005 intended collaborator readiness and 007 representative samples.
 5. Only afterward resume deferred 008–011. No OneNote export/access, image extraction or Canva integration is the current prerequisite.
 
 Node v24.21.0/npm.cmd 11.19.0 on owner Windows already passed; Defender blocks local Wrangler download, not Node itself. Remediation parked; browser deployment path remains usable. Assistant Linux Node v24.19.0 is a separate environment. Optional read-only Windows version helper prepared, not owner-executed.

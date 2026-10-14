@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-10-14T19:27:12.088Z",
+  "mode": "read-only",
+  "environment": "development",
+  "worker": {
+    "reachable": true,
+    "build": {
+      "commit": "1ea5c0eb28f6b57078ddd90bd055627610fbf1fd",
+      "branch": "feature/cc-infrastructure-foundation",
+      "source": "cloudflare-workers-builds",
+      "buildNode": "v24.18.0",
+      "builtAt": "2026-10-14T19:26:42.933Z"
+    },
+    "sourceCommitAvailable": true
+  },
+  "database": {
+    "queryPassed": true,
+    "schemaTables": 16,
+    "missingTables": [],
+    "migrations": [
+      "0001_initial.sql",
+      "0002_variants_components.sql"
+    ],
+    "requiredMigrationsApplied": true,
+    "foreignKeyViolations": 0,
+    "recordCounts": {
+      "shapes": 2,
+      "designs": 2,
+      "physicalCutters": 2,
+      "mappings": 2
+    }
+  },
+  "storage": {
+    "bindingReadable": true,
+    "objectsOnFirstPage": 1,
+    "listingTruncated": false,
+    "sampledAttachments": 1,
+    "missingOriginals": 0,
+    "sizeMismatches": 0
+  },
+  "checksPassed": true,
+  "limits": [
+    "Read-only binding checks do not replace create/edit/retrieve or private-file acceptance.",
+    "R2 public-access configuration requires dashboard evidence.",
+    "Build Node is the deployment build environment, not the owner's Windows PC.",
+    "Exact GitHub deployment is confirmed only after comparing the reported commit to the expected branch head."
+  ]
+}

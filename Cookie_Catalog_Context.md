@@ -1,5 +1,13 @@
 # Cookie_Catalog — Context
 
+## Latest acceptance — 2026-10-14
+
+Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
+
+Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+
+Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+
 Updated 2026-10-14 UTC. Current handoff supersedes older implementation snapshots.
 
 ## Identity and goal
@@ -18,8 +26,8 @@ Active application branch feature/cc-infrastructure-foundation, open draft PR #1
 - URL https://cookie-catalog-dev.j-brickey.workers.dev. GitHub-connected development builds use app root, npm run build, npx wrangler deploy, feature branch. Owner supplied original deployment log; later live UI/downloads prove subsequent routes deployed, exact deployed commit 2939565e128502c32b2cf3448f0c673f9b68c797 was independently matched to GitHub on 2026-10-14.
 - D1 migrations 0001_initial.sql and 0002_variants_components.sql applied/tracked: 15 catalog tables plus d1_migrations. Linked synthetic design/shape/cutter create/edit/read at 90 x 100 mm passed; exports retained relationships.
 - Access Cookie Catalog Dev, emailed PIN, team cookie-catalog-jbrickey.cloudflareaccess.com. Signed JWT/audience/owner-secret verifier fails closed. Owner session passed; intended collaborator roles/access/recovery remain open.
-- Private photo upload/refresh/download passed. Shape UI create/edit/refresh/search and Matched fields highlighting owner-confirmed. Location/physical cutter/design/mapping UI acceptance and private design-image/STL retrieval now passed with synthetic records; live deletion/missing-file acceptance remains open.
-- Existing owner-only JSON export/recovery restored 16 tables/17 rows/2 original fixtures with hashes/FKs valid. Live larger TAR dated 2026-10-14 restored 16 tables/7 rows/0 originals; it proves database-only archive recovery, not current original-file recovery or intentional deletion.
+- Private photo upload/refresh/download passed. Shape UI create/edit/refresh/search and Matched fields highlighting owner-confirmed. Location/physical cutter/design/mapping UI acceptance and private design-image/STL retrieval now passed with synthetic records; approved synthetic deletion passed; controlled live missing-original acceptance remains open.
+- Existing owner-only JSON export/recovery restored 16 tables/17 rows/2 original fixtures with hashes/FKs valid. Live larger TAR dated 2026-10-14 restored 16 tables/7 rows/0 originals; it proves database-only archive recovery, not the subsequent original-containing recovery/deletion evidence recorded below.
 - Larger browser TAR code is implemented: 25 MiB/file, 1000 originals/1 GiB total, 10000 rows/table, 16 MiB manifest. Local 5.25 MB and 26-original tests passed. These are ceilings, not live production throughput.
 - Prior code d8b67ac passed CI #115; notes head e6a5bb1 passed CI #116/117. New read-only infrastructure report/build provenance locally passed 43 tests and type-check/build; live report and GitHub CI passed for 2939565.
 
@@ -29,9 +37,9 @@ CC-TODO-002/003/004 remain current priority. Live acceptance 2026-10-14: owner-a
 
 Live browser 2026-10-14: created and edited labelled TEST Infrastructure 20261014 location, design, physical cutter and proposed flip mapping, then reloaded/searched/retrieved them. Cutter retained 91 x 101 mm, quantity 3, printed origin and linked test shelf. Mapping retained design/shape, proposed flip, edited instructions, rotation 180, mirror Yes, width 90–95 mm. Search identified the matching notes/instructions. Existing demonstration records were preserved. Test records remain in development; record deletion is unavailable.
 
-Live persistent file acceptance 2026-10-14: synthetic design PNG (1944 bytes, SHA-256 b176ff52e49f3b96495aebeae0a546b5b9fe8ce7ff47d6560438a28d618ced71) and synthetic STL (5400084 bytes, SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7) uploaded, survived full refresh, and downloaded byte-identically. This passes live >4 MiB upload/retrieval, not original-containing TAR recovery. Both synthetic originals remain linked in private R2. Deletion/missing-file live checks remain open; do not remove existing owner content.
+Live persistent file acceptance 2026-10-14: synthetic design PNG (1944 bytes, SHA-256 b176ff52e49f3b96495aebeae0a546b5b9fe8ce7ff47d6560438a28d618ced71) and synthetic STL (5400084 bytes, SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7) uploaded, survived full refresh, and downloaded byte-identically. This passes live >4 MiB upload/retrieval, not original-containing TAR recovery. The original two synthetic attachment identities were subsequently deleted with explicit approval; one STL was re-uploaded solely for the successful live TAR recovery below. Controlled missing-original acceptance remains open; do not remove owner content.
 
-Earliest unmet gate is CC-TODO-003 deliberate deletion/missing-file handling with synthetic originals and retained copies. Keep earlier passes; do not repeat the resolved login/provenance prerequisite. Future browser sessions may require secure authentication again; never request secrets in chat. CC-TODO-006 original-containing TAR/larger-file recovery is a later recorded gate, not the immediate sequencing driver. Continue 005 collaborator readiness and 007 authorized representative samples after foundations. OneNote 008/009, photo extraction 010 and Canva 011 are future work; no connector/account access or bulk import is currently requested.
+Earliest unmet gate is CC-TODO-003 controlled live missing-original detection/recovery with metadata retained; approved deletion passed. Keep earlier passes; do not repeat the resolved login/provenance prerequisite. Future browser sessions may require secure authentication again; never request secrets in chat. CC-TODO-006 original-containing TAR/larger-file local recovery now passed; isolated Cloudflare restore and operational durability remain open. Continue 005 collaborator readiness and 007 authorized representative samples after foundations. OneNote 008/009, photo extraction 010 and Canva 011 are future work; no connector/account access or bulk import is currently requested.
 
 ## Owner local setup and boundaries
 

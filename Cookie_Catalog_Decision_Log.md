@@ -1,5 +1,13 @@
 # Cookie_Catalog — Decision Log
 
+## Latest acceptance — 2026-10-14
+
+Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
+
+Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+
+Next unmet gate is controlled live missing-original detection/recovery while metadata remains; normal deletion does not prove it. No live fault-injection route or independent R2-console session exists. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
+
 Updated: 2026-10-14 UTC. Stable decisions are retained below in their historical wording. Selection, authorization, provisioning and verification are separate.
 
 ## 2026-10-14 — CC-DEC-013 — Restore infrastructure acceptance as current priority
