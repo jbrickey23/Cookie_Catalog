@@ -1,5 +1,11 @@
 # Cookie_Catalog
 
+## Current continuation — Main safeguards and devices
+
+Main protection is still NOT applied: readback shows main/development unprotected and no rulesets. The exact single-owner-compatible PR/check policy is prepared in docs/Main_Branch_Safeguards.md. Applying it requires owner GitHub browser sign-in; no credential values belong in project files. The current browser is at sign-in, not an authenticated settings page. No protection settings, repository permissions, deployment settings or application code changed.
+
+Device evidence and a short intended-device checklist are in docs/Device_Acceptance.md. Existing cloud-desktop and earlier owner workflow passes are preserved; actual target-device/browser outcomes remain pending. The next action is secure owner sign-in, then apply/read back the main rule and record actual device outcomes. Preserve the completed rollback/recovery work and all production/resource/security boundaries.
+
 Start here: [User Companion](docs/User_Companion.md) — plain-language catalog, search, files, backups and development-check instructions.
 
 Private catalog for a cookie decorating business: find designs, compatible owned/printable cutters, physical locations, known flips and original files.

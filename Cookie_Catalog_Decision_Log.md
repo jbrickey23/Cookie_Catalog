@@ -148,3 +148,9 @@ Status: user approved. Name the project Cookie_Catalog and bootstrap its already
 ## 2026-10-14 — User documentation companion (routine documentation)
 
 Owner asked whether a user-facing documentation companion was being generated. Existing documents were technical/runbook-oriented, so docs/User_Companion.md was added and linked from README. It covers current catalog terms/workflows, search matches and metadata boundaries, files/removal/missing originals, backup choices/recovery, development controls and unavailable future work. Maintain it alongside user-visible changes; no new architecture decision/task ID, resources or costs.
+
+## 2026-10-14 — Main safeguards and device continuation (prepared; not applied)
+
+Current readback still shows main/development unprotected and no rulesets. Prepared the exact main-only PR + sqlite/GitHub Actions, up-to-date, conversation-resolution, admin-enforced/no-force-push/no-deletion policy with zero mandatory approving reviewers for the current single-owner workflow. GitHub source/PR integration lacks administration writes. Browser settings access requires owner sign-in, which has not completed. No protection/access/deployment settings changed; no application merge/release. Credentials and detailed sign-in values are not recorded.
+
+Prepared intended-device evidence/checklist and User Companion links; cloud Chrome success and prior owner UI evidence do not substitute for target-device acceptance. Continue after secure owner sign-in, preserve all earlier passes and parked Windows/alternate-email boundaries. This is implementation of existing CC-TODO-004, not a new architecture/task ID.
