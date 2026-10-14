@@ -2,13 +2,17 @@
 
 Prepared 2026-10-14. Actual owner-device/browser acceptance is not closed by cloud-browser checks.
 
+## Queued targets and sequencing
+
+Owner specified Chrome and Microsoft Edge on Windows, plus Safari on iPhone on 2026-10-14. “Edge/Explorer” is recorded as modern Edge, with no legacy Internet Explorer support added. These targets are backlog acceptance criteria within CC-TODO-004, not the current implementation priority. Complete the current base-infrastructure follow-ups first; retain actual device verification before release. No compatibility fixes or new device passes are claimed by this update.
+
 ## Evidence and gaps
 
 | Surface | Evidence | Status |
 | --- | --- | --- |
 | Assistant cloud Chrome desktop | Owner-authenticated catalog, matched search, original retrieval, archive/local restore, missing-original check, compatible code rollback/roll-forward | Passed for that browser; not a substitute for owner devices |
-| Owner Windows PC | Node v24.21.0/npm.cmd 11.19.0 verified; earlier owner-confirmed UI/search/photo/archive evidence is preserved | Browser/version and intended-device checklist outcome not fully recorded; do not reinstall Node or repeat every prior test |
-| Phone/tablet | No completed specific-device acceptance recorded | Pending if intended for use; device/browser choice not yet established |
+| Owner Windows PC | Node v24.21.0/npm.cmd 11.19.0 verified; earlier owner-confirmed UI/search/photo/archive evidence is preserved | Chrome and Edge targeted; exact browser versions and intended-device outcomes pending. Do not reinstall Node or repeat every prior test |
+| Phone/tablet | No completed specific-device acceptance recorded | Safari on iPhone targeted; actual device/version and viewing/editing/upload/download outcomes pending |
 | Responsive source setup | app/index.html includes width=device-width, initial-scale=1.0 | Present in source; does not prove mobile usability |
 
 ## Short owner check
@@ -24,4 +28,4 @@ Use the normal development site on each device intended for day-to-day use. Reco
 
 Record only observed outcomes. Mobile viewing, editing, downloads, backup handling and physical-cutter location retrieval can have different readiness. Support must be chosen and tested rather than inferred from viewport metadata or desktop success.
 
-No owner-device remote control or browser emulation has been claimed. Once a target device and outcome are known, update this matrix and the User Companion; leave unsupported/pending workflows explicit.
+No owner-device remote control or browser emulation has been claimed. Once actual target-device outcomes are known, update this matrix and the User Companion; leave unsupported/pending workflows explicit.

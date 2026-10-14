@@ -1,5 +1,11 @@
 # Cookie_Catalog — TODO
 
+## Owner sequencing clarification — 2026-10-14
+
+Keep building the base application infrastructure under CC-TODO-002/003/004. Preserve the completed D1/R2, deployment, rollback and main-protection passes. Next actionable infrastructure follow-up: inspect the failed Cloudflare Workers Builds check on documentation-only PR #2 and review build/preview branch selection; diagnose before changing deployment settings. Continue the existing infrastructure/recovery/access/sample sequence below. No browser compatibility implementation is started by recording these requirements.
+
+Browser/device backlog within CC-TODO-004: support Chrome and Microsoft Edge on Windows, plus Safari on iPhone. Interpret the owner's “Edge/Explorer” as modern Edge; legacy Internet Explorer support is not added. Before release, verify sign-in, record/search/form usability, private file upload/download, responsive layout and the appropriate backup path on those targets. Desktop direct-folder saving and the bounded TAR fallback have different capabilities; keep limitations explicit. Actual Edge/iPhone outcomes remain pending. This acceptance work follows the current base-infrastructure prerequisites; it does not replace them or introduce a new task ID.
+
 ## Current continuation — Main protection active
 
 Main-branch protection was created and read back on 2026-10-14 after owner sign-in. The exact main rule requires a pull request, sqlite from GitHub Actions, an up-to-date branch and resolved conversations, and applies to administrators. Mandatory approvals are disabled for the current single-owner workflow; force pushes/deletions are disabled. The branch API reports main protected=true and development protected=false. Detailed protection API access is unavailable to the integration (403); persisted checkbox/source selections were verified in the signed-in GitHub UI.
@@ -10,7 +16,7 @@ Main updates now use documentation-only pull requests and required checks. Appli
 
 The development code rollback and roll-forward drill passed. Exact deployed sources: baseline 489ed640 → compatible previous app redeployment 26c2425e → restored current app 0a613893. Signed-in owner reads, same-value synthetic-location saves, exact-byte original downloads and restored phase archives passed. All phases retained identical schema, all 14 rows across 16 tables, and the one 5400084-byte STL; integrity/FKs passed. CI and Workers Builds passed. No migration, data restore, resource/security change or production release occurred.
 
-Next CC-TODO-004 prerequisites: intended-device acceptance and main-release safeguards. Read-only GitHub inspection found main and development branches unprotected with no rulesets; no settings were changed. CC-TODO-006 isolated Cloudflare restore/cloud sync/retention, 005 intended-user roles and 007 real samples stay open. Preserve deferred alternate-email testing and Windows remediation. OneNote/photo/Canva remain future work. See docs/Development_Rollback_Acceptance.md and docs/evidence/Development_Rollback_20261014.json.
+Historical checkpoint: the next gates were intended-device acceptance and main-release safeguards. Main protection has since been completed as recorded above; intended-device acceptance remains queued. CC-TODO-006 isolated Cloudflare restore/cloud sync/retention, 005 intended-user roles and 007 real samples stay open. Preserve deferred alternate-email testing and Windows remediation. OneNote/photo/Canva remain future work. See docs/Development_Rollback_Acceptance.md and docs/evidence/Development_Rollback_20261014.json.
 
 ## Latest acceptance — 2026-10-14
 
@@ -116,7 +122,7 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 1. CC-TODO-004 current deployment proof passed: deployed 2939565 matched GitHub; current D1/R2 report passed. Development code rollback/roll-forward also passed; preserve broader release/intended-device gates.
 2. CC-TODO-002 synthetic location/physical cutter/design/mapping create/edit/refresh/search/retrieve passed. Preserve broader real-sample/field/schema acceptance.
-3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Controlled missing-original live detection/recovery subsequently passed. Development code rollback/roll-forward passed. Next: CC-TODO-004 intended-device/main-release safeguard acceptance.
+3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Controlled missing-original live detection/recovery subsequently passed. Development code rollback/roll-forward passed. Main protection is now complete. Next: CC-TODO-004 Cloudflare docs-only build/preview review; retain intended-device acceptance before release without starting a compatibility workstream ahead of base infrastructure.
 4. Then continue CC-TODO-006 isolated Cloudflare restore/operational durability, 005 intended collaborator readiness and 007 representative samples.
 5. Only afterward resume deferred 008–011. No OneNote export/access, image extraction or Canva integration is the current prerequisite.
 
