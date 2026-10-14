@@ -9,7 +9,7 @@ Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptan
 | CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; deletion/other types pending | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
-| CC-TODO-006 | Backup, export and recovery | In progress: larger TAR/larger-upload flow locally restored; live gate pending | 002/003 |
+| CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing/larger-upload gate pending | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open: synthetic importer verified; real samples absent | 002/003/005 |
 
 ## CC-TODO-001 — Repository infrastructure
@@ -70,7 +70,9 @@ Done when: intended users can access their catalog, unauthorized access is rejec
 
 Purpose: preserve catalog data independently of provider/app availability.
 
-Latest: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live larger-upload/archive/save/restore acceptance remains pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
+Verified live: Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Next: add a test original (preferably above 4 MiB), save another TAR and verify actual bytes/relationships. No payload or database is committed to public Git.
+
+Latest implementation: 2026-10-14: owner confirmed Matched fields highlighting works. CC-TODO-006 now adds a larger TAR archive with a D1 schema/records/migration snapshot, separate original bytes, SHA-256 metadata and a required completion receipt. Browser assembly and direct folder saving use desktop Chrome/Edge; each original is a separate authenticated request, avoiding one long Worker invocation. Limits: 25 MiB/file, 1000 originals, 1 GiB originals total, 10000 rows/table, 16 MiB manifest. These are application ceilings, not demonstrated production throughput. Local tests recovered a 5,250,084-byte STL and all 16 tables/relationships; a separate test covered 26 originals. All 40 Node tests and type-check/frontend/Worker build passed. Corruption/truncation/extra data, missing/orphan/changed files and denied requests fail. Live database-only TAR save/restore passed; original-containing TAR and larger-upload acceptance remain pending. Old JSON backup/recovery-test formats and their 4 MiB total/25-object limits are retained for compatibility. No new resources, paid plan, automatic transfer/pruning or production changes.
 
 Verified: owner-only bounded browser export and disposable recovery-test endpoint, strict local restore tool, integrity/authorization/failure-cleanup tests. Actual normal package restored 16 tables/6 rows/0 objects; actual recovery package restored 16 tables/17 rows/2 objects with original bytes and relationships intact. See docs/Backup_Recovery_Plan.md for hashes and instructions.
 
@@ -94,6 +96,6 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 Slicer scaling in v1; store original files, dimensions and optional sizing guidance. Derived model generation, automatic flip suggestions and order/invoicing are deferred. Later product tasks cover entry, linking, visual search and usability.
 
-Matched fields highlighting passed. Verify CC-TODO-006 live TAR save/restore and larger upload, then remaining physical cutter/location/mapping and CC-TODO-003 deletion/design/STL gates. Validate production-scale backup needs before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
+Matched fields highlighting passed. Verify CC-TODO-006 original-containing TAR restore and larger upload, then remaining physical cutter/location/mapping and CC-TODO-003 deletion/design/STL gates. Validate production-scale backup needs before real inventory. Park the formerly managed Windows Defender/CLI issue; browser recovery works. No production deployment, extra paid resources, PC reset or automatic pruning authorized. Do not repeat completed checks.
 
 Next unused task ID: **CC-TODO-008**.

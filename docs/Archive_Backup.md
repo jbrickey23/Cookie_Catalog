@@ -1,6 +1,6 @@
 # CC-TODO-006 — Larger development archive
 
-Updated 2026-10-14. Local integration/restore passed; live saving and larger-file recovery pending. No extra resources or paid plan.
+Updated 2026-10-14. Local integration/restore passed; live database-only TAR saving/restoration passed; original-file recovery pending. No extra resources or paid plan.
 
 ## Browser workflow and limits
 
@@ -38,4 +38,4 @@ Schema SQL is executed: restore only trusted application-generated archives. Leg
 
 40 Node tests and TypeScript/Vite frontend/Worker build passed. Real Miniflare D1/R2 tests upload/retrieve/restore a 5.25 MB STL through actual manifest/file endpoints and shared browser assembler; recreate 16 tables/relationships and exact original bytes; cover 26 originals, mutation/ETag, orphan/missing storage, auth/origin/method, corruption, truncation and extra archive data. Existing JSON/recovery tests remain passing.
 
-Owner confirmed Matched fields highlighting separately. Next: owner saves a live TAR, supplies it privately for actual restore inspection, then tests an original above 4 MiB and repeats archive recovery. Do not commit those payloads to public GitHub. CC-TODO-006 remains open for cloud sync/retention, Cloudflare-side restore, production consistency/performance, automation and recovery objectives.
+Owner confirmed Matched fields highlighting separately. Live TAR database recovery verified 2026-10-14: uploaded Cookie_Catalog_2026-10-14T15-47-38-889Z.tar restored 16 tables/7 rows/0 originals. Manifest/completion checks, SQLite integrity and foreign keys passed; migrations 0001/0002 and the existing design/shape/cutter relationship survived. Zero attachment rows/objects means this proves the live database archive path only; it does not prove current TAR original-file recovery or intentional deletion. Next: add a test original (preferably above 4 MiB), save another TAR and verify actual bytes/relationships. No payload or database is committed to public Git. Do not commit those payloads to public GitHub. CC-TODO-006 remains open for cloud sync/retention, Cloudflare-side restore, production consistency/performance, automation and recovery objectives.
