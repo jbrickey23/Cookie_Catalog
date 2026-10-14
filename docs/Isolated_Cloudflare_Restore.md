@@ -1,5 +1,13 @@
 # CC-TODO-006 — Isolated Cloudflare restore preparation
 
+## 2026-10-14, 22:45 UTC — Owner-created isolated targets and fresh archive
+
+Owner screenshots show separate D1 cookie-catalog-recovery-20261014 (UUID 4d182441-b08e-4739-932d-34ca5511b747), overview reporting zero tables/queries, and separate R2 cookie-catalog-recovery-20261014-private, empty (0 B), Standard storage and Public Access Disabled. Owner chose automatic location/Standard. This is screenshot evidence, not authenticated assistant/API inventory; confirm the recovery database has no catalog/migration tables immediately before import. The owner performed creation during the guided recovery workflow. Active development bindings/data were not changed.
+
+Fresh owner-supplied Cookie_Catalog_2026-10-14T22-44-32-792Z.tar validated/prepared locally: SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d; 16 tables/14 rows, migrations 0001/0002, one 5400084-byte STL with SHA-256 44f1d7d5617d5611da7832a8c3e7fd512d970b3e6f80a61775cbf981a18892f7; integrity/FKs/completion and exact local SQL round-trip passed. Original key attachments/file_77f92535c7654231854cfd600bab0eb8/original. Source commit is not attested by the TAR. Private recovery ZIP handed off separately; no payload, SQL data or originals in GitHub.
+
+Next: guided owner dashboard import into the empty recovery D1, original upload at its exact key into private recovery R2, then independent readback/export/download comparison. Cloud import/upload has not run, and CC-TODO-006 remains open. Cloudflare rejects this assistant browser login with 403; owner dashboard works. No retry of the blocked login, new Worker, paid resource, production change, current-development rebind/overwrite or automatic cleanup. Preserve recovery targets for review.
+
 Status: prepared, not executed. Local original-containing archive restoration and compatible code rollback already passed; preserve those results.
 
 ## October 14 continuation — import preparation implemented
