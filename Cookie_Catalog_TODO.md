@@ -1,10 +1,10 @@
 # Cookie_Catalog — TODO
 
-## Current checkpoint — 2026-10-14, 19:35 UTC
+## Current checkpoint — 2026-10-14, 20:15 UTC
 
-Controlled missing-original recovery passed live on ec8f864: 200 → missing 409 with metadata/link retained → restored 200 with matching bytes → verified fixture cleanup. Existing catalog counts and the retained 5.4 MB STL stayed unchanged. 49 tests/build, GitHub CI and Workers Builds passed.
+The development code rollback and roll-forward drill passed. Exact deployed sources: baseline 489ed640 → compatible previous app redeployment 26c2425e → restored current app 0a613893. Signed-in owner reads, same-value synthetic-location saves, exact-byte original downloads and restored phase archives passed. All phases retained identical schema, all 14 rows across 16 tables, and the one 5400084-byte STL; integrity/FKs passed. CI and Workers Builds passed. No migration, data restore, resource/security change or production release occurred.
 
-Next: CC-TODO-004 development code-rollback/intended-device acceptance; checklist prepared, drill not run. Cloudflare-side full restore, collaborator access and representative samples remain open. Keep OneNote/photo/Canva deferred and the alternate-email test parked. Details: docs/Missing_File_Recovery_Check.md and docs/Development_Rollback_Acceptance.md.
+Next CC-TODO-004 prerequisites: intended-device acceptance and main-release safeguards. Read-only GitHub inspection found main and development branches unprotected with no rulesets; no settings were changed. CC-TODO-006 isolated Cloudflare restore/cloud sync/retention, 005 intended-user roles and 007 real samples stay open. Preserve deferred alternate-email testing and Windows remediation. OneNote/photo/Canva remain future work. See docs/Development_Rollback_Acceptance.md and docs/evidence/Development_Rollback_20261014.json.
 
 ## Latest acceptance — 2026-10-14
 
@@ -21,9 +21,9 @@ Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptan
 | CC-TODO-001 | Repository and durable project state | Open: independent fresh-chat test pending | — |
 | CC-TODO-002 | Database and catalog schema | In progress: live shape create/edit/search passed; search explanations added | 001 |
 | CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; design/STL retrieval and approved deletion passed; controlled missing-original recovery passed | 001/002 |
-| CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployed | 001/002/003 |
+| CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployment and code rollback/roll-forward verified | 001/002/003 |
 | CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
-| CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing/original-file gate pending | 002/003 |
+| CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing local restore passed; Cloudflare restore/durability pending | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open: synthetic importer verified; real samples absent | 002/003/005 |
 
 ## CC-TODO-001 — Repository infrastructure
@@ -66,7 +66,7 @@ Purpose: a private working interface reachable on business devices.
 
 Verified: React/Vite/Workers development scaffold deployed from canonical feature branch; D1/R2/frontend bindings configured. Build root app, build npm run build, deploy npx wrangler deploy. Owner log confirms deployment of 8122a92; later downloaded packages prove newer backup routes were live, although their exact exporting commit was not independently attested. Code 40ab108 passed CI #97 (20 Node tests, SQLite schema/import, type-check/build); pre-reconciliation head 330ca8a passed CI #105.
 
-Remaining: intended-device/browser validation, persistent product paths, build-project naming/preview review, appropriate branch protection/pre-merge checks, approved main-release deployment, known-good release and code rollback verification. Production resources are separate and unprovisioned.
+Remaining: intended-device/browser validation, persistent product paths, build-project naming/preview review, appropriate branch protection/pre-merge checks, approved main-release deployment, known-good production release and provider-native/production rollback verification. Development compatible-code rollback/roll-forward passed. Production resources are separate and unprovisioned.
 
 Done when: a minimal private site deploys from recorded source and performs a persistent record read/write plus authorized attachment retrieval. This proves infrastructure; full catalog UX follows later.
 
@@ -108,9 +108,9 @@ Done when: authorized samples import reproducibly and support Christmas/tree sea
 
 ## Current sequencing — October 14 correction
 
-1. CC-TODO-004 current deployment proof passed: deployed 2939565 matched GitHub; current D1/R2 report passed. Preserve broader release/rollback/intended-device gates.
+1. CC-TODO-004 current deployment proof passed: deployed 2939565 matched GitHub; current D1/R2 report passed. Development code rollback/roll-forward also passed; preserve broader release/intended-device gates.
 2. CC-TODO-002 synthetic location/physical cutter/design/mapping create/edit/refresh/search/retrieve passed. Preserve broader real-sample/field/schema acceptance.
-3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Controlled missing-original live detection/recovery subsequently passed. Next: CC-TODO-004 development rollback/intended-device acceptance.
+3. CC-TODO-003 design PNG and 5400084-byte STL upload/refresh/download passed byte-identically. Approved synthetic deletion and original-containing TAR restore now passed. Controlled missing-original live detection/recovery subsequently passed. Development code rollback/roll-forward passed. Next: CC-TODO-004 intended-device/main-release safeguard acceptance.
 4. Then continue CC-TODO-006 isolated Cloudflare restore/operational durability, 005 intended collaborator readiness and 007 representative samples.
 5. Only afterward resume deferred 008–011. No OneNote export/access, image extraction or Canva integration is the current prerequisite.
 

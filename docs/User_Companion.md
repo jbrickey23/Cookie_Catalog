@@ -154,6 +154,14 @@ A passed infrastructure report is a snapshot, not proof of every business workfl
 
 If a test says cleanup could not be verified, stop repeating it and request review. Tests have their own temporary fixtures; ordinary catalog records should not be removed to make a development check pass.
 
+## What an application rollback means
+
+A code rollback runs an earlier application version. Some newer controls may temporarily disappear. Your catalog records and original files need separate preservation and recovery checks whenever a rollback is planned.
+
+On October 14 the development app was moved to a verified earlier version and returned to the current version. Sign-in, a test-record save and original downloads worked in both. Fresh backups confirmed that every record, relationship and original stayed unchanged. This was a compatible development-code test; production release and full cloud data restoration remain future acceptance work.
+
+You do not need to run a rollback as part of daily catalog use. Keep a trusted backup and ask for help before attempting data restoration or changing application versions.
+
 ## Current boundaries and getting help
 
 Current owner catalog entry, matched-field search, private file retrieval, deliberate synthetic-file deletion, missing-original recovery testing and a live original-containing TAR/local restore have passed acceptance checks.
