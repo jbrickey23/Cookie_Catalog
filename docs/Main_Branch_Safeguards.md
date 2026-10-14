@@ -1,8 +1,8 @@
 # CC-TODO-004 — Main-branch safeguards
 
-Prepared 2026-10-14. NOT applied: repository main/development both report protected=false and repository rulesets are empty. The connected GitHub integration supports source/PR work but exposes no administration write action. The browser reached GitHub sign-in; passkey sign-in did not complete and the subsequent password sign-in was rejected. Owner browser sign-in is the current prerequisite. Never store credentials or sign-in details in project files.
+Applied and verified 2026-10-14. Main protected=true; the development branch remains unprotected. Persisted rule options and GitHub Actions source were read back through the signed-in settings UI. Detailed protection API access returns 403 for the integration; basic branch API independently confirms protection. No repository access or Cloudflare setting changed.
 
-## Concrete intended policy
+## Active policy
 
 | Setting | Target state | Reason |
 | --- | --- | --- |
@@ -18,14 +18,18 @@ Prepared 2026-10-14. NOT applied: repository main/development both report protec
 
 Do not enable signed-commit, code-owner/second-reviewer, merge-queue, deployment or linear-history requirements as part of this step. Current connector-created commits and normal merge-based history must remain usable. Do not grant bypass actors, change repository visibility/access, provision services, upgrade a plan, alter Cloudflare deployment settings or merge application PR #1.
 
-## Apply and verify after owner sign-in
+## Maintenance and verification
 
-1. Open the repository Settings -> Branches page and add a classic branch protection rule for the exact main branch. Inspect the actual current settings before saving; do not stack an overlapping rule over a new existing rule.
+1. Open repository Settings -> Branches and inspect/edit the existing exact-main classic rule. Do not create an overlapping rule.
 2. Enter the table above. Choose the actual recently reported sqlite check and GitHub Actions source when GitHub offers source selection. Do not merely type an unreported check name.
 3. Save and read back the rule from both GitHub UI and the branch/rule API where permitted. Confirm main protected=true, required status name/source and up-to-date policy, PR requirement with zero mandatory approvals, administrator enforcement and no force-push/deletion allowance. Record unavailable readback fields honestly.
 4. Inspect draft application PR #1 for the required check and review state; do not merge or enable auto-merge. A draft remains intentionally unmergeable even after passing checks.
 5. From this point, update main notes through a small documentation-only PR with passing checks. Keep application work on the existing feature branch/draft PR. Do not bypass protection to keep the old direct-main documentation habit.
 
-A configuration readback verifies the saved policy. Actual passing/blocked PR acceptance should be recorded separately when exercised; do not deliberately push destructive history changes to test it. No rule is active until positive readback proves it.
+Configuration readback verified the saved policy. This documentation/CI-only pull request is the first normal protected-main update. Record its check/merge outcome separately; do not deliberately push destructive history changes to test enforcement. Positive UI readback and protected=true confirmed this rule is active.
 
 Official references: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches and https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule .
+
+## CI bootstrap for notes-only main
+
+Before application merge, main contains durable notes but no app/database/tests or workflow. The existing Schema smoke tests/sqlite check is now introduced on main with documentation/link/JSON and complete-source-layout validation. When app source exists, it also runs the same schema/import, npm ci, Node tests, TypeScript and build commands as the development branch. Partial source layout or a missing committed app lockfile fails instead of skipping application validation. This is validated through a documentation/CI-only PR; app source and operational data are excluded.
