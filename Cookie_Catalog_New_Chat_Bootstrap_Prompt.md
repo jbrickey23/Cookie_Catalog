@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Current continuation — Main safeguards and devices
+
+Main protection is still NOT applied: readback shows main/development unprotected and no rulesets. The exact single-owner-compatible PR/check policy is prepared in docs/Main_Branch_Safeguards.md. Applying it requires owner GitHub browser sign-in; no credential values belong in project files. The current browser is at sign-in, not an authenticated settings page. No protection settings, repository permissions, deployment settings or application code changed.
+
+Device evidence and a short intended-device checklist are in docs/Device_Acceptance.md. Existing cloud-desktop and earlier owner workflow passes are preserved; actual target-device/browser outcomes remain pending. The next action is secure owner sign-in, then apply/read back the main rule and record actual device outcomes. Preserve the completed rollback/recovery work and all production/resource/security boundaries.
+
 Continue Cookie_Catalog from current GitHub JBrickey23/Cookie_Catalog, the authoritative public source.
 
 Read README, Context, TODO, Decision Log, this prompt, docs/User_Companion.md and applicable AGENTS.md; inspect current heads and open PRs. Active app is feature/cc-infrastructure-foundation, draft PR #1. Main's notes are current but its app has not been merged/released. No AGENTS.md was found in the latest inspected tree; check again.

@@ -171,3 +171,9 @@ Additional-user access, production release/rollback, intended-device acceptance,
 For help, report the control you used, the message shown and whether saving or downloading appeared to finish. Include the reported source commit when available. Keep sign-in codes, passwords, private originals and full backup contents out of public GitHub issues.
 
 This companion should change alongside user-visible behavior. Technical implementation and evidence remain in the linked runbooks; features described as future work should not be treated as available.
+
+## Check your everyday device
+
+Use the app on the computer or phone you intend to use day to day. Check readability, search matches, opening/editing a test record, and saving an original file. If that device will handle backups, confirm that its save/download method works and the file lands in a private location. A desktop browser check does not establish phone usability.
+
+The short [Device acceptance checklist](Device_Acceptance.md) records what has passed and what still needs checking. Existing test records are available; keep real inventory unchanged for these checks. Main-branch protection is a source-management safeguard described in [Main branch safeguards](Main_Branch_Safeguards.md); its configuration is currently pending owner GitHub sign-in. It does not change how you enter or search catalog records.

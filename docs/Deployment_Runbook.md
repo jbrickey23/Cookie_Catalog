@@ -1,5 +1,11 @@
 # CC-TODO-004 — Deployment and rollback runbook
 
+## Current continuation — Main safeguards and devices
+
+Main protection is still NOT applied: readback shows main/development unprotected and no rulesets. The exact single-owner-compatible PR/check policy is prepared in docs/Main_Branch_Safeguards.md. Applying it requires owner GitHub browser sign-in; no credential values belong in project files. The current browser is at sign-in, not an authenticated settings page. No protection settings, repository permissions, deployment settings or application code changed.
+
+Device evidence and a short intended-device checklist are in docs/Device_Acceptance.md. Existing cloud-desktop and earlier owner workflow passes are preserved; actual target-device/browser outcomes remain pending. The next action is secure owner sign-in, then apply/read back the main rule and record actual device outcomes. Preserve the completed rollback/recovery work and all production/resource/security boundaries.
+
 ## Current checkpoint — 2026-10-14, 20:15 UTC
 
 The development code rollback and roll-forward drill passed. Exact deployed sources: baseline 489ed640 → compatible previous app redeployment 26c2425e → restored current app 0a613893. Signed-in owner reads, same-value synthetic-location saves, exact-byte original downloads and restored phase archives passed. All phases retained identical schema, all 14 rows across 16 tables, and the one 5400084-byte STL; integrity/FKs passed. CI and Workers Builds passed. No migration, data restore, resource/security change or production release occurred.
