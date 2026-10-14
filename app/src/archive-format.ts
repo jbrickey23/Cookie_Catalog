@@ -1,5 +1,20 @@
 export interface ArchiveObject { attachmentId:string;key:string;byteSize:number;sha256:string;contentType:string|null;etag:string }
 export const ARCHIVE_FILE_LIMIT=25*1024*1024;
+export const ARCHIVE_DOWNLOAD_LIMIT=32*1024*1024;
+export async function archiveBlob(stream:ReadableStream<Uint8Array>,limit=ARCHIVE_DOWNLOAD_LIMIT):Promise<Blob> {
+ const reader=stream.getReader(),parts:Uint8Array[]= [];
+ let total=0;
+ try {
+  for(;;){
+   const {done,value}=await reader.read();if(done)break;
+   total+=value.byteLength;
+   if(total>limit)throw Error("Archive exceeds the 32 MiB download limit. Use Save catalog archive for a larger archive.");
+   parts.push(value);
+  }
+  return new Blob(parts as BlobPart[],{type:"application/x-tar"});
+ } catch(error){await reader.cancel().catch(()=>{});throw error;}
+ finally{reader.releaseLock();}
+}
 const encoder=new TextEncoder();
 export async function archiveHash(bytes:Uint8Array) {
  const digest=await crypto.subtle.digest("SHA-256",bytes as BufferSource);
