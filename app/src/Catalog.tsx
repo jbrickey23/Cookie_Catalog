@@ -95,6 +95,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     {nextOffset!==null && <button disabled={busy} onClick={()=>search(undefined,nextOffset)}>Next page</button>}
     {(canEdit || editing) && <>
     <h3>{canEdit ? (editing?"Edit record":"New record") : "Record details"}</h3>
+    {editing&&<p>Record ID for linking an import review: <code>{editing}</code></p>}
     {canEdit && editing && <button disabled={busy} onClick={()=>{if(!dirty||window.confirm("Start a new record and discard unsaved form changes?"))reset();}}>Start a new record</button>}
     <form onSubmit={event => { if (canEdit) void save(event); else event.preventDefault(); }}>
       <fieldset disabled={!canEdit} style={{border:0,padding:0}}>
