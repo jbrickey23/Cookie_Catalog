@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
 import {ImportReview} from "./ImportReview";
 import {Readiness} from "./Readiness";
+import { SourceReferences } from "./SourceReferences";
 import { BatchAttachments } from "./BatchAttachments";
 import { Browse } from "./Browse";
 import { Catalog } from "./Catalog";
@@ -113,6 +114,7 @@ function App() {
     <hr />
     <Catalog canEdit={role !== "viewer"} onSaved={() => setCatalogVersion(version => version + 1)} />
     <hr />
+    {role!=="viewer"&&<SourceReferences onSaved={()=>setCatalogVersion(v=>v+1)} />}
     {role!=="viewer"&&<BatchAttachments onSaved={()=>setCatalogVersion(v=>v+1)} />}
     <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
     </details>
