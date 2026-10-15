@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## 2026-10-15, 00:51 UTC — CC-TODO-012 Windows acceptance passed
+
+Owner ran the packaged helper directly with Node on Windows. Pasted save output confirms 5413888 archive bytes, 16 tables, 14 rows, one 5400084-byte original, integrity ok, valid foreign keys and complete archive; SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d matches prior trusted evidence. A uniquely named normal backup and local receipt were saved to the existing private OneDrive Cookie_Catalog/Backups folder. Review output reports review-only, deletesNothing=true, latest seven and no deletion candidates. Repeated saves produced distinct filenames without overwrite. Following the instructed OneDrive web download, owner reported cloudCopyMatch=true for the newly saved backup ending normal_adaa775e.tar. This is owner-mediated Windows/cloud-download evidence; no direct provider API audit or independent receipt-file inspection is claimed.
+
+CC-TODO-012 is complete for the supported manual Node workflow. The optional PowerShell launcher remains runtime-untested; scheduling, automatic cloud upload and pruning remain outside scope. Existing recovery MIME/runtime/scale limitations keep CC-TODO-006 open. Next: intended-user readiness under CC-TODO-005 (identify intended accounts and owner/editor/viewer needs before access activation), queued Chrome/Edge Windows and Safari iPhone acceptance under CC-TODO-004, then representative real samples under 007. Preserve parked alternate-email/Defender work, private recovery resources and draft/unreleased application PR #1.
+
 ## 2026-10-14 — Autonomous implementation batch; backup helper ready for Windows acceptance
 
 Owner requested faster autonomous engineering: complete implementation and automated checks before delivering one bundled acceptance checklist; ask for user input only for actual blockers, missing identities/roles, material decisions or actions needing their device/session. Do not repeat completed checks or require screenshots for clear successful output.

@@ -1,6 +1,6 @@
 # Cookie Catalog backup helper
 
-Status: implemented and automatically tested; owner Windows acceptance pending. This is a manual backup assistant, not a scheduled backup service. It makes no network requests and never deletes old backups.
+Status: implemented, automatically tested and owner Windows acceptance passed (2026-10-14 Pacific). Direct Node save/local receipt, review-only retention and owner-reported independent OneDrive web-download cloudCopyMatch=true passed. Optional PowerShell launcher remains runtime-untested. This is a manual backup assistant, not a scheduled backup service. It makes no network requests and never deletes old backups.
 
 ## Run on Windows
 
