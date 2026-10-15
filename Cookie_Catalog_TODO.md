@@ -1,5 +1,13 @@
 # Cookie_Catalog — TODO
 
+## October 15 — Full PDF source audit and staging checkpoint
+
+The owner supplied 14 OneNote-exported PDFs after a successful Windows COM export of the requested catalog sections. This resolves the immediate representative-source dependency: 478 PDF pages were grouped into 343 proposed source entries, including 135 continuation pages. These are source-entry counts, not physical-cutter counts. The first pass flags 37 source entries explicitly marked not printed, two not purchased, and 168 mentioning printable files; categories overlap. No printable originals are embedded in the supplied PDFs.
+
+A private searchable review package preserves source text, hashes, PDF page ranges, image references, links and flags. Local extraction preserved 575 unique image streams. Full-source staging passed for 343 unclassified entries with zero file issues; a baseline repeat reports 343 unchanged and none absent. Ten proposed mixed/familiar-theme demo candidates also stage with zero file issues, with all relevant facts still needing verification. No live catalog import or notebook edit occurred. Real source files, entry titles, vendor URLs, images, manifests and private deliverables remain outside this public repository.
+
+See [sanitized PDF findings](docs/PDF_Import_Findings_20261015.md). Next under existing CC-TODO-007/008/009/010: durable source/review and import history, reference-size and ownership/print-status handling with archive/recovery compatibility; reviewed component/duplicate mapping and idempotent preview; then protected pre-change backup and representative development import. Native notebook decoding is optional for continuing from these PDFs, but native page IDs and authorized STL/3MF originals remain unavailable. Preserve pending second-admin/device/recovery gates, completed backup/access evidence, and draft/unreleased status. No new task ID allocated; next unused remains CC-TODO-013.
+
 ## October 15 — Owner answers to bulk review
 
 Q1 resolved: notebook is on personal OneDrive. Q3 resolved: longest measured dimension is the reference/catalog size; a 4 by 2 inch item is called a 4 inch cookie. Preserve both width/height when known, orientation and original units/labels; do not substitute diagonal size or infer measurements from unscaled photos. Internal mm storage remains, with human-facing inch/reference sizing planned. Q4 resolved: physical location is Bin #, with optional Slot # reserved for the future; incomplete items may keep unknown location. Preserve identifiers as labels without stripping leading zeros. Q5 resolved: combine a mixed representative set with a familiar theme.

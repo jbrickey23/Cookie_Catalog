@@ -1,6 +1,6 @@
 # Offline catalog audit and staging
 
-Implemented as preparation for CC-TODO-008/009. No live import or OneNote modification is performed. Only synthetic examples were exercised; the real notebook has not been accessed or analyzed.
+Implemented as preparation for CC-TODO-008/009. No live import or OneNote modification is performed. The October 15 private PDF audit exercised real-source staging for 343 proposed entries and ten demo candidates, with zero file issues and an unchanged repeat baseline. See [PDF findings](PDF_Import_Findings_20261015.md). No live import ran; native notebook decoding remains unavailable.
 
 ## Inputs and boundaries
 
