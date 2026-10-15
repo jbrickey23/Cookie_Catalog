@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 14 — Confirmed access decisions and acceptance
+
+Owner explicitly set admin equal to owner for now. Two privately specified accounts receive owner-equivalent access; the business info account is viewer only. Optional private Worker CATALOG_MEMBERS configuration implements the small fixed role list; existing signed Access identity and bootstrap OWNER_EMAIL remain. No real account identity is committed here. In-app membership editing and Cloudflare dashboard privileges are separate from catalog roles. Owner confirmed policy/secret Save/Deploy, existing admin session and viewer search/details/download acceptance; second admin sign-in remains pending. This supersedes the earlier distinction proposed between owner and admin and the earlier statement that all collaborator activation is pending. No new decision ID is allocated by this reconciliation.
+
 ## 2026-10-14 — CC-DEC-014 — Manual backup cadence, retention and owner
 
 Status: explicitly approved by owner. Jay maintains complete TAR backups in private OneDrive after meaningful changes and before imports/bulk edits/deletions. Keep latest seven normal snapshots plus protected pre-change snapshots until changed-state checks and recoverability are verified. No automatic deletion/transfer/scheduling is enabled. User also requested scripting follow-up CC-TODO-012, accepting PowerShell for manual-step assistance. Scripting is a TODO, not an implemented backup service. Preserve owner-mediated verified cloud-copy and isolated data/original recovery evidence and the separately recorded metadata/runtime/scale limitations.

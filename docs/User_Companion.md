@@ -10,7 +10,7 @@ Admin and owner currently have identical catalog permissions: all existing editi
 
 Cookie Catalog helps you find a decorating design, identify the cutter shape it uses, locate a physical cutter, and retrieve its photo or printable original.
 
-The current site is a private development version. Use clearly labelled TEST or DEMO examples while acceptance work continues. Owner sign-in works. Additional approved accounts can be configured privately; activation and sign-in checks remain pending.
+The current site is a private development version. Use clearly labelled TEST or DEMO examples while acceptance work continues. Owner sign-in works. Approved admin/viewer accounts are configured privately. Existing-owner and viewer sign-in/read-only workflows passed owner checks; the second admin's separate sign-in remains pending.
 
 Open the development site at https://cookie-catalog-dev.j-brickey.workers.dev/ and use its email-code sign-in. Enter sign-in codes on the sign-in page, never in a chat.
 

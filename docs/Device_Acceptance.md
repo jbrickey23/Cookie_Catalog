@@ -2,6 +2,10 @@
 
 Prepared 2026-10-14. Actual owner-device/browser acceptance is not closed by cloud-browser checks.
 
+## October 14 owner-mediated acceptance
+
+Existing owner session displayed Admin / Owner. A separate private-browser viewer session showed read-only access; owner passed tree search, View details and existing-original download with forbidden controls absent. Browser name/version/device for these new observations was not explicitly captured, so do not assign them to Edge or iPhone Safari. Earlier Windows owner evidence and all completed functional passes remain valid. Next device work records remaining exact Chrome/Edge/iPhone targets rather than rerunning every infrastructure check.
+
 ## Queued targets and sequencing
 
 Owner specified Chrome and Microsoft Edge on Windows, plus Safari on iPhone on 2026-10-14. “Edge/Explorer” is recorded as modern Edge, with no legacy Internet Explorer support added. These targets are backlog acceptance criteria within CC-TODO-004, not the current implementation priority. Complete the current base-infrastructure follow-ups first; retain actual device verification before release. No compatibility fixes or new device passes are claimed by this update.

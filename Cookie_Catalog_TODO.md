@@ -1,5 +1,17 @@
 # Cookie_Catalog — TODO
 
+## Reconciled handoff — October 14, 2026 Pacific (October 15 UTC)
+
+This is the authoritative current checkpoint. Earlier dated sections are historical evidence; their pending/proposed statements do not override this checkpoint.
+
+- Active application source remains `feature/cc-infrastructure-foundation`, draft PR #1. App code `fed6dc1` passed 56 local application tests, TypeScript/frontend/Worker build, both GitHub Actions checks and Cloudflare Workers Builds. Subsequent commits record acceptance. Main is not an application release; production remains unreleased.
+- **CC-TODO-012 complete:** direct Node Windows save, 16 tables/14 rows/one original, local receipt, non-destructive retention review and independently web-downloaded cloud copy matched. Backup helper remains manual. Approved policy: Jay backs up after meaningful changes and before import/bulk edits/deletion; latest seven normal plus protected pre-change copies until changes/recoverability are verified.
+- **CC-TODO-005 progressed:** admin and owner are identical, represented by `owner`; two intended owner-equivalent accounts and one viewer were configured privately through optional `CATALOG_MEMBERS` Secret plus the existing Access allow policy. Owner reports settings saved/deployed. Existing owner live Admin / Owner session and separate private-browser viewer read-only/search/details/original download passed. Viewer controls/permissions are tested; no live unauthorized-identity denial is claimed.
+- Membership is currently private Worker deployment configuration, not D1. No schema migration or membership editor was added. JWT validation precedes membership checks; server denies viewer mutations/maintenance/export. Bootstrap `OWNER_EMAIL` remains a separate recovery path. Recover Access/secrets separately; catalog TAR excludes them. Real account emails, payloads and secrets remain outside public GitHub.
+- **Next:** verify the second intended admin's own sign-in, then remaining intended-device checks (Windows Chrome/Edge and iPhone Safari; exact browser/version of today's owner/viewer observations was not captured). Do not repeat completed behavior just for screenshots. Then representative authorized real samples/import readiness under 007 and remaining recovery/release work.
+- **Still open:** history-independent fresh-chat test (001); broader real-sample field/schema/file acceptance (002/003/007); exact intended-device coverage, production separation/release/rollback (004); second admin login and operational access recovery (005); recovery R2 Content-Type fidelity, recovery app runtime, operational scale/consistency and broader recovery readiness (006). Sample isolated D1/schema/record and R2 key/byte restore, independent OneDrive copy and approved manual backup policy already passed.
+- Keep the alternate-email denial test and Defender/Wrangler remediation parked. Preserve isolated recovery resources and existing data. OneNote 008/009, photo extraction 010 and Canva 011 remain deferred. No paid resources, production release, automatic transfer/scheduling/pruning or security weakening. Next unused task ID: CC-TODO-013.
+
 ## 2026-10-15, 01:17 UTC — Owner and viewer live acceptance passed
 
 After the configured role deployment and owner-reported Access/secret saves, owner confirmed their live session displays Admin / Owner. In the guided separate private-browser viewer workflow, owner confirmed read-only and then passed search for tree, View details and existing-original download. The requested acceptance checklist also required absence of create/edit/upload/remove/backup controls; the owner reported pass. Record these as owner-mediated live acceptance, not assistant browser/API observations. Real account emails remain private. The second intended admin account has not yet had its own sign-in verified; do not infer its pass from the existing owner or viewer. Local signed-membership and role/denial tests remain passed.
@@ -123,8 +135,8 @@ Updated: 2026-10-14 UTC. Infrastructure first; stable component IDs and acceptan
 | CC-TODO-002 | Database and catalog schema | In progress: live shape create/edit/search passed; search explanations added | 001 |
 | CC-TODO-003 | File and image storage | In progress: live owner photo upload/read passed; design/STL retrieval and approved deletion passed; controlled missing-original recovery passed | 001/002 |
 | CC-TODO-004 | Runtime, hosting and deployment | In progress: development deployment and code rollback/roll-forward verified | 001/002/003 |
-| CC-TODO-005 | Identity and access | In progress: owner path verified | 004 |
-| CC-TODO-006 | Backup, export and recovery | In progress: live database-only TAR restored; original-containing local restore passed; Cloudflare restore/durability pending | 002/003 |
+| CC-TODO-005 | Identity and access | In progress: private role configuration, existing owner and viewer live acceptance passed; second admin/recovery pending | 004 |
+| CC-TODO-006 | Backup, export and recovery | In progress: sample local/isolated-cloud record/original restore and cloud-copy checks passed; manual policy approved; MIME/runtime/scale gaps remain | 002/003 |
 | CC-TODO-007 | Sample import and seed workflow | Open: synthetic importer verified; real samples absent | 002/003/005 |
 
 ## CC-TODO-001 — Repository infrastructure

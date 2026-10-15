@@ -1,5 +1,9 @@
 # CC-TODO-005 — Development identity and access
 
+## Reconciled activation status — October 14 Pacific
+
+Owner reported saving the exact-email Access allow list and deploying CATALOG_MEMBERS Secret. Existing-owner Admin / Owner and separate viewer read-only/search/details/original download acceptance passed. The second configured admin's own sign-in is pending. Role code and full tests/build/development Workers Build passed. Earlier sections describing activation as entirely pending are historical. Account emails/secrets remain private; account recovery, intended-device specificity and the parked alternate-email denial test are not closed by these passes.
+
 ## 2026-10-15, 01:17 UTC — Owner and viewer live acceptance passed
 
 After the configured role deployment and owner-reported Access/secret saves, owner confirmed their live session displays Admin / Owner. In the guided separate private-browser viewer workflow, owner confirmed read-only and then passed search for tree, View details and existing-original download. The requested acceptance checklist also required absence of create/edit/upload/remove/backup controls; the owner reported pass. Record these as owner-mediated live acceptance, not assistant browser/API observations. Real account emails remain private. The second intended admin account has not yet had its own sign-in verified; do not infer its pass from the existing owner or viewer. Local signed-membership and role/denial tests remain passed.
