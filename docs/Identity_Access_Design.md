@@ -1,5 +1,9 @@
 # CC-TODO-005 — Development identity and access
 
+## 2026-10-15, 00:59 UTC — Owner specified intended administrator
+
+Owner supplied one intended collaborator account privately and requested admin access. Do not commit the real email to this public repository; retrieve it from the owner conversation or private runtime configuration when implementing enrollment. This satisfies the account/desired-role input for CC-TODO-005. Admin is a requested role, not an active grant: current code only supports owner/editor/viewer and the optional membership adapter accepts editor/viewer. Do not silently downgrade the request to editor or map the account to the bootstrap owner. Define and implement admin permissions, durable membership, revocation, client controls and backup/restore compatibility with tests before changing Cloudflare Access or activating the account. Jay remains the project owner. No invitation, account grant, secret, policy or membership mutation has occurred.
+
 ## October 14 — Tested role foundation, activation remains pending
 
 The backend now enforces a shared-catalog permission matrix: owners retain all current controls; authenticated editors may read/create/update catalog records and upload/download files; viewers may search/read/download. Deleting originals, orphan cleanup, all `/api/dev/` diagnostics and full exports remain owner-only. Origin/method/input guards are retained. These roles refer to one shared business catalog, not separate per-user inventories.

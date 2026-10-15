@@ -1,5 +1,9 @@
 # Cookie_Catalog — TODO
 
+## 2026-10-15, 00:59 UTC — Owner specified intended administrator
+
+Owner supplied one intended collaborator account privately and requested admin access. Do not commit the real email to this public repository; retrieve it from the owner conversation or private runtime configuration when implementing enrollment. This satisfies the account/desired-role input for CC-TODO-005. Admin is a requested role, not an active grant: current code only supports owner/editor/viewer and the optional membership adapter accepts editor/viewer. Do not silently downgrade the request to editor or map the account to the bootstrap owner. Define and implement admin permissions, durable membership, revocation, client controls and backup/restore compatibility with tests before changing Cloudflare Access or activating the account. Jay remains the project owner. No invitation, account grant, secret, policy or membership mutation has occurred.
+
 ## 2026-10-15, 00:51 UTC — CC-TODO-012 Windows acceptance passed
 
 Owner ran the packaged helper directly with Node on Windows. Pasted save output confirms 5413888 archive bytes, 16 tables, 14 rows, one 5400084-byte original, integrity ok, valid foreign keys and complete archive; SHA-256 93ec5093d5f2c24604b1886775571b2280c73a3d6763596a8c5f1fac0950138d matches prior trusted evidence. A uniquely named normal backup and local receipt were saved to the existing private OneDrive Cookie_Catalog/Backups folder. Review output reports review-only, deletesNothing=true, latest seven and no deletion candidates. Repeated saves produced distinct filenames without overwrite. Following the instructed OneDrive web download, owner reported cloudCopyMatch=true for the newly saved backup ending normal_adaa775e.tar. This is owner-mediated Windows/cloud-download evidence; no direct provider API audit or independent receipt-file inspection is claimed.
