@@ -15,7 +15,7 @@ test("bounded TAR download retains a complete manifest/original/footer archive",
 test("oversize and failed streams cannot produce a partial download",async()=>{
  let cancelled=false;
  const stream=new ReadableStream<Uint8Array>({start(c){c.enqueue(new Uint8Array(4));c.enqueue(new Uint8Array(4));},cancel(){cancelled=true;}});
- await assert.rejects(()=>archiveBlob(stream,5),/32 MiB download limit/);assert.equal(cancelled,true);
+ await assert.rejects(()=>archiveBlob(stream,5),/download limit \(5 bytes\)/);assert.equal(cancelled,true);
  const broken=new ReadableStream<Uint8Array>({start(c){c.enqueue(new Uint8Array(3));c.error(Error("original changed"));}});
  await assert.rejects(()=>archiveBlob(broken),/original changed/);
 });

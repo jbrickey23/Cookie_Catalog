@@ -4,14 +4,14 @@ type SaveHandle = {createWritable:()=>Promise<WritableStream<Uint8Array>>};
 export function ArchiveBackup() {
   const [busy,setBusy]=useState(false),[status,setStatus]=useState("");
   async function download(small=false) {
-    setBusy(true);setStatus(small?"Preparing a TAR download up to 32 MiB. Keep catalog changes idle.":"Choose a private backup location, then keep catalog changes idle until the download finishes.");
+    setBusy(true);setStatus(small?"Preparing a TAR download up to 64 MiB. Keep catalog changes idle.":"Choose a private backup location, then keep catalog changes idle until the download finishes.");
     let handle:SaveHandle|undefined;
     try {
       const filename="Cookie_Catalog_"+new Date().toISOString().replace(/[:.]/g,"-")+".tar";
       if(!small){
       const picker=(window as unknown as {showSaveFilePicker?:(options:unknown)=>Promise<SaveHandle>}).showSaveFilePicker;
       if(picker)handle=await picker.call(window,{suggestedName:filename,types:[{description:"Cookie Catalog backup",accept:{"application/x-tar":[".tar"]}}]});
-      else {setStatus("Use Download small backup (TAR) for up to 32 MiB, or desktop Chrome/Edge to save a larger backup directly.");return;}
+      else {setStatus("Use Download small backup (TAR) for up to 64 MiB, or desktop Chrome/Edge to save a larger backup directly.");return;}
       }
       const response=await fetch("/api/dev/archive",{method:"POST",cache:"no-store",headers:{"X-Cookie-Catalog-Check":"archive"}});
       if(!response.ok){const body=await response.json() as {error?:string};throw Error(body.error??"Backup could not start.");}
@@ -34,7 +34,7 @@ export function ArchiveBackup() {
       }
     }catch(error){
       const name=(error as Error).name;
-      setStatus(name==="AbortError"?"Backup cancelled.":!small&&(name==="SecurityError"||name==="NotAllowedError")?"Direct folder saving is unavailable in this browser. Use Download small backup (TAR) for up to 32 MiB.":"Backup did not complete: "+(error as Error).message+". Do not rely on a partial file.");
+      setStatus(name==="AbortError"?"Backup cancelled.":!small&&(name==="SecurityError"||name==="NotAllowedError")?"Direct folder saving is unavailable in this browser. Use Download small backup (TAR) for up to 64 MiB.":"Backup did not complete: "+(error as Error).message+". Do not rely on a partial file.");
     }finally{setBusy(false);}
   }
   return <section>
@@ -43,7 +43,7 @@ export function ArchiveBackup() {
     <p>Development limits: 1 GiB of originals total, 1,000 originals, 25 MiB per original and 10,000 rows per table. Desktop Chrome or Edge required for direct folder saving.</p>
     <button disabled={busy} onClick={()=>download()}>{busy?"Saving…":"Save catalog backup"}</button>{" "}
     <button disabled={busy} onClick={()=>download(true)}>Download small backup (TAR)</button>
-    <p>If direct folder saving is unavailable, download a TAR backup up to 32 MiB. Larger backups still require direct folder saving.</p>
+    <p>If direct folder saving is unavailable, download a TAR backup up to 64 MiB. Larger backups still require direct folder saving.</p>
     <p role="status" aria-live="polite">{status}</p>
   </section>;
 }

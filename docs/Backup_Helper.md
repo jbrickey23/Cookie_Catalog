@@ -23,7 +23,7 @@ node .\backup-helper.mjs
 
 The tool requires Node **24.10 or newer** with built-in SQLite; the owner's previously verified Node 24.21.0 meets this requirement. It requires no npm packages, Wrangler or Python on Windows. Python is used only by the repository's synthetic test-fixture generator. The optional `.ps1` launcher runs the same helper, but is not necessary. If PowerShell policy blocks `.ps1`, use the documented `node` command; do not change execution policy or Defender settings. If security blocks `node` itself, stop and report the message.
 
-The backup destination must already exist and be outside every Git checkout. The helper never overwrites old backups. Private archive contents, model files and receipts must stay out of public GitHub. Keep edits/uploads/deletions idle while exporting. Direct-save archives beyond the 32 MiB fallback limit still require a compatible desktop Chrome/Edge save operation in the app.
+The backup destination must already exist and be outside every Git checkout. The helper never overwrites old backups. Private archive contents, model files and receipts must stay out of public GitHub. Keep edits/uploads/deletions idle while exporting. Direct-save archives beyond the 64 MiB fallback limit still require a compatible desktop Chrome/Edge save operation in the app.
 
 ## Focused Windows acceptance
 
