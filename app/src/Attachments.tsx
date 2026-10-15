@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 type RecordOption = { id: string; name: string };
 type Item = { id: string; filename: string; byteSize: number; available: boolean };
 type Orphan = { id: string; byteSize: number; uploadedAt: string; removable: boolean };
-export function Attachments() {
+export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canManage?:boolean}) {
   const [targets, setTargets] = useState<{ shapes: RecordOption[]; designs: RecordOption[] }>({ shapes: [], designs: [] });
   const [kind, setKind] = useState("shape");
   const [recordId, setRecordId] = useState("");
@@ -96,23 +96,24 @@ export function Attachments() {
     <label>Record <select value={recordId} disabled={busy} onChange={event => select(kind,event.target.value)}>
       <option value="">Choose a record</option>{records.map(record => <option key={record.id} value={record.id}>{record.name}</option>)}
     </select></label>
-    <form onSubmit={upload} style={{ marginTop: 16 }}>
+    {canEdit && <form onSubmit={upload} style={{ marginTop: 16 }}>
       <label>Original file <input type="file" disabled={busy || !recordId} accept={kind === "shape" ? ".png,.jpg,.jpeg,.webp,.stl,.3mf" : ".png,.jpg,.jpeg,.webp"} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>
       <p>PNG, JPEG and WebP photos; cutter shapes also accept STL and 3MF. Maximum 25 MiB per file.</p>
       {kind === "shape" && <label>Printable file license/source notes (optional)<br /><textarea maxLength={2000} value={notes} disabled={busy} onChange={event => setNotes(event.target.value)} /></label>}
       <p><button disabled={busy || !recordId || !file} type="submit">{busy ? "Working…" : "Save private file"}</button></p>
-    </form>
+    </form>}
     <p role="status" aria-live="polite">{status}</p>
     {recordId && <button disabled={busy} onClick={async () => { setBusy(true); try { await refresh(); setStatus("File list refreshed."); } catch (error) { setStatus((error as Error).message); } finally { setBusy(false); } }}>Refresh files</button>}
     {recordId && items.length === 0 && <p>No files linked to this record.</p>}
     <ul>{items.map(item => <li key={item.id} style={{ margin: "12px 0" }}>
       {item.filename} ({item.byteSize.toLocaleString()} bytes){" "}
       {item.available ? <a href={"/api/attachments/" + item.id}>Download original</a> : <strong>Original missing — recover from backup or remove this entry.</strong>}{" "}
-      <button disabled={busy} onClick={() => setConfirmId(item.id)}>Remove</button>
-      {confirmId === item.id && <p>This deletes the original and all its catalog attachment links. Keep a private backup first.{" "}
+      {canManage && <button disabled={busy} onClick={() => setConfirmId(item.id)}>Remove</button>}
+      {canManage && confirmId === item.id && <p>This deletes the original and all its catalog attachment links. Keep a private backup first.{" "}
         <button disabled={busy} onClick={() => remove(item.id)}>Delete original</button>{" "}
         <button disabled={busy} onClick={() => setConfirmId("")}>Cancel</button></p>}
     </li>)}</ul>
+    {canManage && <>
     <p>Use Catalog archive below for larger backups: up to 1 GiB of originals and 1,000 files. The older small JSON backup remains limited to 4 MiB total and 25 files.</p>
     <h3>Storage cleanup</h3>
     <p>Check for originals left without catalog metadata after an interrupted operation. Cleanup is manual; files younger than 24 hours are kept.</p>
@@ -121,9 +122,10 @@ export function Attachments() {
     <ul>{orphans.map(item => <li key={item.id}>
       Unlinked file {item.id} ({item.byteSize.toLocaleString()} bytes; {new Date(item.uploadedAt).toLocaleString()}){" "}
       {item.removable ? <button disabled={busy} onClick={() => setConfirmId(item.id)}>Remove unlinked file</button> : "Kept for at least 24 hours"}
-      {confirmId === item.id && <p>Delete this unlinked original? Keep your private backup first.{" "}
+      {canManage && confirmId === item.id && <p>Delete this unlinked original? Keep your private backup first.{" "}
         <button disabled={busy} onClick={() => removeOrphan(item.id)}>Delete unlinked original</button>{" "}
         <button disabled={busy} onClick={() => setConfirmId("")}>Cancel</button></p>}
     </li>)}</ul>
+    </>}
   </section>;
 }

@@ -1,5 +1,28 @@
 # CC-TODO-005 — Development identity and access
 
+## Private configured membership — October 15
+
+Admin and owner are equivalent at the owner's request: both use role `owner`. The two intended admin identities and one viewer identity are held privately; never commit real emails. Server authorization applies on every request, independently of hidden UI controls.
+
+### Activate on existing development Worker
+
+1. Deploy this tested development code through the existing feature-branch Workers Build. Keep application PR #1 draft; no main/production release is required.
+2. Workers & Pages → cookie-catalog-dev → Settings → Variables and Secrets → Add. Select Secret, name `CATALOG_MEMBERS`, value a JSON array such as `[{"email":"admin@example.test","role":"owner"},{"email":"read-only@example.test","role":"viewer"}]`. Replace synthetic identities privately with the owner-authorized list. Save/Deploy. Preserve `OWNER_EMAIL`, Access team domain and audience. The optional secret is intentionally not required for existing owner-only deployment.
+3. In Zero Trust, edit the existing Cookie Catalog Dev application's Allow policy. Preserve the bootstrap owner's exact email and allow only the authorized additional emails. Keep the existing email-code identity provider, application audience, hostname and private storage protections. Do not add Everyone, domain-wide rules or bypass policies.
+4. Owner-confirm deployed source and normal login before testing additional users in their own browser sessions. Session endpoint returns owner for admins and viewer for read-only membership. Check viewer search/detail/download and absence of create/upload/delete/maintenance/export controls; server guards independently reject forbidden API requests. Confirm admin retains existing owner controls. Record observed results; never request or log sign-in codes.
+
+A private role map is the membership store for this small fixed list, avoiding a schema change and preserving current TAR compatibility. It is not editable in the app. An owner catalog role does not itself grant Cloudflare dashboard permissions. A future self-service membership UI/D1 store is separate work.
+
+### Revoke, recover and verify
+
+Remove the account from CATALOG_MEMBERS and deploy the changed secret, then remove its Access allow entry. The app checks membership on every request even with an existing signed token. A role change likewise takes effect after the configuration deployment. OWNER_EMAIL is a separate bootstrap recovery path: deleting its membership entry cannot revoke it; deliberately rotate that secret/Access policy if the bootstrap account itself must change.
+
+Malformed JSON, invalid role/email, duplicate case-insensitive email, unexpected fields, over 100 entries or a value over 16 KiB denies configured members. The bootstrap owner remains available for repair. An absent secret preserves the existing owner-only runtime. No role comes from JWT custom claims, client headers or request parameters.
+
+Catalog TAR exports intentionally do not contain Access policy, OWNER_EMAIL or CATALOG_MEMBERS. Retain these private settings in the owner's existing secure recovery records and recreate them separately when recovering the Worker. Do not embed membership secrets in catalog backups or public evidence. There is no membership D1 table/migration to restore. Removing the optional secret rolls back to bootstrap-owner-only access without changing catalog data; preserve Access protection.
+
+Validation: 56 application tests and TypeScript/frontend/Worker build passed locally. Configured memberships include signed admin/viewer tokens, ignored claimed roles, wrong audience/signature, revocation and malformed/duplicate maps. Existing real D1/R2 permission tests verify reads/downloads and viewer write/deletion/maintenance denial. Rendered controls verify viewer browsing without create/upload/cleanup. Actual owner device/access-policy/secret/live collaborator acceptance remains pending.
+
 ## 2026-10-15, 00:59 UTC — Owner specified intended administrator
 
 Owner supplied one intended collaborator account privately and requested admin access. Do not commit the real email to this public repository; retrieve it from the owner conversation or private runtime configuration when implementing enrollment. This satisfies the account/desired-role input for CC-TODO-005. Admin is a requested role, not an active grant: current code only supports owner/editor/viewer and the optional membership adapter accepts editor/viewer. Do not silently downgrade the request to editor or map the account to the bootstrap owner. Define and implement admin permissions, durable membership, revocation, client controls and backup/restore compatibility with tests before changing Cloudflare Access or activating the account. Jay remains the project owner. No invitation, account grant, secret, policy or membership mutation has occurred.

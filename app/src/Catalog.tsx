@@ -11,7 +11,7 @@ const sections: Record<string,{label:string;fields:Field[]}> = {
 };
 const defaults:Record<string,string>={quantity:"1",origin:"unknown",status:"proposed",use_type:"standard",mirrored:"0"};
 function title(row:Row) { return String(row.name ?? row.label ?? row.design_name ?? row.shape_name ?? row.id); }
-export function Catalog({onSaved}:{onSaved:()=>void}) {
+export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolean}) {
   const [kind,setKind]=useState("shapes"),[rows,setRows]=useState<Row[]>([]),[query,setQuery]=useState("");
   const [lookups,setLookups]=useState<Record<string,Row[]>>({shapes:[],designs:[],locations:[]});
   const [values,setValues]=useState<Record<string,string>>({...defaults}),[editing,setEditing]=useState("");
@@ -73,7 +73,7 @@ export function Catalog({onSaved}:{onSaved:()=>void}) {
       {kind==="physical_cutters" && <span> — {row.width_mm??"?"} × {row.height_mm??"?"} mm; quantity {row.quantity}; {row.location_label??"location unknown"}</span>}
       {kind==="design_shape_links" && <span> → {row.shape_name}; {row.status} {row.use_type}</span>}
       {(row.notes || row.instructions) && <span> — {row.notes??row.instructions}</span>}{" "}
-      <button disabled={busy} onClick={()=>edit(row)}>Edit</button>
+      <button disabled={busy} onClick={()=>edit(row)}>{canEdit ? "Edit" : "View details"}</button>
       {!!row.searchHits?.length && <div style={{margin:"5px 0 8px 16px",fontSize:"0.95rem"}}>
         <span>Matched fields:</span>
         <ul>{row.searchHits.map(hit=><li key={hit.field}>
@@ -84,9 +84,11 @@ export function Catalog({onSaved}:{onSaved:()=>void}) {
     </li>)}</ul>
     {!busy && rows.length===0 && <p>No matching records.</p>}
     {nextOffset!==null && <button disabled={busy} onClick={()=>search(undefined,nextOffset)}>Next page</button>}
-    <h3>{editing?"Edit record":"New record"}</h3>
-    {editing && <button disabled={busy} onClick={reset}>Start a new record</button>}
-    <form onSubmit={save}>
+    {(canEdit || editing) && <>
+    <h3>{canEdit ? (editing?"Edit record":"New record") : "Record details"}</h3>
+    {canEdit && editing && <button disabled={busy} onClick={reset}>Start a new record</button>}
+    <form onSubmit={event => { if (canEdit) void save(event); else event.preventDefault(); }}>
+      <fieldset disabled={!canEdit} style={{border:0,padding:0}}>
       {sections[kind].fields.map(field=>{
         const value=values[field.key]??"",change=(next:string)=>setValues(previous=>({...previous,[field.key]:next}));
         const options=field.lookup?lookups[field.lookup]:[];
@@ -99,9 +101,11 @@ export function Catalog({onSaved}:{onSaved:()=>void}) {
             :<input disabled={busy} required={field.required} type={field.type??"text"} step={field.type==="number"?"any":undefined} maxLength={field.type==="url"?2000:200} value={value} onChange={event=>change(event.target.value)} />}
         </label></div>;
       })}
-      <button disabled={busy}>{busy?"Working…":editing?"Save changes":"Create record"}</button>
+      {canEdit && <button disabled={busy}>{busy?"Working…":editing?"Save changes":"Create record"}</button>}
+      </fieldset>
     </form>
+    </>}
     <p role="status" aria-live="polite">{status}</p>
-    <p>Use test records during development. File attachments are managed below. Record deletion and collaborator editing are not yet enabled.</p>
+    <p>Use test records during development. File attachments are managed below. Record deletion is not yet enabled.</p>
   </section>;
 }

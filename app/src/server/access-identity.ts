@@ -21,6 +21,7 @@ export interface AccessConfiguration {
   ACCESS_TEAM_DOMAIN?: string;
   ACCESS_AUD?: string;
   OWNER_EMAIL?: string;
+  CATALOG_MEMBERS?: string;
 }
 /** Trusted server-side membership adapter; never resolve roles from JWT custom claims. */
 export interface MembershipResolver {
@@ -33,7 +34,31 @@ export function accessIsConfigured(config: AccessConfiguration): boolean {
     && /^[^\s@]+@[^\s@]+$/.test(config.OWNER_EMAIL ?? "");
 }
 
-/** Owner bootstrap remains the only wired runtime path. Optional membership is preparation only. */
+/** Private deployment configuration; never accept membership from client/JWT role claims.
+ * Admin is represented by owner, matching the owner's approved equal permissions.
+ * Invalid maps deny all configured members, leaving bootstrap recovery available.
+ */
+export function configuredMemberRole(raw: string | undefined, email: string): AuthenticatedUser["role"] | null {
+  if (!raw || raw.length > 16384) return null;
+  try {
+    const entries: unknown = JSON.parse(raw);
+    if (!Array.isArray(entries) || entries.length > 100) return null;
+    const members = new Map<string, AuthenticatedUser["role"]>();
+    for (const entry of entries) {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)
+          || Object.keys(entry).sort().join(",") !== "email,role") return null;
+      const {email: address, role} = entry;
+      if (typeof address !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)
+          || !["owner", "editor", "viewer"].includes(role)) return null;
+      const normalized = address.toLowerCase();
+      if (members.has(normalized)) return null;
+      members.set(normalized, role);
+    }
+    return members.get(email.trim().toLowerCase()) ?? null;
+  } catch { return null; }
+}
+
+/** Bootstrap owner plus private deployment membership, checked on every request. */
 export class AccessIdentityVerifier implements IdentityVerifier {
   constructor(private readonly config: AccessConfiguration, private readonly keys?: JWTVerifyGetKey, private readonly membership?: MembershipResolver) {}
 
@@ -61,6 +86,11 @@ export class AccessIdentityVerifier implements IdentityVerifier {
           || typeof payload.iat !== "number" || payload.iat > Math.floor(Date.now() / 1000) + 5) return null;
       const email = payload.email.trim().toLowerCase();
       if (email === this.config.OWNER_EMAIL!.trim().toLowerCase()) return { subject: payload.sub, email, role: "owner" };
+      // Explicit private configuration takes precedence over the optional legacy adapter.
+      if (this.config.CATALOG_MEMBERS !== undefined) {
+        const role = configuredMemberRole(this.config.CATALOG_MEMBERS, email);
+        return role ? {subject: payload.sub, email, role} : null;
+      }
       const role=await this.membership?.resolve(payload.sub,email);
       if(role!=="editor" && role!=="viewer")return null;
       return {subject:payload.sub,email,role};

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
 import { Catalog } from "./Catalog";
@@ -6,6 +6,15 @@ import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
 
 function App() {
+  const [role,setRole] = useState<"owner"|"editor"|"viewer"|null>(null);
+  const [sessionError,setSessionError] = useState("");
+  useEffect(() => {
+    fetch("/api/session",{cache:"no-store"}).then(async response => {
+      const body = await response.json() as {role?: "owner"|"editor"|"viewer"};
+      if (!response.ok || !["owner","editor","viewer"].includes(body.role ?? "")) throw Error("Sign in again to open the catalog.");
+      setRole(body.role!);
+    }).catch(() => setSessionError("Your session could not be verified. Refresh and sign in again."));
+  },[]);
   const [catalogVersion,setCatalogVersion] = useState(0);
   const [result, setResult] = useState<string>("");
   const [storageResult, setStorageResult] = useState<string>("");
@@ -86,14 +95,17 @@ function App() {
       setStorageBusy(false);
     }
   }
+  if (!role) return <main style={{fontFamily:"system-ui",padding:"2rem"}}><h1>Cookie Catalog</h1><p role="status">{sessionError || "Checking your access…"}</p></main>;
   return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
     <h1>Cookie Catalog</h1>
-    <InfrastructureVerification />
+    <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
+    {role === "owner" && <InfrastructureVerification />}
     <hr />
-    <Catalog onSaved={() => setCatalogVersion(version => version + 1)} />
+    <Catalog canEdit={role !== "viewer"} onSaved={() => setCatalogVersion(version => version + 1)} />
     <hr />
-    <Attachments key={catalogVersion} />
+    <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
     <hr />
+    {role === "owner" && <>
     <ArchiveBackup />
     <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>
@@ -118,7 +130,8 @@ function App() {
     <button onClick={() => downloadBackup(true)} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download file recovery test"}
     </button>
-    <p>Collaborator access and production release remain under development.</p>
+    </>}
+    <p>Private development catalog. Production release remains under development.</p>
   </main>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);

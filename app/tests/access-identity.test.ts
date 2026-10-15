@@ -158,3 +158,33 @@ test("storage mutation requires a verified owner, POST, origin and custom header
   assert.equal(writes, 1);
   assert.equal((await handleApiRequest(request(jwt, "/api/dev/storage-check"), verifier, undefined, files)).status, 405);
 });
+
+test("private membership grants owner-equivalent admin and viewer after JWT verification and observes revocation", async () => {
+  const privateConfig = {...config, CATALOG_MEMBERS: JSON.stringify([
+    {email:"admin@example.test",role:"owner"}, {email:"viewer@example.test",role:"viewer"}
+  ])};
+  const configured = new AccessIdentityVerifier(privateConfig,keys);
+  assert.equal((await configured.verify(request(await token({email:"Admin@Example.Test",sub:"admin"}))))?.role,"owner");
+  const viewerJwt = await token({email:"viewer@example.test",sub:"viewer",role:"owner"});
+  assert.equal((await configured.verify(request(viewerJwt)))?.role,"viewer");
+  assert.equal((await handleApiRequest(request(viewerJwt,"/api/dev/archive","POST"),configured)).status,403);
+  assert.equal((await handleApiRequest(request(viewerJwt,"/api/catalog/shapes","POST"),configured)).status,403);
+  assert.equal((await handleApiRequest(request(viewerJwt,"/api/attachments/demo","DELETE"),configured)).status,403);
+  assert.equal(await configured.verify(request(await token({email:"stranger@example.test"}))),null);
+  assert.equal(await configured.verify(request(await token({email:"admin@example.test",aud:["wrong"]}))),null);
+  assert.equal(await configured.verify(request(await token({email:"admin@example.test"},(await generateKeyPair("RS256")).privateKey))),null);
+  privateConfig.CATALOG_MEMBERS = "[]";
+  assert.equal(await configured.verify(request(viewerJwt)),null,"removal revokes subsequent requests despite unexpired JWT");
+  assert.equal((await configured.verify(request(await token())))?.role,"owner");
+});
+test("malformed, duplicate or invalid private memberships fail closed without resolver fallback", async () => {
+  const jwt = await token({email:"member@example.test"});
+  for (const value of ["broken", "{}", "null", JSON.stringify([{email:"member@example.test",role:"admin"}]),
+    JSON.stringify([{email:"member@example.test",role:"viewer"},{email:"MEMBER@example.test",role:"owner"}]),
+    JSON.stringify([{email:"member@example.test",role:"owner",extra:true}]),
+    JSON.stringify([{email:"member@example.test",role:"viewer"},{email:"bad",role:"owner"}])]) {
+    const configured = new AccessIdentityVerifier({...config,CATALOG_MEMBERS:value},keys,{resolve:async()=>"editor"});
+    assert.equal(await configured.verify(request(jwt)),null);
+    assert.equal((await configured.verify(request(await token())))?.role,"owner");
+  }
+});

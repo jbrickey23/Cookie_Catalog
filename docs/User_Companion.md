@@ -2,11 +2,15 @@
 
 Updated October 14, 2026. This guide describes the current development app and will be updated when its behavior changes.
 
+## Access roles
+
+Admin and owner currently have identical catalog permissions: all existing editing, file deletion, backup/export and maintenance controls. Viewer access is read only: browse, search, view record details and download originals. Viewers do not receive editing, upload, deletion, backup/export or maintenance controls. Accounts are managed through private Cloudflare settings; there is no user-management screen in the app. Catalog roles do not grant Cloudflare dashboard access.
+
 ## Start here
 
 Cookie Catalog helps you find a decorating design, identify the cutter shape it uses, locate a physical cutter, and retrieve its photo or printable original.
 
-The current site is a private development version. Use clearly labelled TEST or DEMO examples while acceptance work continues. Owner sign-in works; access for additional people is still being developed.
+The current site is a private development version. Use clearly labelled TEST or DEMO examples while acceptance work continues. Owner sign-in works. Additional approved accounts can be configured privately; activation and sign-in checks remain pending.
 
 Open the development site at https://cookie-catalog-dev.j-brickey.workers.dev/ and use its email-code sign-in. Enter sign-in codes on the sign-in page, never in a chat.
 
