@@ -6,7 +6,7 @@ export function validateReferencePlan(value:unknown):Plan {
  const p=value as Plan;
  if(!p||p.format!=="cookie-catalog-reference-plan"||p.version!==1||!Array.isArray(p.items)||!p.items.length||p.items.length>1000)throw Error("Choose a source-reference plan with 1–1,000 entries.");
  const seen=new Set<string>();
- for(const r of p.items){if(!r||typeof r.name!=="string"||!r.name.trim()||r.name.length>200||typeof r.notes!=="string"||r.notes.length>4000||!identity(r.notes))throw Error("Every reference needs a name and preserved source identity.");const key=identity(r.notes)!;if(seen.has(key))throw Error("Duplicate source identity in this plan.");seen.add(key);
+ for(const r of p.items){if(!r||Object.keys(r).some(k=>!["name","source_url","notes"].includes(k))||typeof r.name!=="string"||!r.name.trim()||r.name.length>200||typeof r.notes!=="string"||r.notes.length>4000||!identity(r.notes))throw Error("Every reference needs a name and preserved source identity.");const key=identity(r.notes)!;if(seen.has(key))throw Error("Duplicate source identity in this plan.");seen.add(key);
   if(r.source_url){try{if(r.source_url.length>2000||!["http:","https:"].includes(new URL(r.source_url).protocol))throw Error();}catch{throw Error("Unsupported source URL.");}}
  }
  return p;

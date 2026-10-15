@@ -1,6 +1,6 @@
 import React,{useEffect,useState,useRef} from "react";
-export interface BrowseItem {id:string;shape_id:string;source_bin:string|null;name:string;quantity:number|null;record_kind?:"physical"|"reference";review_state?:string|null;width_mm:number|null;height_mm:number|null;reference_size_mm:number|null;location:string|null;slot:string|null;image_id:string|null;image_name:string|null}
-const reviewLabel=(state:string|null|undefined)=>state==="not_printed"?"Not printed":state==="not_owned"?"Not purchased":state==="set_review"?"Set / components need review":"Inventory needs review";
+export interface BrowseItem {id:string;shape_id:string;source_bin:string|null;name:string;quantity:number|null;record_kind?:"physical"|"reference";review_state?:string|null;source_url?:string|null;source_reason?:string|null;width_mm:number|null;height_mm:number|null;reference_size_mm:number|null;location:string|null;slot:string|null;image_id:string|null;image_name:string|null}
+const reviewLabel=(state:string|null|undefined)=>({not_printed:"Not printed",not_owned:"Not purchased",set_review:"Set / components need review",variant_review:"Size variants need review",duplicate_review:"Possible duplicate",print_review:"Print status needs review"}[state??""]??"Inventory needs review");
 const number=(n:number)=>Number(n.toFixed(2)).toString();
 export function CutterCard({item,onOpen}:{item:BrowseItem;onOpen?:()=>void}) {
   const [failed,setFailed]=useState(false);
@@ -13,7 +13,7 @@ export function CutterCard({item,onOpen}:{item:BrowseItem;onOpen?:()=>void}) {
     {!item.location&&item.source_bin&&<p className="collection-note">Source bin: {item.source_bin} · needs confirmation</p>}
     {item.record_kind==="reference"&&<p className="collection-note">Source reference · no owned physical cutter recorded.</p>}
     {artwork&&<p className="collection-note">Actual cutter photo still needed.</p>}
-    {onOpen&&<button className="view-cutter" onClick={onOpen}>View {item.name}</button>}
+    {onOpen&&<button id={"view-"+item.id} className="view-cutter" onClick={onOpen}>View {item.name}</button>}
     </div>
   </article>;
 }
@@ -21,17 +21,18 @@ export function Browse({version=0}:{version?:number}) {
   const [selected,setSelected]=useState<BrowseItem|null>(null);
   const [kind,setKind]=useState("all");
   const [query,setQuery]=useState(""),[search,setSearch]=useState(""),[demo,setDemo]=useState(false),[offset,setOffset]=useState(0);
+  const [total,setTotal]=useState(0);
   const [items,setItems]=useState<BrowseItem[]>([]),[next,setNext]=useState<number|null>(null),[error,setError]=useState(""),[busy,setBusy]=useState(true),[refresh,setRefresh]=useState(0);
   useEffect(()=>{let active=true;setBusy(true);setError("");
-    fetch(`/api/browse?q=${encodeURIComponent(search)}&offset=${offset}&demo=${demo}&kind=${kind}`,{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {items:BrowseItem[];nextOffset:number|null};}).then(body=>{if(active){setItems(body.items);setNext(body.nextOffset);}}).catch(()=>{if(active){setItems([]);setError("The catalog could not load. Refresh and retry.");}}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};
+    fetch(`/api/browse?q=${encodeURIComponent(search)}&offset=${offset}&demo=${demo}&kind=${kind}`,{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {items:BrowseItem[];nextOffset:number|null;total:number};}).then(body=>{if(active){setItems(body.items);setTotal(body.total);setNext(body.nextOffset);setSelected(previous=>previous?body.items.find(i=>i.id===previous.id)??null:null);}}).catch(()=>{if(active){setItems([]);setError("The catalog could not load. Refresh and retry.");}}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};
   },[search,demo,offset,version,refresh,kind]);
   return <section aria-labelledby="browse-title" className="catalog-browse"><div className="browse-heading"><div><p className="eyebrow">YOUR COLLECTION</p><h2 id="browse-title">Find a cutter</h2><p>Browse cutters, sizes and source references. See what still needs collecting.</p></div><button onClick={()=>setRefresh(v=>v+1)} disabled={busy}>Refresh catalog</button></div>
     <form className="browse-search" onSubmit={e=>{e.preventDefault();setSelected(null);setOffset(0);setSearch(query.trim());}}><label htmlFor="browse-search">Search by name or bin</label><div><input id="browse-search" type="search" value={query} maxLength={120} onChange={e=>setQuery(e.target.value)} placeholder="Try a name or bin…"/><button type="submit">Search</button></div></form>
     <p><label>Show entries <select value={kind} onChange={e=>{setKind(e.target.value);setSelected(null);setOffset(0);}}><option value="all">All catalog entries</option><option value="physical">Physical cutters</option><option value="reference">Source references / inventory needs review</option></select></label></p>
     <label className="demo-toggle"><input type="checkbox" checked={demo} onChange={e=>{setDemo(e.target.checked);setOffset(0);}}/> Show demonstration records</label>
-    <p role="status" aria-live="polite">{busy?"Loading cutters…":error||`${items.length} entries on this page${offset?` · page ${offset/24+1}`:""}.`}</p>
+    <p role="status" aria-live="polite">{busy?"Loading cutters…":error||`Showing ${items.length?offset+1:0}–${offset+items.length} of ${total} catalog entries.`}</p>
     {!busy&&!error&&items.length===0&&<p>No cutters match this search.</p>}
-    {selected&&<CutterDetails key={selected.id+"-"+refresh+"-"+version} item={selected} onClose={()=>setSelected(null)}/>}
+    {selected&&<CutterDetails key={selected.id+"-"+refresh+"-"+version} item={selected} onClose={()=>{setSelected(null);requestAnimationFrame(()=>document.getElementById("view-"+selected.id)?.focus());}}/>}
     {!busy&&<div className="cutter-grid">{items.map(item=><CutterCard key={item.id} item={item} onOpen={()=>setSelected(item)}/>)}</div>}
     <nav aria-label="Catalog pages" className="browse-pages"><button disabled={busy||offset===0} onClick={()=>setOffset(Math.max(0,offset-24))}>Previous page</button><button disabled={busy||next===null} onClick={()=>next!==null&&setOffset(next)}>Next page</button></nav>
     <p className="browse-note">Images and recorded sizes are reference information. An image alone does not verify dimensions or scale.</p>
@@ -46,6 +47,10 @@ function CutterDetails({item,onClose}:{item:BrowseItem;onClose:()=>void}) {
   return <section ref={panel} tabIndex={-1} className="cutter-detail" aria-label={"Viewing "+item.name}><div className="browse-heading"><h3>Viewing: {item.name}</h3><button onClick={onClose}>Close cutter details</button></div>
     <p>{item.reference_size_mm?number(item.reference_size_mm/25.4)+"″ reference size (longest edge)":"Reference size needs collecting"} · {item.quantity===null?"No owned physical cutter recorded":"Quantity "+item.quantity}</p>
     <p>Location: {item.location??"Needs checking"}{item.slot?" · Slot "+item.slot:""}</p>
+    <p>Width × height: {item.width_mm&&item.height_mm?`${number(item.width_mm)} × ${number(item.height_mm)} mm`:"Measurements needed"}</p>
+    {item.source_bin&&<p>Recorded source bin: {item.source_bin}. Confirm the current physical location separately.</p>}
+    {item.source_reason&&<p>{item.source_reason}</p>}
+    {item.source_url&&/^https?:/.test(item.source_url)&&<p><a href={item.source_url} target="_blank" rel="noreferrer">Open recorded source link</a></p>}
     <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/>}<figcaption>{file.filename} · {file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>
     <p>Files belong to the cutter shape and may be shared across its size variants. Reference artwork and decorated examples do not verify the physical cutter or its size.</p>
   </section>;
