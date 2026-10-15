@@ -1,5 +1,15 @@
 # Cookie_Catalog — TODO
 
+## October 15 — Autonomous completion/import preparation batch
+
+Owner authorized a sustained reversible engineering batch, recommended defaults, verified technical sources and one consolidated decision review. The missing-detail collection workflow is explicitly part of CC-TODO-009's import milestone. See [batch review](docs/Batch_Review_20261015.md), [completion workflow](docs/Catalog_Completion_Workflow.md), [staging instructions](docs/Import_Staging.md) and [development guidelines](docs/Development_Guidelines.md).
+
+Implemented: authenticated read-only live gap queue; admin/editor local manifest review/classification/page splitting/evidence/download workspace; offline source-preserving staging with duplicate/baseline reports; local HTML inventory adapter with explicit unsupported-native/remote-resource gaps; selectors paged beyond 200; and revision-protected atomic catalog edits that preserve a conflicting draft. The live schema, migrations, validated 16-table backup format and existing account configuration remain unchanged. No real source, live import, source edits, automatic pruning, paid resource or production release.
+
+Validation: 68 local app tests, 16 offline Node helper tests, SQLite schema/synthetic import, eight Python recovery tests, three HTML audit tests and TypeScript/frontend/Worker build passed. DOM interactions cover draft/download roundtrip and conflict retention. Actual browser visual QA is blocked by invalid Chromium downloads; Edge/iPhone and the second admin login remain owner checks. Current live queue does not save review decisions; browser drafts must be downloaded. No real OneNote catalog was audited/imported.
+
+Next dependency: notebook account/export type and representative source material. Bulk quick-response questions Q1–Q5 and deferred engineering are in the batch review; use its recommended defaults unless overridden. Persistent live review history and the live importer require source audit plus coordinated migration/archive upgrades. CC-TODO-008/009 now have authorized offline preparation; real notebook extraction/import is not activated. Preserve completed Windows backup and owner/viewer passes, parked alternate-email/Defender work, isolated recovery resources and draft PR #1. Next unused task ID remains CC-TODO-013.
+
 ## Reconciled handoff — October 14, 2026 Pacific (October 15 UTC)
 
 This is the authoritative current checkpoint. Earlier dated sections are historical evidence; their pending/proposed statements do not override this checkpoint.
@@ -237,8 +247,8 @@ Slicer scaling remains v1. Production, new paid resources, security bypass, PC r
 
 These are newly scoped tasks, not claims of completed integration. Preserve existing OneNote content and never overwrite the source.
 
-### CC-TODO-008 — Audit OneNote legacy catalog (DEFERRED)
-Status: Deferred; resume after infrastructure acceptance and representative sample/import readiness. Notebook access/export is a later input, not the current blocker.
+### CC-TODO-008 — Audit OneNote legacy catalog
+Status: Offline preparation authorized and implemented; actual notebook audit awaits account/export type and representative source. Existing infrastructure/device gates remain open. HTML inventory tooling is not native OneNote decoding.
 - Determine whether the notebook is personal Outlook/OneDrive or Microsoft 365 work/school.
 - Inventory notebook/section/page structure, page titles, images, attachments, cutter outlines, decorated designs, sizes and physical locations.
 - Identify source identifiers and provenance; estimate record counts, gaps, duplicates and relationships.
@@ -246,12 +256,14 @@ Status: Deferred; resume after infrastructure acceptance and representative samp
 - Done when representative pages are extracted, counted and mapped with unknowns explicitly recorded.
 
 ### CC-TODO-009 — OneNote migration importer
-Status: Deferred; depends on 008 and existing import/attachment infrastructure (007/003).
+Status: Preparation in progress under owner-authorized autonomous batch; offline staging and local review workspace implemented. Actual source-specific/live import still depends on 008 and representative sample readiness (007/003).
 - Choose supported export or Microsoft Graph path after account type is confirmed; do not assume direct OneNote connector availability.
 - Preserve original images/files, page links/IDs, titles, hierarchy and attribution.
 - Idempotent staging import with duplicate review, error report, dry run and record-count reconciliation.
 - Keep originals private; require approval before bulk live migration.
-- Done when a representative sample imports and round-trip audit confirms records and attachments.
+- Include the collection/completeness workflow in this milestone: source-preserving incomplete entries; missing dimensions/location/photo/scale-photo/originals; unknown, needs-verification, not-applicable-with-reason and evidence-supported complete states; physical versus file-only requirements; a practical review queue and gradual completion.
+- Implemented preparation: docs/Catalog_Completion_Workflow.md, docs/Import_Staging.md, offline staging, local HTML inventory, read-only live queue and editable local browser drafts. No persistent live review status or bulk importer is claimed.
+- Done when a representative sample imports and round-trip audit confirms records and attachments, gaps are visible and the owner can complete them through the reviewed workflow.
 
 ### CC-TODO-010 — Photo-assisted metadata extraction
 Status: Deferred; depends on representative source photos from 008.

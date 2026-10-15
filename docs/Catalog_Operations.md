@@ -1,5 +1,11 @@
 # CC-TODO-002 — Owner catalog operations
 
+## October 15 — Conditional saves and review preparation
+
+GET /api/catalog/{kind}/{id} now returns the exact record revision in JSON and ETag. PUT requires that single revision in If-Match. Missing revision returns 428; a stale revision or an intervening atomic compare-and-update conflict returns 412 without overwriting the other edit. UPDATE/INSERT RETURNING returns exactly that write's saved row, avoiding a separate readback race. The browser loads the revision when opening Edit and retains its form on error. Refresh old tabs after the upgrade. No schema change is required. Local D1 tests cover stale clients and a write racing after precondition evaluation; DOM tests confirm draft retention.
+
+Linked-record selectors now follow API pages beyond 200 with a visible 10,000-choice limit. /api/readiness is an authenticated read-only paged metadata review endpoint; it does not verify original availability, analyze images or save review decisions. Admin/editor local manifest preparation makes no live import. See [staging](Import_Staging.md).
+
 Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Owner confirmed the live shape create/edit/refresh/search workflow; remaining physical cutter/location/mapping acceptance is open. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
 
 ## Routes and validation

@@ -1,3 +1,4 @@
+import {catalogReadiness} from "./server/readiness";
 import { checkDevelopmentStorage } from "./server/development-storage-check";
 import { handleAttachments } from "./server/attachments";
 import { handleCatalog } from "./server/catalog";
@@ -46,6 +47,10 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       const manifest=await createArchiveManifest(database,files);
       return new Response(manifest.buffer as ArrayBuffer,{headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(error){return json({error:error instanceof BackupError?error.message:"Archive preparation failed."},503);}
+  }
+  if (pathname === "/api/readiness") {
+    if (!database) return json({error:"Catalog database unavailable"},503);
+    return catalogReadiness(request,database);
   }
   if (pathname.startsWith("/api/catalog/")) {
     if(request.method!=="GET"&&!mayWrite(user))return json({error:"Editing access required"},403);

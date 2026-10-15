@@ -1,6 +1,9 @@
+import "./styles.css";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
+import {ImportReview} from "./ImportReview";
+import {Readiness} from "./Readiness";
 import { Catalog } from "./Catalog";
 import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
@@ -100,6 +103,9 @@ function App() {
     <h1>Cookie Catalog</h1>
     <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
     {role === "owner" && <InfrastructureVerification />}
+    <hr />
+    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview /></details>}
+    <Readiness key={"review-"+catalogVersion} />
     <hr />
     <Catalog canEdit={role !== "viewer"} onSaved={() => setCatalogVersion(version => version + 1)} />
     <hr />

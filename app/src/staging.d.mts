@@ -1,0 +1,15 @@
+import type {ReviewKind,FieldReview,ReviewField} from "./readiness";
+export interface StagingFile {path:string;purpose:"cutter_photo"|"scale_photo"|"design_photo"|"printable_original"|"source_page"|"unknown";sha256?:string;}
+export interface StagingItem {
+  sourceKey:string;kind:ReviewKind;name:string;
+  source:{pageId:string;pageTitle?:string;sectionPath?:string;url?:string};
+  facts?:{widthMm?:number;heightMm?:number;location?:string;source?:string};
+  files?:StagingFile[];
+  reviews?:Partial<Record<ReviewField,FieldReview>>;
+}
+export interface StagingManifest {format:"cookie-catalog-staging";version:1;sourceNamespace:string;items:StagingItem[];}
+export const kinds:readonly ReviewKind[];
+export const purposes:readonly StagingFile["purpose"][];
+export function validateManifest(input:unknown):StagingManifest;
+
+export function text(value:unknown,max?:number):value is string;

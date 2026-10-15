@@ -1,5 +1,13 @@
 # Cookie_Catalog — Decision Log
 
+## October 15 — CC-DEC-015 — Autonomous engineering and import-completion scope
+
+Owner explicitly authorized going as far as possible on reversible work while they are away, using recommended defaults, batching open decisions and following source-verified application-development guidance. Costly/dependency-heavy improvements must be cataloged instead of blocking unrelated progress. This does not authorize production release, paid resources, destructive migration, source OneNote edits or external messages.
+
+The source-import milestone (CC-TODO-009) includes a workflow to identify and collect missing size/location/photos/scale references and other applicable details. Importing incomplete records is allowed; guessed dimensions/ownership or automatically verified photos are not. Recommended initial implementation uses a read-only live queue and private editable staging drafts, preserving the validated live schema/archive format until source analysis supports a coordinated migration. Applied defaults and bulk Q1–Q5 are in docs/Batch_Review_20261015.md. Evidence references, reasons for exceptions and physical/file-only distinction are explicit; no real notebook source has been supplied/analyzed by this batch.
+
+Next unused decision ID: CC-DEC-016.
+
 ## October 14 — Confirmed access decisions and acceptance
 
 Owner explicitly set admin equal to owner for now. Two privately specified accounts receive owner-equivalent access; the business info account is viewer only. Optional private Worker CATALOG_MEMBERS configuration implements the small fixed role list; existing signed Access identity and bootstrap OWNER_EMAIL remain. No real account identity is committed here. In-app membership editing and Cloudflare dashboard privileges are separate from catalog roles. Owner confirmed policy/secret Save/Deploy, existing admin session and viewer search/details/download acceptance; second admin sign-in remains pending. This supersedes the earlier distinction proposed between owner and admin and the earlier statement that all collaborator activation is pending. No new decision ID is allocated by this reconciliation.
@@ -86,7 +94,7 @@ Prepared two byte-identical UTC-named JSON snapshots, a checksum/size/migration/
 
 Latest-seven normal snapshots after meaningful changes/before imports remains proposed, not an approved or activated pruning/scheduling policy. No automatic transfer, new subscription or production change was activated. See docs/Backup_Recovery_Plan.md.
 
-Next unused decision ID: CC-DEC-015.
+Historical checkpoint then: next unused decision ID was CC-DEC-015.
 
 ## 2026-10-14 — Infrastructure acceptance evidence (routine engineering)
 

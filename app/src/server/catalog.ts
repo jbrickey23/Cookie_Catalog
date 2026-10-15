@@ -51,6 +51,14 @@ function validate(kind: Kind, input: unknown): Record<string,Value> {
     throw new InputError("Minimum compatible width cannot exceed maximum.");
   return values;
 }
+async function revision(kind:Kind,record:Record<string,unknown>):Promise<string> {
+  const bytes=new TextEncoder().encode(JSON.stringify([kind,Object.keys(record).sort().map(field=>[field,record[field]??null])]));
+  const hash=new Uint8Array(await crypto.subtle.digest("SHA-256",bytes));
+  return '"'+Array.from(hash,n=>n.toString(16).padStart(2,"0")).join("")+'"';
+}
+async function recordResponse(kind:Kind,record:Record<string,unknown>,status=200):Promise<Response> {
+  const token=await revision(kind,record),response=json({record,revision:token},status);response.headers.set("etag",token);return response;
+}
 async function body(request: Request): Promise<unknown> {
   if(!request.headers.get("content-type")?.startsWith("application/json")) throw new InputError("JSON request required.");
   const reader=request.body?.getReader(); if(!reader) throw new InputError("Record is empty.");
@@ -99,8 +107,8 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
   try {
     if(request.method==="GET") {
       if(id) {
-        const record=await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first();
-        return record ? json({record}):json({error:"Record not found."},404);
+        const record=await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first<Record<string,unknown>>();
+        return record ? recordResponse(kind,record):json({error:"Record not found."},404);
       }
       const q=(url.searchParams.get("q")??"").trim();
       if(q.length>120)return json({error:"Search is limited to 120 characters."},400);
@@ -116,16 +124,30 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
     }
     if((request.method==="POST" && id) || (request.method==="PUT" && !id) || !["POST","PUT"].includes(request.method))return json({error:"Method not allowed."},405);
     const values=validate(kind,await body(request));
-    if(id && !await database.prepare("SELECT id FROM "+kind+" WHERE id=?").bind(id).first())return json({error:"Record not found."},404);
+    const previous=id ? await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first<Record<string,Value>>() : null;
+    if(id&&!previous)return json({error:"Record not found."},404);
+    if(previous) {
+      const expected=request.headers.get("if-match");
+      if(!expected)return json({error:"Copy your draft, refresh the page and open the latest record before saving changes."},428);
+      if(expected!==await revision(kind,previous))return json({error:"Someone changed this record. Your draft has been kept; reopen the record and compare before saving."},412);
+    }
     for(const [field,table] of [["shape_id","shapes"],["design_id","designs"],["location_id","locations"]] as const) {
       if(values[field] && !await database.prepare("SELECT id FROM "+table+" WHERE id=?").bind(values[field]).first())
         return json({error:"Linked "+table+" record not found."},404);
     }
     const recordId=id ?? kind+"_"+crypto.randomUUID().replace(/-/g,"");
     const fields=specs[kind].fields;
-    if(id) await database.prepare("UPDATE "+kind+" SET "+fields.map(field=>field+"=?").join(",")+" WHERE id=?").bind(...fields.map(field=>values[field]),id).run();
-    else await database.prepare("INSERT INTO "+kind+"(id,"+fields.join(",")+") VALUES (?,"+fields.map(()=>"?").join(",")+")").bind(recordId,...fields.map(field=>values[field])).run();
-    return json({record:await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(recordId).first()},id?200:201);
+    let saved:Record<string,unknown>|null;
+    if(id&&previous) {
+      // Atomic compare-and-update closes the race after the precondition read.
+      // RETURNING pairs the response revision with exactly this write's values.
+      const compareFields=[...fields,...(Object.hasOwn(previous,"created_at")?["created_at"]:[])];
+      saved=await database.prepare("UPDATE "+kind+" SET "+fields.map(field=>field+"=?").join(",")+" WHERE id=? AND "+compareFields.map(field=>field+" IS ?").join(" AND ")+" RETURNING *")
+        .bind(...fields.map(field=>values[field]),id,...compareFields.map(field=>previous[field]??null)).first<Record<string,unknown>>();
+      if(!saved)return json({error:"This record changed while saving. Your draft has been kept; reopen and compare before retrying."},412);
+    }
+    else saved=await database.prepare("INSERT INTO "+kind+"(id,"+fields.join(",")+") VALUES (?,"+fields.map(()=>"?").join(",")+") RETURNING *").bind(recordId,...fields.map(field=>values[field])).first<Record<string,unknown>>();
+    return recordResponse(kind,saved!,id?200:201);
   }catch(error) {
     if(error instanceof InputError)return json({error:error.message},400);
     const text=String(error);

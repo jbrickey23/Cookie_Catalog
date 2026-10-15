@@ -6,8 +6,8 @@ import {handleApiRequest} from "../src/worker";
 import type {IdentityVerifier} from "../src/server/access-identity";
 const origin="https://catalog.example.test";
 const owner:IdentityVerifier={verify:async()=>({subject:"owner",email:"owner@example.test",role:"owner"})};
-function write(kind:string,record:unknown,id?:string) {
-  return new Request(origin+"/api/catalog/"+kind+(id?"/"+id:""),{method:id?"PUT":"POST",headers:{"content-type":"application/json",Origin:origin,"X-Cookie-Catalog-Check":"catalog"},body:JSON.stringify(record)});
+function write(kind:string,record:unknown,id?:string,revision?:string) {
+  return new Request(origin+"/api/catalog/"+kind+(id?"/"+id:""),{method:id?"PUT":"POST",headers:{"content-type":"application/json",Origin:origin,"X-Cookie-Catalog-Check":"catalog",...(revision?{"If-Match":revision}:{})},body:JSON.stringify(record)});
 }
 async function env() {
   const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:"catalog"}}));
@@ -31,7 +31,9 @@ test("owner creates linked catalog records, edits dimensions, and retrieves/sear
     const location=await create(db,"locations",{label:"TEST Drawer 2"});
     const cutter=await create(db,"physical_cutters",{shape_id:shape.id,location_id:location.id,width_mm:80,height_mm:100,quantity:1,origin:"printed"});
     const link=await create(db,"design_shape_links",{design_id:design.id,shape_id:shape.id,status:"tested",use_type:"flip",mirrored:1,instructions:"Rotate and decorate as a gnome",min_width_mm:70,max_width_mm:100});
-    const updated=await handleApiRequest(write("physical_cutters",{shape_id:shape.id,location_id:location.id,width_mm:90,height_mm:100,quantity:2,origin:"printed"},cutter.id),owner,db);
+    const current=await handleApiRequest(new Request(origin+"/api/catalog/physical_cutters/"+cutter.id),owner,db);
+    const token=(await current.json() as any).revision;
+    const updated=await handleApiRequest(write("physical_cutters",{shape_id:shape.id,location_id:location.id,width_mm:90,height_mm:100,quantity:2,origin:"printed"},cutter.id,token),owner,db);
     assert.equal(updated.status,200);
     const reread=await handleApiRequest(new Request(origin+"/api/catalog/physical_cutters/"+cutter.id),owner,db);
     const record=(await reread.json() as any).record;
@@ -151,5 +153,40 @@ test("physical dimensions/location/origin and mapping status explain their own m
       assert.equal(row.searchHits[0].field,field);
       const hit=row.searchHits[0];assert.equal(hit.snippet.slice(hit.start,hit.start+hit.length).toLowerCase(),query);
     }
+  }finally{await runtime.dispose();}
+});
+
+test("conditional edits prevent stale admins overwriting each other and preserve the first save",async()=>{
+  const {runtime,db}=await env();
+  try{
+    const shape=await create(db,"shapes",{name:"TEST shared record",notes:"original"});
+    const read=()=>handleApiRequest(new Request(origin+"/api/catalog/shapes/"+shape.id),owner,db);
+    const a=await read(),b=await read(),revisionA=a.headers.get("etag")!,revisionB=b.headers.get("etag")!;
+    assert.equal(revisionA,revisionB);
+    assert.equal((await handleApiRequest(write("shapes",{name:shape.name,notes:"no precondition"},shape.id),owner,db)).status,428);
+    const first=await handleApiRequest(write("shapes",{name:shape.name,notes:"first admin edit"},shape.id,revisionA),owner,db);
+    assert.equal(first.status,200);assert.notEqual(first.headers.get("etag"),revisionA);
+    const stale=await handleApiRequest(write("shapes",{name:shape.name,notes:"second stale edit"},shape.id,revisionB),owner,db);
+    assert.equal(stale.status,412);assert.match((await stale.json()).error,/draft has been kept/);
+    assert.equal((await (await read()).json()).record.notes,"first admin edit");
+    const latest=await read();const retry=await handleApiRequest(write("shapes",{name:shape.name,notes:"reviewed combined edit"},shape.id,latest.headers.get("etag")!),owner,db);
+    assert.equal(retry.status,200);assert.equal((await retry.json()).record.notes,"reviewed combined edit");
+    assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM shapes").first<any>())?.n,1);
+  }finally{await runtime.dispose();}
+});
+
+test("a concurrent edit after precondition evaluation is rejected atomically",async()=>{
+  const {runtime,db}=await env();
+  try{
+    const shape=await create(db,"shapes",{name:"TEST race",notes:"original"});
+    const opened=await handleApiRequest(new Request(origin+"/api/catalog/shapes/"+shape.id),owner,db);
+    const racing={prepare(sql:string){
+      const statement=db.prepare(sql);
+      return {bind(...values:any[]){const bound=statement.bind(...values);return {
+        async first(){if(sql.startsWith("UPDATE shapes"))await db.prepare("UPDATE shapes SET notes='concurrent edit' WHERE id=?").bind(shape.id).run();return bound.first();}
+      };}};
+    }} as unknown as D1Database;
+    const response=await handleApiRequest(write("shapes",{name:shape.name,notes:"stale draft"},shape.id,opened.headers.get("etag")!),owner,racing);
+    assert.equal(response.status,412);assert.equal((await db.prepare("SELECT notes FROM shapes WHERE id=?").bind(shape.id).first<any>())?.notes,"concurrent edit");
   }finally{await runtime.dispose();}
 });

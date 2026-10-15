@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import {catalogChoices} from "./catalog-choices";
 type RecordOption = { id: string; name: string };
 type Item = { id: string; filename: string; byteSize: number; available: boolean };
 type Orphan = { id: string; byteSize: number; uploadedAt: string; removable: boolean };
@@ -44,11 +45,9 @@ export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canM
   }
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/attachment-targets", { cache: "no-store" }).then(async response => {
-      const body = await response.json() as { error?: string; shapes: RecordOption[]; designs: RecordOption[] };
-      if (!response.ok) throw new Error(body.error ?? "Sign in again to load catalog records.");
-      if (!cancelled) setTargets(body);
-    }).catch(error => { if (!cancelled) setStatus(error.message); });
+    Promise.all([catalogChoices("shapes"),catalogChoices("designs")]).then(([shapes,designs])=>{
+      if(!cancelled)setTargets({shapes:shapes.map(row=>({id:row.id,name:row.name!})),designs:designs.map(row=>({id:row.id,name:row.name!}))});
+    }).catch(error=>{if(!cancelled)setStatus(error.message);});
     return () => { cancelled = true; };
   }, []);
   async function select(nextKind: string, nextId: string) {

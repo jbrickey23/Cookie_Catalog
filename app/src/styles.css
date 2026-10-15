@@ -1,0 +1,7 @@
+/* Keep long source names and controls usable on narrow screens. */
+main { overflow-wrap: anywhere; }
+fieldset { min-width: 0; }
+input, select, textarea, button { max-width: 100%; box-sizing: border-box; }
+button { white-space: normal; }
+textarea { width: 100%; min-height: 5rem; }
+:focus-visible { outline: 3px solid #1769aa; outline-offset: 2px; }

@@ -1,5 +1,15 @@
 # Cookie_Catalog — Context
 
+## October 15 — Autonomous completion/import preparation batch
+
+Owner authorized a sustained reversible engineering batch, recommended defaults, verified technical sources and one consolidated decision review. The missing-detail collection workflow is explicitly part of CC-TODO-009's import milestone. See [batch review](docs/Batch_Review_20261015.md), [completion workflow](docs/Catalog_Completion_Workflow.md), [staging instructions](docs/Import_Staging.md) and [development guidelines](docs/Development_Guidelines.md).
+
+Implemented: authenticated read-only live gap queue; admin/editor local manifest review/classification/page splitting/evidence/download workspace; offline source-preserving staging with duplicate/baseline reports; local HTML inventory adapter with explicit unsupported-native/remote-resource gaps; selectors paged beyond 200; and revision-protected atomic catalog edits that preserve a conflicting draft. The live schema, migrations, validated 16-table backup format and existing account configuration remain unchanged. No real source, live import, source edits, automatic pruning, paid resource or production release.
+
+Validation: 68 local app tests, 16 offline Node helper tests, SQLite schema/synthetic import, eight Python recovery tests, three HTML audit tests and TypeScript/frontend/Worker build passed. DOM interactions cover draft/download roundtrip and conflict retention. Actual browser visual QA is blocked by invalid Chromium downloads; Edge/iPhone and the second admin login remain owner checks. Current live queue does not save review decisions; browser drafts must be downloaded. No real OneNote catalog was audited/imported.
+
+Next dependency: notebook account/export type and representative source material. Bulk quick-response questions Q1–Q5 and deferred engineering are in the batch review; use its recommended defaults unless overridden. Persistent live review history and the live importer require source audit plus coordinated migration/archive upgrades. CC-TODO-008/009 now have authorized offline preparation; real notebook extraction/import is not activated. Preserve completed Windows backup and owner/viewer passes, parked alternate-email/Defender work, isolated recovery resources and draft PR #1. Next unused task ID remains CC-TODO-013.
+
 ## Reconciled handoff — October 14, 2026 Pacific (October 15 UTC)
 
 This is the authoritative current checkpoint. Earlier dated sections are historical evidence; their pending/proposed statements do not override this checkpoint.

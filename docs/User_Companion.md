@@ -16,6 +16,16 @@ Open the development site at https://cookie-catalog-dev.j-brickey.workers.dev/ a
 
 For a first example, create a shape, a storage location, a physical cutter, a design, and a mapping between the design and shape. Add originals afterward under Private files.
 
+## Find missing catalog details
+
+Catalog review queue shows physical cutters, printable files, designs and unclassified shapes. Open an item to see missing or unverified dimensions, location, images, scale reference or provenance. Existing values are not automatically verified. Printable-only entries do not request a physical storage location. This queue is read only and does not save completion decisions yet.
+
+Admins/editors can expand Import preparation workspace to open a prepared JSON manifest. Classify an item, split another item from the same source page, enter dimensions/location, label source-file references and record review notes/evidence. Download reviewed manifest to keep changes. It stays in the current tab until saved; no manifest or source payload is uploaded and no live import occurs. Viewers do not receive this workspace. Keep original exports and downloaded drafts private. See [workflow](Catalog_Completion_Workflow.md) for details.
+
+## Avoid overwriting another editor
+
+Edit opens the latest saved record. If someone changes it before you save, your save is refused and your draft stays in the form. Copy your draft, reopen the latest record and compare the changes before saving. After an application upgrade, refresh older tabs before beginning a new edit. Unsaved-change prompts help when switching records/sections, but keep a copy before leaving a page.
+
 ## What each record means
 
 | Browse choice | What it describes | Example |
