@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { Attachments } from "./Attachments";
 import {ImportReview} from "./ImportReview";
 import {Readiness} from "./Readiness";
+import { Browse } from "./Browse";
 import { Catalog } from "./Catalog";
 import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
@@ -99,9 +100,11 @@ function App() {
     }
   }
   if (!role) return <main style={{fontFamily:"system-ui",padding:"2rem"}}><h1>Cookie Catalog</h1><p role="status">{sessionError || "Checking your access…"}</p></main>;
-  return <main style={{ fontFamily: "system-ui", maxWidth: 780, margin: "4rem auto", padding: "0 1rem" }}>
+  return <main className="app-shell">
     <h1>Cookie Catalog</h1>
     <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
+    <Browse version={catalogVersion} />
+    <details className="management-panel"><summary>Manage catalog and review missing details</summary>
     {role === "owner" && <InfrastructureVerification />}
     <hr />
     {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews /></details>}
@@ -110,8 +113,8 @@ function App() {
     <Catalog canEdit={role !== "viewer"} onSaved={() => setCatalogVersion(version => version + 1)} />
     <hr />
     <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
-    <hr />
-    {role === "owner" && <>
+    </details>
+    {role === "owner" && <details className="management-panel"><summary>Backups and development checks</summary>
     <ArchiveBackup />
     <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>
@@ -136,7 +139,7 @@ function App() {
     <button onClick={() => downloadBackup(true)} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download file recovery test"}
     </button>
-    </>}
+    </details>}
     <p>Private development catalog. Production release remains under development.</p>
   </main>;
 }

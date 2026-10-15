@@ -1,6 +1,7 @@
 import {handleCatalogImportSetup} from "./server/catalog-import-setup";
 import {handleCatalogImport} from "./server/catalog-import";
 import {handleImportReviews} from "./server/import-reviews";
+import {browseCatalog} from "./server/browse";
 import {catalogReadiness} from "./server/readiness";
 import { checkDevelopmentStorage } from "./server/development-storage-check";
 import { handleAttachments } from "./server/attachments";
@@ -68,6 +69,10 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       return handleCatalogImport(request,database,user.subject,importer[1],importer[2]==="apply");
     }
     return handleImportReviews(request,database,user.subject);
+  }
+  if (pathname === "/api/browse") {
+    if (!database) return json({error:"Catalog database unavailable"},503);
+    return browseCatalog(request,database);
   }
   if (pathname === "/api/readiness") {
     if (!database) return json({error:"Catalog database unavailable"},503);

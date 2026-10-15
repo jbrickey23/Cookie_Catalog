@@ -109,9 +109,12 @@ export async function handleAttachments(request: Request, database: D1Database, 
       const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
       const hash = Array.from(digest, n => n.toString(16).padStart(2,"0")).join("");
       if (bytes.byteLength !== row.byte_size || hash !== row.sha256) return json({ error: "Original file failed integrity verification." }, 409);
+      const inline=url.searchParams.get("view")==="image";
+      const detected=media(row.filename,new Uint8Array(bytes));
+      if(inline && (!detected?.startsWith("image/") || detected!==row.media_type)) return json({error:"Only supported verified images can be displayed."},415);
       return new Response(bytes, { headers: {
-        "content-type": "application/octet-stream", "cache-control": "no-store", "x-content-type-options": "nosniff",
-        "content-disposition": "attachment; filename*=UTF-8''" + encodeURIComponent(row.filename).replace(/'/g, "%27")
+        "content-type": inline ? detected! : "application/octet-stream", "cache-control": "no-store", "x-content-type-options": "nosniff",
+        "content-disposition": (inline ? "inline" : "attachment")+"; filename*=UTF-8''" + encodeURIComponent(row.filename).replace(/'/g, "%27")
       } });
     }
     if (url.pathname !== "/api/attachments") return json({ error: "Not found" }, 404);

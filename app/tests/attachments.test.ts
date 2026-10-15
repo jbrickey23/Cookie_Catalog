@@ -41,6 +41,10 @@ test("persistent photo/design/STL upload, exact-byte private retrieval, associat
       assert.match(downloaded.headers.get("content-disposition")! ,/^attachment;/);
       assert.equal(downloaded.headers.get("content-type"),"application/octet-stream");
       assert.deepEqual(new Uint8Array(await downloaded.arrayBuffer()),bytes);
+      const inline=await handleApiRequest(new Request(origin+"/api/attachments/"+item.id+"?view=image"),owner,db,bucket);
+      assert.equal(inline.status,name.endsWith(".stl")?415:200);
+      if(!name.endsWith(".stl")){assert.equal(inline.headers.get("content-type"),"image/png");assert.match(inline.headers.get("content-disposition")!,/^inline;/);assert.equal(inline.headers.get("cache-control"),"no-store");assert.deepEqual(new Uint8Array(await inline.arrayBuffer()),bytes);}
+
       const list=await handleApiRequest(new Request(origin+"/api/attachments?kind="+kind+"&recordId="+id),owner,db,bucket);
       assert.equal((await list.json() as any).attachments[0].available,true);
       if(name.endsWith(".stl")) assert.equal((await db.prepare("SELECT format FROM printable_assets WHERE attachment_id=?").bind(item.id).first<any>())?.format,"stl");

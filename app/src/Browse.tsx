@@ -1,0 +1,48 @@
+import React,{useEffect,useState,useRef} from "react";
+export interface BrowseItem {id:string;shape_id:string;source_bin:string|null;name:string;quantity:number;width_mm:number|null;height_mm:number|null;reference_size_mm:number|null;location:string|null;slot:string|null;image_id:string|null;image_name:string|null}
+const number=(n:number)=>Number(n.toFixed(2)).toString();
+export function CutterCard({item,onOpen}:{item:BrowseItem;onOpen?:()=>void}) {
+  const [failed,setFailed]=useState(false);
+  const artwork=/reference[ _-]*artwork/i.test(item.image_name??"");
+  return <article className="cutter-card">
+    <div className="cutter-image">{item.image_id&&!failed?<img loading="lazy" src={"/api/attachments/"+encodeURIComponent(item.image_id)+"?view=image"} alt={artwork?"Reference artwork for "+item.name:item.name+" — catalog image"} onError={()=>setFailed(true)}/>:<span>{failed?"Image unavailable":"Image needed"}</span>}</div>
+    <div className="cutter-card-body"><p className="image-kind">{artwork?"Reference artwork":item.image_id?"Catalog image":"No image attached"}</p><h3>{item.name}</h3>
+    <p className="reference-size">{item.reference_size_mm?number(item.reference_size_mm/25.4)+'″ cutter':"Reference size needed"}</p>
+    <dl><div><dt>Location</dt><dd>{item.location??"Needs checking"}{item.slot?" · Slot "+item.slot:""}</dd></div><div><dt>Quantity</dt><dd>{item.quantity}</dd></div><div><dt>Width × height</dt><dd>{item.width_mm&&item.height_mm?`${number(item.width_mm)} × ${number(item.height_mm)} mm`:"Measurements needed"}</dd></div></dl>
+    {!item.location&&item.source_bin&&<p className="collection-note">Source bin: {item.source_bin} · needs confirmation</p>}
+    {artwork&&<p className="collection-note">Actual cutter photo still needed.</p>}
+    {onOpen&&<button className="view-cutter" onClick={onOpen}>View {item.name}</button>}
+    </div>
+  </article>;
+}
+export function Browse({version=0}:{version?:number}) {
+  const [selected,setSelected]=useState<BrowseItem|null>(null);
+  const [query,setQuery]=useState(""),[search,setSearch]=useState(""),[demo,setDemo]=useState(false),[offset,setOffset]=useState(0);
+  const [items,setItems]=useState<BrowseItem[]>([]),[next,setNext]=useState<number|null>(null),[error,setError]=useState(""),[busy,setBusy]=useState(true),[refresh,setRefresh]=useState(0);
+  useEffect(()=>{let active=true;setBusy(true);setError("");
+    fetch(`/api/browse?q=${encodeURIComponent(search)}&offset=${offset}&demo=${demo}`,{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {items:BrowseItem[];nextOffset:number|null};}).then(body=>{if(active){setItems(body.items);setNext(body.nextOffset);}}).catch(()=>{if(active){setItems([]);setError("The catalog could not load. Refresh and retry.");}}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};
+  },[search,demo,offset,version,refresh]);
+  return <section aria-labelledby="browse-title" className="catalog-browse"><div className="browse-heading"><div><p className="eyebrow">YOUR COLLECTION</p><h2 id="browse-title">Find a cutter</h2><p>Browse individual cutters and sizes. See what still needs collecting.</p></div><button onClick={()=>setRefresh(v=>v+1)} disabled={busy}>Refresh catalog</button></div>
+    <form className="browse-search" onSubmit={e=>{e.preventDefault();setSelected(null);setOffset(0);setSearch(query.trim());}}><label htmlFor="browse-search">Search by name or bin</label><div><input id="browse-search" type="search" value={query} maxLength={120} onChange={e=>setQuery(e.target.value)} placeholder="Try a name or bin…"/><button type="submit">Search</button></div></form>
+    <label className="demo-toggle"><input type="checkbox" checked={demo} onChange={e=>{setDemo(e.target.checked);setOffset(0);}}/> Show demonstration records</label>
+    <p role="status" aria-live="polite">{busy?"Loading cutters…":error||`${items.length} cutters on this page${offset?` · page ${offset/24+1}`:""}.`}</p>
+    {!busy&&!error&&items.length===0&&<p>No cutters match this search.</p>}
+    {selected&&<CutterDetails key={selected.id+"-"+refresh+"-"+version} item={selected} onClose={()=>setSelected(null)}/>}
+    {!busy&&<div className="cutter-grid">{items.map(item=><CutterCard key={item.id} item={item} onOpen={()=>setSelected(item)}/>)}</div>}
+    <nav aria-label="Catalog pages" className="browse-pages"><button disabled={busy||offset===0} onClick={()=>setOffset(Math.max(0,offset-24))}>Previous page</button><button disabled={busy||next===null} onClick={()=>next!==null&&setOffset(next)}>Next page</button></nav>
+    <p className="browse-note">Images and recorded sizes are reference information. An image alone does not verify dimensions or scale.</p>
+  </section>;
+}
+
+function CutterDetails({item,onClose}:{item:BrowseItem;onClose:()=>void}) {
+  const panel=useRef<HTMLElement>(null);
+  useEffect(()=>{panel.current?.focus();},[]);
+  const [files,setFiles]=useState<{id:string;filename:string;mediaType:string;available:boolean}[]>([]),[status,setStatus]=useState("Loading files…");
+  useEffect(()=>{let active=true;fetch("/api/attachments?kind=shape&recordId="+encodeURIComponent(item.shape_id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {attachments:{id:string;filename:string;mediaType:string;available:boolean}[]};}).then(body=>{if(active){setFiles(body.attachments);setStatus(body.attachments.length?"":"No files attached.");}}).catch(()=>{if(active)setStatus("Files could not load. Close and reopen this cutter to retry.");});return()=>{active=false;};},[item.shape_id]);
+  return <section ref={panel} tabIndex={-1} className="cutter-detail" aria-label={"Viewing "+item.name}><div className="browse-heading"><h3>Viewing: {item.name}</h3><button onClick={onClose}>Close cutter details</button></div>
+    <p>{item.reference_size_mm?number(item.reference_size_mm/25.4)+"″ reference size (longest edge)":"Reference size needs collecting"} · Quantity {item.quantity}</p>
+    <p>Location: {item.location??"Needs checking"}{item.slot?" · Slot "+item.slot:""}</p>
+    <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/>}<figcaption>{file.filename} · {file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>
+    <p>Files belong to the cutter shape and may be shared across its size variants. Reference artwork and decorated examples do not verify the physical cutter or its size.</p>
+  </section>;
+}
