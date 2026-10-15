@@ -10,12 +10,12 @@ export function ArchiveBackup() {
       const filename="Cookie_Catalog_"+new Date().toISOString().replace(/[:.]/g,"-")+".tar";
       if(!small){
       const picker=(window as unknown as {showSaveFilePicker?:(options:unknown)=>Promise<SaveHandle>}).showSaveFilePicker;
-      if(picker)handle=await picker.call(window,{suggestedName:filename,types:[{description:"Cookie Catalog archive",accept:{"application/x-tar":[".tar"]}}]});
-      else {setStatus("Use Download small TAR archive for up to 32 MiB, or desktop Chrome/Edge to save a larger archive directly.");return;}
+      if(picker)handle=await picker.call(window,{suggestedName:filename,types:[{description:"Cookie Catalog backup",accept:{"application/x-tar":[".tar"]}}]});
+      else {setStatus("Use Download small backup (TAR) for up to 32 MiB, or desktop Chrome/Edge to save a larger backup directly.");return;}
       }
       const response=await fetch("/api/dev/archive",{method:"POST",cache:"no-store",headers:{"X-Cookie-Catalog-Check":"archive"}});
-      if(!response.ok){const body=await response.json() as {error?:string};throw Error(body.error??"Archive could not start.");}
-      if(response.headers.get("content-type")!=="application/json")throw Error("Sign in again before archiving.");
+      if(!response.ok){const body=await response.json() as {error?:string};throw Error(body.error??"Backup could not start.");}
+      if(response.headers.get("content-type")!=="application/json")throw Error("Sign in again before backing up.");
       setStatus("Saving catalog records and originals. Keep edits/uploads/deletions idle…");
       const manifest=new Uint8Array(await response.arrayBuffer());
       const stream=await archiveStream(manifest,async object=>{
@@ -27,23 +27,23 @@ export function ArchiveBackup() {
       if(small){
         const blob=await archiveBlob(stream),url=URL.createObjectURL(blob),link=document.createElement("a");
         link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
-        setStatus("Archive download started. Keep it private and verify the saved file before relying on it.");
+        setStatus("Backup download started. Keep it private and verify the saved file before relying on it.");
       }else{
         await stream.pipeTo(await handle!.createWritable());
-        setStatus("Archive saved. Keep it private and verify recovery before relying on it.");
+        setStatus("Backup saved. Keep it private and verify recovery before relying on it.");
       }
     }catch(error){
       const name=(error as Error).name;
-      setStatus(name==="AbortError"?"Archive cancelled.":!small&&(name==="SecurityError"||name==="NotAllowedError")?"Direct folder saving is unavailable in this browser. Use Download small TAR archive for up to 32 MiB.":"Archive did not complete: "+(error as Error).message+". Do not rely on a partial file.");
+      setStatus(name==="AbortError"?"Backup cancelled.":!small&&(name==="SecurityError"||name==="NotAllowedError")?"Direct folder saving is unavailable in this browser. Use Download small backup (TAR) for up to 32 MiB.":"Backup did not complete: "+(error as Error).message+". Do not rely on a partial file.");
     }finally{setBusy(false);}
   }
   return <section>
-    <h2>Catalog archive</h2>
-    <p>Save a TAR archive containing catalog records, original files and checksums directly into your private backup folder.</p>
+    <h2>Catalog backup</h2>
+    <p>Save a TAR backup containing catalog records, original files and checksums directly into your private backup folder.</p>
     <p>Development limits: 1 GiB of originals total, 1,000 originals, 25 MiB per original and 10,000 rows per table. Desktop Chrome or Edge required for direct folder saving.</p>
-    <button disabled={busy} onClick={()=>download()}>{busy?"Saving…":"Save catalog archive"}</button>{" "}
-    <button disabled={busy} onClick={()=>download(true)}>Download small TAR archive</button>
-    <p>If direct folder saving is unavailable, download a TAR archive up to 32 MiB. Larger archives still require direct folder saving.</p>
+    <button disabled={busy} onClick={()=>download()}>{busy?"Saving…":"Save catalog backup"}</button>{" "}
+    <button disabled={busy} onClick={()=>download(true)}>Download small backup (TAR)</button>
+    <p>If direct folder saving is unavailable, download a TAR backup up to 32 MiB. Larger backups still require direct folder saving.</p>
     <p role="status" aria-live="polite">{status}</p>
   </section>;
 }

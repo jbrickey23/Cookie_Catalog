@@ -8,7 +8,7 @@ export async function archiveBlob(stream:ReadableStream<Uint8Array>,limit=ARCHIV
   for(;;){
    const {done,value}=await reader.read();if(done)break;
    total+=value.byteLength;
-   if(total>limit)throw Error("Archive exceeds the 32 MiB download limit. Use Save catalog archive for a larger archive.");
+   if(total>limit)throw Error("Backup exceeds the 32 MiB download limit. Use Save catalog backup for a larger backup.");
    parts.push(value);
   }
   return new Blob(parts as BlobPart[],{type:"application/x-tar"});

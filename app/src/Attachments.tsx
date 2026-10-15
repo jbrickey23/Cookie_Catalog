@@ -113,7 +113,7 @@ export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canM
         <button disabled={busy} onClick={() => setConfirmId("")}>Cancel</button></p>}
     </li>)}</ul>
     {canManage && <>
-    <p>Use Catalog archive below for larger backups: up to 1 GiB of originals and 1,000 files. The older small JSON backup remains limited to 4 MiB total and 25 files.</p>
+    <p>Use Catalog backup below for larger backups: up to 1 GiB of originals and 1,000 files. The older small JSON backup remains limited to 4 MiB total and 25 files.</p>
     <h3>Storage cleanup</h3>
     <p>Check for originals left without catalog metadata after an interrupted operation. Cleanup is manual; files younger than 24 hours are kept.</p>
     <button disabled={busy} onClick={() => scanOrphans()}>Check unlinked files</button>{" "}
