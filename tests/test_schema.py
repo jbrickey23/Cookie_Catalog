@@ -47,6 +47,10 @@ def test_schema():
     db.execute("INSERT INTO printable_size_recipes(id,printable_asset_id,label,target_width_mm,scale_percent) VALUES (?,?,?,?,?)", ("recipe-1","asset-1","80mm",80,80))
     assert db.execute("SELECT COUNT(*) FROM design_components").fetchone()[0] == 1
     assert db.execute("SELECT scale_percent FROM printable_size_recipes").fetchone()[0] == 80
+    db.executescript((SCHEMA.parent / "0004_catalog_imports.sql").read_text(encoding="utf-8"))
+    assert db.execute("SELECT width_mm,reference_size_mm,slot FROM physical_cutters WHERE id='cutter-1'").fetchone() == (90.0, None, None)
+    db.execute("UPDATE physical_cutters SET reference_size_mm=?,slot=? WHERE id='cutter-1'", (101.6, "A"))
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
     db.close()
 
 if __name__ == "__main__":

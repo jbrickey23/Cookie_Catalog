@@ -113,3 +113,23 @@ test("catalog conflict keeps the editor draft and sends the opened revision",asy
     assert.equal((screen.getByLabelText("Notes / themes") as HTMLTextAreaElement).value,"my retained draft");assert.equal(writes.length,1);assert.equal(writes[0].headers["If-Match"],'"opened-revision"');
   }finally{cleanup();globalThis.fetch=originalFetch;}
 });
+
+test("inventory import UI starts with no selections and requires a plan plus backup confirmation before applying",async()=>{
+ const {CatalogImport}=await import('../src/CatalogImport');const original=globalThis.fetch,confirm=window.confirm,m=fixture();let applied:any;const calls:string[]=[];
+ globalThis.fetch=async(input,init)=>{calls.push(String(input));const body=JSON.parse(String(init?.body));
+  if(String(input).endsWith('/catalog-plan'))return Response.json({planSha256:'a'.repeat(64),ready:1,blocked:0,alreadyLinked:0,selected:1,rows:[{sourceKey:m.items[0].sourceKey,name:m.items[0].name,status:'ready',targetId:'TEST target',referenceSizeMm:76.2,reasons:[],candidates:[]}]});
+  if(String(input).endsWith('/apply')){applied=body;return Response.json({created:1,linked:0,alreadyLinked:0});}throw Error('Unexpected request');
+ };window.confirm=()=>true;
+ try{
+  render(React.createElement(CatalogImport,{id:'review_'+'a'.repeat(32),revision:'"review-1"',manifest:m,disabled:false,onBusy:()=>{}}));
+  fireEvent.click(screen.getByText('Import reviewed entries into inventory'));
+  assert.equal(calls.length,0);assert.equal((screen.getByRole('button',{name:'Prepare inventory plan'}) as HTMLButtonElement).disabled,true);
+  fireEvent.change(screen.getByLabelText('Inventory action for '+m.items[0].name),{target:{value:'create'}});
+  fireEvent.click(screen.getByLabelText(/I confirm that the selected physical cutters are owned/));
+  fireEvent.click(screen.getByRole('button',{name:'Prepare inventory plan'}));await screen.findByText(/1 ready, 0 blocked/);
+  assert.equal((screen.getByRole('button',{name:'Import selected entries'}) as HTMLButtonElement).disabled,true);
+  fireEvent.change(screen.getByLabelText('Protected pre-change backup reference'),{target:{value:'TEST protected backup receipt'}});
+  fireEvent.click(screen.getByLabelText(/I saved and verified a protected pre-change backup/));
+  fireEvent.click(screen.getByRole('button',{name:'Import selected entries'}));await screen.findByText(/Import recorded: 1 new inventory records/);assert.equal(applied.ownershipConfirmed,true);assert.equal(applied.backupConfirmed,true);assert.equal(applied.choices.length,1);
+ }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
+});

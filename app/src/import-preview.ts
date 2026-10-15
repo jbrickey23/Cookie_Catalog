@@ -24,6 +24,6 @@ export function importPreview(manifest:StagingManifest) {
       ...(counts.notOwned?["Separate items marked not owned from owned inventory."]:[]),
       ...(counts.notPrintedPhysical?["Items marked not printed cannot establish a printed physical cutter."]:[]),
       ...(counts.ownershipUnknown?["Confirm ownership before creating owned inventory."]:[]),
-      ...(counts.quantityUnknown?["Confirm physical quantities; unknown is not one."]:[])],
-    next:"This preview records source classifications and gaps only. Original bytes, catalog mappings, duplicates, a protected pre-change backup and the live importer still need review before applying anything."};
+      ...(counts.quantityUnknown?["Individual cutters will default to quantity one at import; review exceptions or sets."]:[])],
+    next:"This preview records source classifications and gaps only. Use the inventory plan to review mappings and duplicates before importing selected entries. Original-file uploads remain separate; record a verified protected pre-change backup before applying."};
 }

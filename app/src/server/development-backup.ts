@@ -5,9 +5,10 @@ export const BACKUP_TABLES = [
   "printable_assets", "shape_size_variants", "design_components", "printable_size_recipes", "d1_migrations"
 ] as const;
 export const REVIEW_TABLES = ["import_review_workspaces","import_review_versions","import_review_items","import_review_runs"] as const;
+export const IMPORT_TABLES = ["catalog_import_batches","catalog_source_mappings"] as const;
 function snapshotTables(schema:SchemaRow[]):readonly string[]{
   const names=schema.filter(row=>row.type==="table").map(row=>row.name).sort();
-  for(const profile of [BACKUP_TABLES,[...BACKUP_TABLES,...REVIEW_TABLES]]){
+  for(const profile of [BACKUP_TABLES,[...BACKUP_TABLES,...REVIEW_TABLES],[...BACKUP_TABLES,...REVIEW_TABLES,...IMPORT_TABLES]]){
     if(JSON.stringify(names)===JSON.stringify([...profile].sort()))return profile;
   }
   throw new BackupError("Database schema has changed. Update the recovery tool before exporting.");
@@ -69,7 +70,7 @@ export async function createDatabaseSnapshot(database: D1Database, maxRows = MAX
     }
     tables[selectedTables[i]] = rows;
   }
-  const expectedMigrations=["0001_initial.sql","0002_variants_components.sql",...(selectedTables.length===20?["0003_import_reviews.sql"]:[])];
+  const expectedMigrations=["0001_initial.sql","0002_variants_components.sql",...(selectedTables.includes("import_review_runs")?["0003_import_reviews.sql"]:[]),...(selectedTables.includes("catalog_source_mappings")?["0004_catalog_imports.sql"]:[])];
   if(JSON.stringify(tables.d1_migrations.map(row=>row.name).sort())!==JSON.stringify(expectedMigrations))throw new BackupError("Database migration records do not match the supported schema.");
   if (checkedRows(results.at(-1)).length) throw new BackupError("Database relationships failed validation.");
   return { schema, tables };

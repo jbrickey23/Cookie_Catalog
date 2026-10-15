@@ -21,7 +21,7 @@ function checkedManifest(value:unknown){
   if(manifest.items.some(item=>new TextEncoder().encode(JSON.stringify(item)).length>32000))throw new InputError("A source item exceeds the 32000-byte portable recovery limit; split its file references or notes.");
   return {format:manifest.format,version:manifest.version,sourceNamespace:manifest.sourceNamespace,items:manifest.items};
 }
-async function open(db:D1Database,id:string,requestedRevision:number|null){
+export async function openReview(db:D1Database,id:string,requestedRevision:number|null){
   const head=await db.prepare(`SELECT w.id,w.title,w.source_namespace,w.current_revision,w.updated_at,v.revision,v.manifest_sha256,v.item_count
     FROM import_review_workspaces w JOIN import_review_versions v ON v.workspace_id=w.id AND v.revision=COALESCE(?,w.current_revision) WHERE w.id=?`).bind(requestedRevision,id).first<Head>();
   if(!head)return null;
@@ -44,7 +44,7 @@ export async function handleImportReviews(request:Request,db:D1Database,subject:
     if(request.method==="GET"&&id&&!parts[1]){
       const value=url.searchParams.get("revision"),revision=value===null?null:Number(value);
       if(revision!==null&&(!Number.isSafeInteger(revision)||revision<1))throw new InputError("Choose a valid saved version.");
-      const saved=await open(db,id,revision);if(!saved)return json({error:"Review not found."},404);
+      const saved=await openReview(db,id,revision);if(!saved)return json({error:"Review not found."},404);
       const [versions,runs]=await db.batch([
         db.prepare("SELECT revision,item_count,saved_at FROM import_review_versions WHERE workspace_id=? ORDER BY revision DESC LIMIT 50").bind(id),
         db.prepare("SELECT id,revision,created_at,result_json FROM import_review_runs WHERE workspace_id=? ORDER BY created_at DESC,id DESC LIMIT 20").bind(id)
@@ -53,7 +53,7 @@ export async function handleImportReviews(request:Request,db:D1Database,subject:
         versions:versions.results,previews:(runs.results as {id:string;revision:number;created_at:string;result_json:string}[]).map(row=>({id:row.id,revision:row.revision,created_at:row.created_at,result:JSON.parse(row.result_json)}))});
     }
     if(request.method==="POST"&&id&&parts[1]==="preview"){
-      const saved=await open(db,id,null);if(!saved)return json({error:"Review not found."},404);
+      const saved=await openReview(db,id,null);if(!saved)return json({error:"Review not found."},404);
       if(request.headers.get("If-Match")!==token(saved.head.current_revision))return json({error:"The saved review changed. Reopen it before preparing a preview."},412);
       const result=importPreview(saved.manifest),runId="preview_"+crypto.randomUUID().replaceAll("-","");
       const stored=await db.prepare(`INSERT INTO import_review_runs(id,workspace_id,revision,manifest_sha256,mode,result_json,created_by,created_at)
@@ -74,7 +74,7 @@ export async function handleImportReviews(request:Request,db:D1Database,subject:
         if(!match||!Number.isSafeInteger(Number(match[1]))||Number(match[1])>=Number.MAX_SAFE_INTEGER)return json({error:"Reopen the saved review before saving changes."},428);
         revision=Number(match[1])+1;
       }else{
-        const existing=await open(db,workspaceId,null);
+        const existing=await openReview(db,workspaceId,null);
         if(existing)return existing.head.manifest_sha256===manifestHash&&existing.head.title===input.title.trim()
           ?json({id:workspaceId,title:existing.head.title,revision:token(existing.head.current_revision),saved:true,replayed:true})
           :json({error:"This review identifier already exists. Reopen it before saving changes."},409);
@@ -92,7 +92,7 @@ export async function handleImportReviews(request:Request,db:D1Database,subject:
           FROM import_review_workspaces w,json_each(?) j WHERE w.id=? AND w.save_token=?`).bind(JSON.stringify(manifest.items),workspaceId,saveToken)
       ]);
       if(!result[0].results.length&&!id){
-        const existing=await open(db,workspaceId,null);
+        const existing=await openReview(db,workspaceId,null);
         return existing&&existing.head.manifest_sha256===manifestHash&&existing.head.title===input.title.trim()
           ?json({id:workspaceId,title:existing.head.title,revision:token(existing.head.current_revision),saved:true,replayed:true})
           :json({error:"This review identifier already exists. Reopen it before saving changes."},409);

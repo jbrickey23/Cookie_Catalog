@@ -12,9 +12,9 @@ function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value),{status,headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
 }
 class InputError extends Error {}
-function validate(kind: Kind, input: unknown): Record<string,Value> {
+function validate(kind: Kind, input: unknown,fields:readonly string[]=specs[kind].fields): Record<string,Value> {
   if (!input || typeof input !== "object" || Array.isArray(input)) throw new InputError("Record must be a JSON object.");
-  const source=input as Record<string,unknown>, spec=specs[kind];
+  const source=input as Record<string,unknown>, spec={...specs[kind],fields};
   if(Object.keys(source).some(key=>!(spec.fields as readonly string[]).includes(key))) throw new InputError("Record contains unsupported fields.");
   const values: Record<string,Value>={};
   for(const key of spec.fields) {
@@ -24,7 +24,7 @@ function validate(kind: Kind, input: unknown): Record<string,Value> {
       if(required) throw new InputError("Missing "+key+".");
       values[key]=null; continue;
     }
-    if(["width_mm","height_mm","min_width_mm","max_width_mm","rotation_degrees","quantity","mirrored"].includes(key)) {
+    if(["reference_size_mm","width_mm","height_mm","min_width_mm","max_width_mm","rotation_degrees","quantity","mirrored"].includes(key)) {
       if(typeof value !== "number" || !Number.isFinite(value)) throw new InputError(key+" must be a finite number.");
       if(key === "mirrored" && value !== 0 && value !== 1) throw new InputError("Mirrored must be 0 or 1.");
       if(key === "quantity" && (!Number.isInteger(value) || value < 0 || value > 10000)) throw new InputError("Quantity must be a whole number from 0 to 10000.");
@@ -105,6 +105,8 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
   if(!match || !Object.hasOwn(specs,match[1]))return json({error:"Catalog route not found."},404);
   const kind=match[1] as Kind,id=match[2];
   try {
+    const columns=kind==="physical_cutters"?(await database.prepare("PRAGMA table_info(physical_cutters)").all<{name:string}>()).results.map(r=>r.name):[];
+    const fields:readonly string[]=[...specs[kind].fields,...(columns.includes("reference_size_mm")?["reference_size_mm","slot"]:[])];
     if(request.method==="GET") {
       if(id) {
         const record=await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first<Record<string,unknown>>();
@@ -120,10 +122,10 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
       // Separate field predicates prevent a phrase from matching across unrelated values.
       const where=expressions.map(expression=>"instr(lower("+expression+"),lower(?))>0").join(" OR ");
       const result=await database.prepare(sql+" WHERE ("+where+") ORDER BY "+select.order+" LIMIT 201 OFFSET ?").bind(...expressions.map(()=>q),offset).all<Record<string,unknown>>();
-      return json({records:result.results.slice(0,200).map(row=>explain(row,select.fields,q)),query:q,nextOffset:result.results.length>200 ? offset+200:null});
+      return json({records:result.results.slice(0,200).map(row=>explain(row,select.fields,q)),fields,query:q,nextOffset:result.results.length>200 ? offset+200:null});
     }
     if((request.method==="POST" && id) || (request.method==="PUT" && !id) || !["POST","PUT"].includes(request.method))return json({error:"Method not allowed."},405);
-    const values=validate(kind,await body(request));
+    const values=validate(kind,await body(request),fields);
     const previous=id ? await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first<Record<string,Value>>() : null;
     if(id&&!previous)return json({error:"Record not found."},404);
     if(previous) {
@@ -136,7 +138,6 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
         return json({error:"Linked "+table+" record not found."},404);
     }
     const recordId=id ?? kind+"_"+crypto.randomUUID().replace(/-/g,"");
-    const fields=specs[kind].fields;
     let saved:Record<string,unknown>|null;
     if(id&&previous) {
       // Atomic compare-and-update closes the race after the precondition read.

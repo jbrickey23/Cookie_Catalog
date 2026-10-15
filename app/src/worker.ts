@@ -1,3 +1,5 @@
+import {handleCatalogImportSetup} from "./server/catalog-import-setup";
+import {handleCatalogImport} from "./server/catalog-import";
 import {handleImportReviews} from "./server/import-reviews";
 import {catalogReadiness} from "./server/readiness";
 import { checkDevelopmentStorage } from "./server/development-storage-check";
@@ -54,6 +56,17 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(!["GET","POST","PUT"].includes(request.method))return json({error:"Method not allowed"},405);
     if(request.method!=="GET"&&(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="import-review"))return json({error:"Same-origin review request required"},403);
     if(!database)return json({error:"Catalog database unavailable"},503);
+    if(pathname==="/api/import-reviews/import-setup"){
+      if(!["GET","POST"].includes(request.method))return json({error:"Method not allowed"},405);
+      if(request.method==="POST"&&user.role!=="owner")return json({error:"Owner/admin access required to activate importing"},403);
+      return handleCatalogImportSetup(request,database);
+    }
+    const importer=/^\/api\/import-reviews\/(review_[a-f0-9]{32})\/(catalog-plan|apply)$/.exec(pathname);
+    if(importer){
+      if(request.method!=="POST")return json({error:"Method not allowed"},405);
+      if(importer[2]==="apply"&&user.role!=="owner")return json({error:"Owner/admin access required to import inventory"},403);
+      return handleCatalogImport(request,database,user.subject,importer[1],importer[2]==="apply");
+    }
     return handleImportReviews(request,database,user.subject);
   }
   if (pathname === "/api/readiness") {

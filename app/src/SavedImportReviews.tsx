@@ -1,3 +1,4 @@
+import {CatalogImport} from "./CatalogImport";
 import React,{useState} from "react";
 import {validateManifest,type StagingManifest} from "./staging.mjs";
 import type {importPreview} from "./import-preview";
@@ -48,6 +49,7 @@ export function SavedImportReviews({draft,dirty,onOpen,onSaved,onBusy}:{draft:St
       })}>Record import preview</button>
       <p>Save changes before recording a preview. A preview checks metadata; it does not verify original file bytes or apply an import.</p>
     </>}
+    {current&&draft&&<CatalogImport key={current.id+current.revision} id={current.id} revision={current.revision} manifest={draft} disabled={busy||dirty||JSON.stringify(current.manifest)!==JSON.stringify(draft)} onBusy={onBusy} />}
     {current&&<details><summary>Saved versions and preview history</summary>
       <ul>{current.versions.map(v=><li key={v.revision}>Version {v.revision} · {v.item_count} entries · {v.saved_at}{" "}<button disabled={busy} onClick={()=>void task(()=>load(current.id,v.revision))}>Open version {v.revision} as draft</button></li>)}</ul>
       <p>Showing at most 50 recent versions and 20 recent previews. Older history remains in backups.</p>

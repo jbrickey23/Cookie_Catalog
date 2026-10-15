@@ -15,6 +15,8 @@ function title(row:Row) { return String(row.name ?? row.label ?? row.design_name
 export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolean}) {
   const [kind,setKind]=useState("shapes"),[rows,setRows]=useState<Row[]>([]),[query,setQuery]=useState("");
   const [lookups,setLookups]=useState<Record<string,Row[]>>({shapes:[],designs:[],locations:[]});
+  const [sizingFields,setSizingFields]=useState(false);
+  const activeFields:Field[]=[...sections[kind].fields,...(kind==="physical_cutters"&&sizingFields?[{key:"reference_size_mm",label:"Reference size — longest edge (inches)",type:"number" as const},{key:"slot",label:"Slot (optional)"}]:[])];
   const [dirty,setDirty]=useState(false);
   useEffect(()=>{const warn=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue="";}};window.addEventListener("beforeunload",warn);return()=>window.removeEventListener("beforeunload",warn);},[dirty]);
   const [revision,setRevision]=useState("");
@@ -22,9 +24,9 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
   const [nextOffset,setNextOffset]=useState<number|null>(null),[busy,setBusy]=useState(false),[status,setStatus]=useState("");
   async function load(section=kind,q=query,offset=0) {
     const response=await fetch("/api/catalog/"+section+"?q="+encodeURIComponent(q)+"&offset="+offset,{cache:"no-store"});
-    const body=await response.json() as {error?:string;records:Row[];nextOffset:number|null};
+    const body=await response.json() as {error?:string;records:Row[];nextOffset:number|null;fields?:string[]};
     if(!response.ok)throw Error(body.error ?? "Catalog could not load.");
-    setRows(body.records);setNextOffset(body.nextOffset);
+    setSizingFields(section==="physical_cutters"&&!!body.fields?.includes("reference_size_mm"));setRows(body.records);setNextOffset(body.nextOffset);
   }
   async function choices() {
     const entries=await Promise.all((["shapes","designs","locations"] as const).map(async section=>[section,await catalogChoices(section)] as const));
@@ -45,9 +47,9 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     event.preventDefault();setBusy(true);setStatus("Saving record…");
     try {
       const record:Record<string,string|number|null>={};
-      for(const field of sections[kind].fields) {
+      for(const field of activeFields) {
         const value=values[field.key]??"";
-        record[field.key]=value===""?null:field.type==="number" || field.key==="mirrored"?Number(value):value;
+        record[field.key]=value===""?null:field.type==="number" || field.key==="mirrored"?Number(value)*(field.key==="reference_size_mm"?25.4:1):value;
       }
       const response=await fetch("/api/catalog/"+kind+(editing?"/"+editing:""),{method:editing?"PUT":"POST",headers:{"content-type":"application/json","X-Cookie-Catalog-Check":"catalog",...(editing?{"If-Match":revision}:{})},body:JSON.stringify(record)});
       const body=await response.json() as {error?:string;record:Row;revision:string};
@@ -63,7 +65,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
       const response=await fetch("/api/catalog/"+kind+"/"+row.id,{cache:"no-store"});
       const body=await response.json() as {record:Row;revision:string;error?:string};
       if(!response.ok)throw Error(body.error??"Record could not load.");
-      setDirty(false);setRevision(body.revision);setEditing(String(body.record.id));setValues(Object.fromEntries(sections[kind].fields.map(field=>[field.key,String(body.record[field.key]??"")])));
+      setDirty(false);setRevision(body.revision);setEditing(String(body.record.id));setValues(Object.fromEntries(activeFields.map(field=>[field.key,String(field.key==="reference_size_mm"&&body.record[field.key]!=null?Number((Number(body.record[field.key])/25.4).toFixed(8)):body.record[field.key]??"")])));
       setStatus((canEdit?"Editing ":"Viewing ")+title(body.record)+".");
     }catch(error){setStatus((error as Error).message);}finally{setBusy(false);}
   }
@@ -77,7 +79,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     </form>
     <ul>{rows.map(row=><li key={String(row.id)} style={{margin:"10px 0"}}>
       <strong>{title(row)}</strong>
-      {kind==="physical_cutters" && <span> — {row.width_mm??"?"} × {row.height_mm??"?"} mm; quantity {row.quantity}; {row.location_label??"location unknown"}</span>}
+      {kind==="physical_cutters" && <span> — {row.width_mm??"?"} × {row.height_mm??"?"} mm; reference size {row.reference_size_mm!=null?`${Number((Number(row.reference_size_mm)/25.4).toFixed(4))}″ (${row.reference_size_mm} mm)`:"unknown"}; quantity {row.quantity}; {row.location_label??"location unknown"}</span>}
       {kind==="design_shape_links" && <span> → {row.shape_name}; {row.status} {row.use_type}</span>}
       {(row.notes || row.instructions) && <span> — {row.notes??row.instructions}</span>}{" "}
       <button disabled={busy} onClick={()=>edit(row)}>{canEdit ? "Edit" : "View details"}</button>
@@ -96,7 +98,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     {canEdit && editing && <button disabled={busy} onClick={()=>{if(!dirty||window.confirm("Start a new record and discard unsaved form changes?"))reset();}}>Start a new record</button>}
     <form onSubmit={event => { if (canEdit) void save(event); else event.preventDefault(); }}>
       <fieldset disabled={!canEdit} style={{border:0,padding:0}}>
-      {sections[kind].fields.map(field=>{
+      {activeFields.map(field=>{
         const value=values[field.key]??"",change=(next:string)=>{setDirty(true);setValues(previous=>({...previous,[field.key]:next}));};
         const options=field.lookup?lookups[field.lookup]:[];
         return <div key={field.key} style={{margin:"10px 0"}}><label>{field.label}{field.required?" *":""}<br />
