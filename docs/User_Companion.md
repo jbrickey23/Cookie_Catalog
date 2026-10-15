@@ -1,5 +1,15 @@
 # Cookie Catalog — User Companion
 
+## Quickly confirm Physical / Digital / Both
+
+Open Import preparation workspace, list/open the existing saved review, then choose Open quick verification. Search by name or bin and review thumbnails/source evidence. Physical means an owned cutter; Digital records a source reference, not an original STL/3MF on file. Both records both classifications.
+
+Choose Confirm safe suggestions in this group to confirm all matching unconfirmed entries, including other pages. Change individual choices as needed. Sets, size variants, possible duplicates and unknown suggestions stay for detailed review. Not-printed/not-purchased evidence blocks physical stock until explicitly corrected under Review details.
+
+Save checklist decisions keeps your work without creating inventory. Admin/owner can supply a verified protected pre-change backup reference, check its confirmation, then choose Save decisions and import confirmed cutters. The app saves decisions, plans batches and imports eligible individual cutters; blocked entries stay for review. Digital-only choices create no stock or originals. Existing source shapes/photos are reused, already imported entries are skipped, and catalog browsing refreshes. Keep edits idle while importing. If a request fails, reopen the latest review; completed source mappings prevent duplicate inventory on retry. Missing measurements and locations remain collection tasks.
+
+This is development functionality; actual device and owner acceptance still apply. See [Quick verification](Quick_Verification.md).
+
 ## Save your import review work
 
 After the saved-review development activation, Import preparation workspace can save and reopen a prepared review across sessions. Save new review keeps classifications, ownership, quantity unknowns, Bin/optional Slot, longest-edge reference size, original size labels, source references and review notes. Download reviewed manifest still gives you a separate copy. Save review changes retains earlier versions and protects against overwriting somebody else's work.

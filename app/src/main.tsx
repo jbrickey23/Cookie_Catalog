@@ -109,7 +109,7 @@ function App() {
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>
     {role === "owner" && <InfrastructureVerification />}
     <hr />
-    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews /></details>}
+    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews canImport={role==="owner"} onCatalogChanged={()=>setCatalogVersion(v=>v+1)} /></details>}
     <Readiness key={"review-"+catalogVersion} />
     <hr />
     <Catalog canEdit={role !== "viewer"} onSaved={() => setCatalogVersion(version => version + 1)} />

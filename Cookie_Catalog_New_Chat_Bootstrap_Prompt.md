@@ -1,5 +1,20 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Quick verification implemented — October 15, 2026
+
+The Physical / Digital / Both checklist is now implemented on `feature/cc-infrastructure-foundation`, draft PR #1. It opens a saved source review, retrieves private source-reference evidence/photos, suggests classifications and supports name/bin filtering, paged rows, confirming all safe suggestions in a filtered group, individual exceptions and a link into detailed review. Suggestions remain unconfirmed until owner/editor action. Digital means a source reference, not possession or upload of an STL/3MF original.
+
+Save checklist decisions creates a revision-protected review version. Owner/admin can use one Save decisions and import confirmed cutters action after recording a verified protected pre-change backup. It saves decisions, plans bounded batches of at most 50, leaves blocked entries for detailed review, replans the exact eligible subset and applies through existing owner-only/same-origin/fingerprint/transaction guards. Catalog browsing refreshes afterward. A conflict retains the draft; partial progress remains idempotent on retry. Editors can save decisions but do not receive import/backup controls; viewers remain denied.
+
+Physical promotion reuses an exact existing source-reference shape and its photo links. Previously mapped source identities are skipped even when review metadata changed, preserving inventory values. Missing/mismatched mapping targets still block. Duplicate source-reference identities, sets, size variants, possible duplicates and explicit not-printed/not-purchased evidence cannot silently create physical stock through quick verification. Explicit status corrections belong in detailed review. Unknown dimensions/location remain collection tasks; quantity defaults to one individual cutter, with existing size/quantity safeguards.
+
+No schema migration, source re-export, inventory import, attachment mutation or private payload publication was performed by this implementation session. The live schema remains 22 tables/four migrations. `catalog.sourceClassification` is optional saved-review JSON metadata; existing backup validators and restored current code preserve it. Older application versions that reject this new optional field must retain the updated manifest parser before serving newer reviews; no new backward-code acceptance is claimed.
+
+Validation: 103 application tests, 28 offline helper tests, SQLite/schema/synthetic import, eight Python recovery tests, three OneNote HTML-audit tests and TypeScript/frontend/Worker build pass. Coverage includes source shape/photo preservation, corrected-review idempotency, negative-source guards, 50-entry batch/subset planning, backup gating, editor controls, conflict-draft retention and classification metadata roundtrip through TAR/helper/JSON/isolated D1 restoration. DOM tests are not intended-device or live-owner acceptance.
+
+Next: publish this development change and verify GitHub/Workers Builds; then owner acceptance of the quick checklist with the existing private saved review and a fresh verified pre-change backup before any real stock import. Preserve the latest post-import OneDrive-copy verification, second-admin sign-in, intended-device/accessibility and operational recovery/release gates. Do not repeat completed source audit, schema activation, example/photo import or Windows backup setup. No paid resources, destructive cleanup, security weakening, parked login investigation or production release. Continue CC-TODO-007/008/009; next unused task remains CC-TODO-013.
+
+
 ## Reconciled checkpoint — October 15, 2026, 16:26 Pacific
 
 This checkpoint supersedes pending/proposed statements in older sections below. Source audit, saved reviews, inventory importing, private photo import and browsing are implemented and development-accepted. Do not repeat schema activation, source export, example import or completed Windows backup setup.

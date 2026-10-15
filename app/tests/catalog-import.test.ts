@@ -113,7 +113,9 @@ test('duplicate names require explicit distinct reason; linking preserves existi
         const stale = await apply(db, p, [selected[0]]);
         assert.equal(stale.status, 412);
         const current = await handleApiRequest(request('catalog-plan', { choices: [selected[0]], ownershipConfirmed: true }, '"review-2"'), owner, db);
-        assert.equal((await current.json() as any).blocked, 1);
+        const currentPlan=await current.json() as any;
+        assert.equal(currentPlan.blocked,0);assert.equal(currentPlan.alreadyLinked,1);
+        assert.equal((await db.prepare("SELECT quantity FROM physical_cutters WHERE id='existing-cutter'").first<any>())?.quantity,3);
     }
     finally {
         await runtime.dispose();
@@ -189,7 +191,8 @@ test('apply is owner-only and same-origin, selection is bounded, and missing mig
     }
 });
 test('22-table import audit and mappings survive TAR/helper validation and both Python recovery paths', async () => {
-    const { runtime, db, bucket } = await environment(), dir = mkdtempSync(join(tmpdir(), 'cookie-import-recovery-'));
+    const m=manifest();m.items[0].catalog={...m.items[0].catalog,sourceClassification:'both'};
+    const { runtime, db, bucket } = await environment(true,m), dir = mkdtempSync(join(tmpdir(), 'cookie-import-recovery-'));
     try {
         const p = await prepare(db);
         assert.equal((await apply(db, p)).status, 201);
@@ -210,6 +213,8 @@ test('22-table import audit and mappings survive TAR/helper validation and both 
             const restored = await recovery.getD1Database('DB') as unknown as D1Database;
             await restored.batch(statements.map((s: string) => restored.prepare(s)));
             assert.equal(await count(restored, 'catalog_source_mappings'), 2);
+            const mapping=await restored.prepare("SELECT item_json FROM catalog_source_mappings WHERE source_key='physical'").first<any>();
+            assert.equal(JSON.parse(mapping.item_json).catalog.sourceClassification,'both');
             const recoveredPlan = await prepare(restored);
             assert.equal(recoveredPlan.alreadyLinked, 2);
             assert.equal((await apply(restored, p)).status, 200);
@@ -314,4 +319,63 @@ test('catalog editing retains separate reference size, axes and Slot with revisi
     finally {
         await runtime.dispose();
     }
+});
+
+test('quick verification reuses source shape/photos, skips corrected imported reviews, and preserves revision and owner guards', async()=>{
+ const m=manifest();m.items[0].catalog={ownership:'owned',sourceClassification:'both'};
+ const {runtime,db}=await environment(true,m);
+ try{
+  const notes=JSON.stringify({format:'cookie-catalog-source-reference',sourceNamespace:m.sourceNamespace,sourceKey:'physical',reviewState:'print_review',reason:'Source mentions STL; ownership needs confirmation.'});
+  await db.prepare("INSERT INTO shapes(id,name,notes) VALUES('source-shape',?,?)").bind(m.items[0].name,notes).run();
+  await db.prepare("INSERT INTO attachments(id,storage_key,filename,media_type) VALUES('photo','private/photo','TEST photo.png','image/png')").run();
+  await db.prepare("INSERT INTO shape_attachments VALUES('source-shape','photo','cutter_photo')").run();
+  // Photo identity is checked without replacing any existing shape or attachment links.
+  const before=await db.prepare("SELECT * FROM shapes WHERE id='source-shape'").first<any>();
+  const get=(rev='"review-1"',verifier=owner)=>handleApiRequest(new Request(origin+'/api/import-reviews/'+id+'/quick-check',{headers:{'If-Match':rev}}),verifier,db);
+  const context=await (await get()).json() as any;
+  assert.equal(context.items[0].shapeId,'source-shape');assert.equal(context.items[0].imported,false);assert.equal(context.items[0].imageId,'photo');assert.match(context.items[0].evidence,/STL/);
+  assert.equal((await get('"review-0"')).status,412);
+  const viewer:IdentityVerifier={verify:async()=>({subject:'viewer',email:'viewer@example.test',role:'viewer'})};
+  assert.equal((await get('"review-1"',viewer)).status,403);
+  const choices=[{sourceKey:'physical',action:'create'}];
+  const p=await prepare(db,choices);assert.equal(p.ready,1);assert.equal(p.rows[0].shapeId,'source-shape');
+  assert.equal((await apply(db,p,choices)).status,201);
+  assert.deepEqual(await db.prepare("SELECT * FROM shapes WHERE id='source-shape'").first(),before);
+  assert.equal(await count(db,'shapes'),1);
+  const physical=await db.prepare('SELECT * FROM physical_cutters').first<any>();assert.equal(physical.shape_id,'source-shape');assert.equal(physical.quantity,1);
+  m.items[0].catalog={...m.items[0].catalog,originalSizeLabel:'corrected source label'};
+  const saved=await handleApiRequest(new Request(origin+'/api/import-reviews/'+id,{method:'PUT',headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'import-review','If-Match':'"review-1"'},body:JSON.stringify({id,title:'TEST corrected review',manifest:m})}),owner,db);
+  assert.equal(saved.status,200);
+  const next=await (await handleApiRequest(request('catalog-plan',{choices,ownershipConfirmed:true},'"review-2"'),owner,db)).json() as any;
+  assert.equal(next.alreadyLinked,1);assert.equal(next.blocked,0);assert.match(next.rows[0].reasons[0],/metadata changed/i);
+  assert.deepEqual(await db.prepare('SELECT * FROM physical_cutters').first(),physical);
+  const fresh=await (await get('"review-2"')).json() as any;assert.equal(fresh.items[0].imported,true);
+  assert.equal(await count(db,'attachments'),1);assert.equal(await count(db,'shape_attachments'),1);
+  const edited=await db.prepare("SELECT attachment_id FROM shape_attachments WHERE shape_id='source-shape'").first<any>();assert.equal(edited.attachment_id,'photo');
+ }finally{await runtime.dispose();}
+});
+
+test('duplicate source-reference identities block promotion instead of creating another shape',async()=>{
+ const {runtime,db}=await environment();
+ try{
+  const notes=JSON.stringify({format:'cookie-catalog-source-reference',sourceNamespace:'test-import',sourceKey:'physical'});
+  await db.prepare("INSERT INTO shapes(id,name,notes) VALUES('ref1','TEST a',?),('ref2','TEST b',?)").bind(notes,notes).run();
+  const p=await prepare(db,[{sourceKey:'physical',action:'create'}]);assert.equal(p.blocked,1);assert.match(p.rows[0].reasons.join(' '),/source-reference shapes/);
+  assert.equal(await count(db,'physical_cutters'),0);
+ }finally{await runtime.dispose();}
+});
+
+test('not-printed evidence in a source reference blocks physical import even if a client bypasses the checklist',async()=>{
+ const m=manifest();m.items[0].catalog={ownership:'owned',sourceClassification:'both'};
+ const {runtime,db}=await environment(true,m);
+ try{
+  const notes=JSON.stringify({format:'cookie-catalog-source-reference',sourceNamespace:m.sourceNamespace,sourceKey:'physical',reviewState:'not_printed',reason:'Printable STL, not printed'});
+  await db.prepare("INSERT INTO shapes(id,name,notes) VALUES('reference','TEST reference',?)").bind(notes).run();
+  const choices=[{sourceKey:'physical',action:'create'}];const p=await prepare(db,choices);assert.equal(p.blocked,1);assert.match(p.rows[0].reasons.join(' '),/Source evidence says not printed/);
+  assert.equal((await apply(db,p,choices)).status,409);assert.equal(await count(db,'physical_cutters'),0);
+  m.items[0].catalog={...m.items[0].catalog,printStatus:'printed'};
+  const update=new Request(origin+'/api/import-reviews/'+id,{method:'PUT',headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'import-review','If-Match':'"review-1"'},body:JSON.stringify({id,title:'TEST corrected status',manifest:m})});
+  assert.equal((await handleApiRequest(update,owner,db)).status,200);
+  const fixed=await (await handleApiRequest(request('catalog-plan',{choices,ownershipConfirmed:true},'"review-2"'),owner,db)).json() as any;assert.equal(fixed.ready,1);
+ }finally{await runtime.dispose();}
 });

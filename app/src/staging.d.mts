@@ -4,7 +4,7 @@ export interface StagingItem {
   sourceKey:string;kind:ReviewKind;name:string;
   source:{pageId:string;pageTitle?:string;sectionPath?:string;url?:string};
   facts?:{widthMm?:number;heightMm?:number;location?:string;source?:string};
-  catalog?:{ownership?:"unknown"|"owned"|"not_owned";printStatus?:"unknown"|"printed"|"not_printed"|"not_applicable";quantity?:number;referenceSizeMm?:number;originalSizeLabel?:string;slot?:string};
+  catalog?:{sourceClassification?:"physical"|"digital"|"both";ownership?:"unknown"|"owned"|"not_owned";printStatus?:"unknown"|"printed"|"not_printed"|"not_applicable";quantity?:number;referenceSizeMm?:number;originalSizeLabel?:string;slot?:string};
   files?:StagingFile[];
   reviews?:Partial<Record<ReviewField,FieldReview>>;
 }

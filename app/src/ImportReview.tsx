@@ -6,7 +6,7 @@ const kindNames={physical_cutter:"Physical cutter",printable_asset:"Printable fi
 const states:ReviewState[]=["unknown","needs_verification","not_applicable","complete"];
 const stateNames={unknown:"Missing / unknown",needs_verification:"Needs verification",not_applicable:"Not applicable",complete:"Complete"};
 function method(field:ReviewField):Evidence["method"] {return field==="dimensions"?"measured":field==="original"?"file_check":["photo","scale_photo","location"].includes(field)?"visual_review":"source_review";}
-export function ImportReview({enableSavedReviews=false}:{enableSavedReviews?:boolean}={}) {
+export function ImportReview({enableSavedReviews=false,canImport=false,onCatalogChanged}:{enableSavedReviews?:boolean;canImport?:boolean;onCatalogChanged?:()=>void}={}) {
   const [networkBusy,setNetworkBusy]=useState(false),[workspaceReset,setWorkspaceReset]=useState(0);
   const [dirty,setDirty]=useState(false);
   useEffect(()=>{const warn=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue="";}};window.addEventListener("beforeunload",warn);return()=>window.removeEventListener("beforeunload",warn);},[dirty]);
@@ -47,14 +47,14 @@ export function ImportReview({enableSavedReviews=false}:{enableSavedReviews?:boo
     <p>Open a prepared manifest to classify items and collect missing details. Work stays in this tab until you download it or explicitly save a review. Your inventory and source notebook are unchanged.</p>
     <label>Prepared manifest (JSON) <input type="file" accept=".json,application/json" onChange={event=>{void open(event.target.files?.[0]);event.target.value="";}} /></label>
     <p role="status" aria-live="polite">{message}</p>
-    {enableSavedReviews&&<SavedImportReviews key={workspaceReset} draft={draft} dirty={dirty} onBusy={setNetworkBusy} onOpen={(manifest,unsaved=false)=>{setDraft(manifest);setDirty(unsaved);setSelected(0);setMessage("Saved source review opened. Catalog inventory is unchanged.");}} onSaved={()=>{setDirty(false);setMessage("Review saved. Catalog inventory is unchanged.");}} />}
+    {enableSavedReviews&&<SavedImportReviews canImport={canImport} onCatalogChanged={onCatalogChanged} key={workspaceReset} draft={draft} dirty={dirty} onBusy={setNetworkBusy} onInspect={index=>{setSelected(index);requestAnimationFrame(()=>document.getElementById("source-item-details")?.scrollIntoView({behavior:"smooth"}));}} onOpen={(manifest,unsaved=false)=>{setDraft(manifest);setDirty(unsaved);setSelected(0);setMessage("Saved source review opened. Catalog inventory is unchanged.");}} onSaved={()=>{setDirty(false);setMessage("Review saved.");}} />}
 
     {draft&&<>
       <p>{draft.items.length} source items. Namespace: {draft.sourceNamespace}</p>
       <button onClick={download}>Download reviewed manifest</button>{" "}
       <button onClick={()=>{if(window.confirm("Discard this local draft? Download it first to keep changes.")){setDraft(null);setDirty(false);setMessage("Local draft closed.");}}}>Close local draft</button>
       {item&&<>
-        <p><label>Item <select value={selected} onChange={e=>setSelected(Number(e.target.value))}>{draft.items.map((entry,i)=><option key={entry.sourceKey} value={i}>{i+1}. {entry.name}</option>)}</select></label></p>
+        <p id="source-item-details"><label>Item <select value={selected} onChange={e=>setSelected(Number(e.target.value))}>{draft.items.map((entry,i)=><option key={entry.sourceKey} value={i}>{i+1}. {entry.name}</option>)}</select></label></p>
         <p>Source: {item.source.pageTitle??item.source.pageId}{item.source.sectionPath?" / "+item.source.sectionPath:""}</p>
         <p><label>Item name <input maxLength={200} value={item.name} onChange={e=>update(item=>{item.name=e.target.value;})} /></label></p>
         <p><label>Item type <select value={item.kind} onChange={e=>update(item=>{

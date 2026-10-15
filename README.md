@@ -1,5 +1,9 @@
 # Cookie_Catalog
 
+## Quick collection verification
+
+The development feature branch now includes the Physical / Digital / Both source checklist, filtered-group confirmation, exceptions, saved decisions and guarded owner/admin import in batches. Existing source shapes/photos and imported inventory are preserved. Digital references do not assert possession of printable originals. See [Quick verification](docs/Quick_Verification.md) and the latest Context checkpoint; production remains unreleased.
+
 ## October 15 — Autonomous completion/import preparation batch
 
 Owner authorized a sustained reversible engineering batch, recommended defaults, verified technical sources and one consolidated decision review. The missing-detail collection workflow is explicitly part of CC-TODO-009's import milestone. See [batch review](docs/Batch_Review_20261015.md), [completion workflow](docs/Catalog_Completion_Workflow.md), [staging instructions](docs/Import_Staging.md) and [development guidelines](docs/Development_Guidelines.md).

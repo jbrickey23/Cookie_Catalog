@@ -1,3 +1,4 @@
+import { sourceReference, suggestion } from '../quick-classification';
 import { openReview } from './import-reviews';
 import { sha256 } from './development-backup';
 import type { StagingItem } from '../staging.mjs';
@@ -88,6 +89,8 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
         if (!item)
             throw new InputError('A selected source entry is absent from this saved version.');
         const itemHash = await digest(item), prior = mappings.find(m => m.source_key === item.sourceKey);
+        const sourceShapes = shapes.filter(s => { const ref = sourceReference(s.notes); return ref?.sourceNamespace === saved.manifest.sourceNamespace && ref.sourceKey === item.sourceKey; });
+        const sourceShape = sourceShapes.length === 1 ? sourceShapes[0] : null;
         const sameName = shapes.filter(s => fold(s.name) === fold(item.name) || item.source.url && s.source_url === item.source.url);
         const candidates: Row[] = item.kind === 'design' ? designs.filter(d => fold(d.name) === fold(item.name) || item.source.url && d.source_url === item.source.url) : physical.filter(c => choice.shapeId ? c.shape_id === choice.shapeId : sameName.some(s => s.id === c.shape_id)).map(c => ({ ...c, name: shapes.find(s => s.id === c.shape_id)?.name }));
         const reasons: string[] = [];
@@ -95,12 +98,20 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
             const exists = prior.kind === 'design' ? designs.some(d => d.id === prior.design_id) : physical.some(p => p.id === prior.physical_id && p.shape_id === prior.shape_id);
             const target = prior.design_id ?? prior.physical_id;
             const mismatched = choice.action === 'link' && choice.targetId !== target;
-            rows.push({ sourceKey: item.sourceKey, name: item.name, kind: item.kind, status: exists && prior.item_sha256 === itemHash && !mismatched ? 'already_linked' : 'blocked', reasons: !exists ? ['The mapped inventory record changed or is missing; reconcile it manually.'] : mismatched ? ['This source entry is already mapped to a different record.'] : prior.item_sha256 !== itemHash ? ['This entry changed after its first import. Reconcile the existing record; another import will not overwrite it.'] : [], targetId: target, candidates });
+            rows.push({ sourceKey: item.sourceKey, name: item.name, kind: item.kind, status: exists && !mismatched ? 'already_linked' : 'blocked', reasons: !exists ? ['The mapped inventory record changed or is missing; reconcile it manually.'] : mismatched ? ['This source entry is already mapped to a different record.'] : prior.item_sha256 !== itemHash ? ['Review metadata changed after import. Existing inventory is retained; this entry is skipped. Reconcile any inventory edits separately.'] : [], targetId: target, candidates });
             continue;
         }
+        if (sourceShapes.length > 1) reasons.push('Several source-reference shapes share this identity. Reconcile them before importing.');
+        if (sourceShape && choice.shapeId && choice.shapeId !== sourceShape.id) reasons.push('Use the existing source-reference shape to preserve its photos and identity.');
         if (!['physical_cutter', 'design'].includes(item.kind))
             reasons.push(item.kind === 'printable_asset' ? 'Printable files require a separate verified-original upload and attachment mapping. Keep this entry for that workflow.' : 'Classify and split this entry before importing it.');
         if (item.kind === 'physical_cutter') {
+            if(sourceShape){
+                const ref=sourceReference(sourceShape.notes)!;
+                const check=suggestion(item,{sourceKey:item.sourceKey,shapeId:sourceShape.id,imageId:null,reviewState:ref.reviewState??'',evidence:sourceShape.notes??'',imported:false,ambiguous:false});
+                if(check.physicalBlocked)reasons.push('Source evidence says not printed or not purchased. Correct ownership and print status in the detailed review before importing physical stock.');
+                if(item.catalog?.sourceClassification&&check.ambiguous)reasons.push('This source set, size variant or duplicate needs individual review before quick import.');
+            }
             if (item.catalog?.ownership === 'not_owned')
                 reasons.push('This cutter is marked not owned.');
             if (item.catalog?.printStatus === 'not_printed')
@@ -115,7 +126,7 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
             reasons.push('The chosen existing record does not exist for this item type.');
         const reference = item.catalog?.referenceSizeMm;
         const differentKnownSizes = item.kind === 'physical_cutter' && !!reference && candidates.length > 0 && sameName.every(s => !s.source_url || !item.source.url || s.source_url === item.source.url) && candidates.every(c => c.reference_size_mm !== null && Math.abs(c.reference_size_mm - reference) > 0.000001);
-        if (choice.action === 'create' && !differentKnownSizes && (candidates.length || item.kind !== 'design' && sameName.length && !choice.shapeId) && !choice.distinctReason)
+        if (choice.action === 'create' && !differentKnownSizes && (candidates.length || item.kind !== 'design' && sameName.some(s => s.id !== sourceShape?.id) && !choice.shapeId) && !choice.distinctReason)
             reasons.push('A matching name or source link already exists. Link it, or explain why this is a separate item.');
         const duplicates = selected.filter(c => c.action === 'create' && c.sourceKey !== choice.sourceKey).map(c => saved.manifest.items.find(i => i.sourceKey === c.sourceKey)!).filter(i => i.kind === item.kind && (fold(i.name) === fold(item.name) || item.source.url && i.source.url === item.source.url) && !(i.kind === 'physical_cutter' && i.catalog?.referenceSizeMm && reference && Math.abs(i.catalog.referenceSizeMm - reference) > 0.000001));
         if (choice.action === 'create' && duplicates.length && !choice.distinctReason)
@@ -127,7 +138,7 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
         const otherSizes = selected.filter(c => c.action === 'create' && c.sourceKey !== choice.sourceKey && !c.distinctReason && !c.shapeId).map(c => saved.manifest.items.find(i => i.sourceKey === c.sourceKey)!).filter(i => i.kind === 'physical_cutter' && fold(i.name) === fold(item.name) && (!i.source.url || !item.source.url || i.source.url === item.source.url) && reference && i.catalog?.referenceSizeMm && Math.abs(i.catalog.referenceSizeMm - reference) > 0.000001);
         const groupedShapeId = otherSizes.length && !choice.distinctReason ? 'shape_import_' + await digest([saved.manifest.sourceNamespace, 'shape-name', fold(item.name)]) : null;
         const key = await digest([saved.manifest.sourceNamespace, item.sourceKey]);
-        const shapeId = item.kind === 'physical_cutter' ? (target?.shape_id ?? choice.shapeId ?? (differentKnownSizes && sameName.length === 1 ? sameName[0].id : groupedShapeId ?? 'shape_import_' + key)) : null;
+        const shapeId = item.kind === 'physical_cutter' ? (target?.shape_id ?? sourceShape?.id ?? choice.shapeId ?? (differentKnownSizes && sameName.length === 1 ? sameName[0].id : groupedShapeId ?? 'shape_import_' + key)) : null;
         const targetId = target?.id ?? (item.kind === 'design' ? 'design_import_' : 'cutter_import_') + key;
         const locationLabel = item.reviews?.location?.state === 'complete' && item.reviews.location.evidence?.method === 'visual_review' && item.reviews.location.evidence.reference.trim() ? item.facts?.location?.trim() : undefined;
         if (locationLabel && locationLabel.length > 200)

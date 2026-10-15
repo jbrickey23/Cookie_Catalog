@@ -16,7 +16,8 @@ export function validateManifest(manifest){
     if(!keys(f,['widthMm','heightMm','location','source'])||Object.entries(f).some(([k,v])=>k.endsWith('Mm')?typeof v!=='number'||!Number.isFinite(v)||v<=0||v>10000:!text(v,4000)))throw Error('Invalid facts; retain unknown dimensions by omitting them.');
     if(item.files!==undefined&&(!Array.isArray(item.files)||item.files.length>100||item.files.some(f=>!keys(f,['path','purpose','sha256'])||!text(f.path,2000)||!purposes.includes(f.purpose)||(f.sha256!==undefined&&!/^[a-f0-9]{64}$/.test(f.sha256)))))throw Error('Invalid file descriptor.');
     const c=item.catalog??{};
-    if(!keys(c,['ownership','printStatus','quantity','referenceSizeMm','originalSizeLabel','slot'])
+    if(!keys(c,['ownership','printStatus','quantity','referenceSizeMm','originalSizeLabel','slot','sourceClassification'])
+      ||c.sourceClassification!==undefined&&!['physical','digital','both'].includes(c.sourceClassification)
       ||c.ownership!==undefined&&!['unknown','owned','not_owned'].includes(c.ownership)
       ||c.printStatus!==undefined&&!['unknown','printed','not_printed','not_applicable'].includes(c.printStatus)
       ||c.quantity!==undefined&&(!Number.isSafeInteger(c.quantity)||c.quantity<0||c.quantity>100000)

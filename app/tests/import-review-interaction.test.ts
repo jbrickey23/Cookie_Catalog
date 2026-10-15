@@ -133,3 +133,54 @@ test("inventory import UI starts with no selections and requires a plan plus bac
   fireEvent.click(screen.getByRole('button',{name:'Import selected entries'}));await screen.findByText(/Import recorded: 1 new inventory records/);assert.equal(applied.ownershipConfirmed,true);assert.equal(applied.backupConfirmed,true);assert.equal(applied.choices.length,1);
  }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
 });
+
+test('quick checklist confirms a filtered group, saves decisions and imports bounded eligible subsets with photos and safe skips',async()=>{
+ const {QuickVerification}=await import('../src/QuickVerification');const original=globalThis.fetch,confirm=window.confirm;let completed:any,saved:any;const planned:number[]=[],applied:number[]=[];
+ const manifest:any={format:'cookie-catalog-staging',version:1,sourceNamespace:'TEST quick',items:Array.from({length:53},(_,i)=>({sourceKey:'p'+i,kind:'unclassified',name:'TEST cutter '+i,source:{pageId:'page'+i,sectionPath:'Bin 001'}}))};
+ manifest.items.push({sourceKey:'digital',kind:'unclassified',name:'TEST digital STL',source:{pageId:'digital'},catalog:{printStatus:'not_printed'}});
+ manifest.items.push({sourceKey:'set',kind:'unclassified',name:'TEST set of stars',source:{pageId:'set',sectionPath:'Bin 001'}});
+ const contexts=manifest.items.map((i:any)=>({sourceKey:i.sourceKey,shapeId:'shape_'+i.sourceKey,imageId:i.sourceKey==='p1'?'private-photo':null,reviewState:'',evidence:'Source evidence',imported:i.sourceKey==='p0',ambiguous:false}));
+ globalThis.fetch=async(input,init)=>{
+  const url=String(input),body=init?.body?JSON.parse(String(init.body)):null;
+  if(url.endsWith('/quick-check'))return Response.json({items:contexts});
+  if(init?.method==='PUT'){saved=body;return Response.json({revision:'"review-2"'});}
+  if(url.endsWith('/catalog-plan')){planned.push(body.choices.length);const rows=body.choices.map((c:any)=>({...c,status:c.sourceKey==='p1'?'blocked':'ready',reasons:c.sourceKey==='p1'?['Possible duplicate']:[]}));return Response.json({planSha256:'a'.repeat(64),rows,ready:rows.filter((r:any)=>r.status==='ready').length,blocked:rows.filter((r:any)=>r.status==='blocked').length,alreadyLinked:0});}
+  if(url.endsWith('/apply')){assert.equal(body.backupConfirmed,true);assert.equal(body.ownershipConfirmed,true);assert.equal(new Headers(init!.headers).get('If-Match'),'"review-2"');assert(!body.choices.some((c:any)=>['digital','set','p0','p1'].includes(c.sourceKey)));applied.push(body.choices.length);return Response.json({created:body.choices.length});}
+  throw Error('Unexpected request '+url);
+ };window.confirm=()=>true;
+ function Harness(){const [draft,setDraft]=React.useState(manifest);return React.createElement(QuickVerification,{id:'review_'+'a'.repeat(32),title:'TEST',revision:'"review-1"',manifest:draft,disabled:false,onChange:setDraft,onBusy:()=>{},onInspect:()=>{},onComplete:(m:any,revision:string,message:string)=>{completed={m,revision,message};}});}
+ try{
+  render(React.createElement(Harness));fireEvent.click(screen.getByRole('button',{name:'Open quick verification'}));await screen.findByText('Suggestions loaded. Nothing is confirmed until you choose or confirm a group.');
+  assert.equal(screen.getByAltText('TEST cutter 1 — source image').getAttribute('src'),'/api/attachments/private-photo?view=image');
+  fireEvent.click(screen.getByRole('button',{name:'Confirm safe suggestions in this group'}));await screen.findByText(/53 classifications confirmed/);
+  assert.equal((screen.getByRole('button',{name:'Save decisions and import confirmed cutters'}) as HTMLButtonElement).disabled,true);
+  fireEvent.change(screen.getByLabelText('Verified protected backup reference'),{target:{value:'TEST verified protected archive'}});fireEvent.click(screen.getByLabelText(/I saved and verified a protected pre-change backup for this import/));
+  fireEvent.click(screen.getByRole('button',{name:'Save decisions and import confirmed cutters'}));await waitFor(()=>assert.ok(completed));
+  assert.deepEqual(planned,[50,49,2]);assert.deepEqual(applied,[49,2]);assert.match(completed.message,/51 physical records imported/);assert.match(completed.message,/1 entries need detailed review/);
+  assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='digital').kind,'printable_asset');assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='digital').catalog.ownership,undefined);
+  assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='set').catalog,undefined);assert.equal(saved.manifest.items[0].catalog,undefined);
+ }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
+});
+
+test('quick checklist keeps changed draft on save conflict and performs no import',async()=>{
+ const {QuickVerification}=await import('../src/QuickVerification');const original=globalThis.fetch;let writes=0;const m=fixture();
+ globalThis.fetch=async(input,init)=>{if(String(input).endsWith('/quick-check'))return Response.json({items:[]});if(init?.method==='PUT'){writes++;return Response.json({error:'The saved review changed. Your draft is kept.'},{status:412});}throw Error('No inventory call allowed');};
+ function Harness(){const [draft,setDraft]=React.useState(m);return React.createElement(QuickVerification,{id:'review_'+'a'.repeat(32),title:'TEST',revision:'"review-1"',manifest:draft,disabled:false,onChange:setDraft,onBusy:()=>{},onInspect:()=>{},onComplete:()=>{throw Error('Conflict cannot complete');}});}
+ try{
+  render(React.createElement(Harness));fireEvent.click(screen.getByRole('button',{name:'Open quick verification'}));await screen.findByText(/Suggestions loaded/);
+  fireEvent.change(screen.getByLabelText('Classification for '+m.items[0].name),{target:{value:'physical'}});
+  fireEvent.change(screen.getByLabelText('Review entries'),{target:{value:'confirmed'}});
+  fireEvent.click(screen.getByRole('button',{name:'Save checklist decisions'}));await screen.findByText(/The saved review changed. Your draft is kept/);
+  assert.equal((screen.getByLabelText('Classification for '+m.items[0].name) as HTMLSelectElement).value,'physical');assert.equal(writes,1);
+ }finally{cleanup();globalThis.fetch=original;}
+});
+
+test('editor checklist can save decisions without exposing the inventory import or backup controls',async()=>{
+ const {QuickVerification}=await import('../src/QuickVerification');const original=globalThis.fetch;
+ globalThis.fetch=async()=>Response.json({items:[]});
+ try{
+  render(React.createElement(QuickVerification,{id:'review_'+'a'.repeat(32),title:'TEST',revision:'"review-1"',manifest:fixture(),disabled:false,canImport:false,onChange:()=>{},onBusy:()=>{},onInspect:()=>{},onComplete:()=>{}}));
+  fireEvent.click(screen.getByRole('button',{name:'Open quick verification'}));await screen.findByText(/Suggestions loaded/);
+  assert(screen.getByRole('button',{name:'Save checklist decisions'}));assert.equal(screen.queryByRole('button',{name:'Save decisions and import confirmed cutters'}),null);assert.equal(screen.queryByLabelText('Verified protected backup reference'),null);
+ }finally{cleanup();globalThis.fetch=original;}
+});

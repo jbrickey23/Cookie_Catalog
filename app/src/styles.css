@@ -50,3 +50,15 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .browse-search input {min-width:0;flex:1}
 .browse-search button {flex:0 0 auto;white-space:nowrap}
 .catalog-browse select {font:inherit;padding:.5rem;border:1px solid #9cac9e;border-radius:6px;background:white;color:#253b34}
+
+.quick-verification { margin:1.5rem 0; padding:1rem; border:1px solid #c8d8d1; border-radius:12px; background:#f7faf8; }
+.quick-filters { display:flex; gap:1rem; flex-wrap:wrap; }
+.quick-list { display:grid; gap:.75rem; margin:1rem 0; }
+.quick-row { display:flex; gap:1rem; border-bottom:1px solid #d5dfda; padding:.75rem 0; }
+.quick-row img,.quick-no-image { width:96px; height:96px; object-fit:contain; flex-shrink:0; background:white; border-radius:8px; }
+.quick-no-image { display:grid; place-items:center; font-size:.8rem; }
+.quick-row>div:last-child { min-width:0; flex:1; }
+.quick-row p { margin:.35rem 0; }
+.quick-row select { margin:.4rem 0; }
+.quick-evidence { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.8rem; max-height:12rem; overflow:auto; }
+@media(max-width:600px){.quick-verification{padding:.65rem}.quick-row{gap:.65rem}.quick-row img,.quick-no-image{width:64px;height:64px}.quick-row select{width:100%}}

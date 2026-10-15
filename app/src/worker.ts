@@ -1,3 +1,4 @@
+import {quickReviewContext} from './server/quick-review';
 import {handleCatalogImportSetup} from "./server/catalog-import-setup";
 import {handleCatalogImport} from "./server/catalog-import";
 import {handleImportReviews} from "./server/import-reviews";
@@ -61,6 +62,11 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       if(!["GET","POST"].includes(request.method))return json({error:"Method not allowed"},405);
       if(request.method==="POST"&&user.role!=="owner")return json({error:"Owner/admin access required to activate importing"},403);
       return handleCatalogImportSetup(request,database);
+    }
+    const quick=/^\/api\/import-reviews\/(review_[a-f0-9]{32})\/quick-check$/.exec(pathname);
+    if(quick){
+      if(request.method!=="GET")return json({error:"Method not allowed"},405);
+      return quickReviewContext(request,database,quick[1]);
     }
     const importer=/^\/api\/import-reviews\/(review_[a-f0-9]{32})\/(catalog-plan|apply)$/.exec(pathname);
     if(importer){

@@ -1,10 +1,11 @@
+import {QuickVerification} from "./QuickVerification";
 import {CatalogImport} from "./CatalogImport";
 import React,{useState} from "react";
 import {validateManifest,type StagingManifest} from "./staging.mjs";
 import type {importPreview} from "./import-preview";
 type Workspace={id:string;title:string;current_revision:number};
 type Saved={id:string;title:string;revision:string;loadedRevision:number;manifest:StagingManifest;versions:{revision:number;item_count:number;saved_at:string}[];previews:{id:string;revision:number;created_at:string;result:ReturnType<typeof importPreview>}[]};
-export function SavedImportReviews({draft,dirty,onOpen,onSaved,onBusy}:{draft:StagingManifest|null;dirty:boolean;onOpen:(manifest:StagingManifest,unsaved?:boolean)=>void;onSaved:()=>void;onBusy:(busy:boolean)=>void}){
+export function SavedImportReviews({draft,dirty,onOpen,onSaved,onBusy,onInspect,canImport=false,onCatalogChanged}:{draft:StagingManifest|null;dirty:boolean;onOpen:(manifest:StagingManifest,unsaved?:boolean)=>void;onSaved:()=>void;onBusy:(busy:boolean)=>void;onInspect?:(index:number)=>void;canImport?:boolean;onCatalogChanged?:()=>void}){
   const [workspaces,setWorkspaces]=useState<Workspace[]>([]),[selected,setSelected]=useState(""),[nextOffset,setNextOffset]=useState<number|null>(null);
   const [current,setCurrent]=useState<Saved|null>(null),[title,setTitle]=useState(""),[newId]=useState(()=>"review_"+crypto.randomUUID().replaceAll("-",""));
   const [message,setMessage]=useState(""),[busy,setBusy]=useState(false),[preview,setPreview]=useState<ReturnType<typeof importPreview>|null>(null);
@@ -49,7 +50,8 @@ export function SavedImportReviews({draft,dirty,onOpen,onSaved,onBusy}:{draft:St
       })}>Record import preview</button>
       <p>Save changes before recording a preview. A preview checks metadata; it does not verify original file bytes or apply an import.</p>
     </>}
-    {current&&draft&&<CatalogImport key={current.id+current.revision} id={current.id} revision={current.revision} manifest={draft} disabled={busy||dirty||JSON.stringify(current.manifest)!==JSON.stringify(draft)} onBusy={onBusy} />}
+    {current&&draft&&<QuickVerification key={'quick-'+current.id+current.revision} id={current.id} title={title||current.title} revision={current.revision} manifest={draft} canImport={canImport} disabled={busy||current.loadedRevision!==Number(/^"review-(\d+)"$/.exec(current.revision)![1])} onBusy={onBusy} onChange={m=>onOpen(m,true)} onInspect={index=>onInspect?.(index)} onComplete={(m,revision,message)=>{setCurrent({...current,revision,loadedRevision:Number(/^"review-(\d+)"$/.exec(revision)![1]),manifest:m});onOpen(m);onSaved();onCatalogChanged?.();setMessage(message);}}/>}
+    {current&&draft&&canImport&&<CatalogImport key={current.id+current.revision} id={current.id} revision={current.revision} manifest={draft} disabled={busy||dirty||JSON.stringify(current.manifest)!==JSON.stringify(draft)} onBusy={onBusy} />}
     {current&&<details><summary>Saved versions and preview history</summary>
       <ul>{current.versions.map(v=><li key={v.revision}>Version {v.revision} · {v.item_count} entries · {v.saved_at}{" "}<button disabled={busy} onClick={()=>void task(()=>load(current.id,v.revision))}>Open version {v.revision} as draft</button></li>)}</ul>
       <p>Showing at most 50 recent versions and 20 recent previews. Older history remains in backups.</p>
