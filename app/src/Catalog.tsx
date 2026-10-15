@@ -19,6 +19,12 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
   const activeFields:Field[]=[...sections[kind].fields,...(kind==="physical_cutters"&&sizingFields?[{key:"reference_size_mm",label:"Reference size — longest edge (inches)",type:"number" as const},{key:"slot",label:"Slot (optional)"}]:[])];
   const [dirty,setDirty]=useState(false);
   useEffect(()=>{const warn=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue="";}};window.addEventListener("beforeunload",warn);return()=>window.removeEventListener("beforeunload",warn);},[dirty]);
+  const [activeName,setActiveName]=useState("");
+  function recordName(record:Row,fallback="") {
+    if(kind==="physical_cutters")return String(lookups.shapes.find(shape=>shape.id===record.shape_id)?.name??record.shape_name??(fallback||record.id));
+    if(kind==="design_shape_links")return String(lookups.designs.find(design=>design.id===record.design_id)?.name??record.design_name??(fallback||record.id))+" → "+String(lookups.shapes.find(shape=>shape.id===record.shape_id)?.name??record.shape_name??record.shape_id);
+    return title(record);
+  }
   const [revision,setRevision]=useState("");
   const [values,setValues]=useState<Record<string,string>>({...defaults}),[editing,setEditing]=useState("");
   const [nextOffset,setNextOffset]=useState<number|null>(null),[busy,setBusy]=useState(false),[status,setStatus]=useState("");
@@ -33,7 +39,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     setLookups(Object.fromEntries(entries));
   }
   useEffect(()=>{setBusy(true);Promise.all([load("shapes",""),choices()]).catch(error=>setStatus(error.message)).finally(()=>setBusy(false));},[]);
-  function reset() {setDirty(false);setRevision("");setEditing("");setValues({...defaults});}
+  function reset() {setDirty(false);setRevision("");setEditing("");setActiveName("");setValues({...defaults});}
   async function switchSection(section:string) {
     if(dirty&&!window.confirm("Switch sections and discard unsaved form changes?"))return;
     setKind(section);setQuery("");reset();setBusy(true);setStatus("");
@@ -54,7 +60,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
       const response=await fetch("/api/catalog/"+kind+(editing?"/"+editing:""),{method:editing?"PUT":"POST",headers:{"content-type":"application/json","X-Cookie-Catalog-Check":"catalog",...(editing?{"If-Match":revision}:{})},body:JSON.stringify(record)});
       const body=await response.json() as {error?:string;record:Row;revision:string};
       if(!response.ok)throw Error(body.error??"Record could not save.");
-      setEditing(String(body.record.id));setRevision(body.revision);setDirty(false);
+      setEditing(String(body.record.id));setActiveName(recordName(body.record,activeName));setRevision(body.revision);setDirty(false);
       await Promise.all([load(),choices()]);onSaved();setStatus("Saved. Refresh or search to retrieve this record.");
     }catch(error){setStatus((error as Error).message);}finally{setBusy(false);}
   }
@@ -65,7 +71,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
       const response=await fetch("/api/catalog/"+kind+"/"+row.id,{cache:"no-store"});
       const body=await response.json() as {record:Row;revision:string;error?:string};
       if(!response.ok)throw Error(body.error??"Record could not load.");
-      setDirty(false);setRevision(body.revision);setEditing(String(body.record.id));setValues(Object.fromEntries(activeFields.map(field=>[field.key,String(field.key==="reference_size_mm"&&body.record[field.key]!=null?Number((Number(body.record[field.key])/25.4).toFixed(8)):body.record[field.key]??"")])));
+      setDirty(false);setRevision(body.revision);setEditing(String(body.record.id));setActiveName(recordName({...row,...body.record},title(row)));setValues(Object.fromEntries(activeFields.map(field=>[field.key,String(field.key==="reference_size_mm"&&body.record[field.key]!=null?Number((Number(body.record[field.key])/25.4).toFixed(8)):body.record[field.key]??"")])));
       setStatus((canEdit?"Editing ":"Viewing ")+title(body.record)+".");
     }catch(error){setStatus((error as Error).message);}finally{setBusy(false);}
   }
@@ -77,7 +83,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
       <label>Search record metadata <input value={query} maxLength={120} disabled={busy} onChange={event=>setQuery(event.target.value)} /></label>{" "}
       <button disabled={busy}>Search</button>
     </form>
-    <ul>{rows.map(row=><li key={String(row.id)} style={{margin:"10px 0"}}>
+    <ul>{rows.map(row=><li key={String(row.id)} aria-current={editing===String(row.id)?"true":undefined} style={{margin:"10px 0",...(editing===String(row.id)?{borderLeft:"4px solid #245d42",paddingLeft:"10px",background:"#edf5ef"}:{})}}>
       <strong>{title(row)}</strong>
       {kind==="physical_cutters" && <span> — {row.width_mm??"?"} × {row.height_mm??"?"} mm; reference size {row.reference_size_mm!=null?`${Number((Number(row.reference_size_mm)/25.4).toFixed(4))}″ (${row.reference_size_mm} mm)`:"unknown"}; quantity {row.quantity}; {row.location_label??"location unknown"}</span>}
       {kind==="design_shape_links" && <span> → {row.shape_name}; {row.status} {row.use_type}</span>}
@@ -94,7 +100,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     {!busy && rows.length===0 && <p>No matching records.</p>}
     {nextOffset!==null && <button disabled={busy} onClick={()=>search(undefined,nextOffset)}>Next page</button>}
     {(canEdit || editing) && <>
-    <h3>{canEdit ? (editing?"Edit record":"New record") : "Record details"}</h3>
+    <h3>{editing?`${canEdit?"Editing":"Viewing"}: ${activeName}`:"New record"}</h3>
     {editing&&<p>Record ID for linking an import review: <code>{editing}</code></p>}
     {canEdit && editing && <button disabled={busy} onClick={()=>{if(!dirty||window.confirm("Start a new record and discard unsaved form changes?"))reset();}}>Start a new record</button>}
     <form onSubmit={event => { if (canEdit) void save(event); else event.preventDefault(); }}>
