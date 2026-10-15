@@ -13,7 +13,7 @@ One source page can describe several entities: a physical cutter, its printable 
 | Decorating design | Identifying example/artwork and provenance | Its exact physical size, a verified cutter match or permission to redistribute |
 | Unclassified page/item | Determine item type/ownership, preserve source | Page title or file extension as proof of the intended catalog entity |
 
-Record orientation and measurement method alongside numeric dimensions. The current draft uses width/height in millimeters; it does not choose the final cutting-edge versus outside-dimension convention or discard maker sizing labels. Keep such labels in review notes until the real-source audit establishes the mapping. Scaling remains a slicer operation in v1.
+Owner convention: the longest measured dimension is the reference/catalog size. A 4 by 2 inch cutter is called a 4 inch cookie. Preserve width/height, orientation, measurement method and maker labels; do not use the diagonal. Store numeric dimensions in mm while retaining original inch/reference labels for display. Physical locations use Bin #, with optional Slot # reserved for future use. Missing locations remain unknown during import. Keep such labels in review notes until the real-source audit establishes the mapping. Scaling remains a slicer operation in v1.
 
 ## Status meanings
 

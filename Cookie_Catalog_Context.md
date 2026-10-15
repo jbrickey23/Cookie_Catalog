@@ -1,5 +1,11 @@
 # Cookie_Catalog — Context
 
+## October 15 — Owner answers to bulk review
+
+Q1 resolved: notebook is on personal OneDrive. Q3 resolved: longest measured dimension is the reference/catalog size; a 4 by 2 inch item is called a 4 inch cookie. Preserve both width/height when known, orientation and original units/labels; do not substitute diagonal size or infer measurements from unscaled photos. Internal mm storage remains, with human-facing inch/reference sizing planned. Q4 resolved: physical location is Bin #, with optional Slot # reserved for the future; incomplete items may keep unknown location. Preserve identifiers as labels without stripping leading zeros. Q5 resolved: combine a mixed representative set with a familiar theme.
+
+Q2 source request: begin with a PDF export of a familiar section (or approximately 6–10 representative pages) for immediate layout/text/image analysis; also obtain the original personal-OneDrive notebook export ZIP for structure/resource/native-format inspection and future extraction. Separate associated STL/3MF files are useful if available. Preserve the notebook and send existing content as-is; missing details are audit findings, not pre-work. Microsoft notebook/PDF export instructions were verified. Native OneNote containers still require an adapter; no actual source has been received/decoded yet. Existing device/recovery boundaries and draft/unreleased status remain.
+
 ## Publication verified — October 15
 
 Implementation `182bb9f` passed both GitHub Actions checks and Cloudflare Workers Builds (build d74557bd-2972-4d2c-80b4-6be1c2da7b8c, version 91cc3b16-50bf-4ab7-9816-faa07abdf6b3). Published source tree exactly matches the locally tested staged tree. Local checks: 68 application tests, 16 Node helper tests, eight Python recovery tests, three HTML-audit tests, schema/synthetic import, type-check/build and documentation validation passed. See [sanitized batch evidence](docs/evidence/Batch_20261015.json).

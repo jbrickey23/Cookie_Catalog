@@ -1,12 +1,18 @@
 # Cookie_Catalog — Decision Log
 
+## October 15 — CC-DEC-016 — Reference sizing, bins and representative source
+
+Owner confirmed personal OneDrive notebook. Reference/catalog size is the longest measured dimension: 4 by 2 inches is called a 4 inch cookie. Retain both measured axes, orientation, units and evidence; do not infer diagonal or photo-based measurements. Physical location convention is Bin #, optional future Slot #. Representative demonstration combines mixed item cases with a familiar theme. Q2 needs the existing source, beginning with a readable PDF section/sample and original notebook export ZIP, plus separate related originals when available. No notebook content or new live schema was imported/applied by recording these answers.
+
+Next unused decision ID: CC-DEC-017.
+
 ## October 15 — CC-DEC-015 — Autonomous engineering and import-completion scope
 
 Owner explicitly authorized going as far as possible on reversible work while they are away, using recommended defaults, batching open decisions and following source-verified application-development guidance. Costly/dependency-heavy improvements must be cataloged instead of blocking unrelated progress. This does not authorize production release, paid resources, destructive migration, source OneNote edits or external messages.
 
 The source-import milestone (CC-TODO-009) includes a workflow to identify and collect missing size/location/photos/scale references and other applicable details. Importing incomplete records is allowed; guessed dimensions/ownership or automatically verified photos are not. Recommended initial implementation uses a read-only live queue and private editable staging drafts, preserving the validated live schema/archive format until source analysis supports a coordinated migration. Applied defaults and bulk Q1–Q5 are in docs/Batch_Review_20261015.md. Evidence references, reasons for exceptions and physical/file-only distinction are explicit; no real notebook source has been supplied/analyzed by this batch.
 
-Next unused decision ID: CC-DEC-016.
+Historical checkpoint then: next unused decision ID was CC-DEC-016.
 
 ## October 14 — Confirmed access decisions and acceptance
 

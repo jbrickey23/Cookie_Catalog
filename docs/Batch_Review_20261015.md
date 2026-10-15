@@ -1,5 +1,11 @@
 # Autonomous engineering batch — October 15, 2026
 
+## October 15 — Owner answers to bulk review
+
+Q1 resolved: notebook is on personal OneDrive. Q3 resolved: longest measured dimension is the reference/catalog size; a 4 by 2 inch item is called a 4 inch cookie. Preserve both width/height when known, orientation and original units/labels; do not substitute diagonal size or infer measurements from unscaled photos. Internal mm storage remains, with human-facing inch/reference sizing planned. Q4 resolved: physical location is Bin #, with optional Slot # reserved for the future; incomplete items may keep unknown location. Preserve identifiers as labels without stripping leading zeros. Q5 resolved: combine a mixed representative set with a familiar theme.
+
+Q2 source request: begin with a PDF export of a familiar section (or approximately 6–10 representative pages) for immediate layout/text/image analysis; also obtain the original personal-OneDrive notebook export ZIP for structure/resource/native-format inspection and future extraction. Separate associated STL/3MF files are useful if available. Preserve the notebook and send existing content as-is; missing details are audit findings, not pre-work. Microsoft notebook/PDF export instructions were verified. Native OneNote containers still require an adapter; no actual source has been received/decoded yet. Existing device/recovery boundaries and draft/unreleased status remain.
+
 Owner authorization: go as far as possible on reversible work, use recommended defaults, follow application development guidelines, verify technical sources and batch open decisions. This advances the demonstration/import milestone without claiming actual notebook access or a completed live import.
 
 ## Delivered in this batch
@@ -30,13 +36,13 @@ Only the source/account/export input is needed to begin the real notebook audit.
 
 | ID | Input / decision | Options / recommended approach | What it affects |
 | --- | --- | --- | --- |
-| Q1 | Where is the current OneNote notebook stored? | A personal OneDrive; B work/school Microsoft 365/SharePoint; C unsure | Select the supported extraction route. No account type has been assumed. |
+| Q1 | Where is the current OneNote notebook stored? | Resolved: personal OneDrive | Use the personal-OneDrive export route; inspect the actual package before choosing a decoder. |
 | Q2 | Representative source material | Provide the existing export/sample pages and associated original files when available; preserve the original notebook | Real parsing, page/item counts, relationships, actual gaps and duplicate review. A link/account alone is not a supplied export. |
-| Q3 | Which physical measurement should be primary? | A cutting-footprint width/height, retaining maker labels/outside size in notes (recommended); B outside dimensions; C both as separate structured values later | Final measurement/schema convention. Existing numbers remain unverified meanwhile. |
-| Q4 | How should physical locations be named? | A keep existing labels first and normalize after audit (recommended); B adopt a new room/cabinet/bin scheme now | Avoid relabeling inventory before seeing the real source. |
-| Q5 | First wife-ready demonstration selection | A mixed 6–10 real examples including physical/file-only/design/missing-detail/known-flip cases (recommended); B one familiar theme first | Choose the representative import and demonstration path. |
+| Q3 | Which physical measurement should be primary? | Resolved: longest measured dimension is the reference size (4 by 2 inch = 4 inch cookie); retain both axes where known | Final measurement/schema convention. Existing numbers remain unverified meanwhile. |
+| Q4 | How should physical locations be named? | Resolved: Bin #, optional Slot # for future | Avoid relabeling inventory before seeing the real source. |
+| Q5 | First wife-ready demonstration selection | Resolved: both — mixed representative cases centered on a familiar theme | Choose the representative import and demonstration path. |
 
-A compact response can be `Q1 A; Q3 A; Q4 A; Q5 A`, with the source supplied separately when convenient. Q2 is a source dependency, not an approval request. Defaults Q3–Q5 do not block further synthetic engineering.
+Q1/Q3/Q4/Q5 are answered. Q2 is the remaining source dependency: PDF sample plus original notebook export ZIP; separate associated originals when available. No repeated answers or completed-detail collection are required before the audit.
 
 ## Verified results
 
