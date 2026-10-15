@@ -1,5 +1,9 @@
 # Cookie_Catalog — Context
 
+## 2026-10-15, 01:11 UTC — Development role deployment passed; owner reports configuration saved
+
+Implementation fed6dc189e454cdf288ff561450ac1884b84a6dd passed both GitHub Actions sqlite checks (runs 38663656199 and 38663664733) and Cloudflare Workers Builds 12d3d3eb-11ed-435f-b5d4-b8f8065dc021, version b561b64b-668a-4f82-bacd-3da9d7d39561. Owner reported saving the existing Access application's exact-email allow list and completing CATALOG_MEMBERS Secret Save/Deploy with the privately supplied two owner-equivalent accounts and one viewer. Secret contents/policy persistence are owner-reported, not direct API readback. Actual existing-owner/admin/viewer session acceptance is next; do not claim login/permissions passed yet. Preserve private emails, bootstrap OWNER_EMAIL, current catalog data and all prior deferred boundaries. No messages/invitations or production release.
+
 ## 2026-10-15 — Owner/admin equivalence implemented; private configuration activation pending
 
 Owner clarified that admin and owner have identical permissions for now, designated two owner-equivalent accounts and one viewer, then authorized proceeding. Actual account identities remain private in the conversation; do not publish them. Code now supports optional private CATALOG_MEMBERS JSON containing email/role entries (owner/editor/viewer). Admin uses owner; viewer can browse/search/view details/download, with server-side write/delete/maintenance/export denial and role-aware UI. Entries are evaluated after signed JWT verification on every request; invalid/duplicate maps deny configured members; removing an entry revokes subsequent requests after deployment. Existing OWNER_EMAIL bootstrap remains owner and is not revoked through this map.
