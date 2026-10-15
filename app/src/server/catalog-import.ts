@@ -92,7 +92,7 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
         const sourceShapes = shapes.filter(s => { const ref = sourceReference(s.notes); return ref?.sourceNamespace === saved.manifest.sourceNamespace && ref.sourceKey === item.sourceKey; });
         const sourceShape = sourceShapes.length === 1 ? sourceShapes[0] : null;
         const sameName = shapes.filter(s => fold(s.name) === fold(item.name) || item.source.url && s.source_url === item.source.url);
-        const candidates: Row[] = item.kind === 'design' ? designs.filter(d => fold(d.name) === fold(item.name) || item.source.url && d.source_url === item.source.url) : physical.filter(c => choice.shapeId ? c.shape_id === choice.shapeId : sameName.some(s => s.id === c.shape_id)).map(c => ({ ...c, name: shapes.find(s => s.id === c.shape_id)?.name }));
+        const candidates: Row[] = item.kind === 'design' ? designs.filter(d => fold(d.name) === fold(item.name) || item.source.url && d.source_url === item.source.url) : physical.filter(c => choice.shapeId ? c.shape_id === choice.shapeId : c.shape_id === sourceShape?.id || sameName.some(s => s.id === c.shape_id)).map(c => ({ ...c, name: shapes.find(s => s.id === c.shape_id)?.name }));
         const reasons: string[] = [];
         if (prior) {
             const exists = prior.kind === 'design' ? designs.some(d => d.id === prior.design_id) : physical.some(p => p.id === prior.physical_id && p.shape_id === prior.shape_id);

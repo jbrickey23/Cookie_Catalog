@@ -352,6 +352,10 @@ test('quick verification reuses source shape/photos, skips corrected imported re
   const fresh=await (await get('"review-2"')).json() as any;assert.equal(fresh.items[0].imported,true);
   assert.equal(await count(db,'attachments'),1);assert.equal(await count(db,'shape_attachments'),1);
   const edited=await db.prepare("SELECT attachment_id FROM shape_attachments WHERE shape_id='source-shape'").first<any>();assert.equal(edited.attachment_id,'photo');
+  await db.prepare("DELETE FROM catalog_source_mappings WHERE source_key='physical'").run();
+  await db.prepare("UPDATE shapes SET name='TEST renamed source shape' WHERE id='source-shape'").run();
+  const renamed=await (await handleApiRequest(request('catalog-plan',{choices,ownershipConfirmed:true},'\"review-2\"'),owner,db)).json() as any;
+  assert.equal(renamed.blocked,1);assert.equal(renamed.rows[0].candidates[0].id,physical.id);
  }finally{await runtime.dispose();}
 });
 
