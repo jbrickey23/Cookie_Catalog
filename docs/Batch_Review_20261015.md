@@ -44,7 +44,7 @@ Local: 68 application tests passed, including real Miniflare D1/R2 authorization
 
 Real-browser visual/interaction QA was attempted but Chromium download returned invalid/truncated archives in this runtime. No headless visual pass or actual Edge/iPhone pass is claimed. DOM tests verify local interactions, not browser layout or native download behavior. Source-level responsive CSS/focus treatment is included; actual target-device acceptance remains open.
 
-Remote CI/deployment outcomes are recorded in the follow-up durable checkpoint after publication. Keep application PR #1 draft and production unreleased.
+Both GitHub Actions checks and Cloudflare Workers Builds passed for implementation 182bb9f. The published tree matches the locally tested staged source. Build d74557bd-2972-4d2c-80b4-6be1c2da7b8c produced version 91cc3b16-50bf-4ab7-9816-faa07abdf6b3. See [sanitized evidence](evidence/Batch_20261015.json). New UI live acceptance remains pending. Keep application PR #1 draft and production unreleased.
 
 ## Remaining engineering and evidence dependencies
 

@@ -1,5 +1,11 @@
 # Cookie_Catalog — Context
 
+## Publication verified — October 15
+
+Implementation `182bb9f` passed both GitHub Actions checks and Cloudflare Workers Builds (build d74557bd-2972-4d2c-80b4-6be1c2da7b8c, version 91cc3b16-50bf-4ab7-9816-faa07abdf6b3). Published source tree exactly matches the locally tested staged tree. Local checks: 68 application tests, 16 Node helper tests, eight Python recovery tests, three HTML-audit tests, schema/synthetic import, type-check/build and documentation validation passed. See [sanitized batch evidence](docs/evidence/Batch_20261015.json).
+
+Current stop is dependency-based: real notebook account/export/sample, second admin login and actual device/visual acceptance. New screens are development-deployed code, not owner-accepted live behavior. No actual notebook analysis/import, new schema, live review persistence or production release occurred. Continue from [bulk decisions and defaults](docs/Batch_Review_20261015.md); do not restart completed Windows backup or existing owner/viewer checks.
+
 ## October 15 — Autonomous completion/import preparation batch
 
 Owner authorized a sustained reversible engineering batch, recommended defaults, verified technical sources and one consolidated decision review. The missing-detail collection workflow is explicitly part of CC-TODO-009's import milestone. See [batch review](docs/Batch_Review_20261015.md), [completion workflow](docs/Catalog_Completion_Workflow.md), [staging instructions](docs/Import_Staging.md) and [development guidelines](docs/Development_Guidelines.md).

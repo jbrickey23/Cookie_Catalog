@@ -1,0 +1,63 @@
+{
+  "format": "cookie-catalog-autonomous-batch-evidence",
+  "version": 1,
+  "implementationCommit": "182bb9ff3f1cd6393368d61725199f6a9b49f957",
+  "tree": "ae8aa9c79af763f00ba03e7a0f8bf3b1f007f557",
+  "recordedAt": "2026-10-15T06:00:49.160Z",
+  "scope": "existing development only",
+  "local": {
+    "applicationTests": 68,
+    "offlineNodeHelperTests": 16,
+    "pythonRecoveryTests": 8,
+    "pythonHtmlAuditTests": 3,
+    "schemaSmoke": "passed",
+    "syntheticImport": "passed",
+    "typecheckAndBuild": "passed",
+    "documentationLinksAndJson": "passed",
+    "publishedTreeMatchesTestedIndex": true,
+    "realNotebookUsed": false,
+    "liveImportExecuted": false
+  },
+  "remoteChecks": [
+    {
+      "name": "Workers Builds: cookie-catalog-dev",
+      "id": 116272961692,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jbrickey23/Cookie_Catalog/runs/116272961692",
+      "detailsUrl": "https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-dev/production/builds/d74557bd-2972-4d2c-80b4-6be1c2da7b8c"
+    },
+    {
+      "name": "sqlite",
+      "id": 116272827930,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38689794402/job/116272827930",
+      "detailsUrl": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38689794402/job/116272827930"
+    },
+    {
+      "name": "sqlite",
+      "id": 116272808030,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38689788006/job/116272808030",
+      "detailsUrl": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38689788006/job/116272808030"
+    }
+  ],
+  "limits": {
+    "browserVisualQA": "blocked: Chromium download returned invalid/truncated archive",
+    "domInteractionTests": "passed; not actual browser/device coverage",
+    "newLiveUiAcceptance": "pending owner",
+    "persistentLiveReviewDecisions": false,
+    "nativeOneNoteDecoding": false,
+    "sourceSpecificLiveImporter": false,
+    "productionReleased": false,
+    "privateIdentitiesPublished": false
+  },
+  "nextDependencies": [
+    "notebook account/export type and representative source",
+    "second intended admin login",
+    "remaining exact Windows Chrome/Edge and iPhone Safari acceptance"
+  ],
+  "review": "docs/Batch_Review_20261015.md"
+}
