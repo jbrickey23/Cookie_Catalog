@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 15 — Quick source classification and bulk verification
+
+Owner requests OneNote-derived suggestions with a compact Physical / Digital / Both checklist, grouped confirmation and bulk import. Preserve source references and photos; promote only confirmed eligible physical individuals using existing shape IDs. Digital reference status does not assert original STL/3MF possession. Sets, sizes and duplicate ambiguities remain explicit. This records the requested design; implementation is pending. See the authoritative current checkpoint in Cookie_Catalog_Context.md.
+
 ## October 15 — CC-DEC-016 — Reference sizing, bins and representative source
 
 Owner confirmed personal OneDrive notebook. Reference/catalog size is the longest measured dimension: 4 by 2 inches is called a 4 inch cookie. Retain both measured axes, orientation, units and evidence; do not infer diagonal or photo-based measurements. Physical location convention is Bin #, optional future Slot #. Representative demonstration combines mixed item cases with a familiar theme. Q2 needs the existing source, beginning with a readable PDF section/sample and original notebook export ZIP, plus separate related originals when available. No notebook content or new live schema was imported/applied by recording these answers.

@@ -1,5 +1,30 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Reconciled checkpoint — October 15, 2026, 16:26 Pacific
+
+This checkpoint supersedes pending/proposed statements in older sections below. Source audit, saved reviews, inventory importing, private photo import and browsing are implemented and development-accepted. Do not repeat schema activation, source export, example import or completed Windows backup setup.
+
+- Development branch: `feature/cc-infrastructure-foundation`; PR #1 remains draft. Latest application commit `f54ef2eb9f5a4dd9eb3716f0079477bb7a03e182` passed both GitHub Actions sqlite checks and Cloudflare Workers Builds. Deployment version `54cb8aae-e602-4c85-b0b7-c55a96c910ca` completed October 15 at 23:20 UTC. Production remains unreleased.
+- Live schema is 22 tables with four migrations. Saved source review versions and idempotent inventory plans/apply are active. Source references preserve uncertain entries without creating owned physical stock. Uploaded images remain private and are linked to the intended source shapes. Real source identities, names, images, manifests and backup evidence stay outside this public repository.
+- Photo-first browsing supports search, physical/reference filters, totals, paging, private photo previews and named detail views. Existing management forms and development checks are collapsed below browsing. Active catalog editing identifies the selected record.
+- The full post-import TAR passed strict helper validation and local recovery: table records, file checksums, SQLite integrity and foreign keys. Previous rows were preserved. This latest backup has NOT been independently verified in OneDrive; prior successful cloud-copy acceptance does not establish verification for this new file.
+- Latest implementation validation: 94 application tests, 28 offline Node tests, type-check and build passed. Browser acceptance covered private real catalog browsing and uploads; comprehensive intended-device/accessibility acceptance remains open.
+
+### Immediate next task — quick verification, not yet implemented
+
+The owner requests a compact OneNote-based checklist: **Physical / Digital / Both**, with source-derived suggestions, bulk confirmation, exceptions and one import action. This is authorized work, not a completed feature. No checklist code has been added as of this checkpoint.
+
+Use OneNote evidence to suggest classifications. Keep physical ownership/printed status distinct from digital-source references. A digital mention is not possession of an original STL/3MF; supplied PDFs contain no printable originals. Reuse existing source-reference shape IDs and their photos when promoting confirmed physical entries. Skip already imported mappings, including sources whose review metadata was subsequently corrected. Preserve revision/concurrency guards, idempotency, backup prerequisites and owner-only application. Sets, ambiguous duplicates and multiple size variants must not become invented individual quantities.
+
+Recommended flow: show suggested classifications with thumbnails/source evidence; confirm a group and edit exceptions; save review decisions; import confirmed eligible individuals in bounded batches. Keep uncertainty and missing measurements in the collection workflow rather than requiring every detail before import. Explicit not-printed/not-purchased evidence remains blocked for owned physical stock unless the owner corrects the source status.
+
+### Standing decisions and remaining gates
+
+- Quantity defaults to one per individual cutter; different sizes are distinct physical entries. Size is the longest edge; oriented width and height remain separate. Storage is Bin # with optional Slot #. Owner/admin are equivalent; viewer stays read-only.
+- Continue autonomously with recommended defaults and batched open decisions. User priority: quick verification and usable browsing, minimizing manual paths, scripts and individual file operations.
+- Retain second intended admin sign-in, intended-device checks, operational access recovery and remaining release/recovery readiness. Keep parked security/login investigations parked. No paid resources, destructive cleanup, access weakening or production release.
+- Continue existing CC-TODO-007/008/009; next unused task ID remains CC-TODO-013. Native OneNote decoding and separate printable originals remain optional later inputs, not blockers to the supplied-PDF workflow.
+
 ## October 15 — Saved source review implementation; development activation next
 
 Implemented additive migration 0003_import_reviews.sql, four source-review/history tables, editor/admin save/reopen/version history, atomic revision-protected saves and metadata preview history. Ownership, print status, optional quantity/Slot and longest-edge reference size/original labels remain separate from measured axes. Saving reviews creates no catalog inventory and uploads no originals. No live apply importer exists.
