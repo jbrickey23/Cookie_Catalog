@@ -13,6 +13,48 @@ async function open(manifest:unknown){
   fireEvent.change(screen.getByLabelText("Prepared manifest (JSON)"),{target:{files:[{size:JSON.stringify(manifest).length,text:async()=>JSON.stringify(manifest)}]}});
   await screen.findByText(/3 source items/);
 }
+test("saved review UI retains reference sizing, unknown quantity and unsaved edits after a conflict",async()=>{
+  const original=globalThis.fetch;let saved:any;
+  globalThis.fetch=async(input,init)=>{
+    if(init?.method==="POST"&&String(input).endsWith("/api/import-reviews")){
+      saved=JSON.parse(String(init.body));return Response.json({id:saved.id,title:saved.title,revision:'"review-1"',saved:true},{status:201});
+    }
+    if(init?.method==="PUT")return Response.json({error:"The saved review changed. Your draft is kept."},{status:412});
+    throw Error("Unexpected request "+String(input));
+  };
+  try{
+    render(React.createElement(ImportReview,{enableSavedReviews:true}));await open(fixture());
+    fireEvent.change(screen.getByLabelText("Ownership"),{target:{value:"owned"}});
+    fireEvent.change(screen.getByLabelText("Reference size — longest edge (inches)"),{target:{value:"4"}});
+    fireEvent.change(screen.getByLabelText("Original size label / units"),{target:{value:'4" by 2"'}});
+    fireEvent.change(screen.getByLabelText("Slot (optional)"),{target:{value:"001"}});
+    fireEvent.click(screen.getByRole("button",{name:"Save new review"}));
+    await screen.findByText(/Review saved with version history/);
+    assert.equal(saved.manifest.items[0].catalog.referenceSizeMm,101.6);assert.equal(saved.manifest.items[0].catalog.quantity,undefined);assert.equal(saved.manifest.items[0].catalog.slot,"001");
+    assert.equal(saved.manifest.items[0].facts.widthMm,90);assert.equal(saved.manifest.items[0].facts.heightMm,100);
+    fireEvent.change(screen.getByLabelText("Item name"),{target:{value:"TEST retained draft"}});
+    fireEvent.click(screen.getByRole("button",{name:"Save review changes"}));
+    await screen.findByText("The saved review changed. Your draft is kept.");
+    assert.equal((screen.getByLabelText("Item name") as HTMLInputElement).value,"TEST retained draft");
+    assert.equal((screen.getByRole("button",{name:"Record import preview"}) as HTMLButtonElement).disabled,true);
+  }finally{cleanup();globalThis.fetch=original;}
+});
+test("saved review can be reopened after leaving the browser tab without importing catalog records",async()=>{
+  const original=globalThis.fetch,m=fixture(),id="review_"+"a".repeat(32);m.items[0].catalog={ownership:"not_owned",referenceSizeMm:101.6};
+  globalThis.fetch=async input=>String(input).includes("?offset=")
+    ?Response.json({workspaces:[{id,title:"TEST saved",current_revision:2}],nextOffset:null})
+    :Response.json({id,title:"TEST saved",revision:'"review-2"',loadedRevision:String(input).includes("revision=1")?1:2,manifest:m,versions:[{revision:2,item_count:3,saved_at:"2026-10-15"},{revision:1,item_count:3,saved_at:"2026-10-14"}],previews:[]});
+  try{
+    render(React.createElement(ImportReview,{enableSavedReviews:true}));
+    fireEvent.click(screen.getByRole("button",{name:"List saved reviews"}));await screen.findByLabelText("Saved review");
+    fireEvent.click(screen.getByRole("button",{name:"Open saved review"}));await screen.findByText(/3 source items/);
+    assert.equal((screen.getByLabelText("Ownership") as HTMLSelectElement).value,"not_owned");
+    assert.equal((screen.getByLabelText("Reference size — longest edge (inches)") as HTMLInputElement).value,"4");
+    assert.ok(screen.getByRole("button",{name:"Save review changes"}));
+    fireEvent.click(screen.getByRole("button",{name:"Open version 1 as draft"}));await screen.findByText(/Earlier version opened as a draft/);
+    assert.equal((screen.getByRole("button",{name:"Record import preview"}) as HTMLButtonElement).disabled,true);
+  }finally{cleanup();globalThis.fetch=original;}
+});
 test("local review edits measurements/files, splits page items and downloads a round-trippable manifest without network",async()=>{
   let calls=0,downloaded:Blob|null=null;
   const originalFetch=globalThis.fetch,createUrl=URL.createObjectURL,revokeUrl=URL.revokeObjectURL,timer=globalThis.setTimeout;

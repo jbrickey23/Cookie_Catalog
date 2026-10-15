@@ -16,7 +16,7 @@ from prepare_cloudflare_restore import prepare, verify, snapshot
 
 def fixture(path, missing_migration=False, large=False):
     with sqlite3.connect(":memory:") as db:
-        for migration in sorted((ROOT / "database/migrations").glob("*.sql")):
+        for migration in [ROOT / "database/migrations" / name for name in ("0001_initial.sql", "0002_variants_components.sql")]:
             db.executescript(migration.read_text())
         db.execute("CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY, name TEXT, applied_at TEXT)")
         for index, name in enumerate(("0001_initial.sql", "0002_variants_components.sql")):

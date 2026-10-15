@@ -1,4 +1,4 @@
-import {BACKUP_TABLES} from "./development-backup";
+import {BACKUP_TABLES,REVIEW_TABLES} from "./development-backup";
 import {buildInformation} from "./build-information";
 export async function inspectInfrastructure(database:D1Database,files:R2Bucket) {
   const [tables,migrations,relationships,counts,attachments]=await database.batch<Record<string,unknown>>([
@@ -11,7 +11,11 @@ export async function inspectInfrastructure(database:D1Database,files:R2Bucket) 
   if([tables,migrations,relationships,counts,attachments].some(result=>!result.success))throw Error("Database verification query failed");
   const names=tables.results.map(row=>String(row.name)),applied=migrations.results.map(row=>String(row.name));
   const missingTables=BACKUP_TABLES.filter(name=>!names.includes(name));
-  const requiredMigrations=["0001_initial.sql","0002_variants_components.sql"];
+  const hasReviews=REVIEW_TABLES.every(name=>names.includes(name));
+  const supportedSchema=names.length===BACKUP_TABLES.length&&!REVIEW_TABLES.some(name=>names.includes(name))
+    ||names.length===BACKUP_TABLES.length+REVIEW_TABLES.length&&hasReviews;
+  const requiredMigrations=["0001_initial.sql","0002_variants_components.sql",...(hasReviews?["0003_import_reviews.sql"]:[])];
+  const reviewStorageReady=hasReviews&&applied.includes("0003_import_reviews.sql");
   const listing=await files.list({limit:100});
   let missingOriginals=0,sizeMismatches=0;
   for(const row of attachments.results){
@@ -23,9 +27,9 @@ export async function inspectInfrastructure(database:D1Database,files:R2Bucket) 
   return {
     checkedAt:new Date().toISOString(),mode:"read-only",environment:"development",
     worker:{reachable:true,build,sourceCommitAvailable:build.commit!==null},
-    database:{queryPassed:true,schemaTables:names.length,missingTables,migrations:applied,requiredMigrationsApplied:requiredMigrations.every(name=>applied.includes(name)),foreignKeyViolations:relationships.results.length,recordCounts:counts.results[0]},
+    database:{queryPassed:true,schemaTables:names.length,supportedSchema,reviewStorageReady,missingTables,migrations:applied,requiredMigrationsApplied:requiredMigrations.every(name=>applied.includes(name)),foreignKeyViolations:relationships.results.length,recordCounts:counts.results[0]},
     storage:{bindingReadable:true,objectsOnFirstPage:listing.objects.length,listingTruncated:listing.truncated,sampledAttachments:attachments.results.length,missingOriginals,sizeMismatches},
-    checksPassed:missingTables.length===0&&requiredMigrations.every(name=>applied.includes(name))&&relationships.results.length===0&&missingOriginals===0&&sizeMismatches===0,
+    checksPassed:supportedSchema&&missingTables.length===0&&requiredMigrations.every(name=>applied.includes(name))&&relationships.results.length===0&&missingOriginals===0&&sizeMismatches===0,
     limits:["Read-only binding checks do not replace create/edit/retrieve or private-file acceptance.","R2 public-access configuration requires dashboard evidence.","Build Node is the deployment build environment, not the owner's Windows PC.","Exact GitHub deployment is confirmed only after comparing the reported commit to the expected branch head."]
   };
 }

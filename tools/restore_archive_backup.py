@@ -7,7 +7,7 @@ import re
 import shutil
 import sqlite3
 import tarfile
-from restore_development_backup import TABLES, identifier
+from restore_development_backup import table_profile, identifier
 
 def restore(source, destination):
     source, destination = Path(source), Path(destination)
@@ -39,9 +39,10 @@ def restore(source, destination):
             if payload.get("environment") != "development":
                 raise ValueError("Not a development archive")
             tables, schema = payload["database"]["tables"], payload["database"]["schema"]
-            if set(tables) != TABLES or {item["name"] for item in schema if item["type"] == "table"} != TABLES:
+            selected_tables = table_profile(tables)
+            if {item["name"] for item in schema if item["type"] == "table"} != selected_tables:
                 raise ValueError("Unexpected or incomplete schema")
-            if any(item["type"] not in ("table", "index") or item["tbl_name"] not in TABLES for item in schema):
+            if any(item["type"] not in ("table", "index") or item["tbl_name"] not in selected_tables for item in schema):
                 raise ValueError("Unsupported schema object")
             objects = payload["objects"]
             attachments = {row["storage_key"]: row for row in tables["attachments"]}

@@ -6,7 +6,7 @@ import {DatabaseSync, constants} from 'node:sqlite';
 import {createInterface} from 'node:readline/promises';
 import {pathToFileURL} from 'node:url';
 
-const TABLES = ['shapes','locations','physical_cutters','designs','design_shape_links','tags','design_tags','shape_tags','attachments','shape_attachments','design_attachments','printable_assets','shape_size_variants','design_components','printable_size_recipes','d1_migrations'];
+const LEGACY_TABLES = ['shapes','locations','physical_cutters','designs','design_shape_links','tags','design_tags','shape_tags','attachments','shape_attachments','design_attachments','printable_assets','shape_size_variants','design_components','printable_size_recipes','d1_migrations'];
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const same = (a,b) => JSON.stringify(a) === JSON.stringify(b);
 const identifier = value => {
@@ -62,7 +62,9 @@ export function validateArchive(file) {
     if(envelope.format!=='cookie-catalog-archive'||envelope.version!==1||typeof envelope.payloadJson!=='string'
         ||hash(Buffer.from(envelope.payloadJson))!==envelope.payloadSha256||!Number.isFinite(Date.parse(envelope.exportedAt))) throw Error('Invalid archive manifest.');
     const payload=JSON.parse(envelope.payloadJson),{tables,schema}=payload.database??{};
-    if(payload.environment!=='development'||!tables||!same(Object.keys(tables).sort(),[...TABLES].sort())||!Array.isArray(schema)
+    const reviewTables=['import_review_workspaces','import_review_versions','import_review_items','import_review_runs'];
+    const TABLES=[LEGACY_TABLES,[...LEGACY_TABLES,...reviewTables]].find(profile=>tables&&same(Object.keys(tables).sort(),[...profile].sort()));
+    if(payload.environment!=='development'||!TABLES||!tables||!same(Object.keys(tables).sort(),[...TABLES].sort())||!Array.isArray(schema)
         ||!same(schema.filter(s=>s.type==='table').map(s=>s.name).sort(),[...TABLES].sort())
         ||schema.some(s=>!['table','index'].includes(s.type)||!TABLES.includes(s.tbl_name))) throw Error('Unexpected database schema.');
     const objects=payload.objects;
@@ -83,7 +85,10 @@ export function validateArchive(file) {
     db.exec('PRAGMA foreign_keys=ON; BEGIN; PRAGMA defer_foreign_keys=ON;');
     // Schema SQL is untrusted input even in a trusted export: confine it to memory.
     const forbidden=new Set(Object.entries(constants).filter(([name])=>/^SQLITE_(ATTACH|DETACH|ALTER_|DROP_|CREATE_TEMP_|CREATE_TRIGGER|CREATE_VIEW|CREATE_VTABLE|PRAGMA|TRANSACTION|FUNCTION)/.test(name)).map(([,value])=>value));
-    db.setAuthorizer(action=>forbidden.has(action)?constants.SQLITE_DENY:constants.SQLITE_OK);
+    // These two pure built-ins enforce the bounded JSON review constraints.
+    // File access, extensions, arbitrary functions and all other denied actions stay denied.
+    db.setAuthorizer((action,arg1,arg2)=>action===constants.SQLITE_FUNCTION&&['json_valid','length'].includes(String(arg2).toLowerCase())
+      ?constants.SQLITE_OK:forbidden.has(action)?constants.SQLITE_DENY:constants.SQLITE_OK);
     for(const kind of ['table','index'])for(const item of schema)if(item.type===kind&&item.sql) {
       if(typeof item.sql!=='string'||!(new RegExp('^CREATE\\s+(?:UNIQUE\\s+)?'+kind+'\\b','i')).test(item.sql)) throw Error('Unsupported schema SQL.');
       db.exec(item.sql);
@@ -106,7 +111,7 @@ export function validateArchive(file) {
     if(!same(actualTables,[...TABLES].sort())||db.prepare('PRAGMA foreign_key_check').all().length
         ||Object.values(db.prepare('PRAGMA integrity_check').get())[0]!=='ok')throw Error('Database integrity or relationships failed.');
     const migrations=db.prepare('SELECT name FROM d1_migrations ORDER BY name').all().map(r=>r.name);
-    if(!same(migrations,['0001_initial.sql','0002_variants_components.sql']))throw Error('Known migrations missing or unexpected.');
+    if(!same(migrations,['0001_initial.sql','0002_variants_components.sql',...(TABLES.length===20?['0003_import_reviews.sql']:[])]))throw Error('Known migrations missing or unexpected.');
     db.exec('COMMIT');
     for(const object of objects) {
       const part=member('objects/'+object.key,25*1024**2,object.byteSize);

@@ -1,5 +1,9 @@
 # Cookie Catalog backup helper
 
+## Saved review schema compatibility
+
+Use the updated helper before activating migration 0003. It validates either the original complete 16-table database/two migrations or the complete 20-table source-review database/three migrations. Both retain the existing TAR envelope. Partial/unknown schemas and mismatched migration metadata fail validation. New archives include review items, immutable versions and preview runs; older helpers intentionally reject unfamiliar tables. The app exporter and Python TAR/JSON restore/preparation tools support both known profiles. [Activation and recovery details](Saved_Import_Reviews.md).
+
 Status: implemented, automatically tested and owner Windows acceptance passed (2026-10-14 Pacific). Direct Node save/local receipt, review-only retention and owner-reported independent OneDrive web-download cloudCopyMatch=true passed. Optional PowerShell launcher remains runtime-untested. This is a manual backup assistant, not a scheduled backup service. It makes no network requests and never deletes old backups.
 
 ## Run on Windows

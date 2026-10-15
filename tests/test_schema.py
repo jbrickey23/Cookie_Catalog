@@ -8,6 +8,7 @@ def test_schema():
     db = sqlite3.connect(":memory:")
     db.executescript(SCHEMA.read_text(encoding="utf-8"))
     db.executescript((SCHEMA.parent / "0002_variants_components.sql").read_text(encoding="utf-8"))
+    db.executescript((SCHEMA.parent / "0003_import_reviews.sql").read_text(encoding="utf-8"))
     db.execute("PRAGMA foreign_keys = ON")
     db.execute("INSERT INTO shapes(id,name) VALUES (?,?)", ("shape-1","Generic tree"))
     db.execute("INSERT INTO locations(id,label) VALUES (?,?)", ("loc-1","Test bin"))

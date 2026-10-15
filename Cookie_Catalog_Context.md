@@ -1,5 +1,17 @@
 # Cookie_Catalog — Context
 
+## October 15 — Saved source review implementation; development activation next
+
+Implemented additive migration 0003_import_reviews.sql, four source-review/history tables, editor/admin save/reopen/version history, atomic revision-protected saves and metadata preview history. Ownership, print status, optional quantity/Slot and longest-edge reference size/original labels remain separate from measured axes. Saving reviews creates no catalog inventory and uploads no originals. No live apply importer exists.
+
+Updated app export, Node backup helper, Python JSON/TAR restore and isolated D1 preparation support exact 16-table legacy and 20-table review schemas with matching migration records. Partial/unknown profiles fail safely; older helpers reject the new table set. Upgrade the helper before migrating. Per-item snapshots are bounded to 32000 UTF-8 bytes; requests to one MiB/1000 entries. See [saved review guide](docs/Saved_Import_Reviews.md).
+
+Local validation includes actual D1 save/reopen/history/racing writes, origin/membership guards, preview gaps, reference-size separation and stale-draft UI retention; new history round-trips through TAR/helper, JSON and fresh isolated D1. Both actual private manifests (343 entries and ten demo examples) saved/reopened exactly in local D1, with zero catalog inventory rows created. Demo preview retains ten unknown ownership/quantity decisions, eight missing reference sizes and eight incomplete axis pairs. Real data remains private; only synthetic tests and sanitized evidence are committed.
+
+Next is owner-mediated activation on the existing development D1: fresh complete protected pre-change backup with the updated helper; apply migration 0003 and its migration record; verify 20 tables/three migrations/review storage ready; save/reopen the prepared demo review and create a preview; validate a post-migration archive. Direct authenticated Cloudflare migration access is unavailable in this workspace; do not retry the parked login/security work or claim remote migration/application acceptance. Do not import inventory yet. Current original/duplicate/component questions remain review items.
+
+This supersedes historical statements that source review can only survive as a local download or that real source has not been audited. Preserve completed backup/owner/viewer checks, pending second-admin/device/recovery work and draft/unreleased status. Existing CC-TODO-007/008/009 continue; next unused task remains CC-TODO-013.
+
 ## October 15 — Full PDF source audit and staging checkpoint
 
 The owner supplied 14 OneNote-exported PDFs after a successful Windows COM export of the requested catalog sections. This resolves the immediate representative-source dependency: 478 PDF pages were grouped into 343 proposed source entries, including 135 continuation pages. These are source-entry counts, not physical-cutter counts. The first pass flags 37 source entries explicitly marked not printed, two not purchased, and 168 mentioning printable files; categories overlap. No printable originals are embedded in the supplied PDFs.

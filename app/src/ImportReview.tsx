@@ -1,3 +1,4 @@
+import {SavedImportReviews} from "./SavedImportReviews";
 import React,{useEffect,useState} from "react";
 import {validateManifest,kinds,purposes,type StagingManifest,type StagingItem} from "./staging.mjs";
 import {applicableFields,readiness,type ReviewField,type ReviewState,type FieldReview,type Evidence} from "./readiness";
@@ -5,7 +6,8 @@ const kindNames={physical_cutter:"Physical cutter",printable_asset:"Printable fi
 const states:ReviewState[]=["unknown","needs_verification","not_applicable","complete"];
 const stateNames={unknown:"Missing / unknown",needs_verification:"Needs verification",not_applicable:"Not applicable",complete:"Complete"};
 function method(field:ReviewField):Evidence["method"] {return field==="dimensions"?"measured":field==="original"?"file_check":["photo","scale_photo","location"].includes(field)?"visual_review":"source_review";}
-export function ImportReview() {
+export function ImportReview({enableSavedReviews=false}:{enableSavedReviews?:boolean}={}) {
+  const [networkBusy,setNetworkBusy]=useState(false),[workspaceReset,setWorkspaceReset]=useState(0);
   const [dirty,setDirty]=useState(false);
   useEffect(()=>{const warn=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue="";}};window.addEventListener("beforeunload",warn);return()=>window.removeEventListener("beforeunload",warn);},[dirty]);
   const [draft,setDraft]=useState<StagingManifest|null>(null),[selected,setSelected]=useState(0),[message,setMessage]=useState("");
@@ -15,14 +17,14 @@ export function ImportReview() {
     try {
       if(file.size>16*1024**2)throw Error("Choose a staging manifest no larger than 16 MiB.");
       const manifest=validateManifest(JSON.parse(await file.text()));
-      setDraft(manifest);setDirty(false);setSelected(0);setMessage("Local review draft opened. Nothing was uploaded or imported.");
+      setDraft(manifest);setDirty(false);setSelected(0);setWorkspaceReset(x=>x+1);setMessage("Local review draft opened. Nothing was uploaded or imported.");
     }catch(error){setMessage((error as Error).message);}
   }
   function update(change:(item:StagingItem)=>void) {
     setDraft(previous=>{
       if(!previous)return null;const next=structuredClone(previous);change(next.items[selected]);return next;
     });
-    setDirty(true);setMessage("Draft changed in this browser tab. Download the reviewed manifest to keep it.");
+    setDirty(true);setMessage("Draft changed in this browser tab. Save or download the reviewed manifest to keep it.");
   }
   function review(field:ReviewField,patch:Partial<FieldReview>) {
     update(item=>{item.reviews??={};item.reviews[field]={state:"unknown",...item.reviews[field],...patch};});
@@ -41,9 +43,12 @@ export function ImportReview() {
     photo:!!item.files?.some(f=>["cutter_photo","design_photo","scale_photo"].includes(f.purpose)),scalePhoto:!!item.files?.some(f=>f.purpose==="scale_photo"),original:!!item.files?.some(f=>f.purpose==="printable_original")},reviews:item.reviews}).checks:[];
   return <section aria-labelledby="import-review-heading">
     <h2 id="import-review-heading">Prepare an import review</h2>
-    <p>Open a prepared manifest to classify items and collect missing details. Work stays in this tab until you download it. Your live catalog and source notebook are unchanged.</p>
+    <fieldset disabled={networkBusy} style={{border:0,padding:0,margin:0}}>
+    <p>Open a prepared manifest to classify items and collect missing details. Work stays in this tab until you download it or explicitly save a review. Your inventory and source notebook are unchanged.</p>
     <label>Prepared manifest (JSON) <input type="file" accept=".json,application/json" onChange={event=>{void open(event.target.files?.[0]);event.target.value="";}} /></label>
     <p role="status" aria-live="polite">{message}</p>
+    {enableSavedReviews&&<SavedImportReviews key={workspaceReset} draft={draft} dirty={dirty} onBusy={setNetworkBusy} onOpen={(manifest,unsaved=false)=>{setDraft(manifest);setDirty(unsaved);setSelected(0);setMessage("Saved source review opened. Catalog inventory is unchanged.");}} onSaved={()=>{setDirty(false);setMessage("Review saved. Catalog inventory is unchanged.");}} />}
+
     {draft&&<>
       <p>{draft.items.length} source items. Namespace: {draft.sourceNamespace}</p>
       <button onClick={download}>Download reviewed manifest</button>{" "}
@@ -53,12 +58,12 @@ export function ImportReview() {
         <p>Source: {item.source.pageTitle??item.source.pageId}{item.source.sectionPath?" / "+item.source.sectionPath:""}</p>
         <p><label>Item name <input maxLength={200} value={item.name} onChange={e=>update(item=>{item.name=e.target.value;})} /></label></p>
         <p><label>Item type <select value={item.kind} onChange={e=>update(item=>{
-          item.kind=e.target.value as StagingItem["kind"];
-          item.reviews=Object.fromEntries(Object.entries(item.reviews??{}).filter(([field])=>applicableFields(item.kind).includes(field as ReviewField)));
+          item.kind=e.target.value as StagingItem["kind"];item.catalog={};
+          item.reviews=Object.fromEntries(Object.entries(item.reviews??{}).filter(([field])=>applicableFields(item.kind).includes(field as ReviewField)).map(([field,review])=>[field,{...review,state:"needs_verification"}]));
         })}>{kinds.map(kind=><option key={kind} value={kind}>{kindNames[kind]}</option>)}</select></label></p>
-        <p>Changing the type resets reviews that do not apply to the new type. Keep the original manifest for reference.</p>
+        <p>Changing the type resets ownership/quantity assertions and review completion. Applicable review notes remain; keep the original manifest for reference.</p>
         <button onClick={()=>{
-          const copy=structuredClone(item);copy.sourceKey+="#split-"+crypto.randomUUID();copy.name=(copy.name+" — another item").slice(0,200);copy.kind="unclassified";copy.facts={};copy.reviews={};copy.files=copy.files?.map(f=>({...f,purpose:f.purpose==="source_page"?"source_page":"unknown"}));
+          const copy=structuredClone(item);copy.sourceKey+="#split-"+crypto.randomUUID();copy.name=(copy.name+" — another item").slice(0,200);copy.kind="unclassified";copy.facts={};copy.catalog={};copy.reviews={};copy.files=copy.files?.map(f=>({...f,purpose:f.purpose==="source_page"?"source_page":"unknown"}));
           if(copy.sourceKey.length>2000){setMessage("Source identifier is too long to split here; use a shorter stable identifier in the prepared manifest.");return;}
           setDirty(true);setDraft({...draft,items:[...draft.items,copy]});setSelected(draft.items.length);setMessage("Another draft item created from this page. Classify it and assign only its own files; no live record was created.");
         }}>Describe another item from this page</button>
@@ -67,6 +72,14 @@ export function ImportReview() {
           <p>Record orientation and how you measured in the dimension review notes. A scale photo alone does not establish verified dimensions.</p>
         </fieldset>}
         {item.kind==="physical_cutter"&&<p><label>Storage location <input maxLength={4000} value={item.facts?.location??""} onChange={e=>update(item=>{item.facts??={};item.facts.location=e.target.value;})} /></label></p>}
+        {["physical_cutter","printable_asset"].includes(item.kind)&&<fieldset><legend>Ownership and reference size</legend>
+          <p><label>Ownership <select value={item.catalog?.ownership??"unknown"} onChange={e=>update(item=>{item.catalog??={};item.catalog.ownership=e.target.value as "unknown"|"owned"|"not_owned";})}><option value="unknown">Unknown / needs checking</option><option value="owned">Owned</option><option value="not_owned">Not owned / not purchased</option></select></label></p>
+          <p><label>Print status <select value={item.catalog?.printStatus??"unknown"} onChange={e=>update(item=>{item.catalog??={};item.catalog.printStatus=e.target.value as "unknown"|"printed"|"not_printed"|"not_applicable";})}><option value="unknown">Unknown / needs checking</option><option value="printed">Printed</option><option value="not_printed">Not printed</option><option value="not_applicable">Not applicable</option></select></label></p>
+          {item.kind==="physical_cutter"&&<><p><label>Physical quantity (blank means unknown) <input type="number" min="0" max="100000" step="1" value={item.catalog?.quantity??""} onChange={e=>update(item=>{item.catalog??={};if(e.target.value==="")delete item.catalog.quantity;else item.catalog.quantity=Number(e.target.value);})} /></label></p><p><label>Slot (optional) <input maxLength={200} value={item.catalog?.slot??""} onChange={e=>update(item=>{item.catalog??={};item.catalog.slot=e.target.value;})} /></label></p></>}
+          <p><label>Reference size — longest edge (inches) <input type="number" min="0.001" step="any" value={item.catalog?.referenceSizeMm===undefined?"":Number((item.catalog.referenceSizeMm/25.4).toFixed(8))} onChange={e=>update(item=>{item.catalog??={};if(e.target.value==="")delete item.catalog.referenceSizeMm;else item.catalog.referenceSizeMm=Number(e.target.value)*25.4;})} /></label></p>
+          <p><label>Original size label / units <input maxLength={200} value={item.catalog?.originalSizeLabel??""} onChange={e=>update(item=>{item.catalog??={};item.catalog.originalSizeLabel=e.target.value;})} /></label></p>
+          <p>A 4 by 2 inch cookie has a 4 inch reference size. Keep oriented measured width/height separately. Do not use packaging or assembled-set dimensions for an individual cutter.</p>
+        </fieldset>}
         <h3>Source files</h3>
         <p>These are references to your separate source folder. This page does not open, upload or verify their bytes.</p>
         <ul>{item.files?.map((file,i)=><li key={i}><label>Relative source file path <input maxLength={2000} value={file.path} onChange={e=>update(item=>{item.files![i].path=e.target.value;})} /></label>{" "}<label>Purpose <select value={file.purpose} onChange={e=>update(item=>{item.files![i].purpose=e.target.value as typeof file.purpose;})}>{purposes.map(purpose=><option key={purpose} value={purpose}>{purpose.replaceAll("_"," ")}</option>)}</select></label>{" "}
@@ -82,8 +95,9 @@ export function ImportReview() {
           <p><label>Review notes / exception reason <textarea maxLength={4000} value={decision?.note??""} onChange={e=>review(check.field,{note:e.target.value})} /></label></p>
           {decision?.state==="complete"&&<p><label>Evidence reference ({method(check.field).replaceAll("_"," ")}) <input maxLength={2000} value={decision.evidence?.reference??""} onChange={e=>review(check.field,{evidence:{method:method(check.field),reference:e.target.value}})} /></label></p>}
         </fieldset>;})}
-        <p>Complete records your supplied evidence; the offline preparation step still validates references and file checksums. Unknown details can stay unknown. Download before closing this tab.</p>
+        <p>Complete records your supplied evidence; the offline preparation step still validates references and file checksums. Unknown details can stay unknown. Save or download before closing this tab.</p>
       </>}
     </>}
+    </fieldset>
   </section>;
 }

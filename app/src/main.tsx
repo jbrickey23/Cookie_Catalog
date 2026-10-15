@@ -104,7 +104,7 @@ function App() {
     <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
     {role === "owner" && <InfrastructureVerification />}
     <hr />
-    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview /></details>}
+    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews /></details>}
     <Readiness key={"review-"+catalogVersion} />
     <hr />
     <Catalog canEdit={role !== "viewer"} onSaved={() => setCatalogVersion(version => version + 1)} />

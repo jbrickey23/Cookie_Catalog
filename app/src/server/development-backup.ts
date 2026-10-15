@@ -4,6 +4,14 @@ export const BACKUP_TABLES = [
   "design_tags", "shape_tags", "attachments", "shape_attachments", "design_attachments",
   "printable_assets", "shape_size_variants", "design_components", "printable_size_recipes", "d1_migrations"
 ] as const;
+export const REVIEW_TABLES = ["import_review_workspaces","import_review_versions","import_review_items","import_review_runs"] as const;
+function snapshotTables(schema:SchemaRow[]):readonly string[]{
+  const names=schema.filter(row=>row.type==="table").map(row=>row.name).sort();
+  for(const profile of [BACKUP_TABLES,[...BACKUP_TABLES,...REVIEW_TABLES]]){
+    if(JSON.stringify(names)===JSON.stringify([...profile].sort()))return profile;
+  }
+  throw new BackupError("Database schema has changed. Update the recovery tool before exporting.");
+}
 const MAX_ROWS = 1000;
 const MAX_OBJECTS = 25;
 const MAX_OBJECT_BYTES = 4 * 1024 * 1024;
@@ -27,24 +35,28 @@ function checkedRows(result: D1Result<unknown> | undefined): Row[] {
   return result.results as Row[];
 }
 export async function createDatabaseSnapshot(database: D1Database, maxRows = MAX_ROWS) {
-  // D1 batch is transactional. All table rows, schema and integrity checks share one snapshot.
+  const schemaSql="SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE substr(name,1,7) != 'sqlite_' AND substr(name,1,4) != '_cf_' ORDER BY type, name";
+  const probe=await database.batch([database.prepare(schemaSql)]);
+  const selectedTables=snapshotTables(checkedRows(probe[0]) as unknown as SchemaRow[]);
+  // Probe chooses a known profile. Revalidate schema inside the transactional snapshot.
   const results = await database.batch([
-    database.prepare("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE substr(name,1,7) != 'sqlite_' AND substr(name,1,4) != '_cf_' ORDER BY type, name"),
-    ...BACKUP_TABLES.map(table => database.prepare(`SELECT * FROM "${table}" LIMIT ${maxRows + 1}`)),
+    database.prepare(schemaSql),
+    ...selectedTables.map(table => database.prepare(`SELECT * FROM "${table}" LIMIT ${maxRows + 1}`)),
     database.prepare("PRAGMA foreign_key_check")
   ]);
-  if (results.length !== BACKUP_TABLES.length + 2) throw new BackupError("Database snapshot incomplete.");
+  if (results.length !== selectedTables.length + 2) throw new BackupError("Database snapshot incomplete.");
   const schema = checkedRows(results[0]) as unknown as SchemaRow[];
-  const known = new Set<string>(BACKUP_TABLES);
+  if(JSON.stringify(snapshotTables(schema))!==JSON.stringify(selectedTables))throw new BackupError("Database schema changed during snapshot.");
+  const known = new Set<string>(selectedTables);
   if (schema.some(item => !known.has(item.tbl_name) || !["table", "index"].includes(item.type)
       || (item.sql?.toUpperCase().includes("CREATE VIRTUAL TABLE")))) {
     throw new BackupError("Database schema has changed. Update the recovery tool before exporting.");
   }
-  if (schema.filter(item => item.type === "table").length !== BACKUP_TABLES.length) {
+  if (schema.filter(item => item.type === "table").length !== selectedTables.length) {
     throw new BackupError("Database schema incomplete.");
   }
   const tables: Record<string, Row[]> = {};
-  for (let i = 0; i < BACKUP_TABLES.length; i++) {
+  for (let i = 0; i < selectedTables.length; i++) {
     const rows = checkedRows(results[i + 1]);
     if (rows.length > maxRows) throw new BackupError("Database snapshot exceeds the record limit. Use an operator export.");
     for (const row of rows) for (const value of Object.values(row)) {
@@ -55,8 +67,10 @@ export async function createDatabaseSnapshot(database: D1Database, maxRows = MAX
         throw new BackupError("Database number cannot be exported safely.");
       }
     }
-    tables[BACKUP_TABLES[i]] = rows;
+    tables[selectedTables[i]] = rows;
   }
+  const expectedMigrations=["0001_initial.sql","0002_variants_components.sql",...(selectedTables.length===20?["0003_import_reviews.sql"]:[])];
+  if(JSON.stringify(tables.d1_migrations.map(row=>row.name).sort())!==JSON.stringify(expectedMigrations))throw new BackupError("Database migration records do not match the supported schema.");
   if (checkedRows(results.at(-1)).length) throw new BackupError("Database relationships failed validation.");
   return { schema, tables };
 }

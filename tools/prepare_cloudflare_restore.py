@@ -11,7 +11,7 @@ import shutil
 import sqlite3
 import tarfile
 from restore_archive_backup import restore
-from restore_development_backup import TABLES, identifier
+from restore_development_backup import table_profile, migration_profile, identifier
 
 
 def digest(path):
@@ -41,17 +41,16 @@ def snapshot(connection):
     connection.row_factory = sqlite3.Row
     actual = {row[0] for row in connection.execute("SELECT name FROM sqlite_schema WHERE type='table'")}
     # D1 internal tables are not catalog tables. Other user tables fail comparison.
-    if {name for name in actual if not name.startswith(("sqlite_", "_cf_"))} != TABLES:
-        raise ValueError("Unexpected catalog table set")
+    tables = table_profile({name for name in actual if not name.startswith(("sqlite_", "_cf_"))})
     if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok" or connection.execute("PRAGMA foreign_key_check").fetchall():
         raise ValueError("Database integrity/relationships failed")
     rows = {}
-    for table in sorted(TABLES):
+    for table in sorted(tables):
         rows[table] = sorted([dict(row) for row in connection.execute(f"SELECT * FROM {identifier(table)}")],
                              key=lambda row: json.dumps(row, sort_keys=True, ensure_ascii=False))
     schema = [dict(row) for row in connection.execute(
         "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE sql IS NOT NULL AND type IN ('table','index') ORDER BY type,name")
-        if row["tbl_name"] in TABLES]
+        if row["tbl_name"] in tables]
     return {"tables": rows, "schema": schema}
 
 
@@ -80,8 +79,8 @@ def prepare(archive, destination):
         envelope = json.loads((destination / "manifest.json").read_text(encoding="utf-8"))
         payload = json.loads(envelope["payloadJson"])
         migrations = {row["name"] for row in expected["tables"]["d1_migrations"]}
-        if migrations != {"0001_initial.sql", "0002_variants_components.sql"}:
-            raise ValueError("Both known migration entries are required")
+        if migrations != migration_profile(expected["tables"]):
+            raise ValueError("Known migration entries must match the schema profile")
         statements = ["PRAGMA defer_foreign_keys=ON;"]
         for kind in ("table", "index"):
             statements += [item["sql"].rstrip("; ") + ";" for item in expected["schema"] if item["type"] == kind]

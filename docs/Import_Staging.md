@@ -1,5 +1,9 @@
 # Offline catalog audit and staging
 
+## Saved review workflow
+
+The existing manifest now optionally retains catalog ownership, printStatus, quantity, referenceSizeMm, originalSizeLabel and slot. Quantity stays omitted until known. Reference size is separate from width/height. Existing manifests remain valid; old strict validators reject unknown new fields rather than dropping them. Updated offline preparation retains these assertions. The development workspace supports explicit private save/reopen and versioned preview history after migration 0003; local Download is still available. See [saved review guide](Saved_Import_Reviews.md) for limits, activation and the remaining actual-import boundary.
+
 Implemented as preparation for CC-TODO-008/009. No live import or OneNote modification is performed. The October 15 private PDF audit exercised real-source staging for 343 proposed entries and ten demo candidates, with zero file issues and an unchanged repeat baseline. See [PDF findings](PDF_Import_Findings_20261015.md). No live import ran; native notebook decoding remains unavailable.
 
 ## Inputs and boundaries

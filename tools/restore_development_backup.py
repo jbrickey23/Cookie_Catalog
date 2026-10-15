@@ -14,6 +14,18 @@ TABLES = {
     "printable_assets", "shape_size_variants", "design_components", "printable_size_recipes", "d1_migrations"
 }
 
+
+REVIEW_TABLES = {"import_review_workspaces", "import_review_versions", "import_review_items", "import_review_runs"}
+
+def table_profile(names):
+    names = set(names)
+    if names not in (TABLES, TABLES | REVIEW_TABLES):
+        raise ValueError("Unexpected or incomplete schema")
+    return names
+
+def migration_profile(tables):
+    return {"0001_initial.sql", "0002_variants_components.sql"} | ({"0003_import_reviews.sql"} if REVIEW_TABLES <= set(tables) else set())
+
 def identifier(value):
     if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", value):
         raise ValueError("Invalid SQL identifier")
@@ -35,9 +47,10 @@ def restore(source, destination):
     if payload.get("environment") != "development":
         raise ValueError("Not a development backup")
     tables, schema = payload["database"]["tables"], payload["database"]["schema"]
-    if set(tables) != TABLES or {item["name"] for item in schema if item["type"] == "table"} != TABLES:
+    selected_tables = table_profile(tables)
+    if {item["name"] for item in schema if item["type"] == "table"} != selected_tables:
         raise ValueError("Unexpected or incomplete schema")
-    if any(item["type"] not in ("table", "index") or item["tbl_name"] not in TABLES for item in schema):
+    if any(item["type"] not in ("table", "index") or item["tbl_name"] not in selected_tables for item in schema):
         raise ValueError("Unsupported schema object")
     objects = payload["objects"]
     attachments = {item["storage_key"]: item for item in tables["attachments"]}

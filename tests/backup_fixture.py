@@ -8,7 +8,7 @@ import sys
 root = Path(__file__).resolve().parents[1]
 connection = sqlite3.connect(":memory:")
 connection.row_factory = sqlite3.Row
-for path in sorted((root / "database/migrations").glob("*.sql")):
+for path in [root / "database/migrations" / name for name in ("0001_initial.sql", "0002_variants_components.sql")]:
     connection.executescript(path.read_text())
 connection.execute("CREATE TABLE d1_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)")
 for i, name in enumerate(("0001_initial.sql", "0002_variants_components.sql"), 1):

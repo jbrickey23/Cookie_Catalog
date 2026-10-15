@@ -1,5 +1,11 @@
 # Cookie Catalog — User Companion
 
+## Save your import review work
+
+After the saved-review development activation, Import preparation workspace can save and reopen a prepared review across sessions. Save new review keeps classifications, ownership, quantity unknowns, Bin/optional Slot, longest-edge reference size, original size labels, source references and review notes. Download reviewed manifest still gives you a separate copy. Save review changes retains earlier versions and protects against overwriting somebody else's work.
+
+Record import preview summarizes gaps in a saved version. This does not create inventory or upload originals. Earlier versions can be opened as drafts; saving creates a new version. Changing item type resets ownership/quantity assertions and completion, retaining applicable source notes. Actual bulk catalog import remains a separate next step. See [saved review instructions](Saved_Import_Reviews.md).
+
 Updated October 14, 2026. This guide describes the current development app and will be updated when its behavior changes.
 
 ## Access roles

@@ -1,3 +1,4 @@
+import {handleImportReviews} from "./server/import-reviews";
 import {catalogReadiness} from "./server/readiness";
 import { checkDevelopmentStorage } from "./server/development-storage-check";
 import { handleAttachments } from "./server/attachments";
@@ -47,6 +48,13 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       const manifest=await createArchiveManifest(database,files);
       return new Response(manifest.buffer as ArrayBuffer,{headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(error){return json({error:error instanceof BackupError?error.message:"Archive preparation failed."},503);}
+  }
+  if (pathname === "/api/import-reviews" || pathname.startsWith("/api/import-reviews/")) {
+    if(!mayWrite(user))return json({error:"Editing access required"},403);
+    if(!["GET","POST","PUT"].includes(request.method))return json({error:"Method not allowed"},405);
+    if(request.method!=="GET"&&(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="import-review"))return json({error:"Same-origin review request required"},403);
+    if(!database)return json({error:"Catalog database unavailable"},503);
+    return handleImportReviews(request,database,user.subject);
   }
   if (pathname === "/api/readiness") {
     if (!database) return json({error:"Catalog database unavailable"},503);

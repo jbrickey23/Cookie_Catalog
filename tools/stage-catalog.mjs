@@ -59,7 +59,7 @@ export function stageCatalog(manifestFile,sourceFolder,output,baselineFile){
     }
     const facts={...raw.facts,source:raw.facts?.source||[raw.source.pageId,raw.source.sectionPath].filter(Boolean).join(' / '),
       photo:files.some(f=>['cutter_photo','design_photo','scale_photo'].includes(f.purpose)),scalePhoto:files.some(f=>f.purpose==='scale_photo'),original:files.some(f=>f.purpose==='printable_original')};
-    const item={id,kind:raw.kind,name:raw.name,facts,reviews:raw.reviews};
+    const item={id,kind:raw.kind,name:raw.name,facts,reviews:raw.reviews,...(raw.catalog?{catalog:raw.catalog}:{})};
     for(const [field,review]of Object.entries(raw.reviews??{})){
       if(review.state==='complete'&&readiness(item).checks.find(c=>c.field===field)?.state!=='complete')issues.push('Unsupported complete claim for '+field+'; provide the value/file and correct evidence method.');
     }

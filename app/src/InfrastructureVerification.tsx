@@ -2,7 +2,7 @@ import React,{useState} from "react";
 interface Report {
   checksPassed:boolean;
   worker:{build:{commit:string|null;branch:string|null;source:string;buildNode:string|null};sourceCommitAvailable:boolean};
-  database:{schemaTables:number;requiredMigrationsApplied:boolean;foreignKeyViolations:number};
+  database:{reviewStorageReady?:boolean;schemaTables:number;requiredMigrationsApplied:boolean;foreignKeyViolations:number};
   storage:{bindingReadable:boolean;sampledAttachments:number;missingOriginals:number;sizeMismatches:number};
 }
 export function InfrastructureVerification() {
@@ -39,6 +39,7 @@ export function InfrastructureVerification() {
     {report&&<div>
       <p>Source commit: <code>{report.worker.build.commit??"Not available — deployment traceability not yet verified"}</code><br />Branch: {report.worker.build.branch??"unknown"}<br />Build source: {report.worker.build.source}</p>
       <p>D1: {report.database.schemaTables} tables; migrations {report.database.requiredMigrationsApplied?"present":"missing"}; {report.database.foreignKeyViolations} foreign-key violations.</p>
+      <p>Saved review storage: {report.database.reviewStorageReady?"ready":"not activated; review migration required"}.</p>
       <p>R2 binding readable: {report.storage.bindingReadable?"yes":"no"}; {report.storage.sampledAttachments} linked originals sampled; {report.storage.missingOriginals} missing; {report.storage.sizeMismatches} size mismatches.</p>
       <p>Build Node: {report.worker.build.buildNode??"unknown"} (deployment build environment).</p>
       <button onClick={download}>Download verification report</button>

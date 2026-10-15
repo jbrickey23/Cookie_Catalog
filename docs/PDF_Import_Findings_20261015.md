@@ -58,3 +58,4 @@ References:
 Use unknown until supported by evidence; do not silently merge, infer measured dimensions from unscaled photos, or count unprinted entries as physical stock. Location remains Bin with optional future Slot. Stage incomplete entries without requiring the owner to clean the notebook first. Batch ownership/original-location/component conflicts after proposed mappings are concrete.
 
 Pending infrastructure acceptance and recovery boundaries remain unchanged. Draft PR #1 remains unreleased. No paid resources, production release, source edits, live bulk import, external messages or security changes occurred.
+
