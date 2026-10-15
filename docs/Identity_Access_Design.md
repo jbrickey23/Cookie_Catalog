@@ -1,5 +1,11 @@
 # CC-TODO-005 — Development identity and access
 
+## 2026-10-15, 01:17 UTC — Owner and viewer live acceptance passed
+
+After the configured role deployment and owner-reported Access/secret saves, owner confirmed their live session displays Admin / Owner. In the guided separate private-browser viewer workflow, owner confirmed read-only and then passed search for tree, View details and existing-original download. The requested acceptance checklist also required absence of create/edit/upload/remove/backup controls; the owner reported pass. Record these as owner-mediated live acceptance, not assistant browser/API observations. Real account emails remain private. The second intended admin account has not yet had its own sign-in verified; do not infer its pass from the existing owner or viewer. Local signed-membership and role/denial tests remain passed.
+
+CC-TODO-005 now has configured owner-equivalent admin/viewer roles with observed existing-owner and viewer acceptance. It remains open for the second admin sign-in, account recovery/admin operations readiness and the separately deferred live alternate-email denial test (do not restart automatically). No in-app membership editor exists; authorized Cloudflare configuration is the current administration path. CC-TODO-012 Windows backup acceptance remains complete. Next useful device check is Windows Edge and iPhone Safari if not already observed; do not repeat passed behavior solely to collect screenshots. Then continue authorized representative real samples (007) and remaining recovery/release readiness. Preserve current development resources/data, parked Windows security remediation, deferred OneNote/photo/Canva, and draft/unreleased application PR #1.
+
 ## Private configured membership — October 15
 
 Admin and owner are equivalent at the owner's request: both use role `owner`. The two intended admin identities and one viewer identity are held privately; never commit real emails. Server authorization applies on every request, independently of hidden UI controls.
