@@ -124,7 +124,7 @@ export async function handleAttachments(request: Request, database: D1Database, 
       if (!t || !ID.test(id)) return json({ error: "Choose a valid catalog record." }, 400);
       const rows = await database.prepare(`SELECT a.* FROM attachments a JOIN ${t.links} l ON l.attachment_id=a.id WHERE l.${t.column}=? ORDER BY a.created_at,a.id LIMIT 200`).bind(id).all<Attachment>();
       const items = await Promise.all(rows.results.map(async row => ({
-        id: row.id, filename: row.filename, mediaType: row.media_type, byteSize: row.byte_size,
+        id: row.id, filename: row.filename, mediaType: row.media_type, byteSize: row.byte_size, sha256: row.sha256,
         available: (await bucket.head(row.storage_key)) !== null
       })));
       return json({ attachments: items, limit: 200 });
