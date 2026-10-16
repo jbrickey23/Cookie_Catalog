@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 16 — publication and managed backup acceptance
+
+Owner approved publication; exact tested source tree is deployed as 8043509 with passing CI/Workers Builds and authenticated source verification. The original snapshot completed 592 checked originals and read-only restore preview passed (22 tables / 4,040 rows). No live restore or inventory change. Daily creation remains off and no pruning is activated. This supersedes the earlier publication block and incomplete snapshot status. See docs/Interrupted_Worker_Reconciliation_20261016.md and sanitized evidence.
+
 ## October 16 — interrupted worker continuity
 
 Preserve the canonical development commits and original retained backup. The 324/592 snapshot is incomplete; no successful live restore/complete receipt is claimed. Compact copy-plan mitigation is locally tested in 4626eb4 but publication is blocked by automatic approval review pending explicit destination/branch authorization. Continue from [the current recovery checkpoint](docs/Interrupted_Worker_Reconciliation_20261016.md). No new product decision, production release, live restore, schedule or pruning was authorized.

@@ -1,0 +1,31 @@
+{
+  "applicationCommit": "80435098a6c169b94d0d966001da7f006ac3cd6e",
+  "environment": "development",
+  "evidence": "authenticated owner browser UI",
+  "snapshotCapturedAt": "2026-10-16T00:52:02Z",
+  "snapshotKind": "normal",
+  "resumedExistingJob": true,
+  "originals": 592,
+  "originalsChecked": 592,
+  "uiCompletion": "Backup complete and automatically checked: 592 originals.",
+  "restorePreview": {
+    "passed": true,
+    "tables": 22,
+    "databaseRows": 4040,
+    "physicalCutters": 208,
+    "currentPhysicalCutters": 208,
+    "designs": 2,
+    "originals": 592
+  },
+  "liveRestoreApplied": false,
+  "catalogRecordsChanged": false,
+  "dailyBackupEnabled": false,
+  "automaticPruningEnabled": false,
+  "independentOffProviderCopyVerified": false,
+  "ciRuns": [
+    38834081836,
+    38834086296
+  ],
+  "workersBuild": "d79f6e33-43f3-4948-b8eb-80aec7fcf204",
+  "deploymentVersion": "5e3891fb-307b-415c-8ce2-25dd935d5ea4"
+}

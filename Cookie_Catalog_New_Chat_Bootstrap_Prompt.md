@@ -1,5 +1,17 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Live backup acceptance — October 16, 2026 (UTC)
+
+Owner explicitly approved publishing the prepared work. Command-line Git had no push credentials; the connected GitHub integration published the exact tested tree as `80435098a6c169b94d0d966001da7f006ac3cd6e` on the existing development branch. Local commits 4626eb4, 1b5a745 and 2694bf9 remain preserved. The earlier publication block is resolved.
+
+Both GitHub runs 38834081836 (push) and 38834086296 (PR) passed. Workers Builds d79f6e33-43f3-4948-b8eb-80aec7fcf204 passed, deploying version 5e3891fb-307b-415c-8ce2-25dd935d5ea4. The authenticated report at 2026-10-16T01:16:16.462Z independently matched 8043509, 22 tables, all four migrations, zero foreign-key violations and five sampled originals without missing files/size mismatches. Current totals include demonstration data: 345 shapes, 208 physical cutters, two designs and two mappings; Browse has 344 non-demo entries / 206 non-demo physical rows.
+
+The original normal snapshot from October 15 at 17:52:02 Pacific resumed in place and completed **592/592 originals — checked**. The UI reported automatic verification completed. The read-only Review restore loaded successfully: 22 tables, 4,040 database rows, 208 physical cutters, two designs and 592 originals; current physical count also 208. This proves the completed managed snapshot/receipt and schema-compatible preview against the real development catalog. No actual restore, new snapshot, catalog write or deletion was performed. Daily creation remains disabled. No production release, migration, paid resource, pruning or security change.
+
+Current validation remains 129 application tests, 28 helper tests, schema/synthetic import, eight Python recovery tests, three OneNote audit tests and TypeScript/frontend/Worker build. Live inline draft/Cancel acceptance passed earlier on fc136b1; its application source is retained. Broader intended-device/accessibility, actual inline write/delete acceptance, retention approval/reclamation, independent off-provider automation and an explicitly approved live/isolated restore remain open. CC-TODO-013 is no longer blocked on the first 592-original snapshot or read-only preview. CC-TODO-014 remains open for remaining workspace acceptance. Next unused task: CC-TODO-015.
+
+Resume from the deployed 8043509 application tree and this newer acceptance, not the superseded 324/592 or blocked-publication checkpoint below. The canonical remote branch remains feature/cc-infrastructure-foundation, draft PR #1; main stays protected and unreleased. Sanitized evidence: docs/evidence/Infrastructure_20261016_8043509.json and docs/evidence/Managed_Backup_Acceptance_20261016.json.
+
 ## Interrupted-worker reconciliation — October 16, 2026 (UTC)
 
 Canonical development remains `feature/cc-infrastructure-foundation`, draft PR #1. Remote and authenticated deployed application both match `fc136b19761aca1c295ed4b3ca3009a25b6d0c15`. Preserve BIN `ae39eb5`, managed recovery `3f2457a`, and inline workspace `fc136b1`; the approved document-only branch `df377933` must not replace this newer application history. Protected main remains `db3ffe8`; no merge or production release.
