@@ -1,5 +1,11 @@
 # Cookie_Catalog — Decision Log
 
+## Full-height results pane and shared thumbnails — October 16, 2026 (Pacific)
+
+Owner screenshot showed unused space beneath the right results pane while the focused card continued below it. Desktop expanded workspace now stretches the independently scrolling two-column results pane to the focused card's full height, including automatic adjustment as its content changes. Results are out of flow within that pane so the number of results does not enlarge the focused card. Narrow stacked layout keeps its bounded scroll behavior. Focused card margin is removed only in the side-by-side layout so both panes share top/bottom alignment.
+
+Focused photos and right-pane thumbnail image areas now share a 200 × 200-pixel display box (responsive width clamp), with object-fit:contain preserving the complete design without stretching/cropping. Focused-image pop-out and original download links, guarded thumbnail focus switching and inline drafts are unchanged. This is CSS display sizing, not conversion, stored-image editing, physical scale or the deferred CC-TODO-015 asset-standards work. Screenshot attachment was successfully read at its supplied path; the pasted missing-file message did not prevent inspection. Build/type-check passed; deployment/visual acceptance follows. No data/API/schema/access/resource change.
+
 ## R1 viewer/workspace acceptance; Canva standards deferred — October 16, 2026 (Pacific)
 
 Application 0b23bdb129fea4652d9570433aa53d15315e903a contains the requested two-column image/name/location thumbnail pane and 500 × 500-pixel requested read-only image viewer. Local 143 tests/build passed. Live cloud Chrome acceptance: thumbnail switch prompted for unsaved changes, dismiss kept the same record/draft, Cancel removed only the temporary draft, and a clean whole-card click changed focus. Fitted viewer displayed the original with Download original and no editing controls; closing returned to the same focused card. Browser decides final popup/tab dimensions; cloud renderer did not attest a physical-inch or exact 500-pixel window. No real catalog/original write occurred during these tests. CI/deployment evidence is retained on the application commit.

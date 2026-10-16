@@ -148,3 +148,18 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 
 .detail-images>figure>.image-window-link {display:block;border-radius:8px;cursor:zoom-in}
 .detail-images>figure>.image-window-link:hover {outline:2px solid #6c8a75;outline-offset:2px}
+
+/* Shared readable thumbnail area; open the image for a larger read-only view. */
+.detail-images {grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),200px))}
+.detail-images figure {width:200px;max-width:100%}
+.detail-images>figure>.image-window-link,
+.browse-workspace.expanded .cutter-image {width:200px;max-width:100%;height:200px;aspect-ratio:auto;margin-inline:auto;background:#f4f4ee}
+.detail-images img {width:100%;height:100%;max-height:none;object-fit:contain}
+.browse-workspace.expanded .cutter-image img {display:block;object-fit:contain}
+@media(min-width:761px){
+ .browse-workspace.expanded {align-items:stretch}
+ .browse-workspace.expanded .cutter-detail {margin:0}
+ .browse-workspace.expanded .browse-results {position:relative;min-height:0;max-height:none;align-self:stretch}
+ /* Out of flow so the result count cannot make the focused card taller. */
+ .browse-workspace.expanded .browse-results>.cutter-grid {position:absolute;top:.15rem;left:.15rem;right:.15rem;align-content:start}
+}
