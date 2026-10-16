@@ -1,3 +1,4 @@
+import {RecordRecovery} from './RecordRecovery';
 import {ManagedBackups} from "./ManagedBackups";
 import "./styles.css";
 import React, { useEffect, useState } from "react";
@@ -107,6 +108,7 @@ function App() {
     <h1>Cookie Catalog</h1>
     <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
     <Browse version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
+    {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>
     {role === "owner" && <InfrastructureVerification />}

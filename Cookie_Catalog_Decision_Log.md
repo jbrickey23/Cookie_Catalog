@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 16 — routine edits use bounded record recovery
+
+Owner explicitly prioritizes quick, economical Save/Delete. Full-catalog checks on each edit are superseded by durable per-entry before/after records plus guarded D1 transactions and owner-reviewed conflict-safe undo. Whole snapshots remain for bulk import, full restore and backup scheduling. Focused card images move above editable fields. See docs/Record_Recovery.md. No migration, paid resources, automatic pruning or production release.
+
 ## October 16 — publication and managed backup acceptance
 
 Owner approved publication; exact tested source tree is deployed as 8043509 with passing CI/Workers Builds and authenticated source verification. The original snapshot completed 592 checked originals and read-only restore preview passed (22 tables / 4,040 rows). No live restore or inventory change. Daily creation remains off and no pruning is activated. This supersedes the earlier publication block and incomplete snapshot status. See docs/Interrupted_Worker_Reconciliation_20261016.md and sanitized evidence.

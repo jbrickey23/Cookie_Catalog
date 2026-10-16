@@ -54,11 +54,12 @@ function CutterDetails({item,onClose,canEdit,canDelete,onDirty,onSaved,onDeleted
   const [files,setFiles]=useState<{id:string;filename:string;mediaType:string;available:boolean}[]>([]),[status,setStatus]=useState("Loading files…");
   useEffect(()=>{let active=true;fetch("/api/attachments?kind=shape&recordId="+encodeURIComponent(item.shape_id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {attachments:{id:string;filename:string;mediaType:string;available:boolean}[]};}).then(body=>{if(active){setFiles(body.attachments);setStatus(body.attachments.length?"":"No files attached.");}}).catch(()=>{if(active)setStatus("Files could not load. Close and reopen this cutter to retry.");});return()=>{active=false;};},[item.shape_id]);
   return <section ref={panel} tabIndex={-1} className="cutter-detail" aria-label={"Viewing "+item.name}><div className="browse-heading"><h3>Viewing: {item.name}</h3><button onClick={onClose}>Close cutter details</button></div>
+    <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/>}<figcaption>{file.filename} · {file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>
     {item.record_kind==='reference'&&<p>Assigned BIN: {item.location??item.source_bin??'Not recorded'}. Location is independent of physical/digital status.</p>}
     <EntryEditor kind={item.record_kind==='reference'?'shapes':'cutters'} id={item.record_kind==='reference'?item.shape_id:item.id} canEdit={canEdit} canDelete={canDelete} onDirty={onDirty} onSaved={onSaved} onDeleted={onDeleted}/>
     {item.source_reason&&<p>{item.source_reason}</p>}
     {item.source_url&&/^https?:/.test(item.source_url)&&<p><a href={item.source_url} target="_blank" rel="noreferrer">Open recorded source link</a></p>}
-    <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/>}<figcaption>{file.filename} · {file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>
+
     <p>Files belong to the cutter shape and may be shared across its size variants. Reference artwork and decorated examples do not verify the physical cutter or its size.</p>
   </section>;
 }

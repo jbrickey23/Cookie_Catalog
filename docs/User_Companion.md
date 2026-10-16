@@ -2,10 +2,14 @@
 
 ## Browse and edit in place
 
-Select a result card to open details on the left and scroll remaining results on the right. Click a value to change it. Save/Cancel appear only while values differ; switching or closing asks before discarding a draft. Save creates and checks its recovery point automatically. Tags can be searched or drafted here; new tags and shapes are saved only with the entry. Cancel creates no vocabulary. Existing shape values and files are shared across size variants. New physical cutter can select an existing shape or draft a named new shape; New shape reference adds no physical stock.
+Select a result card to open details on the left and scroll remaining results on the right. Attached cutter images appear at the top of the focused card, above the editable fields. Click a value to change it. Save/Cancel appear only while values differ; switching or closing asks before discarding a draft. Save keeps a small recovery copy of the affected entry automatically; it does not wait for a full-catalog backup or file scan. Tags can be searched or drafted here; new tags and shapes are saved only with the entry. Cancel creates no vocabulary. Existing shape values and files are shared across size variants. New physical cutter can select an existing shape or draft a named new shape; New shape reference adds no physical stock.
 
 BIN/location uses an existing assignment. A selected physical location overrides the original OneNote assignment; clearing it returns to that source assignment. Location does not confirm physical ownership or printing. Admin deletion asks for confirmation, protects the current state, and blocks linked records rather than deleting related inventory/files/history. Conflicts keep your draft; compare with the latest record before retrying. Designs and compatibility mapping management remain in the advanced catalog section.
 
+
+## Undo a routine record change
+
+Admin/owner can expand **Undo recent record changes**, select **Review change**, and then **Undo this change** after reviewing it. This restores that entry's previous values when its current saved state still matches the recorded result. Newer changes and new linked records block undo. Failed attempts may appear in the list but cannot overwrite unrelated state. Images and originals stay shared and in place. Undo also retains a recovery copy of the values it replaces.
 
 ## Backups and recovery from inside the app
 

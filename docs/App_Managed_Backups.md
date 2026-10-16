@@ -1,5 +1,7 @@
 # App-managed backups and recovery
 
+Routine inline Save/Delete uses [small record recovery copies and reviewed undo](Record_Recovery.md). These actions do not create full snapshots or scan original files. The full-catalog workflow below remains for Back up now, protected bulk imports and whole-catalog restoration.
+
 Live development acceptance (October 16 UTC): deployed 8043509 resumed the original snapshot to 592 checked originals; read-only restore preview passed for 22 tables / 4,040 rows. No actual live restore was performed. Daily creation is still disabled. See [current reconciliation](Interrupted_Worker_Reconciliation_20261016.md).
 
 This development workflow replaces routine file exports, CMD execution and pasted backup references. The existing private R2 bucket stores snapshot manifests, immutable originals keyed by SHA-256, receipts and resumable job metadata under `catalog-backups/`. No new bucket, database, paid plan or schema migration is created. The public Git repository contains code and sanitized evidence only.

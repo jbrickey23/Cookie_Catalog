@@ -1,5 +1,15 @@
 # Cookie_Catalog — TODO
 
+## Fast routine editing and image-first focus — October 16, 2026 (UTC)
+
+Owner rejected full-catalog protection passes on every small edit: everyday Save/Delete must be quick and economical while preserving recovery. Replace the inline entry checkpoint loop with one server-managed private before/after recovery record covering the affected shape, optional physical row and tag definitions/associations. R2 must acknowledge this bounded (maximum 256 KiB) checksum-protected record before the guarded atomic D1 write. Failed attempts remain recoverable records but are not claimed as successful commits. Ordinary Save/Delete never enumerates storage, reads/copies originals or creates full managed snapshot jobs. Existing optimistic concurrency, role/origin guards, immutable source provenance, canonical tags and inbound-relationship deletion checks remain. Existing complete snapshots are preserved; bulk import/restore protection and opt-in scheduling remain unchanged.
+
+An owner-only collapsed Undo recent record changes panel lists the latest ten recovery records on demand. Review checks that current affected records still match the recorded result. Approved undo atomically restores prior values/associations or recreates a deleted row, refuses newer changes/new dependencies/changed shared tag definitions, preserves shared vocabulary and originals, and records its own inverse recovery point. Undo and recovery review do not run whole-catalog exports. Failed SQL cannot leave partial rows, tags or partially applied undo. Record recovery history remains private in existing R2 under catalog-backups/record-changes/; it is separate from portable whole-catalog archives and is retained without automatic pruning. No schema migration, new resource or paid plan.
+
+Focused editable cards now show attached images immediately below their heading, before BIN and editable values, as explicitly requested by the owner. Existing sharing, original downloads, permissions and image-scale caveats remain.
+
+Local validation: 135 application tests, including no-storage-scan/one-small-write routine mutations, owner-only recovery, edit/delete/create undo, original/provenance/tag retention, corrupt or unavailable recovery storage, failed SQL and racing edits/undo, fifty-tag bulk restoration under a conservative query budget, and one-request Save with draft retained on conflict. TypeScript/frontend/Worker build passes. Deployed acceptance follows publication; do not claim live latency or completed synthetic CRUD until recorded. CC-TODO-013/014 continue; next unused task remains CC-TODO-015.
+
 ## Live backup acceptance — October 16, 2026 (UTC)
 
 Owner explicitly approved publishing the prepared work. Command-line Git had no push credentials; the connected GitHub integration published the exact tested tree as `80435098a6c169b94d0d966001da7f006ac3cd6e` on the existing development branch. Local commits 4626eb4, 1b5a745 and 2694bf9 remain preserved. The earlier publication block is resolved.

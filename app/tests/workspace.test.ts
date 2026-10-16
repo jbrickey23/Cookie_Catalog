@@ -31,11 +31,10 @@ test('workspace creates shapes and physical records atomically; staged tags cano
   assert.equal((await success(await call(db,files,'/cutters/'+saved.cutter.id))).revision,edited.revision);
  }finally{await runtime.dispose();}
 });
-test('invalid shape, arbitrary BIN, unverified snapshot and stale selected shape create no records or orphan vocabulary',async()=>{
+test('invalid shape, arbitrary BIN and stale selected shape create no records or orphan vocabulary',async()=>{
  const {runtime,db,files}=await env();try{
   const invalid:any=draft(' ');invalid.tags=[{label:'orphan'}];assert.equal((await call(db,files,'/cutters','POST',invalid)).status,400);
   const unknown:any=draft();unknown.cutter.location_id='new-bin';unknown.tags=[{label:'orphan'}];assert.equal((await call(db,files,'/cutters','POST',unknown)).status,400);
-  assert.equal((await call(db,files,'/cutters','POST',draft())).status,400);
   assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())?.n,0);assert.equal((await db.prepare('SELECT count(*) n FROM tags').first<any>())?.n,0);
   await db.prepare("INSERT INTO shapes(id,name) VALUES('existing','Existing')").run();const existing=await success(await call(db,files,'/shapes/existing'));
   const input:any=draft('Existing');input.existingShapeId='existing';input.shapeRevision=existing.revision;
@@ -43,7 +42,7 @@ test('invalid shape, arbitrary BIN, unverified snapshot and stale selected shape
   input.existingShapeId=undefined;input.shapeRevision=undefined;assert.equal((await call(db,files,'/cutters','POST',input)).status,409);
  }finally{await runtime.dispose();}
 });
-test('delete requires owner confirmation and backup, checks inbound relationships, and preserves shared shapes',async()=>{
+test('delete requires owner confirmation and record protection, checks inbound relationships, and preserves shared shapes',async()=>{
  const {runtime,db,files}=await env();try{
   const saved=await success(await call(db,files,'/cutters','POST',draft(),undefined,await checkpoint(db,files)),201),id=saved.cutter.id;
   assert.equal((await call(db,files,'/cutters/'+id,'DELETE',{approved:true},saved.revision,undefined,identity('editor'))).status,403);
@@ -57,7 +56,7 @@ test('delete requires owner confirmation and backup, checks inbound relationship
 test('atomic transaction rejects a racing change and rolls back newly drafted tags',async()=>{
  const {runtime,db,files}=await env();try{
   const saved=await success(await call(db,files,'/cutters','POST',draft(),undefined,await checkpoint(db,files)),201),backup=await checkpoint(db,files),input:any=draft();input.tags=[{label:'must roll back'}];input.cutter.quantity=2;
-  let batches=0;const racing=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>{if(++batches===4)await target.prepare('UPDATE physical_cutters SET quantity=9 WHERE id=?').bind(saved.cutter.id).run();return target.batch(statements);};const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});
+  let batches=0;const racing=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>{if(++batches===2)await target.prepare('UPDATE physical_cutters SET quantity=9 WHERE id=?').bind(saved.cutter.id).run();return target.batch(statements);};const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});
   assert.equal((await call(racing,files,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision,backup)).status,412);assert.equal((await db.prepare('SELECT quantity FROM physical_cutters').first<any>())?.quantity,9);assert.equal((await db.prepare('SELECT count(*) n FROM tags').first<any>())?.n,0);
  }finally{await runtime.dispose();}
 });
@@ -69,11 +68,68 @@ test('workspace role/origin guards run first; editors can protect changes but ca
  }finally{await runtime.dispose();}
 });
 test('a SQL failure after shape, tag and cutter insertion rolls back the entire new entry and retains its recovery point',async()=>{
- const {runtime,db,files}=await env();try{const backup=await checkpoint(db,files);let batches=0;const broken=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>target.batch(++batches===4?[...statements,target.prepare('INSERT INTO missing_workspace_table VALUES(1)')]:statements);const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});const input:any=draft();input.tags=[{label:'no orphan'}];const response=await call(broken,files,'/cutters','POST',input,undefined,backup);assert.notEqual(response.status,201);for(const table of ['shapes','physical_cutters','tags','shape_tags'])assert.equal((await db.prepare('SELECT count(*) n FROM '+table).first<any>())?.n,0);assert.equal((await completeBackup(files,backup)).job.status,'complete');}finally{await runtime.dispose();}
+ const {runtime,db,files}=await env();try{const backup=await checkpoint(db,files);let batches=0;const broken=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>target.batch(++batches===2?[...statements,target.prepare('INSERT INTO missing_workspace_table VALUES(1)')]:statements);const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});const input:any=draft();input.tags=[{label:'no orphan'}];const response=await call(broken,files,'/cutters','POST',input,undefined,backup);assert.notEqual(response.status,201);for(const table of ['shapes','physical_cutters','tags','shape_tags'])assert.equal((await db.prepare('SELECT count(*) n FROM '+table).first<any>())?.n,0);assert.equal((await completeBackup(files,backup)).job.status,'complete');}finally{await runtime.dispose();}
 });
 test('maximum tag associations use a bounded transaction; removing them preserves every shared tag',async()=>{
  const {runtime,db,files}=await env();try{const input:any=draft();input.tags=Array.from({length:50},(_,i)=>({label:'TEST tag '+i}));const backup=await checkpoint(db,files);let prepared=0;const counted=new Proxy(db,{get(target,key){if(key==='prepare')return(sql:string)=>{prepared++;return target.prepare(sql);};const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});const saved=await success(await call(counted,files,'/cutters','POST',input,undefined,backup),201);assert.equal(saved.tags.length,50);assert(prepared<=50,'save remains within the conservative per-request query budget');input.tags=[];await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision,await checkpoint(db,files)));assert.equal((await db.prepare('SELECT count(*) n FROM tags').first<any>())?.n,50);assert.equal((await db.prepare('SELECT count(*) n FROM shape_tags').first<any>())?.n,0);}finally{await runtime.dispose();}
 });
 test('shape deletion explicitly blocks cascade tag relationships rather than silently removing them',async()=>{
  const {runtime,db,files}=await env();try{await db.prepare("INSERT INTO shapes(id,name) VALUES('s','TEST tagged shape')").run();await db.prepare("INSERT INTO tags(id,label) VALUES('t','TEST shared')").run();await db.prepare("INSERT INTO shape_tags VALUES('s','t')").run();const opened=await success(await call(db,files,'/shapes/s'));const response=await call(db,files,'/shapes/s','DELETE',{approved:true},opened.revision,await checkpoint(db,files));assert.equal(response.status,409);assert.equal((await db.prepare('SELECT count(*) n FROM shape_tags').first<any>())?.n,1);}finally{await runtime.dispose();}
+});
+
+test('routine create/edit/delete use one small recovery write and never read original files or full snapshots',async()=>{
+ const {runtime,db,files}=await env();try{
+  let puts=0;const sizes:number[]=[];
+  const bounded=new Proxy(files,{get(target,key){if(['list','head','delete'].includes(String(key)))return()=>{throw Error('Routine change must not scan storage');};if(key==='get')return(path:string,...args:any[])=>{assert.equal(path,'catalog-backups/control/restore.json');return (target.get as any)(path,...args);};if(key==='put')return(path:string,value:Uint8Array,options:any)=>{assert(path.startsWith('catalog-backups/record-changes/'));puts++;sizes.push(value.byteLength);return target.put(path,value,options);};const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});
+  const saved=await success(await call(db,bounded,'/cutters','POST',draft()),201);assert(saved.recoveryId);assert.equal(puts,1);
+  const input=draft();input.cutter.quantity=2;const edited=await success(await call(db,bounded,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision));assert.equal(puts,2);
+  await success(await call(db,bounded,'/cutters/'+saved.cutter.id,'DELETE',{approved:true},edited.revision));assert.equal(puts,3);assert(sizes.every(size=>size<5000));
+  const listing=await success(await call(db,files,'/recovery'));assert.equal(listing.changes.length,3);
+ }finally{await runtime.dispose();}
+});
+async function undo(db:D1Database,files:R2Bucket,id:string){const preview=await success(await call(db,files,'/recovery/'+id));assert.equal(preview.canUndo,true,preview.reason);return success(await call(db,files,'/recovery/'+id,'POST',{approved:true},preview.revision));}
+test('record undo restores edits, tags, deleted rows and new entries without full archive work',async()=>{
+ const {runtime,db,files}=await env();try{
+  const original:any=draft();original.tags=[{label:'TEST keep shared'}];const saved=await success(await call(db,files,'/cutters','POST',original),201);
+  const input:any=draft('TEST changed name');input.tags=[];input.cutter.quantity=7;
+  const edited=await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision));await undo(db,files,edited.recoveryId);
+  const reopened=await success(await call(db,files,'/cutters/'+saved.cutter.id));assert.equal(reopened.shape.name,saved.shape.name);assert.equal(reopened.cutter.quantity,1);assert.deepEqual(reopened.tags,saved.tags);
+  const removed=await success(await call(db,files,'/cutters/'+saved.cutter.id,'DELETE',{approved:true},reopened.revision));assert.equal((await call(db,files,'/cutters/'+saved.cutter.id)).status,404);await undo(db,files,removed.recoveryId);assert.equal((await success(await call(db,files,'/cutters/'+saved.cutter.id))).revision,saved.revision);
+  await undo(db,files,saved.recoveryId);assert.equal((await call(db,files,'/cutters/'+saved.cutter.id)).status,404);assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())?.n,0);assert.equal((await db.prepare('SELECT count(*) n FROM tags').first<any>())?.n,1,'shared vocabulary is retained');
+  const shape=await success(await call(db,files,'/shapes','POST',{shape:{name:'TEST recover shape'},cutter:null,tags:[]}),201);
+  const deleted=await success(await call(db,files,'/shapes/'+shape.shape.id,'DELETE',{approved:true},shape.revision));await undo(db,files,deleted.recoveryId);assert.equal((await success(await call(db,files,'/shapes/'+shape.shape.id))).shape.name,'TEST recover shape');
+ }finally{await runtime.dispose();}
+});
+test('a missing recovery write blocks a save; failed SQL leaves a recovery attempt that cannot undo unrelated data',async()=>{
+ const {runtime,db,files}=await env();try{
+  const unavailable=new Proxy(files,{get(target,key){if(key==='put')return()=>{throw Error('TEST recovery unavailable');};const v=Reflect.get(target,key);return typeof v==='function'?v.bind(target):v;}});
+  assert.equal((await call(db,unavailable,'/cutters','POST',draft())).status,400);assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())?.n,0);
+  let batches=0;const broken=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>target.batch(++batches===2?[...statements,target.prepare('INSERT INTO missing_test_table VALUES(1)')]:statements);const v=Reflect.get(target,key);return typeof v==='function'?v.bind(target):v;}});
+  assert.notEqual((await call(broken,files,'/cutters','POST',draft())).status,201);
+  const changes=await success(await call(db,files,'/recovery'));assert.equal(changes.changes.length,1);const preview=await success(await call(db,files,'/recovery/'+changes.changes[0].id));assert.equal(preview.canUndo,false);
+  assert.equal((await call(db,files,'/recovery/'+preview.id,'POST',{approved:true},preview.revision)).status,412);
+ }finally{await runtime.dispose();}
+});
+test('undo denies non-owners, stale/racing edits, corrupt recovery records and new relationships',async()=>{
+ const {runtime,db,files}=await env();try{
+  const saved=await success(await call(db,files,'/cutters','POST',draft()),201),path='/recovery/'+saved.recoveryId;
+  assert.equal((await call(db,files,path,'GET',undefined,undefined,undefined,identity('editor'))).status,403);assert.equal((await call(db,files,'/recovery','GET',undefined,undefined,undefined,identity('viewer'))).status,403);
+  const preview=await success(await call(db,files,path));assert.equal((await call(db,files,path,'POST',{approved:false},preview.revision)).status,400);
+  await db.prepare('UPDATE physical_cutters SET quantity=9 WHERE id=?').bind(saved.cutter.id).run();assert.equal((await call(db,files,path,'POST',{approved:true},preview.revision)).status,412);
+  await db.prepare('UPDATE physical_cutters SET quantity=1 WHERE id=?').bind(saved.cutter.id).run();
+  await db.prepare("INSERT INTO attachments(id,storage_key,filename) VALUES('test-file','attachments/test-file/original','test.png')").run();await db.prepare("INSERT INTO shape_attachments VALUES(?,'test-file','photo')").bind(saved.shape.id).run();
+  assert.equal((await call(db,files,path,'POST',{approved:true},preview.revision)).status,409);assert.equal((await db.prepare('SELECT quantity FROM physical_cutters WHERE id=?').bind(saved.cutter.id).first<any>())?.quantity,1,'failed undo rolls back its earlier cutter deletion');
+  await files.put('catalog-backups/record-changes/'+saved.recoveryId+'.json','{}');assert.equal((await call(db,files,path)).status,409);
+ }finally{await runtime.dispose();}
+});
+test('undo restores fifty tag associations within a bounded query budget and rejects a transaction race',async()=>{
+ const {runtime,db,files}=await env();try{
+  const input:any=draft();input.tags=Array.from({length:50},(_,i)=>({label:'TEST many '+i}));const saved=await success(await call(db,files,'/cutters','POST',input),201);
+  input.tags=[];const edited=await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision));const preview=await success(await call(db,files,'/recovery/'+edited.recoveryId));
+  let prepared=0;const counted=new Proxy(db,{get(target,key){if(key==='prepare')return(sql:string)=>{prepared++;return target.prepare(sql);};const v=Reflect.get(target,key);return typeof v==='function'?v.bind(target):v;}});
+  await success(await call(counted,files,'/recovery/'+edited.recoveryId,'POST',{approved:true},preview.revision));assert(prepared<=30,'tag undo uses bulk SQL, not one query per tag');assert.equal((await db.prepare('SELECT count(*) n FROM shape_tags').first<any>())?.n,50);
+  const latest=await success(await call(db,files,'/cutters/'+saved.cutter.id));input.cutter.quantity=2;const changed=await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,latest.revision));const fresh=await success(await call(db,files,'/recovery/'+changed.recoveryId));
+  let batches=0;const racing=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>{if(++batches===2)await target.prepare('UPDATE physical_cutters SET quantity=8 WHERE id=?').bind(saved.cutter.id).run();return target.batch(statements);};const v=Reflect.get(target,key);return typeof v==='function'?v.bind(target):v;}});
+  assert.equal((await call(racing,files,'/recovery/'+changed.recoveryId,'POST',{approved:true},fresh.revision)).status,409);assert.equal((await db.prepare('SELECT quantity FROM physical_cutters').first<any>())?.quantity,8);
+ }finally{await runtime.dispose();}
 });
