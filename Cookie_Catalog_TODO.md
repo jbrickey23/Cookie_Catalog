@@ -1,5 +1,36 @@
 # Cookie_Catalog — TODO
 
+## First-release reconciliation — October 16, 2026 (Pacific)
+
+**Current: v0.1.0-rc.1 deployed to development at 4ca1b1ddfff5745e037549ca5415cdc4bfc1efbe.** Both current-head CI runs (38923760542 / 38923770340) and Workers Build 7571dbaa-043e-460c-a06e-24e1337497d5 passed. Prior authenticated live source/health matched this head, and compact right-pane cards passed visually (four full plus a fifth partial in the observed desktop viewport). Working tree was clean before this documentation update. Retention, fast inline CRUD/Undo, image-first focus and requested compact-card refinement are complete for the development feature cut. Pending-publication/layout wording below is historical.
+
+Authoritative current status and ordered next steps: [First release status](docs/First_Release_Status.md). Remaining release requirements: actual Windows Chrome/Edge and iPhone Safari acceptance, independent intended second-admin/access recovery, then concrete separate production target/data-cutover approval and verification, followed by protected PR/final release. Preserve all completed imports, 592-original snapshot/preview and prior recovery evidence. No new full infrastructure workstream or automatic pruning. Off-provider automation, broader integrations and further cosmetic polish are follow-up scope; current production cutover still needs an identified independent recovery copy. No production resource, access/cost change, merge/tag or real cleanup is performed by this reconciliation. Next unused task: CC-TODO-015.
+
+## Current component disposition
+
+This table and the linked release checklist supersede earlier status tables and next-task wording. Detailed historical scope remains below.
+
+| ID | Current disposition | Remaining / first-release relevance |
+| --- | --- | --- |
+| 001 | Repository, durable state and connected development verified | Independent history-free continuity test remains unverified; maintain canonical checkpoint |
+| 002 | Development schema/CRUD/import/tag/revision checks accepted | Production migrations/readback; broader schema/model refinement later |
+| 003 | Private originals/photo import/retrieval and missing-file recovery accepted | Intended-device/download/access acceptance and production storage verification |
+| 004 | Development CI/deploy, source reporting, rollback and main protection accepted | Actual device checks; approved separate production target/cutover and final release |
+| 005 | Role guards and existing owner/viewer acceptance passed | Second intended admin's independent sign-in and operational access recovery |
+| 006 | Checked full snapshot/preview and prior sample restore/rollback evidence accepted | Production recovery baseline/cutover; broader scale/format recovery later |
+| 007 | Synthetic and real source/reference/photo/import workflows implemented and exercised | Remaining source-quality/duplicate/component reconciliation is ongoing; real samples are not absent |
+| 008 | Source/PDF audit and preserved evidence completed for imported material | Native notebook/account integration and remaining catalog reconciliation later |
+| 009 | Saved reviews/classification and bounded guarded inventory import delivered | Broader native integration/import refinements later |
+| 010 | Assisted photo metadata work deferred | Outside this release cut |
+| 011 | Canva/outline interoperability deferred | Outside this release cut; slicer remains v1 scale tool |
+| 012 | Supported manual Windows backup/helper and remote-copy acceptance complete | Preserve evidence; scheduled/off-provider automation separate |
+| 013 | Managed backup/restore, retention/usage and protected resumption delivered | Independent off-provider automation later; no real cleanup/schedule activation inferred |
+| 014 | Inline CRUD/Undo, image-first details and compact remaining cards delivered | Actual intended-device acceptance and fixes from observed failures |
+
+## Historical checkpoints and original component scope
+
+Earlier counts, blocked publication, unimplemented-feature claims and next-task IDs below are historical; use the current disposition and release checklist above.
+
 ## First-release layout refinement — October 16, 2026 (Pacific)
 
 Continue from verified v0.1.0-rc.1 / 0fe7e40; owner said to proceed. A CSS-only refinement improves long focused-card headings, caption/image wrapping, sticky Save/Cancel wrapping, backup-list action separation, and narrow-screen 44-pixel controls/16-pixel edit inputs. Images remain above editable fields. No data, API, schema, save/recovery logic, retention, permission or schedule changes. Build/type-check passed; development publication and visual check follow. Actual Windows Chrome/Edge, iPhone Safari and intended-admin acceptance remain owner-device work; no such outcome is inferred from CSS. Production target/cutover remains separately unapproved. Preserve all completed work and checked backups.

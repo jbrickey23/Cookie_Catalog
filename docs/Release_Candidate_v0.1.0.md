@@ -2,6 +2,8 @@
 
 Candidate package version: **0.1.0-rc.1**. This is a private development candidate, not an approved production deployment. GitHub PR #1 is the review vehicle for the first application release into protected main. GitHub remains canonical; real catalog data and originals remain private.
 
+Current reconciliation and ordered remaining work: [First release status](First_Release_Status.md). Latest application head is `4ca1b1d`; its CI/deployment and compact-card visual acceptance passed. Earlier `251bebd` evidence below remains the accepted retention baseline.
+
 ## Included in this first cut
 
 - Photo-first catalog search, BIN lookup, paging and responsive focused details with images above editable values.
@@ -30,7 +32,7 @@ A production approval should name the supported initial devices/users and author
 
 ## Refinement after the cut
 
-Minor spacing, card density, image captions, mobile touch comfort and admin-panel organization can be refined without rebuilding storage or slowing routine edits. Broader design/mapping inline editing, STL scaling/outline generation, independent off-provider backup automation and broader operational recovery remain follow-up scope. Slicer remains the v1 geometry scale tool.
+Requested compact card density and focused heading/caption/touch-control spacing refinements are deployed and visually checked in cloud desktop. Further spacing, mobile comfort and admin-panel organization can be refined without rebuilding storage or slowing routine edits. Broader design/mapping inline editing, STL scaling/outline generation, independent off-provider backup automation and broader operational recovery remain follow-up scope. Slicer remains the v1 geometry scale tool.
 
 ## Rollback and durability
 

@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## First-release reconciliation — October 16, 2026 (Pacific)
+
+**Current: v0.1.0-rc.1 deployed to development at 4ca1b1ddfff5745e037549ca5415cdc4bfc1efbe.** Both current-head CI runs (38923760542 / 38923770340) and Workers Build 7571dbaa-043e-460c-a06e-24e1337497d5 passed. Prior authenticated live source/health matched this head, and compact right-pane cards passed visually (four full plus a fifth partial in the observed desktop viewport). Working tree was clean before this documentation update. Retention, fast inline CRUD/Undo, image-first focus and requested compact-card refinement are complete for the development feature cut. Pending-publication/layout wording below is historical.
+
+Authoritative current status and ordered next steps: [First release status](docs/First_Release_Status.md). Remaining release requirements: actual Windows Chrome/Edge and iPhone Safari acceptance, independent intended second-admin/access recovery, then concrete separate production target/data-cutover approval and verification, followed by protected PR/final release. Preserve all completed imports, 592-original snapshot/preview and prior recovery evidence. No new full infrastructure workstream or automatic pruning. Off-provider automation, broader integrations and further cosmetic polish are follow-up scope; current production cutover still needs an identified independent recovery copy. No production resource, access/cost change, merge/tag or real cleanup is performed by this reconciliation. Next unused task: CC-TODO-015.
+
 ## First-release layout refinement — October 16, 2026 (Pacific)
 
 Continue from verified v0.1.0-rc.1 / 0fe7e40; owner said to proceed. A CSS-only refinement improves long focused-card headings, caption/image wrapping, sticky Save/Cancel wrapping, backup-list action separation, and narrow-screen 44-pixel controls/16-pixel edit inputs. Images remain above editable fields. No data, API, schema, save/recovery logic, retention, permission or schedule changes. Build/type-check passed; development publication and visual check follow. Actual Windows Chrome/Edge, iPhone Safari and intended-admin acceptance remain owner-device work; no such outcome is inferred from CSS. Production target/cutover remains separately unapproved. Preserve all completed work and checked backups.
