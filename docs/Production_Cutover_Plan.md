@@ -1,5 +1,13 @@
 # First production cutover — reviewable proposal
 
+## Production provisioning APPROVED; dashboard access blocked — October 16, 2026, 12:49 Pacific
+
+Owner explicitly APPROVED creation of the separate free production resources proposed in the preceding review: cookie-catalog-prod Worker and D1, cookie-catalog-prod-private R2, Cookie Catalog Production Access application on the existing account, preserving development. Do not ask for the same provisioning approval again. Paid resources/upgrades, data cutover, production application deployment and final merge/tag remain outside that provisioning approval.
+
+Execution attempt: no direct Cloudflare plugin was found and no Cloudflare API credentials were configured in the executor. Secure browser-auth sign-in submitted, then Cloudflare displayed API Request Failed: login (403). This is a current remote-browser sign-in failure, not proof of incorrect credentials or an account outage. Stopped after the site error; no method switching, repeated login or security bypass. No production resources were created or verified. Existing development and data remain intact. Owner must provision through their accessible dashboard or provide an approved supported management path; never send secrets in chat or commit them. Next concrete step is create the separate free D1 cookie-catalog-prod and record its non-secret database ID, then private R2, protected Worker/Access setup and configuration verification. Fresh cutover archive/independent copy/transfer/deployment still follow separately.
+
+Latest application 4daa4a24e085c1ae5b52de7eb6ba1f2964b38855 passed both CI checks and development Workers deployment; live read-only source/schema/sample-file verification passed. R1 scope stays fixed. Change Requests CC-TODO-018 is after R1; next unused 019.
+
 Prepared October 16, 2026 (Pacific). This is a preparation plan, not production authorization. Current supported first-release browsers: **Windows Chrome and Microsoft Edge**. The owner removed Safari/iPhone from this release's acceptance scope; no mobile pass is claimed.
 
 ## Proposed separate targets
