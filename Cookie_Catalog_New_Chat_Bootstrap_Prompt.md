@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Production preparation accepted in development — October 16, 2026 (Pacific)
+
+Verified source d7543703587b1efe33f41aed046d578167feeaa4: both CI runs 38955682212 / 38955674794 passed; Workers build 3e33b21d-6eb6-47a6-b473-af3f08ae0712 / version 9c0c395d-73af-4a9d-83d0-c33233331761 passed. Live owner read-only verification matched source and RC version, 22 tables, migrations present, zero FK violations, five originals sampled with none missing/mismatched. Evidence: docs/evidence/Production_Readiness_20261016.json. Production/source compatibility, current-schema synthetic transfer and refreshed reproducible Windows kit pass. Remaining minor wording uses catalog/archive terminology across environments.
+
+NEXT: separate production provisioning authorization for cookie-catalog-prod Worker/D1, cookie-catalog-prod-private R2, Cookie Catalog Production Access on the existing owner account, preserving development and avoiding paid resources. Actual IDs/hostname/privacy/access, selected production build, operational recovery owner, coordinated write freeze/fresh source archive + independent private recovery copy, actual transfer/readback/smoke and final release approval are still open. This checkpoint creates no production resources. CC-TODO-018 Change Requests remains after R1; next unused 019. No new feature expansion.
+
 ## Production compatibility prepared; R1 scope unchanged — October 16, 2026 (Pacific)
 
 CC-TODO-018 captures the accepted post-R1/R1.1 inline Change Request workflow in docs/Change_Request_Workflow.md. Do not add it to R1. Next unused CC-TODO-019. R1 remains current features plus remaining infrastructure/release tasks.

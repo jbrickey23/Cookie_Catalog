@@ -68,7 +68,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(!database||!files)return json({error:"Development bindings unavailable"},503);
     {const blocked=await restoreGate();if(blocked)return blocked;}
     try{return json(await inspectInfrastructure(database,files,environment));}
-    catch{return json({error:"Read-only infrastructure verification failed. Check development bindings/migrations."},503);}
+    catch{return json({error:"Read-only infrastructure verification failed. Check catalog bindings/migrations."},503);}
   }
   if (pathname === "/api/dev/archive" || pathname === "/api/dev/archive-file") {
     if(user.role !== "owner")return json({error:"Owner access required"},403);

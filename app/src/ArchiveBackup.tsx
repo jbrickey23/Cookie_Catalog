@@ -40,7 +40,7 @@ export function ArchiveBackup() {
   return <section>
     <h2>Catalog backup</h2>
     <p>Save a TAR backup containing catalog records, original files and checksums directly into your private backup folder.</p>
-    <p>Development limits: 1 GiB of originals total, 1,000 originals, 25 MiB per original and 10,000 rows per table. Desktop Chrome or Edge required for direct folder saving.</p>
+    <p>Archive limits: 1 GiB of originals total, 1,000 originals, 25 MiB per original and 10,000 rows per table. Desktop Chrome or Edge required for direct folder saving.</p>
     <button disabled={busy} onClick={()=>download()}>{busy?"Saving…":"Save catalog backup"}</button>{" "}
     <button disabled={busy} onClick={()=>download(true)}>Download small backup (TAR)</button>
     <p>If direct folder saving is unavailable, download a TAR backup up to 64 MiB. Larger backups still require direct folder saving.</p>

@@ -25,3 +25,7 @@ Remaining: owner authorization for the proposed cookie-catalog-prod Worker/D1, c
 ## Local validation
 
 154 application tests and build/type-check pass. Nine offline transfer/recovery tests pass, including both source environments and current schema. The refreshed self-contained Windows kit and its local validator accept either source environment and record it in receipts; 31 helper tests pass, including installer reproducibility and production-source validation. Two production configuration tests pass; incomplete or development-bound configurations are rejected. Existing Chrome/Edge and second-admin browse/edit acceptance remains valid. No real backup removal, restore, schedule activation or catalog edit was used for these checks. CI/development deployment acceptance is recorded separately after publication.
+
+## Development acceptance
+
+The corrected Windows kit restored CI reproducibility. Both CI checks and Workers deployment passed at d754370; live read-only diagnostics matched that source, 22 tables/all migrations, zero FK violations and five sampled originals without missing/size mismatches. See evidence/Production_Readiness_20261016.json. Production remains unprovisioned/unapproved.

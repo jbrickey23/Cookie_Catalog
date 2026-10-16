@@ -32,7 +32,7 @@ export function InfrastructureVerification({development=true}:{development?:bool
     link.href=url;link.download="Cookie_Catalog_Infrastructure_"+new Date().toISOString().replace(/[:.]/g,"-")+".json";link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
   }
   return <section>
-    <h2>Development verification</h2>
+    <h2>Catalog infrastructure verification</h2>
     <p>Read the deployed source version, database migrations and storage bindings. This check does not change catalog records or files.</p>
     <button disabled={busy||missingBusy} onClick={check}>{busy?"Checking…":"Verify catalog infrastructure"}</button>
     <p role="status" aria-live="polite">{message}</p>
