@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-10-16T05:28:32.959Z",
+  "environment": "development",
+  "version": "0.1.0-rc.1",
+  "sourceCommit": "251bebda01dc4a5337200d9702619b6f06d4c371",
+  "ci": {
+    "pushRun": 38855813166,
+    "prRun": 38855816581,
+    "conclusion": "success"
+  },
+  "workers": {
+    "build": "57c87f62-a953-472f-a082-d83fed4a34b6",
+    "version": "01c7810d-99a7-41d9-ac04-e641caec7bf9",
+    "conclusion": "success"
+  },
+  "local": {
+    "appTests": 141,
+    "offlineHelperTests": 28,
+    "pythonRecoveryTests": 8,
+    "oneNoteAuditTests": 3,
+    "schemaAndSyntheticImport": "passed",
+    "typecheckAndBuild": "passed"
+  },
+  "liveRetention": {
+    "storageUsedDisplay": "46.6 MiB",
+    "snapshots": 3,
+    "maxSnapshots": 12,
+    "logicalAllowanceDisplay": "88.0 MiB of 2.00 GiB",
+    "checkedOriginalsPerSnapshot": 592,
+    "protectedSelectionsDisabled": 3,
+    "cleanupReviewDisabledWithoutEligibleSelection": true,
+    "protectionReview": "exact old/new dates shown; release disabled without verified-change acknowledgement; Keep protected selected",
+    "scheduleEnabled": false,
+    "cleanupApplied": false,
+    "protectionReleased": false,
+    "catalogRecordsChanged": false,
+    "originalFilesChanged": false
+  },
+  "limits": [
+    "Actual deletion/resumption validated with synthetic D1/R2 tests, not real retained backups.",
+    "Owner Windows Chrome/Edge and iPhone Safari acceptance remain pending.",
+    "Separate production provisioning/cutover and release approval remain pending."
+  ]
+}

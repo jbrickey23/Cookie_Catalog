@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-16T05:28:32.959Z",
+  "mode": "read-only",
+  "environment": "development",
+  "worker": {
+    "reachable": true,
+    "build": {
+      "version": "0.1.0-rc.1",
+      "commit": "251bebda01dc4a5337200d9702619b6f06d4c371",
+      "branch": "feature/cc-infrastructure-foundation",
+      "source": "cloudflare-workers-builds",
+      "buildNode": "v24.18.0",
+      "builtAt": "2026-10-16T05:27:05.529Z"
+    },
+    "sourceCommitAvailable": true
+  },
+  "database": {
+    "queryPassed": true,
+    "schemaTables": 22,
+    "importStorageReady": true,
+    "supportedSchema": true,
+    "reviewStorageReady": true,
+    "missingTables": [],
+    "migrations": [
+      "0001_initial.sql",
+      "0002_variants_components.sql",
+      "0003_import_reviews.sql",
+      "0004_catalog_imports.sql"
+    ],
+    "requiredMigrationsApplied": true,
+    "foreignKeyViolations": 0,
+    "recordCounts": {
+      "shapes": 345,
+      "designs": 2,
+      "physicalCutters": 208,
+      "mappings": 2
+    }
+  },
+  "storage": {
+    "bindingReadable": true,
+    "objectsOnFirstPage": 100,
+    "listingTruncated": true,
+    "sampledAttachments": 5,
+    "missingOriginals": 0,
+    "sizeMismatches": 0
+  },
+  "checksPassed": true,
+  "limits": [
+    "Read-only binding checks do not replace create/edit/retrieve or private-file acceptance.",
+    "R2 public-access configuration requires dashboard evidence.",
+    "Build Node is the deployment build environment, not the owner's Windows PC.",
+    "Exact GitHub deployment is confirmed only after comparing the reported commit to the expected branch head."
+  ]
+}

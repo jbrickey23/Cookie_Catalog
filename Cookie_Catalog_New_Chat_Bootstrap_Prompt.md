@@ -1,5 +1,13 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## v0.1.0-rc.1 deployed and checked — October 16, 2026 (UTC)
+
+Development application 251bebda01dc4a5337200d9702619b6f06d4c371 passed both GitHub runs 38855813166 / 38855816581 and Workers Build 57c87f62-a953-472f-a082-d83fed4a34b6 (Worker version 01c7810d-99a7-41d9-ac04-e641caec7bf9). Authenticated read-only report at 05:28:32 UTC matched version 0.1.0-rc.1 and that exact SHA: 22 tables, all four migrations, zero foreign-key violations, five sampled originals with no missing/size mismatches; counts remain 345 shapes / 208 physical / two designs / two mappings (including demonstrations), 344 non-demo browse entries.
+
+Live storage view passed: 46.6 MiB actual managed storage; three checked 592-original snapshots; 88.0 MiB conservative snapshot allowance of 2 GiB, cap 12. Newest normal and both protected pre-change points have disabled selection. Read-only protection review named the correct older/newer dates and disabled release without acknowledgement; Keep protected preserved it. All three snapshots remain. No real cleanup, release, catalog/original mutation or schedule activation. Local destructive/resume paths passed synthetic D1/R2 tests. See docs/evidence/Retention_Release_Candidate_20261016.json and docs/evidence/Infrastructure_20261016_v010rc1.json.
+
+First feature candidate is implemented, deployed and reviewable in PR #1; release scope/checklist is docs/Release_Candidate_v0.1.0.md. Remaining release work is actual owner-device/intended-admin acceptance and the existing separately approved production provisioning/cutover decision, plus small layout refinement. Do not restart infrastructure or rerun completed acceptance unnecessarily. No production deployment, merge/tag, paid resource or migration. Source checkpoint above supersedes pending-publication wording below. Preserve prior private backups, off-provider archives and original resources. Next unused task: CC-TODO-015.
+
 ## First feature release candidate and reviewed retention — October 16, 2026 (UTC)
 
 The owner authorized finishing the first feature release, with remaining cosmetic refinement kept small. Candidate package version is 0.1.0-rc.1. See docs/Release_Candidate_v0.1.0.md for the concrete included scope, evidence and remaining production/device decision. Preserve all prior completed application work; this builds on deployed a191d8b.
