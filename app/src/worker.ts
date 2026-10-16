@@ -1,3 +1,4 @@
+import {fieldHelpPage} from './field-help';
 import {withBackupStorageLock} from './server/backup-storage-lock';
 import {handleWorkspace} from './server/workspace';
 import {handleManagedBackups,restoreInProgress,scheduledBackups} from './server/managed-backups';
@@ -28,6 +29,10 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   if (!mayRead(user)) return json({ error: "Unauthorized" }, 401);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if(pathname==='/api/help/fields'){
+    if(request.method!=='GET')return json({error:'Method not allowed'},405);
+    return new Response(fieldHelpPage(),{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"}});
+  }
   if(pathname==="/api/backups"||pathname.startsWith("/api/backups/")){
     if(user.role!=="owner")return json({error:"Owner/admin access required"},403);
     if(!database||!files)return json({error:"Backup resources unavailable"},503);

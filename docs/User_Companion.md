@@ -17,6 +17,10 @@ Search matches names, assigned/source BINs and shape tags. Enter `cat Holiday` (
 
 Reset filters clears typed/submitted search, record-type selection, demo visibility and page position, returning to the default full catalog with demonstration rows hidden. It checks for unsaved focused-card edits before switching, just like selecting another card.
 
+## Field help while editing
+
+Hover a focused-card field label or its ? link for a short explanation and example. You can also reach ? with the keyboard; Escape closes the popup. Click ? or Full documentation to open a separate HTML field guide. Closing the guide returns you to the same card, with unsaved values retained. Help being prepared means the field's explanation is still Missing in the content tracker; it does not disable the field.
+
 ## Undo a routine record change
 
 Admin/owner can expand **Undo recent record changes**, select **Review change**, and then **Undo this change** after reviewing it. This restores that entry's previous values when its current saved state still matches the recorded result. Newer changes and new linked records block undo. Failed attempts may appear in the list but cannot overwrite unrelated state. Images and originals stay shared and in place. Undo also retains a recovery copy of the values it replaces.

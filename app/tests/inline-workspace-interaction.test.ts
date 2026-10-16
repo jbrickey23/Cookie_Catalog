@@ -81,3 +81,14 @@ test('search validation explains a malformed phrase and Reset filters recovers t
  globalThis.fetch=async input=>String(input).includes('q=%22cat')?Response.json({error:'Close each quoted search phrase.'},{status:400}):Response.json({items:[],total:0,nextOffset:null});
  try{render(React.createElement(Browse,{}));await screen.findByText('No cutters match this search.');fireEvent.change(screen.getByLabelText('Search by name, bin or tag'),{target:{value:'"cat'}});fireEvent.click(screen.getByRole('button',{name:'Search',exact:true}));await screen.findByText('Close each quoted search phrase.');fireEvent.click(screen.getByRole('button',{name:'Reset filters'}));await waitFor(()=>assert.equal(screen.queryByText('Close each quoted search phrase.'),null));assert.equal((screen.getByLabelText('Search by name, bin or tag') as HTMLInputElement).value,'');}finally{cleanup();globalThis.fetch=original;}
 });
+
+test('field help opens by hover or keyboard, links to full HTML help, tracks gaps and preserves drafts',async()=>{
+ const original=globalThis.fetch,writes:string[]=[];globalThis.fetch=async(input,init)=>{if(init?.method&&init.method!=='GET')writes.push(String(input));return Response.json(String(input).endsWith('/vocabulary')?vocabulary:entry());};
+ try{
+  render(React.createElement(EntryEditor,props));fireEvent.click(await screen.findByRole('button',{name:'Change Name'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST help draft'}});
+  const trigger=screen.getByRole('link',{name:'Help for BIN / location'}),wrapper=trigger.closest('.field-help-label')!;assert.equal(wrapper.getAttribute('data-quick-help'),'Ready');assert.equal(screen.queryByRole('note',{name:'BIN / location quick help'}),null);fireEvent.mouseEnter(wrapper);
+  let tip=screen.getByRole('note',{name:'BIN / location quick help'});assert(within(tip).getByText('Bin 6, or Cabinet A / Bin 3.'));const full=within(tip).getByRole('link',{name:'Full documentation'});assert.equal(full.getAttribute('href'),'/api/help/fields#bin');assert.equal(full.getAttribute('target'),'_blank');assert.equal(full.getAttribute('rel'),'noopener noreferrer');
+  fireEvent.keyDown(trigger,{key:'Escape'});assert.equal(screen.queryByRole('note',{name:'BIN / location quick help'}),null);fireEvent.focus(trigger);assert(screen.getByRole('note',{name:'BIN / location quick help'}));assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST help draft');assert.deepEqual(writes,[]);
+  const slot=screen.getByRole('link',{name:'Help for Slot'});assert.equal(slot.closest('.field-help-label')!.getAttribute('data-quick-help'),'Missing');fireEvent.mouseEnter(slot.closest('.field-help-label')!);assert(within(screen.getByRole('note',{name:'Slot quick help'})).getByText('Help for this field is being prepared.'));
+ }finally{cleanup();globalThis.fetch=original;}
+});

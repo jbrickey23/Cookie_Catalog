@@ -166,3 +166,10 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 
 .browse-search>div {flex-wrap:wrap}
 .browse-search input {flex:1 1 14rem}
+
+.field-help-label {position:relative;display:inline-flex;align-items:baseline;gap:.35rem;max-width:100%}
+.field-help-trigger {display:inline-grid;place-items:center;flex:none;width:1.3rem;height:1.3rem;border:1px solid #829786;border-radius:50%;color:#365944;text-decoration:none;font-size:.8rem;font-weight:650}
+.field-help-popover {position:absolute;z-index:4;top:100%;left:0;width:19rem;max-width:calc(100vw - 4.5rem);padding:.8rem;border:1px solid #829786;border-radius:8px;background:#fff;box-shadow:0 4px 16px #233e3126;font-size:.85rem;line-height:1.45;font-weight:400}
+.field-help-popover>span {display:block;margin-bottom:.5rem}
+.field-help-popover a {color:#1769aa;display:inline-block;padding:.2rem 0}
+@media(max-width:760px){.field-help-trigger{width:1.6rem;height:1.6rem}}
