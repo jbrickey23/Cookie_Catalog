@@ -1,5 +1,21 @@
 # Cookie_Catalog — TODO
 
+## R1 viewer/workspace acceptance; Canva standards deferred — October 16, 2026 (Pacific)
+
+Application 0b23bdb129fea4652d9570433aa53d15315e903a contains the requested two-column image/name/location thumbnail pane and 500 × 500-pixel requested read-only image viewer. Local 143 tests/build passed. Live cloud Chrome acceptance: thumbnail switch prompted for unsaved changes, dismiss kept the same record/draft, Cancel removed only the temporary draft, and a clean whole-card click changed focus. Fitted viewer displayed the original with Download original and no editing controls; closing returned to the same focused card. Browser decides final popup/tab dimensions; cloud renderer did not attest a physical-inch or exact 500-pixel window. No real catalog/original write occurred during these tests. CI/deployment evidence is retained on the application commit.
+
+Owner explicitly deferred the wider image-size/DPI/Canva/outline standards discussion to Canva workflow integration. Catalog it as CC-TODO-015 below; it is not an R1 gate or upload-validation change. Next unused task is CC-TODO-016. Next R1 action is owner/wife check of the new viewer/two-column flow, then environment/provenance compatibility, operational recovery ownership and separately approved production target/cutover/release per docs/Production_Cutover_Plan.md. Previously reported Chrome/Edge and independent admin login/browse/edit passes remain accepted.
+
+## CC-TODO-015 — Image asset standards for Canva workflow integration
+
+Status: **Deferred by owner to the Canva integration phase on October 16. Not an R1 requirement.** Continues related 010/011 work; next unused ID is 016.
+
+- [ ] Review [image standards proposal](docs/Image_Asset_Standards_Proposal.md) during Canva workflow design.
+- [ ] Preserve originals; define derived preview sizes/format/color/orientation/transparency and source/derivative provenance.
+- [ ] Define intended-size raster exports (pixel budget/PPI) and vector outline exports with explicit millimeter geometry and calibrated scale; verify the round trip in actual target tools.
+- [ ] Distinguish artwork/reference photos/actual cutter photos/calibrated outline sources; define low-resolution and unknown-scale handling without inventing detail.
+- [ ] Review criteria with owner before implementing upload enforcement, conversions, tracing or replacement/edit flows.
+
 ## Consistent fitted image viewer — October 16, 2026 (Pacific)
 
 Owner clarified a consistent small square image window rather than a large arbitrary pop-out. Requested size is now 500 × 500 pixels (browser controls/display scaling may differ; no physical-inch or cutter-scale promise). Focused image links open a read-only authenticated HTML viewer with the image filling the available viewport using object-fit:contain, preserving aspect ratio and the full image. Window resizing refits it. A private original-download link is available inside as well as on the focused card. The viewer contains no scripts/forms/editor or file-write route; filename HTML is escaped and CSP limits sources. Verified image bytes remain on the existing checksum-checked route, without a second original read to generate the viewer shell. Catalog focus/drafts and guarded two-column thumbnail switching remain intact. 143 application tests and build/type-check pass; viewer tests cover safe filename escaping, image-only types, no scripts/forms and no duplicate original retrieval. Latest deployment acceptance follows. Earlier d067744 CI had one optional workerd-platform package installation failure while its other CI run and Workers build passed; this was runner dependency setup, not a failed application assertion. Owner also raised image-input/Canva/outline standards: docs/Image_Asset_Standards_Proposal.md records a proposal to preserve originals and derive previews/exports with calibrated geometry. No upload-standard enforcement is activated. No migration, resource, access, schedule, restore, original edit or production change.

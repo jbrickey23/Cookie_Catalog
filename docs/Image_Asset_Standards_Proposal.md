@@ -2,6 +2,8 @@
 
 October 16, 2026. Owner raised standards for incoming catalog images and later Canva/outline generation while the read-only image viewer was being implemented. No automatic conversion, DPI requirement, crop, new upload format or image-editing feature is approved or implemented by this note.
 
+**Tracking: CC-TODO-015. Owner explicitly deferred this to Canva workflow integration; outside R1.** No implementation or upload enforcement is activated.
+
 ## Proposed handling
 
 | Asset | Proposed rule |
