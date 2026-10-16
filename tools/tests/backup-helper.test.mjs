@@ -7,11 +7,11 @@ import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import {validateArchive,saveBackup,verifyCloudCopy,reviewRetention,fileHash} from '../backup-helper.mjs';
 const root=fileURLToPath(new URL('../../',import.meta.url));
-function fixture() {
+function fixture(environment='development') {
   const dir=fs.mkdtempSync(path.join(tmpdir(),'cookie-helper-'));
   const archive=path.join(dir,'trusted synthetic 雪.tar'),destination=path.join(dir,'OneDrive backups 雪');
   fs.mkdirSync(destination);
-  execFileSync('python3',['-c',"import sys; from pathlib import Path; sys.path.insert(0,sys.argv[1]); from test_cloudflare_restore import fixture; fixture(Path(sys.argv[2]))",path.join(root,'tests'),archive]);
+  execFileSync('python3',['-c',"import sys; from pathlib import Path; sys.path.insert(0,sys.argv[1]); from test_cloudflare_restore import fixture; fixture(Path(sys.argv[2]), environment=sys.argv[3])",path.join(root,'tests'),archive,environment]);
   return {dir,archive,destination,cleanup:()=>fs.rmSync(dir,{recursive:true,force:true})};
 }
 test('validates linked archive and copies to Unicode/space paths with an honest receipt',()=>{
@@ -92,4 +92,11 @@ test('unreceipted TARs remain untouched and are reported as unverified',()=>{
     assert.deepEqual(report.unverified,['older-unverified.tar']);assert.deepEqual(report.candidatesForManualReview,[]);
     assert.equal(fs.readdirSync(f.destination).length,1);
   }finally{f.cleanup();}
+});
+
+test('local recovery kit accepts production source archives and rejects unknown provenance',()=>{
+ for(const environment of ['development','production','unknown']){const f=fixture(environment);try{
+  if(environment==='unknown'){assert.throws(()=>validateArchive(f.archive));continue;}
+  const report=validateArchive(f.archive);assert.equal(report.sourceEnvironment,environment);const saved=saveBackup(f.archive,f.destination);assert.equal(saved.validation.sourceEnvironment,environment);
+ }finally{f.cleanup();}}
 });

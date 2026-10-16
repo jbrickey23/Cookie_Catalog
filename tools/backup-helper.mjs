@@ -65,7 +65,7 @@ export function validateArchive(file) {
     const reviewTables=['import_review_workspaces','import_review_versions','import_review_items','import_review_runs'];
     const importTables=["catalog_import_batches","catalog_source_mappings"];
     const TABLES=[LEGACY_TABLES,[...LEGACY_TABLES,...reviewTables],[...LEGACY_TABLES,...reviewTables,...importTables]].find(profile=>tables&&same(Object.keys(tables).sort(),[...profile].sort()));
-    if(payload.environment!=='development'||!TABLES||!tables||!same(Object.keys(tables).sort(),[...TABLES].sort())||!Array.isArray(schema)
+    if(!['development','production'].includes(payload.environment)||!TABLES||!tables||!same(Object.keys(tables).sort(),[...TABLES].sort())||!Array.isArray(schema)
         ||!same(schema.filter(s=>s.type==='table').map(s=>s.name).sort(),[...TABLES].sort())
         ||schema.some(s=>!['table','index'].includes(s.type)||!TABLES.includes(s.tbl_name))) throw Error('Unexpected database schema.');
     const objects=payload.objects;
@@ -123,7 +123,7 @@ export function validateArchive(file) {
         ||Object.keys(receipt).length!==3||offset+1024!==stat.size||readAt(fd,offset,1024).some(b=>b!==0))throw Error('Archive completion receipt or footer failed.');
     const sha256=hashRange(fd,0,stat.size),after=fs.fstatSync(fd);
     if(after.size!==stat.size||after.mtimeMs!==stat.mtimeMs)throw Error('Archive changed during validation.');
-    return {bytes:stat.size,sha256,exportedAt:envelope.exportedAt,tables:TABLES.length,records:Object.values(counts).reduce((a,b)=>a+b,0),counts,objects:objects.length,originalBytes,integrity:'ok',foreignKeysValid:true,complete:true};
+    return {bytes:stat.size,sha256,sourceEnvironment:payload.environment,exportedAt:envelope.exportedAt,tables:TABLES.length,records:Object.values(counts).reduce((a,b)=>a+b,0),counts,objects:objects.length,originalBytes,integrity:'ok',foreignKeysValid:true,complete:true};
   } finally {db?.close();fs.closeSync(fd);}
 }
 function privateDirectory(folder) {
