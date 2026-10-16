@@ -35,6 +35,18 @@ export async function protectRecordChange(files:R2Bucket,change:Omit<RecordChang
 }
 async function load(files:R2Bucket,id:string){if(!idPattern.test(id))throw Error('Invalid recovery record.');const object=await files.get(prefix+id+'.json');if(!object||object.size>256*1024)throw Error('Recovery record missing or oversized.');const bytes=new Uint8Array(await object.arrayBuffer());if(!object.checksums.sha256||await sha256(bytes)!==Array.from(new Uint8Array(object.checksums.sha256),b=>b.toString(16).padStart(2,'0')).join(''))throw Error('Recovery checksum failed.');const change=JSON.parse(new TextDecoder().decode(bytes)) as RecordChange;if(change.format!=='cookie-catalog-record-change'||change.version!==1||change.id!==id)throw Error('Unsupported recovery record.');return change;}
 function writeRow(db:D1Database,table:'shapes'|'physical_cutters',row:Row){const fields=Object.keys(row);if(fields.some(f=>!/^[a-z_]+$/.test(f)))throw Error('Invalid recovery field.');return db.prepare(`INSERT INTO ${table}(${fields.join(',')}) VALUES(${fields.map(()=>'?').join(',')}) ON CONFLICT(id) DO UPDATE SET ${fields.filter(f=>f!=='id').map(f=>f+'=excluded.'+f).join(',')}`).bind(...fields.map(f=>row[f]));}
+async function changesForReview(db:D1Database,current:RecordState,target:RecordState){
+ const changes:{field:string;current:string;restore:string}[]=[];
+ const text=(value:unknown)=>value===null||value===undefined||value===''?'Not recorded':String(value);
+ const note=(value:unknown)=>{try{const data=JSON.parse(String(value));if(data?.source)return data.catalogNotes??null;}catch{}return value;};
+ const add=(field:string,a:unknown,b:unknown)=>{if(text(a)!==text(b))changes.push({field,current:text(a),restore:text(b)});};
+ add('Shape reference',current.shape?'Present':'Absent',target.shape?'Present':'Absent');
+ for(const [key,label] of [['name','Name'],['maker','Maker'],['source_url','Source link'],['notes','Shape notes']])add(label,key==='notes'?note(current.shape?.[key]):current.shape?.[key],key==='notes'?note(target.shape?.[key]):target.shape?.[key]);
+ add('Physical record',current.cutter?'Present':'Absent',target.cutter?'Present':'Absent');
+ for(const [key,label] of [['quantity','Quantity'],['origin','Origin'],['reference_size_mm','Reference size (mm)'],['width_mm','Width (mm)'],['height_mm','Height (mm)'],['slot','Slot'],['notes','Cutter notes']])add(label,current.cutter?.[key],target.cutter?.[key]);
+ if(current.cutter?.location_id!==target.cutter?.location_id){const locations=(await db.prepare('SELECT id,label FROM locations WHERE id IN (?,?)').bind(current.cutter?.location_id??null,target.cutter?.location_id??null).all<{id:string;label:string}>()).results;const label=(id:unknown)=>id?locations.find(l=>l.id===id)?.label??'Former location unavailable':'Use recorded source location';add('BIN / location',label(current.cutter?.location_id),label(target.cutter?.location_id));}
+ add('Tags',current.tags.map(t=>t.label).sort().join(', '),target.tags.map(t=>t.label).sort().join(', '));return changes;
+}
 export async function handleRecordRecovery(request:Request,db:D1Database,files:R2Bucket,subject:string,owner:boolean){
  const json=(value:unknown,status=200)=>Response.json(value,{status,headers:{'cache-control':'no-store'}});
  if(!owner)return json({error:'Owner/admin access required for record recovery.'},403);
@@ -44,7 +56,7 @@ export async function handleRecordRecovery(request:Request,db:D1Database,files:R
   const match=/^\/(\d{13}_[a-f0-9]{32})$/.exec(path);if(!match)return json({error:'Recovery route not found.'},404);
   const change=await load(files,match[1]),cutterId=change.kind==='cutters'?change.recordId:undefined;
   const current=await readRecordState(db,change.shapeId,cutterId),revision=await recordRevision(current),expected=await recordRevision(change.after),canUndo=revision===expected&&expected!==await recordRevision(change.before);
-  if(request.method==='GET')return json({id:change.id,at:change.at,method:change.method,kind:change.kind,revision,canUndo,beforeName:change.before.shape?.name??null,afterName:change.after.shape?.name??null,reason:canUndo?'The entry matches the recorded result. Undo restores its previous values.':'The entry no longer matches this result, or this attempt made no change. Newer values will not be overwritten.'});
+  if(request.method==='GET')return json({id:change.id,at:change.at,method:change.method,kind:change.kind,revision,canUndo,changes:await changesForReview(db,current,change.before),beforeName:change.before.shape?.name??null,afterName:change.after.shape?.name??null,reason:canUndo?'The entry matches the recorded result. Undo restores its previous values.':'The entry no longer matches this result, or this attempt made no change. Newer values will not be overwritten.'});
   if(request.method!=='POST')return json({error:'Method not allowed.'},405);
   const input=await body(request) as Row;if(input.approved!==true)return json({error:'Review and approve undo first.'},400);
   if(!canUndo||request.headers.get('if-match')!==revision)return json({error:'This entry changed. Review a fresh undo preview.'},412);

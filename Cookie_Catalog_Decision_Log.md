@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 16 — quick inline editing accepted live
+
+3734795 passed CI, deployment and authenticated source/health checks. Disposable create/edit/delete/undo passed with individual observed actions around one second; image-first focused detail was verified. Test rows were cleaned up. Full-catalog checks are removed from routine inline Save/Delete. See docs/evidence/Fast_Inline_Acceptance_20261016.json.
+
 ## October 16 — routine edits use bounded record recovery
 
 Owner explicitly prioritizes quick, economical Save/Delete. Full-catalog checks on each edit are superseded by durable per-entry before/after records plus guarded D1 transactions and owner-reviewed conflict-safe undo. Whole snapshots remain for bulk import, full restore and backup scheduling. Focused card images move above editable fields. See docs/Record_Recovery.md. No migration, paid resources, automatic pruning or production release.

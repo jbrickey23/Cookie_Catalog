@@ -1,0 +1,31 @@
+{
+  "applicationCommit": "37347952cf64417c632038258ff44c248784febc",
+  "environment": "development",
+  "evidence": "authenticated owner UI with disposable test records",
+  "observedTimingMs": {
+    "createPhysicalCutter": 740,
+    "editField": 1012,
+    "deletePhysicalAfterConfirmation": 783,
+    "undoDeletedPhysicalAfterConfirmation": 676
+  },
+  "timingScope": "One observed UI test per action; elapsed includes browser automation/wait overhead. Not a latency guarantee.",
+  "editUndoRestoredPriorValue": true,
+  "deleteUndoRestoredPhysicalRecord": true,
+  "syntheticPhysicalAndShapeCleanedUp": true,
+  "syntheticSearchResultsAfterCleanup": 0,
+  "focusedCardOrder": [
+    "attached images",
+    "editable fields"
+  ],
+  "existingOwnerRecordsModifiedByTest": false,
+  "originalFilesModified": false,
+  "fullCatalogSnapshotRequiredForRoutineEdits": false,
+  "databaseTables": 22,
+  "foreignKeyViolations": 0,
+  "ciRuns": [
+    38836165318,
+    38836170744
+  ],
+  "workersBuild": "4d54766d-0f4c-4ae8-afb0-6c9a9cd05658",
+  "deploymentVersion": "f2dfb225-d02a-4770-94a5-0e584dde500c"
+}

@@ -92,7 +92,7 @@ test('record undo restores edits, tags, deleted rows and new entries without ful
  const {runtime,db,files}=await env();try{
   const original:any=draft();original.tags=[{label:'TEST keep shared'}];const saved=await success(await call(db,files,'/cutters','POST',original),201);
   const input:any=draft('TEST changed name');input.tags=[];input.cutter.quantity=7;
-  const edited=await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision));await undo(db,files,edited.recoveryId);
+  const edited=await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,saved.revision));const review=await success(await call(db,files,'/recovery/'+edited.recoveryId));assert.deepEqual(review.changes.find((c:any)=>c.field==='Quantity'),{field:'Quantity',current:'7',restore:'1'});await undo(db,files,edited.recoveryId);
   const reopened=await success(await call(db,files,'/cutters/'+saved.cutter.id));assert.equal(reopened.shape.name,saved.shape.name);assert.equal(reopened.cutter.quantity,1);assert.deepEqual(reopened.tags,saved.tags);
   const removed=await success(await call(db,files,'/cutters/'+saved.cutter.id,'DELETE',{approved:true},reopened.revision));assert.equal((await call(db,files,'/cutters/'+saved.cutter.id)).status,404);await undo(db,files,removed.recoveryId);assert.equal((await success(await call(db,files,'/cutters/'+saved.cutter.id))).revision,saved.revision);
   await undo(db,files,saved.recoveryId);assert.equal((await call(db,files,'/cutters/'+saved.cutter.id)).status,404);assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())?.n,0);assert.equal((await db.prepare('SELECT count(*) n FROM tags').first<any>())?.n,1,'shared vocabulary is retained');
