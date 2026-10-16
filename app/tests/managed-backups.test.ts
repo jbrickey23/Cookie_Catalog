@@ -92,3 +92,24 @@ test('scheduled jobs create fresh daily snapshots at the configured Pacific hour
   await db.prepare("UPDATE shapes SET name='TEST fresh tomorrow' WHERE id='test-shape'").run();await scheduledBackups(db,files,new Date('2026-10-17T09:00:00Z'));assert.equal((await files.list({prefix:'catalog-backups/jobs/'})).objects.length,2);
  }finally{await runtime.dispose();}
 });
+
+test('copy progress uses the checksum-bound compact plan and upgrades retained jobs without losing progress',async()=>{
+ const {runtime,db,files,add}=await env();try{
+  for(let i=2;i<=10;i++)await add('file_managed_test'+i,i);
+  const job=await advanceManagedBackup(files,(await startManagedBackup(db,files,'owner')).id);
+  assert.equal(job.offset,4);
+  const jobKey='catalog-backups/jobs/'+job.id+'.json';
+  // Simulate the older deployed job format.
+  delete job.copyPlanSha256;await files.put(jobKey,JSON.stringify(job));
+  const first=await advanceManagedBackup(files,job.id);assert.equal(first.offset,8);assert(first.copyPlanSha256);
+  let manifestReads=0;
+  const compact=new Proxy(files,{get(target,key){if(key==='get')return async(path:string,...args:any[])=>{if(path.startsWith('catalog-backups/manifests/')){manifestReads++;throw Error('Progress must not reparse the database manifest');}return (target.get as any)(path,...args);};const v=Reflect.get(target,key);return typeof v==='function'?v.bind(target):v;}});
+  let done=await advanceManagedBackup(compact,job.id);assert.equal(done.offset,10);
+  done=await advanceManagedBackup(compact,job.id);assert.equal(done.status,'complete');assert.equal(manifestReads,0);
+  await completeBackup(files,job.id); // Full manifest is still validated before recovery/use.
+  const second=await startManagedBackup(db,files,'owner');
+  await files.put('catalog-backups/copy-plans/'+second.id+'.json','{}');
+  await assert.rejects(()=>advanceManagedBackup(files,second.id),/checksum/);
+  assert.equal((await (await files.get('catalog-backups/jobs/'+second.id+'.json'))!.json<any>()).offset,0);
+ }finally{await runtime.dispose();}
+});

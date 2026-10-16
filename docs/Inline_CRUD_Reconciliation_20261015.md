@@ -1,6 +1,6 @@
 # Browse inline CRUD and vocabulary — reconciled decision (2026-10-15)
 
-Status: approved design direction, NOT implemented or deployed. Preserve existing development branch and protected-main PR workflow.
+Status: approved design direction; implemented on the development branch in `fc136b1`. Current implementation and remaining acceptance supersede the original sequencing below. Preserve the development branch and protected-main PR workflow.
 
 ## User experience
 - Browse begins with existing full-width result cards. Selecting a card opens expanded details on the left, with remaining results in a scrollable right column.
@@ -32,7 +32,7 @@ Status: approved design direction, NOT implemented or deployed. Preserve existin
 4. Reconcile current DB/archive counts against actual live development data before changes; prior documented snapshots are not proof of current counts.
 5. Use feature branch/PR, tests and protected main. No production release or paid resources without separate approval.
 
-No application implementation is claimed by this document.
+The original decision section did not claim implementation; see the development reconciliation and current durable checkpoint for completed work.
 
 ## Development reconciliation — 2026-10-16
 

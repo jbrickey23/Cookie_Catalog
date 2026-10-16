@@ -11,7 +11,7 @@ const hex=(b:ArrayBuffer)=>Array.from(new Uint8Array(b),n=>n.toString(16).padSta
 const digest=(v:unknown)=>sha256(new TextEncoder().encode(JSON.stringify(v)));
 type Payload={environment:string;database:{schema:{type:string;name:string;tbl_name:string;sql:string|null}[];tables:Record<string,Record<string,any>[]>};objects:ArchiveObject[]};
 type Manifest={format:string;version:number;exportedAt:string;payloadJson:string;payloadSha256:string};
-export type BackupJob={id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables:number;records:number;exportedAt:string;createdBy:string;manifestSha256:string};
+export type BackupJob={id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables:number;records:number;exportedAt:string;createdBy:string;manifestSha256:string;copyPlanSha256?:string};
 async function read<T>(files:R2Bucket,path:string):Promise<{value:T;etag:string}|null>{const object=await files.get(path);if(!object)return null;if(object.size>18*1024**2)throw Error('Backup metadata limit exceeded.');return {value:await object.json<T>(),etag:object.etag};}
 async function put(files:R2Bucket,path:string,value:unknown,etag?:string){const saved=await files.put(path,JSON.stringify(value),{httpMetadata:{contentType:'application/json'},...(etag?{onlyIf:{etagMatches:etag}}:{})});if(!saved)throw Error('Backup progress changed. Refresh and resume.');return saved;}
 async function source(files:R2Bucket,id:string){if(!idPattern.test(id))throw Error('Choose a valid backup.');const raw=await files.get(key('manifests',id));if(!raw||raw.size>16*1024**2)throw Error('Backup manifest is missing or oversized.');const bytes=new Uint8Array(await raw.arrayBuffer()),manifest=JSON.parse(new TextDecoder().decode(bytes)) as Manifest;if(manifest.format!=='cookie-catalog-archive'||manifest.version!==1||await sha256(new TextEncoder().encode(manifest.payloadJson))!==manifest.payloadSha256)throw Error('Backup manifest checksum failed.');return {bytes,manifest,payload:JSON.parse(manifest.payloadJson) as Payload};}
@@ -21,18 +21,41 @@ export async function startManagedBackup(db:D1Database,files:R2Bucket,createdBy:
  const bytes=await createArchiveManifest(db,files),manifest=JSON.parse(new TextDecoder().decode(bytes)) as Manifest,payload=JSON.parse(manifest.payloadJson) as Payload;
  const total=payload.objects.reduce((n,o)=>n+o.byteSize,0);if(total>1024**3||jobs.reduce((n,j)=>n+j.bytes,0)+total>2*1024**3)throw Error('Managed backup storage safety limit reached. Review retention; no paid capacity or automatic deletion was enabled.');
  const id='backup_'+crypto.randomUUID().replaceAll('-',''),job:BackupJob={id,kind,status:'copying',offset:0,objects:payload.objects.length,bytes:total,tables:Object.keys(payload.database.tables).length,records:Object.values(payload.database.tables).reduce((n,rows)=>n+rows.length,0),exportedAt:manifest.exportedAt,createdBy,manifestSha256:await sha256(bytes)};
- await files.put(key('manifests',id),bytes,{sha256:job.manifestSha256,httpMetadata:{contentType:'application/json'}});await put(files,key('jobs',id),job);return job;
+ await files.put(key('manifests',id),bytes,{sha256:job.manifestSha256,httpMetadata:{contentType:'application/json'}});await saveCopyPlan(files,job,{manifestSha256:job.manifestSha256,payloadSha256:manifest.payloadSha256,objects:payload.objects});await put(files,key('jobs',id),job);return job;
+}
+type CopyPlan={manifestSha256:string;payloadSha256:string;objects:ArchiveObject[]};
+// Progress requests must not parse every saved review/database row for each few files.
+async function saveCopyPlan(files:R2Bucket,job:BackupJob,plan:CopyPlan){
+ const bytes=new TextEncoder().encode(JSON.stringify(plan));
+ job.copyPlanSha256=await sha256(bytes);
+ await files.put(key('copy-plans',job.id),bytes,{sha256:job.copyPlanSha256,httpMetadata:{contentType:'application/json'}});
+}
+async function copyPlan(files:R2Bucket,job:BackupJob):Promise<CopyPlan>{
+ if(!job.copyPlanSha256){
+  // Upgrade retained jobs in place without replacing their snapshot or completed offset.
+  const data=await source(files,job.id);
+  if(await sha256(data.bytes)!==job.manifestSha256)throw Error('Backup job manifest changed.');
+  const plan={manifestSha256:job.manifestSha256,payloadSha256:data.manifest.payloadSha256,objects:data.payload.objects};
+  await saveCopyPlan(files,job,plan);return plan;
+ }
+ const object=await files.get(key('copy-plans',job.id));
+ if(!object||object.size>1024**2)throw Error('Backup copy plan is missing or oversized.');
+ const bytes=new Uint8Array(await object.arrayBuffer());
+ if(await sha256(bytes)!==job.copyPlanSha256)throw Error('Backup copy plan checksum failed.');
+ const plan=JSON.parse(new TextDecoder().decode(bytes)) as CopyPlan;
+ if(plan.manifestSha256!==job.manifestSha256||plan.objects.length!==job.objects)throw Error('Backup copy plan changed.');
+ return plan;
 }
 async function checkedObject(files:R2Bucket,o:ArchiveObject){const object=await files.head(objectKey(o));if(!object||object.size!==o.byteSize||!object.checksums.sha256||hex(object.checksums.sha256)!==o.sha256)throw Error('A managed original failed its stored checksum.');return object;}
 export async function advanceManagedBackup(files:R2Bucket,id:string){
  const record=await read<BackupJob>(files,key('jobs',id));if(!record)throw Error('Backup job not found.');if(record.value.status==='complete')return record.value;
- const data=await source(files,id),job=record.value;if(await sha256(data.bytes)!==job.manifestSha256)throw Error('Backup job manifest changed.');
- for(const o of data.payload.objects.slice(job.offset,job.offset+4)){
+ const job=record.value,plan=await copyPlan(files,job);
+ for(const o of plan.objects.slice(job.offset,job.offset+4)){
   let saved=await files.head(objectKey(o));
   if(!saved){const original=await files.get(o.key,{onlyIf:{etagMatches:o.etag}});if(!original||!('body'in original)||original.size!==o.byteSize)throw Error('An original changed during backup. No risky operation was applied.');saved=await files.put(objectKey(o),original.body,{sha256:o.sha256,onlyIf:{etagDoesNotMatch:'*'},httpMetadata:{contentType:o.contentType??'application/octet-stream'}});}
   await checkedObject(files,o);job.offset++;
  }
- if(job.offset===job.objects){await put(files,key('receipts',id),{format:'cookie-catalog-managed-backup-receipt',version:1,id,manifestSha256:job.manifestSha256,payloadSha256:data.manifest.payloadSha256,objects:job.objects,bytes:job.bytes,verifiedAt:new Date().toISOString(),databaseForeignKeysChecked:true,originalChecksumsChecked:true,independentCopy:false});job.status='complete';}
+ if(job.offset===job.objects){await put(files,key('receipts',id),{format:'cookie-catalog-managed-backup-receipt',version:1,id,manifestSha256:job.manifestSha256,payloadSha256:plan.payloadSha256,objects:job.objects,bytes:job.bytes,verifiedAt:new Date().toISOString(),databaseForeignKeysChecked:true,originalChecksumsChecked:true,independentCopy:false});job.status='complete';}
  await put(files,key('jobs',id),job,record.etag);return job;
 }
 export async function completeBackup(files:R2Bucket,id:string){const job=await read<BackupJob>(files,key('jobs',id)),receipt=await read<{manifestSha256:string}>(files,key('receipts',id));if(!job||job.value.status!=='complete'||!receipt||receipt.value.manifestSha256!==job.value.manifestSha256)throw Error('Choose a completed, verified backup.');const data=await source(files,id);if(await sha256(data.bytes)!==job.value.manifestSha256)throw Error('Backup receipt checksum failed.');return {...data,job:job.value};}

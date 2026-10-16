@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 16 — interrupted worker continuity
+
+Preserve the canonical development commits and original retained backup. The 324/592 snapshot is incomplete; no successful live restore/complete receipt is claimed. Compact copy-plan mitigation is locally tested in 4626eb4 but publication is blocked by automatic approval review pending explicit destination/branch authorization. Continue from [the current recovery checkpoint](docs/Interrupted_Worker_Reconciliation_20261016.md). No new product decision, production release, live restore, schedule or pruning was authorized.
+
 ## October 15 (Pacific) — CC-DEC-020 — Reconcile and implement approved inline workspace
 
 Adopt the approved decision from `docs/Inline_CRUD_Reconciliation_20261015.md` while preserving newer feature-branch BIN/import/recovery implementation. Use reusable master-detail and inline field editors, server validation/roles and atomic optimistic transactions. Stage tag/new-shape vocabulary until Save. Canonical location IDs are selected, not created ad hoc. Explicit catalog location overrides immutable OneNote provenance; future source changes require an explicit reconciliation, not silent overwrite. Every new inline mutation obtains an automatic protected snapshot; owner confirms deletion and relationships block it. Preserve protected main, existing development PR and production-release boundaries. Next unused decision: CC-DEC-021.
