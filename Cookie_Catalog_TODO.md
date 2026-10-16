@@ -1,5 +1,13 @@
 # Cookie_Catalog — TODO
 
+## Production import blocked; ordered SQL fix — October 16, 2026, 15:32 Pacific
+
+Owner approved production data import at 15:24 Pacific. On the wife’s unmanaged Windows PC, Wrangler 4.151.1 authenticated to the correct existing Cloudflare account. Owner CLI evidence matched production D1 9428a5b4-4675-4f45-9ec8-aba243848e27 and bucket cookie-catalog-prod-private. Dashboard readback: no custom domains and public development URL disabled. Owner confirms no catalog edits since freeze. Original SQL SHA256 matched exactly, but both imports returned D1_RESET_DO; subsequent read-only table query showed only _cf_KV. Do not claim import success, change database IDs or recreate resources.
+
+Found independent export compatibility defect: alphabetic inserts required deferred constraints across a single transaction; exact SQL failed autocommit with enforced foreign keys. Generator now schedules parent rows before dependents, including self-referencing locations, without disabling/defering foreign-key enforcement. Fails closed if rows cannot be ordered; validates exact schema/rows under both autocommit and one transaction. Ten recovery tests pass. Same original trusted TAR regenerated privately: 22 tables, 4048 rows, 592 originals; revised SQL SHA256 6db215bad448ee6d37f5352b607fcea3822124d9405fe847c754ee1c9831fd0a. Private transfer v2 supersedes original import.sql. This corrects a demonstrated incompatibility; generic remote reset root cause remains unproven until remote execution/readback. No production data/deployment success implied. Import approval persists for this same target/data; cutover/deployment/main/tag remain separate.
+
+NEXT: download/extract v2, verify exact SQL hash, execute revised import once against confirmed empty production, then independently compare remote export and all R2 originals. Stop on errors. Keep edits paused during final transfer; if resumed, refresh export.
+
 ## Fresh transfer backup verified — October 16, 2026, 14:04 Pacific
 
 Owner confirmed both users paused catalog edits at 13:53 Pacific. Managed snapshot dated 13:53:45 completed and automatically checked all 592 originals; retained earlier snapshots preserved. Fresh portable TAR subsequently exported and independently validated offline: 22 tables, 4,048 total rows and 592 originals; exact local SQL restore roundtrip passed. SHA-256: `480b42093d8645720830dd6f2b8f49f7f17774dcd66724ba2e76b8657cfaf6a7`. Private TAR and prepared transfer ZIP saved privately outside this repository. No private payloads or Library identifiers belong in Git.

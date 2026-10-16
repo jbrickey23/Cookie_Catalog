@@ -91,6 +91,18 @@ class PreparationTests(unittest.TestCase):
             self.assertEqual(evidence['counts']['d1_migrations'], 4)
             shutil.rmtree(self.package)
 
+    def test_current_import_passes_each_statement_with_immediate_constraints(self):
+        fixture(self.archive, current=True)
+        prepare(self.archive, self.package)
+        statements = json.loads((self.package / "statements.json").read_text())
+        with sqlite3.connect(":memory:", isolation_level=None) as db:
+            db.execute("PRAGMA foreign_keys=ON")
+            for statement in statements:
+                self.assertNotIn("defer_foreign_keys", statement)
+                db.execute(statement)
+                self.assertEqual(db.execute("PRAGMA foreign_key_check").fetchall(), [])
+            self.assertEqual(snapshot(db), json.loads((self.package / "expected.json").read_text())["database"])
+
     def test_existing_destination_and_git_checkout_are_preserved(self):
         self.package.mkdir(); sentinel = self.package / "keep"; sentinel.write_text("keep")
         with self.assertRaises(ValueError): prepare(self.archive,self.package)
