@@ -1,3 +1,4 @@
+import type {CatalogEnvironment} from '../catalog-environment';
 import {body,validate} from './catalog';
 import {hasSourceMappings,sourceEvidenceSql} from './source-location';
 import {sourceLocation} from '../source-location';
@@ -20,7 +21,7 @@ function guard(db:D1Database,table:string,row:Row){const fields=Object.keys(row)
 async function vocabulary(db:D1Database,includeShapes=true){const [shapes,tags,locations]=await db.batch([db.prepare(includeShapes?'SELECT id,name FROM shapes ORDER BY id LIMIT 10001':'SELECT id,name FROM shapes WHERE 0'),db.prepare('SELECT * FROM tags ORDER BY id LIMIT 1001'),db.prepare('SELECT id,label FROM locations ORDER BY label LIMIT 1001')]);if(shapes.results.length>10000||tags.results.length>1000||locations.results.length>1000)throw Error('Vocabulary exceeds the supported workspace limit.');return {shapes:shapes.results as Row[],tags:tags.results as Row[],locations:locations.results as Row[]};}
 // Guard a vocabulary snapshot so duplicate detection cannot race another writer.
 function vocabularyGuard(db:D1Database,table:'shapes'|'tags',rows:Row[]){const fields=table==='shapes'?['id','name']:['id','label','category'];return db.prepare(`SELECT CASE WHEN (SELECT json_group_array(json_array(${fields.join(',')})) FROM (SELECT * FROM ${table} ORDER BY id))=? THEN 1 ELSE json('workspace conflict') END`).bind(JSON.stringify(rows.map(r=>fields.map(f=>r[f]??null))));}
-export async function handleWorkspace(request:Request,db:D1Database,files:R2Bucket,subject:string,owner:boolean){
+export async function handleWorkspace(request:Request,db:D1Database,files:R2Bucket,subject:string,owner:boolean,environment:CatalogEnvironment='development'){
  try{
   const path=new URL(request.url).pathname.slice('/api/workspace'.length);
   if(path==='/recovery'||path.startsWith('/recovery/'))return handleRecordRecovery(request,db,files,subject,owner);
@@ -33,7 +34,7 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
    if(pending)return json(pending);
    const latest=jobs.find(j=>j.status==='complete'&&j.kind==='pre-change');
    if(latest){try{await assertFreshBackup(db,files,latest.id);return json(latest);}catch{/* A changed catalog needs its own recovery point. */}}
-   return json(await startManagedBackup(db,files,subject,'pre-change'),201);
+   return json(await startManagedBackup(db,files,subject,'pre-change',environment),201);
   }
   const match=/^\/(shapes|cutters)(?:\/([a-zA-Z0-9_-]{1,128}))?$/.exec(path);if(!match)return json({error:'Workspace route not found.'},404);
   const [,kind,id]=match;

@@ -1,0 +1,46 @@
+// Preparation template only. Provisioning and deployment require separate owner approval.
+// Replace placeholders with verified distinct target IDs before building. Never reuse development IDs.
+{
+  "name": "cookie-catalog-prod",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api",
+      "/api/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cookie-catalog-prod",
+      "database_id": "REPLACE_WITH_VERIFIED_PRODUCTION_D1_ID",
+      "migrations_dir": "../database/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "cookie-catalog-prod-private"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "CATALOG_ENVIRONMENT": "production",
+    "ACCESS_TEAM_DOMAIN": "cookie-catalog-jbrickey.cloudflareaccess.com",
+    "ACCESS_AUD": "REPLACE_WITH_SEPARATE_PRODUCTION_ACCESS_AUDIENCE"
+  },
+  "secrets": {
+    "required": [
+      "OWNER_EMAIL"
+    ]
+  }
+}

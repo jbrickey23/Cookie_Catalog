@@ -32,7 +32,7 @@ test("accepts a signed owner token and returns an uncached session", async () =>
   const response = await handleApiRequest(request(jwt), verifier);
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.deepEqual(await response.json(), { authenticated: true, email: "owner@example.test", role: "owner" });
+  assert.deepEqual(await response.json(), { authenticated: true, email: "owner@example.test", role: "owner", environment: "development" });
 });
 test("missing JWT and spoofed email headers are rejected", async () => {
   const spoof = new Request("https://catalog.example.test/api/session", {

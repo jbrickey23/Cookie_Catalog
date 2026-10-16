@@ -1,5 +1,13 @@
 # Cookie_Catalog — TODO
 
+## Production compatibility prepared; R1 scope unchanged — October 16, 2026 (Pacific)
+
+CC-TODO-018 captures the accepted post-R1/R1.1 inline Change Request workflow in docs/Change_Request_Workflow.md. Do not add it to R1. Next unused CC-TODO-019. R1 remains current features plus remaining infrastructure/release tasks.
+
+Prepared explicit runtime environment identification, production-safe diagnostics, honest source-environment archive/snapshot handling with retained development compatibility, source-labelled restore preview and current-schema offline transfer validation. Added separate placeholder-only production config and read-only configuration gate rejecting development targets. See docs/Production_Readiness_20261016.md. Local 154 app tests/build, nine offline transfer tests and two config tests pass. Publication/CI/dev acceptance follows; no production resource or live data change is implied.
+
+Next: authorize the concrete separate production resources in docs/Production_Cutover_Plan.md; verify actual IDs/Access/private bucket and selected production build, confirm operational access recovery, coordinate write freeze/fresh exact-source archive and independent private recovery copy, transfer/readback/smoke, then final release review. Existing browser/admin passes remain accepted. Do not treat local synthetic transfer tests as live cutover evidence.
+
 ## R1 scope fixed by owner — October 16, 2026, 12:09 Pacific
 
 R1 is the current catalog feature set, the inline reference-to-physical action, and remaining infrastructure/release tasks. Add new scope only for a compelling release blocker. CC-TODO-017: Add physical cutter on a focused reference reuses its stable shape, tags and files, opens physical inventory inline, and creates only on Save. Cancel returns to the reference without writes; dirty reference changes require discard confirmation before starting. Existing revision checks, atomic recovery and role permissions apply. The reference design survives; physical inventory is linked, not a destructive conversion. Left-side context help is separate from the focused card, persists for reading, closes with Close help/Escape and stacks above on narrow screens. Local 150-test suite/build and the additional linked-create/Cancel/dirty-guard interaction test pass (151 total cases); development deployment acceptance pending.

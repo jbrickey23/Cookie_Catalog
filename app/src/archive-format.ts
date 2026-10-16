@@ -41,7 +41,7 @@ export async function archiveStream(manifest:Uint8Array,load:(object:ArchiveObje
  const envelope=JSON.parse(new TextDecoder().decode(manifest));
  if(envelope.format!=="cookie-catalog-archive"||envelope.version!==1||await archiveHash(encoder.encode(envelope.payloadJson))!==envelope.payloadSha256)throw Error("Invalid archive manifest.");
  const payload=JSON.parse(envelope.payloadJson),objects=payload.objects as ArchiveObject[];
- if(payload.environment!=="development"||objects.length>1000||objects.some(o=>o.key!=="attachments/"+o.attachmentId+"/original"||!/^[a-zA-Z0-9_-]{8,128}$/.test(o.attachmentId)||!Number.isSafeInteger(o.byteSize)||o.byteSize<0||o.byteSize>ARCHIVE_FILE_LIMIT))throw Error("Invalid archive descriptors.");
+ if(!["development","production"].includes(payload.environment)||objects.length>1000||objects.some(o=>o.key!=="attachments/"+o.attachmentId+"/original"||!/^[a-zA-Z0-9_-]{8,128}$/.test(o.attachmentId)||!Number.isSafeInteger(o.byteSize)||o.byteSize<0||o.byteSize>ARCHIVE_FILE_LIMIT))throw Error("Invalid archive descriptors.");
  const total=objects.reduce((sum,o)=>sum+o.byteSize,0);
  if(total>1024*1024*1024||manifest.length>16*1024*1024)throw Error("Archive limits exceeded.");
  const manifestHash=await archiveHash(manifest);

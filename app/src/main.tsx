@@ -15,11 +15,13 @@ import { InfrastructureVerification } from "./InfrastructureVerification";
 
 function App() {
   const [role,setRole] = useState<"owner"|"editor"|"viewer"|null>(null);
+  const [environment,setEnvironment]=useState<'development'|'production'>('development');
   const [sessionError,setSessionError] = useState("");
   useEffect(() => {
     fetch("/api/session",{cache:"no-store"}).then(async response => {
-      const body = await response.json() as {role?: "owner"|"editor"|"viewer"};
+      const body = await response.json() as {environment?: "development"|"production";role?: "owner"|"editor"|"viewer"};
       if (!response.ok || !["owner","editor","viewer"].includes(body.role ?? "")) throw Error("Sign in again to open the catalog.");
+      setEnvironment(body.environment==='production'?'production':'development');
       setRole(body.role!);
     }).catch(() => setSessionError("Your session could not be verified. Refresh and sign in again."));
   },[]);
@@ -111,7 +113,7 @@ function App() {
     {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>
-    {role === "owner" && <InfrastructureVerification />}
+    {role === "owner" && <InfrastructureVerification development={environment==='development'} />}
     <hr />
     {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews canImport={role==="owner"} onCatalogChanged={()=>setCatalogVersion(v=>v+1)} /></details>}
     <Readiness key={"review-"+catalogVersion} />
@@ -122,8 +124,9 @@ function App() {
     {role!=="viewer"&&<BatchAttachments onSaved={()=>setCatalogVersion(v=>v+1)} />}
     <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
     </details>
-    {role === "owner" && <details className="management-panel"><summary>Manual archive export and development checks (advanced)</summary>
+    {role === "owner" && <details className="management-panel"><summary>Manual archive export (advanced)</summary>
     <ArchiveBackup />
+    {environment==='development'&&<>
     <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>
     <button onClick={checkDatabase} disabled={busy || backupBusy || storageBusy} style={{ padding: "0.7rem 1rem", cursor: busy ? "wait" : "pointer" }}>
@@ -147,8 +150,9 @@ function App() {
     <button onClick={() => downloadBackup(true)} disabled={backupBusy || storageBusy || busy} style={{ padding: "0.7rem 1rem" }}>
       {backupBusy ? "Preparing…" : "Download file recovery test"}
     </button>
+    </>}
     </details>}
-    <p>Private development catalog. Production release remains under development.</p>
+    <p>{environment==='production'?'Private production catalog.':'Private development catalog. Production release remains under development.'}</p>
   </main>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);

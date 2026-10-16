@@ -1,3 +1,4 @@
+import {catalogEnvironment,type CatalogEnvironment} from './catalog-environment';
 import {fieldHelpPage} from './field-help';
 import {withBackupStorageLock} from './server/backup-storage-lock';
 import {handleWorkspace} from './server/workspace';
@@ -18,13 +19,14 @@ import { AccessIdentityVerifier, accessIsConfigured, mayRead, mayWrite, type Acc
 import {inspectInfrastructure} from "./server/infrastructure-check";
 import {checkMissingFileRecovery} from "./server/development-missing-file-check";
 
-export interface Env extends AccessConfiguration { ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
+export interface Env extends AccessConfiguration { CATALOG_ENVIRONMENT?:string; ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
 function json(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), {
     status, headers: { "content-type": "application/json", "cache-control": "no-store", "x-content-type-options": "nosniff" }
   });
 }
-export async function handleApiRequest(request: Request, verifier: IdentityVerifier, database?: D1Database, files?: R2Bucket): Promise<Response> {
+export async function handleApiRequest(request: Request, verifier: IdentityVerifier, database?: D1Database, files?: R2Bucket, environment:CatalogEnvironment='development'): Promise<Response> {
+  try{catalogEnvironment(environment);}catch{return json({error:'Invalid catalog environment configuration'},503);}
   const user = await verifier.verify(request);
   if (!mayRead(user)) return json({ error: "Unauthorized" }, 401);
   if (!user) return json({ error: "Unauthorized" }, 401);
@@ -37,7 +39,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(user.role!=="owner")return json({error:"Owner/admin access required"},403);
     if(!database||!files)return json({error:"Backup resources unavailable"},503);
     if(request.method!=="GET"&&(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="managed-backup"))return json({error:"Same-origin backup request required"},403);
-    return handleManagedBackups(request,database,files,user.subject);
+    return handleManagedBackups(request,database,files,user.subject,environment);
   }
   const restoreGate=async()=>{try{return files&&await restoreInProgress(files)?json({error:"Catalog restore is in progress. Resume or review recovery from Backups."},423):null;}catch{return json({error:"Recovery status unavailable. Retry before accessing catalog data."},503);}};
   if(pathname.startsWith('/api/workspace/')){
@@ -46,9 +48,10 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(request.method!=='GET'&&(request.headers.get('Origin')!==new URL(request.url).origin||request.headers.get('X-Cookie-Catalog-Check')!=='workspace'))return json({error:'Same-origin workspace request required'},403);
     if(!database||!files)return json({error:'Workspace resources unavailable'},503);
     {const blocked=await restoreGate();if(blocked)return blocked;}
-    return handleWorkspace(request,database,files,user.subject,user.role==='owner');
+    return handleWorkspace(request,database,files,user.subject,user.role==='owner',environment);
   }
   // Maintenance, archive/export and synthetic fixtures are owner-only.
+  if(environment==='production'&&pathname.startsWith('/api/dev/')&&!['/api/dev/archive','/api/dev/archive-file','/api/dev/infrastructure-check'].includes(pathname))return json({error:'Development checks are unavailable in production'},404);
   if(pathname.startsWith("/api/dev/") && user.role!=="owner")return json({error:"Owner access required"},403);
   if(pathname === "/api/dev/missing-file-check") {
     if(user.role!=="owner")return json({error:"Owner access required"},403);
@@ -64,7 +67,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(request.method !== "GET")return json({error:"Method not allowed"},405);
     if(!database||!files)return json({error:"Development bindings unavailable"},503);
     {const blocked=await restoreGate();if(blocked)return blocked;}
-    try{return json(await inspectInfrastructure(database,files));}
+    try{return json(await inspectInfrastructure(database,files,environment));}
     catch{return json({error:"Read-only infrastructure verification failed. Check development bindings/migrations."},503);}
   }
   if (pathname === "/api/dev/archive" || pathname === "/api/dev/archive-file") {
@@ -75,7 +78,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     {const blocked=await restoreGate();if(blocked)return blocked;}
     try {
       if(pathname === "/api/dev/archive-file")return await archiveOriginal(request,database,files);
-      const manifest=await createArchiveManifest(database,files);
+      const manifest=await createArchiveManifest(database,files,environment);
       return new Response(manifest.buffer as ArrayBuffer,{headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(error){return json({error:error instanceof BackupError?error.message:"Archive preparation failed."},503);}
   }
@@ -161,7 +164,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   }
   if (pathname === "/api/session") {
     if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
-    return json({ authenticated: true, email: user.email, role: user.role });
+    return json({ authenticated: true, email: user.email, role: user.role, environment });
   }
   if (pathname === "/api/dev/database-check") {
     if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
@@ -204,12 +207,14 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   return json({ error: "Catalog API unavailable until membership and storage validation are complete" }, 503);
 }
 export default {
-  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(scheduledBackups(env.DB,env.FILES));},
+  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT)));},
   async fetch(request: Request, env: Env): Promise<Response> {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       if (!accessIsConfigured(env)) return json({ error: "Authentication configuration incomplete" }, 503);
-      return handleApiRequest(request, new AccessIdentityVerifier(env), env.DB, env.FILES);
+      let environment:CatalogEnvironment;
+      try{environment=catalogEnvironment(env.CATALOG_ENVIRONMENT);}catch{return json({error:'Invalid catalog environment configuration'},503);}
+      return handleApiRequest(request, new AccessIdentityVerifier(env), env.DB, env.FILES, environment);
     }
     return env.ASSETS.fetch(request);
   }

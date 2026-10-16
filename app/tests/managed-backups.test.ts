@@ -113,3 +113,13 @@ test('copy progress uses the checksum-bound compact plan and upgrades retained j
   assert.equal((await (await files.get('catalog-backups/jobs/'+second.id+'.json'))!.json<any>()).offset,0);
  }finally{await runtime.dispose();}
 });
+
+test('production snapshots keep source provenance, remain fresh, and expose source environment in restore preview',async()=>{
+ const {runtime,db,files}=await env();try{
+  let job=await startManagedBackup(db,files,'owner','pre-change','production');while(job.status!=='complete')job=await advanceManagedBackup(files,job.id);
+  const saved=await completeBackup(files,job.id);assert.equal(saved.payload.environment,'production');await assertFreshBackup(db,files,job.id);
+  assert.equal((await restorePreview(db,files,job.id)).sourceEnvironment,'production');
+  const legacy=await backup(db,files);assert.equal((await completeBackup(files,legacy.id)).payload.environment,'development');await assertFreshBackup(db,files,legacy.id);
+  const response=await handleApiRequest(new Request(origin+'/api/backups',{method:'POST',headers:{Origin:origin,'X-Cookie-Catalog-Check':'managed-backup','content-type':'application/json'},body:'{}'}),owner,db,files,'production');assert.equal(response.status,201);const created=await response.json() as {id:string};const object=await files.get('catalog-backups/manifests/'+created.id+'.json');assert.equal(JSON.parse((await object!.json<any>()).payloadJson).environment,'production');
+ }finally{await runtime.dispose();}
+});

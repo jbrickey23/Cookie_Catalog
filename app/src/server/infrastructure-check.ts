@@ -1,6 +1,7 @@
+import type {CatalogEnvironment} from '../catalog-environment';
 import {BACKUP_TABLES,REVIEW_TABLES,IMPORT_TABLES} from "./development-backup";
 import {buildInformation} from "./build-information";
-export async function inspectInfrastructure(database:D1Database,files:R2Bucket) {
+export async function inspectInfrastructure(database:D1Database,files:R2Bucket,environment:CatalogEnvironment='development') {
   const [tables,migrations,relationships,counts,attachments]=await database.batch<Record<string,unknown>>([
     database.prepare("SELECT name FROM sqlite_schema WHERE type='table' AND substr(name,1,7)!='sqlite_' AND substr(name,1,4)!='_cf_' ORDER BY name"),
     database.prepare("SELECT name FROM d1_migrations ORDER BY id"),
@@ -27,7 +28,7 @@ export async function inspectInfrastructure(database:D1Database,files:R2Bucket) 
   }
   const build=buildInformation();
   return {
-    checkedAt:new Date().toISOString(),mode:"read-only",environment:"development",
+    checkedAt:new Date().toISOString(),mode:"read-only",environment,
     worker:{reachable:true,build,sourceCommitAvailable:build.commit!==null},
     database:{queryPassed:true,schemaTables:names.length,importStorageReady:hasImporter&&applied.includes("0004_catalog_imports.sql"),supportedSchema,reviewStorageReady,missingTables,migrations:applied,requiredMigrationsApplied:requiredMigrations.every(name=>applied.includes(name)),foreignKeyViolations:relationships.results.length,recordCounts:counts.results[0]},
     storage:{bindingReadable:true,objectsOnFirstPage:listing.objects.length,listingTruncated:listing.truncated,sampledAttachments:attachments.results.length,missingOriginals,sizeMismatches},

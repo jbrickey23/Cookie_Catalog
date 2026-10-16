@@ -14,12 +14,13 @@ sys.path.insert(0, str(ROOT / "tools"))
 from prepare_cloudflare_restore import prepare, verify, snapshot
 
 
-def fixture(path, missing_migration=False, large=False):
+def fixture(path, missing_migration=False, large=False, current=False, environment='development'):
     with sqlite3.connect(":memory:") as db:
-        for migration in [ROOT / "database/migrations" / name for name in ("0001_initial.sql", "0002_variants_components.sql")]:
+        names = ["0001_initial.sql", "0002_variants_components.sql"] + (["0003_import_reviews.sql", "0004_catalog_imports.sql"] if current else [])
+        for migration in [ROOT / "database/migrations" / name for name in names]:
             db.executescript(migration.read_text())
         db.execute("CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY, name TEXT, applied_at TEXT)")
-        for index, name in enumerate(("0001_initial.sql", "0002_variants_components.sql")):
+        for index, name in enumerate(names):
             if not missing_migration or index == 0:
                 db.execute("INSERT INTO d1_migrations VALUES (?,?,?)", (index+1, name, "2026-10-14"))
         db.execute("INSERT INTO shapes(id,name,notes) VALUES ('shape_test',?,?)",
@@ -31,10 +32,15 @@ def fixture(path, missing_migration=False, large=False):
         key = "attachments/file_test_01/original"
         db.execute("INSERT INTO attachments(id,storage_key,filename,media_type,byte_size,sha256) VALUES ('file_test_01',?,'test.bin','application/octet-stream',?,?)", (key,len(data),checksum))
         db.execute("INSERT INTO shape_attachments VALUES ('shape_test','file_test_01','original')")
+        if current:
+            db.execute("INSERT INTO import_review_workspaces VALUES ('review_test','TEST review','TEST namespace',1,'TEST token','TEST','TEST')")
+            db.execute("INSERT INTO import_review_versions VALUES ('review_test',1,'TEST hash',1,'TEST owner','TEST')")
+            db.execute("INSERT INTO import_review_items VALUES ('review_test',1,'TEST key',0,'{}')")
+            db.execute("INSERT INTO catalog_import_batches VALUES ('batch_test','review_test',1,'TEST request','TEST plan','TEST backup','TEST owner','TEST',1,'{}')")
         db.commit()
         database = snapshot(db)
     item = {"attachmentId":"file_test_01", "key":key, "byteSize":len(data), "sha256":checksum, "contentType":"application/octet-stream"}
-    payload = json.dumps({"environment":"development","database":database,"objects":[item]})
+    payload = json.dumps({"environment":environment,"database":database,"objects":[item]})
     raw = json.dumps({"format":"cookie-catalog-archive","version":1,"exportedAt":"2026-10-14T00:00:00Z","payloadJson":payload,"payloadSha256":hashlib.sha256(payload.encode()).hexdigest()}).encode()
     receipt = json.dumps({"manifestSha256":hashlib.sha256(raw).hexdigest(),"objects":1,"originalBytes":len(data)}).encode()
     with path.open("wb") as stream:
@@ -71,6 +77,19 @@ class PreparationTests(unittest.TestCase):
             db.execute("PRAGMA foreign_keys=ON")
             db.executescript("BEGIN;" + sql + "COMMIT;")
             self.assertEqual(db.execute("SELECT name FROM shapes").fetchone()[0], "O'Brien; DROP TABLE shapes; --\n雪\x00tail")
+
+    def test_current_schema_transfer_preserves_reviews_migrations_and_source_environment(self):
+        for environment in ('development', 'production'):
+            fixture(self.archive, current=True, environment=environment)
+            result = prepare(self.archive, self.package)
+            self.assertEqual(result['tables'], 22)
+            self.assertTrue(self.compare()['dataComparisonPassed'])
+            evidence = json.loads((self.package / 'expected.json').read_text())
+            self.assertEqual(evidence['sourceEnvironment'], environment)
+            self.assertEqual(evidence['counts']['import_review_items'], 1)
+            self.assertEqual(evidence['counts']['catalog_import_batches'], 1)
+            self.assertEqual(evidence['counts']['d1_migrations'], 4)
+            shutil.rmtree(self.package)
 
     def test_existing_destination_and_git_checkout_are_preserved(self):
         self.package.mkdir(); sentinel = self.package / "keep"; sentinel.write_text("keep")

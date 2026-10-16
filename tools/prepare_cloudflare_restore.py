@@ -101,7 +101,7 @@ def prepare(archive, destination):
         (destination / "import.sql").write_text(sql, encoding="utf-8")
         (destination / "statements.json").write_text(json.dumps(statements), encoding="utf-8")
         evidence = {"format": "cookie-catalog-cloudflare-preparation", "version": 1,
-                    "archiveSha256": before, "exportedAt": envelope["exportedAt"],
+                    "archiveSha256": before, "sourceEnvironment": payload["environment"], "exportedAt": envelope["exportedAt"],
                     "sourceCommit": None, "sourceCommitNote": "Archive does not attest deployed source; record separately.",
                     "importSha256": digest(destination / "import.sql"),
                     "database": expected, "objects": payload["objects"],

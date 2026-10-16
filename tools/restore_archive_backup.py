@@ -15,7 +15,7 @@ def restore(source, destination):
         raise ValueError("Restore destination must not already exist")
     size = source.stat().st_size
     if size > 1024**3 + 18*1024**2 or size % 512 or size < 2048:
-        raise ValueError("Archive size is invalid or exceeds development limits")
+        raise ValueError("Archive size is invalid or exceeds archive limits")
     with source.open("rb") as stream:
         stream.seek(-1024, 2)
         if stream.read() != bytes(1024):
@@ -36,8 +36,8 @@ def restore(source, destination):
             if hashlib.sha256(payload_raw.encode()).hexdigest() != envelope["payloadSha256"]:
                 raise ValueError("Manifest payload checksum mismatch")
             payload = json.loads(payload_raw)
-            if payload.get("environment") != "development":
-                raise ValueError("Not a development archive")
+            if payload.get("environment") not in ("development", "production"):
+                raise ValueError("Unsupported archive source environment")
             tables, schema = payload["database"]["tables"], payload["database"]["schema"]
             selected_tables = table_profile(tables)
             if {item["name"] for item in schema if item["type"] == "table"} != selected_tables:

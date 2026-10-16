@@ -28,6 +28,7 @@
   "workers_dev": true,
   "preview_urls": true,
   "vars": {
+    "CATALOG_ENVIRONMENT": "development",
     "ACCESS_TEAM_DOMAIN": "cookie-catalog-jbrickey.cloudflareaccess.com",
     "ACCESS_AUD": "98ebc56d367291cd85bf0d932caa6e1e2b1d24151f58c4c1f8d7a7b586d17438"
   },

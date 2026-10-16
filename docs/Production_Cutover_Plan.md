@@ -18,6 +18,8 @@ These names are proposals, not provisioned resources or verified URLs. No new pa
 
 ## Preparation findings to resolve before deployment
 
+Update October 16: environment/source-provenance compatibility and synthetic current-schema transfer preparation are now implemented; see [production readiness preparation](Production_Readiness_20261016.md). The paragraphs below record the original findings. Actual separate resource IDs, filled production build, live transfer, private-access attestation and final cutover evidence remain outstanding. No production provisioning is authorized by this update.
+
 The current app/configuration deliberately identifies development. `app/wrangler.jsonc` binds only development D1/R2 and Access. UI footer and restore copy, infrastructure report, archive writers and archive validator contain development labels or format assumptions (`main.tsx`, `ManagedBackups.tsx`, `server/infrastructure-check.ts`, `server/archive-backup.ts`, `server/development-backup.ts`, `archive-format.ts`). Production requires a reviewed environment/configuration and backup-provenance decision, compatible with existing checked archives. Do not just rename strings or relabel an old archive as production. Keep development diagnostics controlled and decide which synthetic test actions are appropriate for production.
 
 Existing offline restore preparation/comparison tooling and isolated restore evidence remain useful, but they are not an unattended production importer. Select and test the current-schema transfer procedure against a fresh private archive before loading production. An empty target receives either the validated complete schema/rows from the archive, or the approved migration-plus-import procedure; do not apply both and duplicate migration/catalog tables.
@@ -45,4 +47,4 @@ After production accepts writes, development becomes stale. Stop edits and captu
 - Verified resource IDs/audience/hostname; environment/provenance compatibility implementation and transfer validation.
 - Fresh source archive and independently verified private recovery copy at the agreed cutover window.
 
-See [current release status](First_Release_Status.md), [device checks](Device_Acceptance.md) and [existing deployment/rollback runbook](Deployment_Runbook.md). Next unused task is CC-TODO-018; this continues 004/005/006/014.
+See [current release status](First_Release_Status.md), [device checks](Device_Acceptance.md) and [existing deployment/rollback runbook](Deployment_Runbook.md). Next unused task is CC-TODO-019; this continues 004/005/006/014.
