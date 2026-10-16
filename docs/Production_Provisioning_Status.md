@@ -1,5 +1,15 @@
 # Production provisioning status — October 16, 2026, Pacific
 
+## Fresh transfer backup verified — October 16, 2026, 14:04 Pacific
+
+Owner confirmed both users paused catalog edits at 13:53 Pacific. Managed snapshot dated 13:53:45 completed and automatically checked all 592 originals; retained earlier snapshots preserved. Fresh portable TAR subsequently exported and independently validated offline: 22 tables, 4,048 total rows and 592 originals; exact local SQL restore roundtrip passed. SHA-256: `480b42093d8645720830dd6f2b8f49f7f17774dcd66724ba2e76b8657cfaf6a7`. Private TAR and prepared transfer ZIP saved privately outside this repository. No private payloads or Library identifiers belong in Git.
+
+Read-only source verification at 21:03:49 UTC matched development head `6650e2146ef22509c12db5901ee2f390ded018f6`, version 0.1.0-rc.1, 22 tables/four migrations, zero FK violations and five originals sampled without missing/size mismatches. Evidence: docs/evidence/Transfer_Source_Verification_20261016.json. The complete archive validation, rather than this sample, checked all 592 originals.
+
+Production Workers dry-run build succeeded at release head `48e8b0adefb2966d7433fdeb8a79873c755d81b5`; see docs/evidence/Production_Dry_Run_20261016.json. Owner confirmed encrypted OWNER_EMAIL and CATALOG_MEMBERS runtime secrets, production branch/build settings and dry-run deploy command. This is not a live production catalog deployment.
+
+NEXT: establish a supported private execution path for the prepared D1/R2 import (remote Cloudflare dashboard sign-in remains blocked; Windows Wrangler setup was parked). Keep production deployment command in dry-run until separately authorized. Before importing, verify actual empty D1/private R2 targets and Access settings; obtain concrete data-transfer authorization, then import, independently re-export/download and compare all rows/object hashes, verify both owners/private access and recovery, and review final deployment/cutover/merge/tag. No production data import, deployment, cutover, main merge or tag has occurred. Source freeze is a manual owner pause, not an enforced maintenance lock; any resumed edits require a new final transfer export. R1 feature scope remains fixed; Change Requests stays R1.1, next unused CC-TODO-019.
+
 ## Cloud dry-run passed — 13:48 Pacific
 
 Owner confirmed builds enabled and Deploy command includes --dry-run. Pushed source-identical checkpoint 48e8b0adefb2966d7433fdeb8a79873c755d81b5 to release/r1-production, retaining tree a9b60f948e1c8e8688e15b63a09ab9a23e058e37. GitHub Workers Builds: cookie-catalog-prod completed success, build 5cb3f2d4-8773-4c48-b50f-095a5c7ab77e. No production version ID reported. Full build log not accessible through the blocked remote dashboard; retain owner-confirmed --dry-run distinction rather than treating build success as a live deployment. Evidence: evidence/Production_Dry_Run_20261016.json.
