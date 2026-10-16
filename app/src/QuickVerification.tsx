@@ -1,3 +1,4 @@
+import {managedBackup,backupApi} from "./managed-backup-client";
 import {recordedLocation} from './source-location';
 import React,{useState} from 'react';
 import {classify,suggestion,type Classification,type QuickContext} from './quick-classification';
@@ -8,7 +9,7 @@ export function QuickVerification({id,title,revision,manifest,disabled,canImport
   onChange:(m:StagingManifest)=>void;onComplete:(m:StagingManifest,revision:string,message:string)=>void;onBusy:(busy:boolean)=>void;onInspect:(index:number)=>void;
 }) {
   const [context,setContext]=useState<QuickContext[]|null>(null),[query,setQuery]=useState(''),[page,setPage]=useState(0),[filter,setFilter]=useState('pending');
-  const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[backup,setBackup]=useState(''),[verified,setVerified]=useState(false);
+  const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[backup,setBackup]=useState(''),[verified,setVerified]=useState(false),[manualBackup,setManualBackup]=useState(false);
   const headers=(rev=revision)=>({'content-type':'application/json','X-Cookie-Catalog-Check':'import-review','If-Match':rev});
   async function api<T>(url:string,init:RequestInit={}){const r=await fetch(url,{...init,cache:'no-store'}),data=await r.json() as any;if(!r.ok)throw Error(data.error??'Quick verification failed. Your review decisions remain in the draft.');return data as T;}
   const ctx=new Map(context?.map(c=>[c.sourceKey,c]));
@@ -35,11 +36,12 @@ export function QuickVerification({id,title,revision,manifest,disabled,canImport
   async function saveAndImport(importInventory:boolean){
     const selected=eligible.map(i=>({sourceKey:i.sourceKey,action:'create' as const}));
     if(importInventory&&!window.confirm(`Save review decisions and import up to ${selected.length} confirmed individual physical cutters? Digital references create no stock. Ambiguous or duplicate entries stay for review.`))return;
-    setBusy(true);onBusy(true);let savedRevision:string|null=null,created=0,skipped=0;const blocked:string[]=[];
+    setBusy(true);onBusy(true);let savedRevision:string|null=null,created=0,skipped=0,backupReference=backup.trim(),backupConfirmed=verified;const blocked:string[]=[];
     try {
       validateManifest(manifest);
       const saved=await api<{revision:string}>(`/api/import-reviews/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({id,title,manifest})});savedRevision=saved.revision;
       if(importInventory){
+        if(!manualBackup){const automatic=await managedBackup(setMessage,'pre-change');await backupApi('/'+automatic.id+'/fresh',{});backupReference=automatic.id;backupConfirmed=true;}
         for(let offset=0;offset<selected.length;offset+=50){
           setMessage(`Importing batch ${Math.floor(offset/50)+1} of ${Math.ceil(selected.length/50)}…`);
           let choices=selected.slice(offset,offset+50);
@@ -51,7 +53,7 @@ export function QuickVerification({id,title,revision,manifest,disabled,canImport
           // Removing blockers changes the signed selection. Always prepare the exact subset.
           if(choices.length!==plan.rows.length)plan=await prepare();
           if(plan.blocked)throw Error('Inventory changed during planning. Saved decisions are kept; reopen before retrying.');
-          const result=await api<{created?:number;alreadyLinked?:number}>(`/api/import-reviews/${id}/apply`,{method:'POST',headers:headers(saved.revision),body:JSON.stringify({choices,ownershipConfirmed:true,planSha256:plan.planSha256,backupReference:backup.trim(),backupConfirmed:verified})});
+          const result=await api<{created?:number;alreadyLinked?:number}>(`/api/import-reviews/${id}/apply`,{method:'POST',headers:headers(saved.revision),body:JSON.stringify({choices,ownershipConfirmed:true,planSha256:plan.planSha256,backupReference,backupConfirmed})});
           created+=result.created??0;skipped+=result.alreadyLinked??0;
         }
       }
@@ -81,10 +83,12 @@ export function QuickVerification({id,title,revision,manifest,disabled,canImport
           <details><summary>Source evidence</summary><pre className="quick-evidence">{c?.evidence||item.facts?.source||item.source.pageTitle||item.source.pageId}</pre></details></div>
         </article>;})}</div>
         <p><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>Previous review page</button> Page {page+1} <button disabled={(page+1)*24>=matching.length} onClick={()=>setPage(p=>p+1)}>Next review page</button></p>
-        {canImport&&<><p><label>Verified protected backup reference <input maxLength={500} value={backup} onChange={e=>{setBackup(e.target.value);setVerified(false);}} placeholder="Pre-change backup filename or receipt"/></label></p>
+        {canImport&&<p><label><input type="checkbox" checked={manualBackup} onChange={e=>setManualBackup(e.target.checked)}/> Use an existing verified backup instead (advanced)</label></p>}
+        {canImport&&manualBackup&&<><p><label>Verified protected backup reference <input maxLength={500} value={backup} onChange={e=>{setBackup(e.target.value);setVerified(false);}} placeholder="Pre-change backup filename or receipt"/></label></p>
         <p><label><input type="checkbox" checked={verified} onChange={e=>setVerified(e.target.checked)}/> I saved and verified a protected pre-change backup for this import.</label></p></>}
-        <button onClick={()=>void saveAndImport(false)}>Save checklist decisions</button>{' '}{canImport&&<button disabled={!eligible.length||!backup.trim()||!verified} onClick={()=>void saveAndImport(true)}>Save decisions and import confirmed cutters</button>}
+        <button onClick={()=>void saveAndImport(false)}>Save checklist decisions</button>{' '}{canImport&&<button disabled={!eligible.length||manualBackup&&(!backup.trim()||!verified)} onClick={()=>void saveAndImport(true)}>{manualBackup?"Save decisions and import confirmed cutters":"Back up and import confirmed cutters"}</button>}
         {!canImport&&<p>An owner/admin applies inventory imports. You can save checklist decisions for review.</p>}
+        {!manualBackup&&canImport&&<p>A fresh protected backup is saved and checked automatically before inventory changes. No CMDs, file downloads or pasted references are needed.</p>}
         <p>Imports run in batches of at most 50. Existing shapes and photos are reused. OneNote bins are accepted as location assignments, independently of Physical/Digital. Missing measurements stay in the collection queue. Digital-only choices save review decisions without creating physical stock or uploading originals.</p>
       </fieldset>
     </>}

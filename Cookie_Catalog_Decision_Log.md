@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 15 — CC-DEC-019 — App-managed snapshots, approval-based restore and opt-in schedule
+
+Owner requests completion of BIN work followed by removing manual file/CMD/reference handoffs from backup and restore. Use the existing private R2 bucket for app-managed, checksum-checked, resumable snapshots and automatic pre-change protection. Restore requires a current preview and approval; it creates its own protected before-state, holds maintenance through transactional database replacement and permits approved rollback. Enable daily fresh creation only through the owner schedule setting; the worker may resume already approved jobs in the background. Portable off-provider archives remain a distinct layer. No new paid resource, production overwrite, credential bypass or automatic pruning is authorized. See docs/App_Managed_Backups.md for capacity/retention and live-acceptance limits. Next unused decision ID: CC-DEC-020.
+
 ## October 15 — CC-DEC-017 — Recorded BIN location and independent inventory status
 
 Owner explicitly accepts the bin identified by OneNote as the recorded current/intended location, without a second verification task. Incorrect locations are corrected later. Physical/Digital classification alone handles physical existence; location never establishes ownership or print status. Existing source assignments are inherited until an explicit catalog move overrides them; future imports persist recorded locations. No source rewrite, destructive migration or live inventory bulk edit is required.

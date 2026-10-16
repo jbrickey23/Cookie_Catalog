@@ -24,6 +24,7 @@
       "bucket_name": "cookie-catalog-dev-private"
     }
   ],
+  "triggers": {"crons": ["* * * * *"]},
   "workers_dev": true,
   "preview_urls": true,
   "vars": {

@@ -35,7 +35,7 @@ function bucket(mode = "ok") {
     },
     async get(key: string) {
       if (mode === "missing") return null;
-      const bytes = objects.get(key)!;
+      const bytes = objects.get(key);if(!bytes)return null;
       const data = mode === "corrupt" ? Uint8Array.from(bytes, b => b ^ 1) : bytes;
       return { size: data.length, httpMetadata: { contentType: "application/octet-stream" }, arrayBuffer: async () => data.slice().buffer };
     }

@@ -1,3 +1,4 @@
+import {ManagedBackups} from "./ManagedBackups";
 import "./styles.css";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -106,6 +107,7 @@ function App() {
     <h1>Cookie Catalog</h1>
     <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
     <Browse version={catalogVersion} />
+    {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>
     {role === "owner" && <InfrastructureVerification />}
     <hr />
@@ -118,7 +120,7 @@ function App() {
     {role!=="viewer"&&<BatchAttachments onSaved={()=>setCatalogVersion(v=>v+1)} />}
     <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
     </details>
-    {role === "owner" && <details className="management-panel"><summary>Backups and development checks</summary>
+    {role === "owner" && <details className="management-panel"><summary>Manual archive export and development checks (advanced)</summary>
     <ArchiveBackup />
     <hr />
     <p>Development infrastructure checks use invented demonstration records.</p>

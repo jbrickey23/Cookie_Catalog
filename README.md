@@ -1,5 +1,9 @@
 # Cookie_Catalog
 
+## App-managed backups and recovery
+
+The development app now provides in-app snapshots, automatic pre-change protection for quick imports, approved restore/rollback and opt-in daily fresh backups. The routine workflow has no CMD or filename handoff. BIN location assignments are independent of Physical/Digital status. See [managed backups](docs/App_Managed_Backups.md) and the latest Context checkpoint for acceptance and retention limits.
+
 ## Quick collection verification
 
 The development feature branch now includes the Physical / Digital / Both source checklist, filtered-group confirmation, exceptions, saved decisions and guarded owner/admin import in batches. Existing source shapes/photos and imported inventory are preserved. Digital references do not assert possession of printable originals. See [Quick verification](docs/Quick_Verification.md) and the latest Context checkpoint; production remains unreleased.

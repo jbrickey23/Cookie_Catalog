@@ -139,7 +139,7 @@ test("database check handles missing fixtures and query failures without leaking
 test("storage mutation requires a verified owner, POST, origin and custom header", async () => {
   let writes = 0;
   const files = { put: async () => { writes++; throw new Error("synthetic stop"); },
-    delete: async () => {}, head: async () => null } as unknown as R2Bucket;
+    delete: async () => {}, get: async () => null, head: async () => null } as unknown as R2Bucket;
   const url = "https://catalog.example.test/api/dev/storage-check";
   assert.equal((await handleApiRequest(new Request(url, { method: "POST" }), verifier, undefined, files)).status, 401);
   const jwt = await token();

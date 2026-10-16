@@ -10,7 +10,7 @@ export async function createArchiveManifest(database:D1Database,files:R2Bucket):
   const page=await files.list({limit:1000,cursor});
   if(++pages>100)throw new BackupError("Storage audit limit exceeded.");
   for(const object of page.objects){
-   if(!object.key.startsWith("dev-checks/")&&!keys.has(object.key))throw new BackupError("Unregistered storage files must be reconciled before archiving.");
+   if(!object.key.startsWith("dev-checks/")&&!object.key.startsWith("catalog-backups/")&&!keys.has(object.key))throw new BackupError("Unregistered storage files must be reconciled before archiving.");
    if(keys.has(object.key))listed.set(object.key,object);
   }
   cursor=page.truncated?page.cursor:undefined;

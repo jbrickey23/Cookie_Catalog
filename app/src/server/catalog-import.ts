@@ -1,3 +1,4 @@
+import {assertFreshBackup,completeBackup} from './managed-backups';
 import {recordedLocation} from '../source-location';
 import { sourceReference, suggestion } from '../quick-classification';
 import { openReview } from './import-reviews';
@@ -151,7 +152,7 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
     const fingerprint = await digest({ workspace: id, revision: saved.head.current_revision, manifest: saved.head.manifest_sha256, selected, ownershipConfirmed, snapshots, mappings });
     return { saved, rows, snapshots, mappings, fingerprint };
 }
-export async function handleCatalogImport(request: Request, db: D1Database, subject: string, id: string, apply: boolean): Promise<Response> {
+export async function handleCatalogImport(request: Request, db: D1Database, subject: string, id: string, apply: boolean, files?:R2Bucket): Promise<Response> {
     try {
         const data = await readImportInput(request);
         if (!data || typeof data !== 'object' || Array.isArray(data) || Object.keys(data).some(k => !['choices', 'planSha256', 'backupReference', 'backupConfirmed', 'ownershipConfirmed'].includes(k)))
@@ -184,6 +185,13 @@ export async function handleCatalogImport(request: Request, db: D1Database, subj
         const ready = planned.rows.filter(r => r.status === 'ready');
         if (!ready.length)
             return json({ imported: 0, alreadyLinked: planned.rows.length, replayed: true });
+        if(/^backup_[a-f0-9]{32}$/.test(backupReference)){
+            if(!files)throw new InputError('Managed backup storage unavailable.');
+            const savedBackup=await completeBackup(files,backupReference);
+            if(savedBackup.job.kind!=='pre-change')throw new InputError('Use a protected pre-change snapshot.');
+            const covered=await db.prepare('SELECT count(*) AS n FROM catalog_import_batches WHERE workspace_id=? AND revision=? AND backup_reference=? AND created_by=?').bind(id,planned.saved.head.current_revision,backupReference,subject).first<{n:number}>();
+            if(!covered?.n)await assertFreshBackup(db,files,backupReference);
+        }
         const now = new Date().toISOString(), result = { batchId, imported: ready.length, created: ready.filter(r => r.choice!.action === 'create').length, linked: ready.filter(r => r.choice!.action === 'link').length, alreadyLinked: planned.rows.length - ready.length };
         const payload = JSON.stringify(ready.map(r => ({ sourceKey: r.sourceKey, kind: r.kind, action: r.choice!.action, itemHash: r.itemHash, itemJson: JSON.stringify(r.item), decisionJson: JSON.stringify({ ...r.choice, ownershipConfirmed: data.ownershipConfirmed === true, quantityDefaulted: r.kind === 'physical_cutter' && r.choice!.action === 'create' && r.item!.catalog?.quantity === undefined }), shapeId: r.shapeId, targetId: r.targetId, name: r.item!.name.trim(), url: /^https?:/.test(r.item!.source.url ?? '') ? r.item!.source.url : null, notes: notes(r.item!) + (r.kind === 'physical_cutter' && r.choice!.action === 'create' && r.item!.catalog?.quantity === undefined ? '\nQuantity defaulted to one individual cutter at import.' : ''), locationId: r.locationId, locationLabel: r.locationLabel ?? null, referenceSize: r.item!.catalog?.referenceSizeMm ?? null, slot: r.item!.catalog?.slot ?? null, width: r.item!.facts?.widthMm ?? null, height: r.item!.facts?.heightMm ?? null, quantity: r.item!.catalog?.quantity ?? 1, origin: r.item!.catalog?.printStatus === 'printed' ? 'printed' : 'unknown' })));
         if (new TextEncoder().encode(payload).length > 1024 * 1024)

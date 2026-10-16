@@ -152,7 +152,7 @@ test('quick checklist confirms a filtered group, saves decisions and imports bou
  try{
   render(React.createElement(Harness));fireEvent.click(screen.getByRole('button',{name:'Open quick verification'}));await screen.findByText('Suggestions loaded. Nothing is confirmed until you choose or confirm a group.');
   assert.equal(screen.getByAltText('TEST cutter 1 — source image').getAttribute('src'),'/api/attachments/private-photo?view=image');
-  fireEvent.click(screen.getByRole('button',{name:'Confirm safe suggestions in this group'}));await screen.findByText(/53 classifications confirmed/);
+  fireEvent.click(screen.getByRole('button',{name:'Confirm safe suggestions in this group'}));await screen.findByText(/53 classifications confirmed/);fireEvent.click(screen.getByLabelText('Use an existing verified backup instead (advanced)'));
   assert.equal((screen.getByRole('button',{name:'Save decisions and import confirmed cutters'}) as HTMLButtonElement).disabled,true);
   fireEvent.change(screen.getByLabelText('Verified protected backup reference'),{target:{value:'TEST verified protected archive'}});fireEvent.click(screen.getByLabelText(/I saved and verified a protected pre-change backup for this import/));
   fireEvent.click(screen.getByRole('button',{name:'Save decisions and import confirmed cutters'}));await waitFor(()=>assert.ok(completed));
@@ -182,5 +182,43 @@ test('editor checklist can save decisions without exposing the inventory import 
   render(React.createElement(QuickVerification,{id:'review_'+'a'.repeat(32),title:'TEST',revision:'"review-1"',manifest:fixture(),disabled:false,canImport:false,onChange:()=>{},onBusy:()=>{},onInspect:()=>{},onComplete:()=>{}}));
   fireEvent.click(screen.getByRole('button',{name:'Open quick verification'}));await screen.findByText(/Suggestions loaded/);
   assert(screen.getByRole('button',{name:'Save checklist decisions'}));assert.equal(screen.queryByRole('button',{name:'Save decisions and import confirmed cutters'}),null);assert.equal(screen.queryByLabelText('Verified protected backup reference'),null);
+ }finally{cleanup();globalThis.fetch=original;}
+});
+
+test('quick import automatically completes a verified managed pre-change snapshot before any inventory apply, without manual fields',async()=>{
+ const {QuickVerification}=await import('../src/QuickVerification');const original=globalThis.fetch,confirm=window.confirm,m=fixture();const order:string[]=[];let completed:any;
+ const backupId='backup_'+'c'.repeat(32);
+ globalThis.fetch=async(input,init)=>{const url=String(input),body=init?.body?JSON.parse(String(init.body)):{};order.push(url);
+  if(url.endsWith('/quick-check'))return Response.json({items:[]});
+  if(init?.method==='PUT')return Response.json({revision:'"review-2"'});
+  if(url==='/api/backups')return Response.json({id:backupId,status:'copying',offset:0,objects:2});
+  if(url.endsWith('/advance'))return Response.json({id:backupId,status:'complete',offset:2,objects:2});
+  if(url.endsWith('/fresh'))return Response.json({verified:true});
+  if(url.endsWith('/catalog-plan'))return Response.json({planSha256:'a'.repeat(64),rows:body.choices.map((c:any)=>({...c,status:'ready',reasons:[]})),ready:1,blocked:0,alreadyLinked:0});
+  if(url.endsWith('/apply')){assert.equal(body.backupReference,backupId);assert.equal(body.backupConfirmed,true);return Response.json({created:1});}
+  throw Error('Unexpected request '+url);
+ };window.confirm=()=>true;
+ function Harness(){const [draft,setDraft]=React.useState(m);return React.createElement(QuickVerification,{id:'review_'+'a'.repeat(32),title:'TEST',revision:'"review-1"',manifest:draft,disabled:false,onChange:setDraft,onBusy:()=>{},onInspect:()=>{},onComplete:(...args:any[])=>{completed=args;}});}
+ try{
+  render(React.createElement(Harness));fireEvent.click(screen.getByRole('button',{name:'Open quick verification'}));await screen.findByText(/Suggestions loaded/);
+  fireEvent.change(screen.getByLabelText('Classification for '+m.items[0].name),{target:{value:'physical'}});
+  assert.equal(screen.queryByLabelText('Verified protected backup reference'),null);
+  fireEvent.click(screen.getByRole('button',{name:'Back up and import confirmed cutters'}));await waitFor(()=>assert.ok(completed));
+  const fresh=order.findIndex(u=>u.endsWith('/fresh')),apply=order.findIndex(u=>u.endsWith('/apply'));assert(fresh>0&&apply>fresh);assert.match(completed[2],/1 physical records imported/);
+ }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
+});
+
+test('in-app normal backup and opt-in daily schedule require no commands, file input or pasted backup reference',async()=>{
+ const {ManagedBackups}=await import('../src/ManagedBackups');const original=globalThis.fetch;let schedule={enabled:false,hour:2},backup:any=null;
+ globalThis.fetch=async(input,init)=>{const url=String(input),body=init?.body?JSON.parse(String(init.body)):{};
+  if(url==='/api/backups'&&init?.method==='GET')return Response.json({backups:backup?[backup]:[],restore:null,schedule});
+  if(url==='/api/backups'){backup={id:'backup_'+'d'.repeat(32),status:'complete',offset:2,objects:2,kind:'normal',exportedAt:'2026-10-15T23:56:20Z'};return Response.json(backup);}
+  if(url.endsWith('/schedule')){schedule=body;return Response.json({saved:true});}throw Error('Unexpected request');
+ };
+ try{
+  render(React.createElement(ManagedBackups,{onRestored:()=>{}}));await waitFor(()=>assert.equal((screen.getByRole('button',{name:'Back up now'}) as HTMLButtonElement).disabled,false));
+  fireEvent.click(screen.getByRole('button',{name:'Back up now'}));await screen.findByText(/Backup complete and automatically checked: 2 originals/);
+  assert.equal(document.querySelector('input[type=file]'),null);assert.equal(screen.queryByLabelText('Verified protected backup reference'),null);
+  fireEvent.click(screen.getByLabelText('Enable a fresh daily backup'));fireEvent.change(screen.getByLabelText('Hour (Pacific time)'),{target:{value:'3'}});fireEvent.click(screen.getByRole('button',{name:'Save backup schedule'}));await screen.findByText(/Daily fresh backups enabled/);assert.deepEqual(schedule,{enabled:true,hour:3});
  }finally{cleanup();globalThis.fetch=original;}
 });

@@ -94,7 +94,7 @@ export async function createDevelopmentBackup(database: D1Database, files: R2Buc
   do {
     const page = await files.list({ limit: 100, cursor });
     if (++pages > 10) throw new BackupError("Development storage too large. Use an operator export.");
-    if (page.objects.some(item => !item.key.startsWith("dev-checks/") && !keys.has(item.key))) {
+    if (page.objects.some(item => !item.key.startsWith("dev-checks/") && !item.key.startsWith("catalog-backups/") && !keys.has(item.key))) {
       throw new BackupError("Storage contains unregistered files. Reconcile them before exporting.");
     }
     cursor = page.truncated ? page.cursor : undefined;

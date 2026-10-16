@@ -7,7 +7,7 @@ The saved-review checklist lets the user confirm source suggestions as Physical,
 1. Open Import preparation workspace and the existing saved review. Select Open quick verification.
 2. Filter by name or bin. Review source evidence and thumbnails. Confirm safe suggestions in the filtered group or choose individual classifications. The group includes matching entries on other pages.
 3. Use Review details for unresolved sets, variants, duplicates, ownership or print-status corrections. Leave unknown measurements/location for later collection.
-4. Save checklist decisions to retain work without creating stock. An owner/admin can instead supply and confirm a verified protected pre-change backup, then choose Save decisions and import confirmed cutters.
+4. Save checklist decisions to retain work without creating stock. An owner/admin can choose Back up and import confirmed cutters. A fresh protected snapshot is saved and checked automatically before inventory writes; no CMD or filename handoff is needed. The existing verified-backup option remains advanced compatibility support.
 5. Review the completion report and any entries requiring detailed review. Catalog browsing refreshes. After a failed request, reopen the saved version; completed source mappings are skipped on retry.
 
 Physical confirms an owned individual cutter. Digital records the source classification only; it never claims an original STL/3MF is possessed, uploaded or verified. Both retains the digital classification while creating eligible physical stock. Editors can save decisions; inventory application is owner/admin-only. Viewers cannot open the review API.

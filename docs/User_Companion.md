@@ -1,5 +1,13 @@
 # Cookie Catalog — User Companion
 
+## Backups and recovery from inside the app
+
+Use the Backups and recovery panel. **Back up now** saves and checks a private app-managed snapshot. No CMD, file download or pasted reference is required. **Back up and import confirmed cutters** automatically creates and checks its protected snapshot before importing. The advanced existing-backup option is optional compatibility support.
+
+For recovery, choose **Review restore**, review the selected snapshot and current physical-cutter counts, then **Approve restore**. The app protects the current state first. It holds catalog maintenance until the selected data/originals and database readback are consistent. Interrupted operations can be resumed, or rolled back to their automatic pre-restore snapshot after approval. Publishing the app does not restore your data.
+
+Daily fresh backups are off initially. Enable them and save a Pacific-time hour to schedule them. Approved work resumes in the background if the browser closes. Complete/checked snapshots are shown in the list. Capacity limits stop creation and ask for retention review rather than deleting protected snapshots. App-managed snapshots share the existing private storage provider; independent OneDrive/off-provider copies remain a separate protection layer. See [managed backups](App_Managed_Backups.md).
+
 ## Bins and Physical/Digital are separate
 
 The bin identified by OneNote is the recorded location. It needs no extra confirmation. Existing imports use that bin automatically; new imports record it. If a cutter moves or the source was incorrect, edit its Storage location. The editor's Use OneNote bin option retains the inherited assignment. A chosen storage location overrides it.

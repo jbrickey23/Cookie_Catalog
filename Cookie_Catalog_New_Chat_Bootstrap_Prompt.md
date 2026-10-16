@@ -1,5 +1,18 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## App-managed backup/recovery implemented — October 15, 2026
+
+BIN work was published as `ae39eb5d81ec9954d3f7bdee49a2d407e84d0023`; both GitHub sqlite checks and Workers Builds passed. Recorded OneNote bins now act as locations independently of physical/digital status. Owner earlier confirmed 83 physical imports, and the protected local backup had 22 tables/592 originals. Existing imports need no reimport or bulk rewrite for the bin change.
+
+Owner explicitly prioritizes removing them from the routine backup/restore handoff, retaining review/approval. Implemented in-app Back up now; automatic protected snapshot/check/freshness before quick inventory import; restore preview/approval with automatic pre-restore snapshot; maintenance, resumable restoration and approved rollback; and an opt-in fresh daily backup hour in Pacific time. The existing worker's minute cron resumes approved jobs; daily creation is disabled until configured. Commands, downloaded files and pasted references are not part of the primary managed workflow.
+
+Snapshots are private under catalog-backups/ in the existing R2 bucket; content-addressed originals are checked/reused, manifests and completion receipts are retained, and live-original exports/audits exclude that reserved namespace. No new schema, external resource, paid plan, production release or live restore was applied. Manual portable archives/OneDrive recovery remain a separate off-provider layer; same-bucket snapshots do not establish independent disaster recovery or restore authentication/deployment secrets.
+
+Validation: 114 application tests and 28 offline helper tests, build/type-check, schema/synthetic import, eight Python recovery tests and three OneNote HTML-audit tests pass. New actual-D1/R2 coverage includes snapshot resumption/dedup/checksum/freshness, restore/maintenance/readback, SQL failure after destructive statements with full rollback, recovery of an interrupted restore, scheduled fresh export/resumption, permissions, and no-command UI backup/import. Local tests do not prove live Cloudflare CPU/scale/device acceptance.
+
+Next: publish/read back the current feature head and verify both sqlite checks/Workers Builds; owner acceptance starts with the in-app Back up now action against the real catalog. Do not ask for CMD execution, a pasted backup filename or repeating the completed BIN/import setup. Actual live restore remains an explicitly approved operation, not an automatic smoke test. CC-TODO-013 remains open for live/592-original acceptance, in-app retention approval/reclamation and independent off-provider automation. Creation safely stops at 12 retained jobs or conservative 2 GiB snapshot-original accounting, rather than automatically pruning protected points. Other second-admin/device/access/release gates remain. Next unused task ID is CC-TODO-014.
+
+
 ## BIN assignments are independent — October 15, 2026
 
 Owner confirmed 83 physical records imported with zero blocked rows after a locally validated protected pre-change backup (22 tables, 592 originals). Cloud-copy verification remains separate.

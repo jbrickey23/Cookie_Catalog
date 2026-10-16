@@ -1,3 +1,4 @@
+import {handleManagedBackups,restoreInProgress,scheduledBackups} from './server/managed-backups';
 import {quickReviewContext} from './server/quick-review';
 import {handleCatalogImportSetup} from "./server/catalog-import-setup";
 import {handleCatalogImport} from "./server/catalog-import";
@@ -25,6 +26,13 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   if (!mayRead(user)) return json({ error: "Unauthorized" }, 401);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if(pathname==="/api/backups"||pathname.startsWith("/api/backups/")){
+    if(user.role!=="owner")return json({error:"Owner/admin access required"},403);
+    if(!database||!files)return json({error:"Backup resources unavailable"},503);
+    if(request.method!=="GET"&&(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="managed-backup"))return json({error:"Same-origin backup request required"},403);
+    return handleManagedBackups(request,database,files,user.subject);
+  }
+  const restoreGate=async()=>{try{return files&&await restoreInProgress(files)?json({error:"Catalog restore is in progress. Resume or review recovery from Backups."},423):null;}catch{return json({error:"Recovery status unavailable. Retry before accessing catalog data."},503);}};
   // Maintenance, archive/export and synthetic fixtures are owner-only.
   if(pathname.startsWith("/api/dev/") && user.role!=="owner")return json({error:"Owner access required"},403);
   if(pathname === "/api/dev/missing-file-check") {
@@ -32,6 +40,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(request.method!=="POST")return json({error:"Method not allowed"},405);
     if(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="missing-file")return json({error:"Same-origin check required"},403);
     if(!database||!files)return json({error:"Development bindings unavailable"},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     try{return json(await checkMissingFileRecovery(database,files));}
     catch{return json({error:"Missing-file test or fixture cleanup failed. Stop testing and review development fixtures."},503);}
   }
@@ -39,6 +48,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(user.role !== "owner")return json({error:"Owner access required"},403);
     if(request.method !== "GET")return json({error:"Method not allowed"},405);
     if(!database||!files)return json({error:"Development bindings unavailable"},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     try{return json(await inspectInfrastructure(database,files));}
     catch{return json({error:"Read-only infrastructure verification failed. Check development bindings/migrations."},503);}
   }
@@ -47,6 +57,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(request.method !== "POST")return json({error:"Method not allowed"},405);
     if(request.headers.get("Origin") !== new URL(request.url).origin || request.headers.get("X-Cookie-Catalog-Check") !== "archive")return json({error:"Same-origin archive request required"},403);
     if(!database || !files)return json({error:"Archive resources unavailable"},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     try {
       if(pathname === "/api/dev/archive-file")return await archiveOriginal(request,database,files);
       const manifest=await createArchiveManifest(database,files);
@@ -58,6 +69,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(!["GET","POST","PUT"].includes(request.method))return json({error:"Method not allowed"},405);
     if(request.method!=="GET"&&(request.headers.get("Origin")!==new URL(request.url).origin||request.headers.get("X-Cookie-Catalog-Check")!=="import-review"))return json({error:"Same-origin review request required"},403);
     if(!database)return json({error:"Catalog database unavailable"},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     if(pathname==="/api/import-reviews/import-setup"){
       if(!["GET","POST"].includes(request.method))return json({error:"Method not allowed"},405);
       if(request.method==="POST"&&user.role!=="owner")return json({error:"Owner/admin access required to activate importing"},403);
@@ -72,16 +84,18 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(importer){
       if(request.method!=="POST")return json({error:"Method not allowed"},405);
       if(importer[2]==="apply"&&user.role!=="owner")return json({error:"Owner/admin access required to import inventory"},403);
-      return handleCatalogImport(request,database,user.subject,importer[1],importer[2]==="apply");
+      return handleCatalogImport(request,database,user.subject,importer[1],importer[2]==="apply",files);
     }
     return handleImportReviews(request,database,user.subject);
   }
   if (pathname === "/api/browse") {
     if (!database) return json({error:"Catalog database unavailable"},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     return browseCatalog(request,database);
   }
   if (pathname === "/api/readiness") {
     if (!database) return json({error:"Catalog database unavailable"},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     return catalogReadiness(request,database);
   }
   if (pathname.startsWith("/api/catalog/")) {
@@ -90,6 +104,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if (request.method !== "GET" && (request.headers.get("Origin") !== new URL(request.url).origin
         || request.headers.get("X-Cookie-Catalog-Check") !== "catalog")) return json({ error: "Same-origin catalog request required" },403);
     if (!database) return json({ error: "Catalog database unavailable" },503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     return handleCatalog(request,database);
   }
   if (pathname === "/api/attachment-targets" || pathname === "/api/attachments" || pathname.startsWith("/api/attachments/")
@@ -103,6 +118,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       return json({ error: "Same-origin attachment request required" }, 403);
     }
     if (!database || !files) return json({ error: "Attachment resources unavailable" }, 503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     return handleAttachments(request, database, files);
   }
   if (pathname === "/api/dev/backup" || pathname === "/api/dev/recovery-check") {
@@ -114,6 +130,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       return json({ error: "Same-origin backup request required" }, 403);
     }
     if (!database || !files) return json({ error: "Development backup resources unavailable" }, 503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     try {
       const document = recoveryCheck ? await createDevelopmentRecoveryCheck(database, files)
         : await createDevelopmentBackup(database, files);
@@ -160,6 +177,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
       return json({ error: "Same-origin check required" }, 403);
     }
     if (!files) return json({ error: "Development storage unavailable" }, 503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
     try {
       return json(await checkDevelopmentStorage(files));
     } catch {
@@ -170,6 +188,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   return json({ error: "Catalog API unavailable until membership and storage validation are complete" }, 503);
 }
 export default {
+  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(scheduledBackups(env.DB,env.FILES));},
   async fetch(request: Request, env: Env): Promise<Response> {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
