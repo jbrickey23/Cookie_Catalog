@@ -1,3 +1,4 @@
+import {recordedLocation} from './source-location';
 import React,{useState} from 'react';
 import {classify,suggestion,type Classification,type QuickContext} from './quick-classification';
 import {validateManifest,type StagingManifest} from './staging.mjs';
@@ -67,10 +68,11 @@ export function QuickVerification({id,title,revision,manifest,disabled,canImport
         <div className="quick-filters"><label>Find source entries <input type="search" maxLength={120} value={query} onChange={e=>{setQuery(e.target.value);setPage(0);}} placeholder="Name or bin"/></label><label>Review entries <select value={filter} onChange={e=>{setFilter(e.target.value);setPage(0);}}><option value="pending">Needs confirmation</option><option value="confirmed">Confirmed</option><option value="imported">Already imported</option><option value="all">All source entries</option></select></label></div>
         <p>{matching.length} matching entries. {eligible.length} confirmed physical candidates across this review.</p>
         <button onClick={()=>choose(new Set(matching.filter(({item,c})=>!item.catalog?.sourceClassification&&!c?.imported).map(({item})=>item.sourceKey)))}>Confirm safe suggestions in this group</button>
+        <label>Set filtered group classification <select value="" onChange={e=>{if(e.target.value)choose(new Set(matching.filter(({c})=>!c?.imported).map(({item})=>item.sourceKey)),e.target.value as Classification);}}><option value="">Choose a group classification…</option><option value="physical">Physical</option><option value="digital">Digital</option><option value="both">Both</option></select></label>
         <p>Group confirmation applies to all matching unconfirmed entries, including other pages. Sets, variants, duplicates and unknown suggestions stay for review.</p>
         <div className="quick-list">{visible.map(({item,index,c})=>{const s=suggestion(item,c);return <article key={item.sourceKey} className="quick-row">
           {c?.imageId?<img loading="lazy" src={'/api/attachments/'+encodeURIComponent(c.imageId)+'?view=image'} alt={item.name+' — source image'}/>:<div className="quick-no-image">No image</div>}
-          <div><strong>{item.name}</strong><p>{item.source.sectionPath} · {item.source.pageTitle??item.source.pageId}</p><p>{c?.imported?'Already imported — inventory is preserved.':s.reason}</p>
+          <div><strong>{item.name}</strong><p>Bin/location: {recordedLocation(item)??"Not recorded"} · {item.source.pageTitle??item.source.pageId}</p><p>{c?.imported?'Already imported — inventory is preserved.':s.reason}</p>
           {!c?.imported&&<label>Classification for {item.name} <select value={item.catalog?.sourceClassification??''} disabled={s.ambiguous} onChange={e=>{
             if(e.target.value)choose(new Set([item.sourceKey]),e.target.value as Classification);
             else{const next=structuredClone(manifest);delete next.items[index].catalog?.sourceClassification;onChange(next);}
@@ -83,7 +85,7 @@ export function QuickVerification({id,title,revision,manifest,disabled,canImport
         <p><label><input type="checkbox" checked={verified} onChange={e=>setVerified(e.target.checked)}/> I saved and verified a protected pre-change backup for this import.</label></p></>}
         <button onClick={()=>void saveAndImport(false)}>Save checklist decisions</button>{' '}{canImport&&<button disabled={!eligible.length||!backup.trim()||!verified} onClick={()=>void saveAndImport(true)}>Save decisions and import confirmed cutters</button>}
         {!canImport&&<p>An owner/admin applies inventory imports. You can save checklist decisions for review.</p>}
-        <p>Imports run in batches of at most 50. Existing shapes and photos are reused. Missing measurements stay in the collection queue. Digital-only choices save review decisions without creating physical stock or uploading originals.</p>
+        <p>Imports run in batches of at most 50. Existing shapes and photos are reused. OneNote bins are accepted as location assignments, independently of Physical/Digital. Missing measurements stay in the collection queue. Digital-only choices save review decisions without creating physical stock or uploading originals.</p>
       </fieldset>
     </>}
     <p role="status" aria-live="polite">{message}</p>

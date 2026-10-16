@@ -45,12 +45,13 @@ test('explicit selection imports owned individual cutter with default quantity o
         assert.equal(cutter.quantity, 1);
         assert.equal(cutter.width_mm, null);
         assert.equal(cutter.height_mm, null);
-        assert.equal(cutter.location_id, null);
+        assert.ok(cutter.location_id);
+        assert.equal((await db.prepare('SELECT label FROM locations WHERE id=?').bind(cutter.location_id).first<any>())?.label,'Unverified bin');
         assert.equal(cutter.origin, 'unknown');
         assert.match(cutter.notes, /Quantity defaulted to one/);
         assert.match(cutter.notes, /101.6 mm/);
         assert.equal(await count(db, 'designs'), 1);
-        assert.equal(await count(db, 'locations'), 0);
+        assert.equal(await count(db, 'locations'), 1);
         const mapping = await db.prepare("SELECT item_json FROM catalog_source_mappings WHERE source_key='physical'").first<any>();
         assert.deepEqual(JSON.parse(mapping.item_json), manifest().items[0]);
         const replay = await apply(db, p);
@@ -381,5 +382,32 @@ test('not-printed evidence in a source reference blocks physical import even if 
   const update=new Request(origin+'/api/import-reviews/'+id,{method:'PUT',headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'import-review','If-Match':'"review-1"'},body:JSON.stringify({id,title:'TEST corrected status',manifest:m})});
   assert.equal((await handleApiRequest(update,owner,db)).status,200);
   const fixed=await (await handleApiRequest(request('catalog-plan',{choices,ownershipConfirmed:true},'"review-2"'),owner,db)).json() as any;assert.equal(fixed.ready,1);
+ }finally{await runtime.dispose();}
+});
+
+test('OneNote bins assign new imports and existing source-only locations across browse, search, details and readiness without data writes',async()=>{
+ const m=manifest();m.items=[{...m.items[0],facts:{},source:{pageId:'test-page',sectionPath:'Cookie Catalog / Bin #001.pdf'},catalog:{ownership:'owned'}}];
+ const {runtime,db}=await environment(true,m);
+ try{
+  const choices=[{sourceKey:'physical',action:'create'}],p=await prepare(db,choices);
+  assert.equal(p.ready,1);assert.equal((await apply(db,p,choices)).status,201);
+  let physical=await db.prepare('SELECT * FROM physical_cutters').first<any>();
+  assert.equal((await db.prepare('SELECT label FROM locations WHERE id=?').bind(physical.location_id).first<any>())?.label,'Bin 001');
+  // Existing imports from the previous app stored their bin only in the source snapshot.
+  await db.prepare('UPDATE physical_cutters SET location_id=NULL WHERE id=?').bind(physical.id).run();
+  physical=await db.prepare('SELECT * FROM physical_cutters').first<any>();
+  const get=async(path:string)=>{const r=await handleApiRequest(new Request(origin+path),owner,db);assert.equal(r.status,200,await r.clone().text());return r.json() as Promise<any>;};
+  const browse=await get('/api/browse?kind=physical&q=Bin%20001');assert.equal(browse.items.length,1);assert.equal(browse.items[0].location,'Bin 001');
+  const list=await get('/api/catalog/physical_cutters?q=Bin%20001');assert.equal(list.records.length,1);assert.equal(list.records[0].location_label,'Bin 001');assert(list.records[0].searchHits.some((h:any)=>h.field==='location_label'));
+  const detail=await get('/api/catalog/physical_cutters/'+physical.id);assert.equal(detail.record.location_id,null);assert.equal(detail.sourceBin,'Bin 001');
+  const queue=await get('/api/readiness');assert.equal(queue.items[0].facts.location,'Bin 001');assert.equal(queue.items[0].checks.find((c:any)=>c.field==='location').state,'complete');
+  assert.deepEqual(await db.prepare('SELECT * FROM physical_cutters').first(),physical);
+  await db.prepare("INSERT INTO locations(id,label) VALUES('moved','Bin 009')").run();
+  const body=Object.fromEntries(list.fields.map((key:string)=>[key,detail.record[key]??null]));body.location_id='moved';
+  const update=new Request(origin+'/api/catalog/physical_cutters/'+physical.id,{method:'PUT',headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'catalog','If-Match':detail.revision},body:JSON.stringify(body)});
+  assert.equal((await handleApiRequest(update,owner,db)).status,200);
+  assert.equal((await get('/api/browse?kind=physical')).items[0].location,'Bin 009');
+  assert.equal((await get('/api/readiness')).items[0].facts.location,'Bin 009');
+  assert.equal((await get('/api/catalog/physical_cutters')).records[0].location_label,'Bin 009');
  }finally{await runtime.dispose();}
 });

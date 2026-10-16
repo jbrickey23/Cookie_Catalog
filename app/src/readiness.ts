@@ -38,6 +38,8 @@ const actions: Record<ReviewField,string> = {
 };
 export function reviewChecks(item: ReviewItem): ReviewCheck[] {
   return applicableFields(item.kind).map(field=>{
+    if(field==="location"&&present(item,field))return {field,label:labels[field],state:"complete" as const,action:"Recorded location: "+item.facts.location+". Update the location if it changes; no separate bin confirmation is required."};
+    if(field==="location")return {field,label:labels[field],state:"unknown" as const,action:"Record the bin/location when known. This is separate from Physical/Digital status."};
     const review=item.reviews?.[field];
     let state:ReviewState=present(item,field)?"needs_verification":"unknown";
     if(review?.state==="complete") {

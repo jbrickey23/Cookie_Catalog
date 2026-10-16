@@ -1,5 +1,15 @@
 # Cookie_Catalog — Decision Log
 
+## October 15 — CC-DEC-017 — Recorded BIN location and independent inventory status
+
+Owner explicitly accepts the bin identified by OneNote as the recorded current/intended location, without a second verification task. Incorrect locations are corrected later. Physical/Digital classification alone handles physical existence; location never establishes ownership or print status. Existing source assignments are inherited until an explicit catalog move overrides them; future imports persist recorded locations. No source rewrite, destructive migration or live inventory bulk edit is required.
+
+## October 15 — CC-DEC-018 — Remove the manual backup handoff
+
+Owner authorizes investment in single-click and/or scheduled backup/restore, with the user reviewing and approving operations rather than exporting, running CMDs and pasting references. Each fresh backup still needs automated completeness/integrity checks; a full restoration drill is a separate acceptance check after format/schema changes and at recovery checkpoints. Automatic pre-change backups should precede risky imports/bulk edits/migrations. Local versus OneDrive folder naming does not remove the handoff; app-managed operation is the current objective under CC-TODO-013. This approves implementation direction, not paid resources, production overwrite, automatic pruning or weakened authentication.
+
+Next unused decision ID: CC-DEC-019.
+
 ## October 15 — Quick verification implementation (routine authorized engineering)
 
 Implemented the previously authorized checklist using saved review versions and existing guarded catalog import routes. Optional sourceClassification metadata preserves Physical / Digital / Both independently from file possession. Group confirmation does not invent individual quantities for sets/variants, and negative physical-source evidence remains blocked until explicitly corrected. Exact source-reference shapes/photos are reused; corrected review metadata does not reimport already mapped inventory. No new architecture decision, task ID, schema migration, real inventory application, resource, cost or production release. User and technical instructions: [Quick verification](docs/Quick_Verification.md).

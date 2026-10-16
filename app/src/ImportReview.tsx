@@ -1,3 +1,4 @@
+import {recordedLocation} from './source-location';
 import {SavedImportReviews} from "./SavedImportReviews";
 import React,{useEffect,useState} from "react";
 import {validateManifest,kinds,purposes,type StagingManifest,type StagingItem} from "./staging.mjs";
@@ -39,7 +40,7 @@ export function ImportReview({enableSavedReviews=false,canImport=false,onCatalog
     }catch(error){setMessage((error as Error).message);}
   }
   const item=draft?.items[selected];
-  const checks=item?readiness({id:item.sourceKey,kind:item.kind,name:item.name,facts:{...item.facts,source:item.facts?.source||item.source.pageId,
+  const checks=item?readiness({id:item.sourceKey,kind:item.kind,name:item.name,facts:{...item.facts,...(recordedLocation(item)?{location:recordedLocation(item)!}:{}),source:item.facts?.source||item.source.pageId,
     photo:!!item.files?.some(f=>["cutter_photo","design_photo","scale_photo"].includes(f.purpose)),scalePhoto:!!item.files?.some(f=>f.purpose==="scale_photo"),original:!!item.files?.some(f=>f.purpose==="printable_original")},reviews:item.reviews}).checks:[];
   return <section aria-labelledby="import-review-heading">
     <h2 id="import-review-heading">Prepare an import review</h2>
@@ -71,7 +72,7 @@ export function ImportReview({enableSavedReviews=false,canImport=false,onCatalog
           {(["widthMm","heightMm"] as const).map(key=><p key={key}><label>{key==="widthMm"?"Width (mm)":"Height (mm)"} <input type="number" min="0.001" max="10000" step="any" value={item.facts?.[key]??""} onChange={e=>update(item=>{item.facts??={};if(e.target.value==="")delete item.facts[key];else item.facts[key]=Number(e.target.value);})} /></label></p>)}
           <p>Record orientation and how you measured in the dimension review notes. A scale photo alone does not establish verified dimensions.</p>
         </fieldset>}
-        {item.kind==="physical_cutter"&&<p><label>Storage location <input maxLength={4000} value={item.facts?.location??""} onChange={e=>update(item=>{item.facts??={};item.facts.location=e.target.value;})} /></label></p>}
+        {item.kind==="physical_cutter"&&<p><label>Storage location <input maxLength={4000} value={item.facts?.location??recordedLocation(item)??""} onChange={e=>update(item=>{item.facts??={};item.facts.location=e.target.value;})} /></label></p>}
         {["physical_cutter","printable_asset"].includes(item.kind)&&<fieldset><legend>Ownership and reference size</legend>
           <p><label>Ownership <select value={item.catalog?.ownership??"unknown"} onChange={e=>update(item=>{item.catalog??={};item.catalog.ownership=e.target.value as "unknown"|"owned"|"not_owned";})}><option value="unknown">Unknown / needs checking</option><option value="owned">Owned</option><option value="not_owned">Not owned / not purchased</option></select></label></p>
           <p><label>Print status <select value={item.catalog?.printStatus??"unknown"} onChange={e=>update(item=>{item.catalog??={};item.catalog.printStatus=e.target.value as "unknown"|"printed"|"not_printed"|"not_applicable";})}><option value="unknown">Unknown / needs checking</option><option value="printed">Printed</option><option value="not_printed">Not printed</option><option value="not_applicable">Not applicable</option></select></label></p>
@@ -80,6 +81,7 @@ export function ImportReview({enableSavedReviews=false,canImport=false,onCatalog
           <p><label>Original size label / units <input maxLength={200} value={item.catalog?.originalSizeLabel??""} onChange={e=>update(item=>{item.catalog??={};item.catalog.originalSizeLabel=e.target.value;})} /></label></p>
           <p>A 4 by 2 inch cookie has a 4 inch reference size. Keep oriented measured width/height separately. Do not use packaging or assembled-set dimensions for an individual cutter.</p>
         </fieldset>}
+        {recordedLocation(item)&&<p>Recorded bin/location: {recordedLocation(item)}. No further bin confirmation is required; update this assignment if it changes. Physical/Digital is a separate decision.</p>}
         <h3>Source files</h3>
         <p>These are references to your separate source folder. This page does not open, upload or verify their bytes.</p>
         <ul>{item.files?.map((file,i)=><li key={i}><label>Relative source file path <input maxLength={2000} value={file.path} onChange={e=>update(item=>{item.files![i].path=e.target.value;})} /></label>{" "}<label>Purpose <select value={file.purpose} onChange={e=>update(item=>{item.files![i].purpose=e.target.value as typeof file.purpose;})}>{purposes.map(purpose=><option key={purpose} value={purpose}>{purpose.replaceAll("_"," ")}</option>)}</select></label>{" "}
@@ -87,7 +89,7 @@ export function ImportReview({enableSavedReviews=false,canImport=false,onCatalog
         </li>)}</ul>
         <button onClick={()=>update(item=>{item.files??=[];item.files.push({path:"",purpose:"unknown"});})}>Add source file reference</button>
         <h3>Collection checklist</h3>
-        {checks.map(check=>{const decision=item.reviews?.[check.field];return <fieldset key={check.field} style={{margin:"1rem 0"}}><legend>{check.label} — {stateNames[check.state]}</legend>
+        {checks.map(check=>{const decision=item.reviews?.[check.field];if(check.field==="location"&&recordedLocation(item))return <p key={check.field}>Storage location: {recordedLocation(item)} — recorded; no confirmation needed. Update the storage location above if it changes.</p>;return <fieldset key={check.field} style={{margin:"1rem 0"}}><legend>{check.label} — {stateNames[check.state]}</legend>
           <p>{check.action}</p>
           <label>Review status <select value={decision?.state??check.state} onChange={e=>review(check.field,{state:e.target.value as ReviewState,...(e.target.value==="complete"?{evidence:{reference:decision?.evidence?.reference??"",method:method(check.field)}}:{})})}>
             {states.filter(state=>state!=="not_applicable"||!["classification","source","original"].includes(check.field)).map(state=><option key={state} value={state}>{stateNames[state]}</option>)}

@@ -1,5 +1,11 @@
 # Cookie Catalog — User Companion
 
+## Bins and Physical/Digital are separate
+
+The bin identified by OneNote is the recorded location. It needs no extra confirmation. Existing imports use that bin automatically; new imports record it. If a cutter moves or the source was incorrect, edit its Storage location. The editor's Use OneNote bin option retains the inherited assignment. A chosen storage location overrides it.
+
+Physical / Digital / Both describes the collection status independently. Digital entries can have an assigned bin without claiming that a physical cutter already exists. A bin assignment never proves physical ownership. Recorded locations are complete in the review queue; missing sizes, originals and other checks remain separate.
+
 ## Quickly confirm Physical / Digital / Both
 
 Open Import preparation workspace, list/open the existing saved review, then choose Open quick verification. Search by name or bin and review thumbnails/source evidence. Physical means an owned cutter; Digital records a source reference, not an original STL/3MF on file. Both records both classifications.

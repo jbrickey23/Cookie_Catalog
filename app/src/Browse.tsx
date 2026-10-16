@@ -9,8 +9,8 @@ export function CutterCard({item,onOpen}:{item:BrowseItem;onOpen?:()=>void}) {
     <div className="cutter-image">{item.image_id&&!failed?<img loading="lazy" src={"/api/attachments/"+encodeURIComponent(item.image_id)+"?view=image"} alt={artwork?"Reference artwork for "+item.name:item.name+" — catalog image"} onError={()=>setFailed(true)}/>:<span>{failed?"Image unavailable":"Image needed"}</span>}</div>
     <div className="cutter-card-body"><p className="image-kind">{artwork?"Reference artwork":item.image_id?"Catalog image":"No image attached"}</p><h3>{item.name}</h3>
     <p className="reference-size">{item.record_kind==="reference"?reviewLabel(item.review_state):item.reference_size_mm?number(item.reference_size_mm/25.4)+'″ cutter':"Reference size needed"}</p>
-    <dl><div><dt>Location</dt><dd>{item.location??"Needs checking"}{item.slot?" · Slot "+item.slot:""}</dd></div><div><dt>Quantity</dt><dd>{item.quantity??"Not recorded as inventory"}</dd></div><div><dt>Width × height</dt><dd>{item.width_mm&&item.height_mm?`${number(item.width_mm)} × ${number(item.height_mm)} mm`:"Measurements needed"}</dd></div></dl>
-    {!item.location&&item.source_bin&&<p className="collection-note">Source bin: {item.source_bin} · needs confirmation</p>}
+    <dl><div><dt>Location</dt><dd>{item.location??item.source_bin??"Not recorded"}{item.slot?" · Slot "+item.slot:""}</dd></div><div><dt>Quantity</dt><dd>{item.quantity??"Not recorded as inventory"}</dd></div><div><dt>Width × height</dt><dd>{item.width_mm&&item.height_mm?`${number(item.width_mm)} × ${number(item.height_mm)} mm`:"Measurements needed"}</dd></div></dl>
+
     {item.record_kind==="reference"&&<p className="collection-note">Source reference · no owned physical cutter recorded.</p>}
     {artwork&&<p className="collection-note">Actual cutter photo still needed.</p>}
     {onOpen&&<button id={"view-"+item.id} className="view-cutter" onClick={onOpen}>View {item.name}</button>}
@@ -46,9 +46,9 @@ function CutterDetails({item,onClose}:{item:BrowseItem;onClose:()=>void}) {
   useEffect(()=>{let active=true;fetch("/api/attachments?kind=shape&recordId="+encodeURIComponent(item.shape_id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {attachments:{id:string;filename:string;mediaType:string;available:boolean}[]};}).then(body=>{if(active){setFiles(body.attachments);setStatus(body.attachments.length?"":"No files attached.");}}).catch(()=>{if(active)setStatus("Files could not load. Close and reopen this cutter to retry.");});return()=>{active=false;};},[item.shape_id]);
   return <section ref={panel} tabIndex={-1} className="cutter-detail" aria-label={"Viewing "+item.name}><div className="browse-heading"><h3>Viewing: {item.name}</h3><button onClick={onClose}>Close cutter details</button></div>
     <p>{item.reference_size_mm?number(item.reference_size_mm/25.4)+"″ reference size (longest edge)":"Reference size needs collecting"} · {item.quantity===null?"No owned physical cutter recorded":"Quantity "+item.quantity}</p>
-    <p>Location: {item.location??"Needs checking"}{item.slot?" · Slot "+item.slot:""}</p>
+    <p>Location: {item.location??item.source_bin??"Not recorded"}{item.slot?" · Slot "+item.slot:""}</p>
     <p>Width × height: {item.width_mm&&item.height_mm?`${number(item.width_mm)} × ${number(item.height_mm)} mm`:"Measurements needed"}</p>
-    {item.source_bin&&<p>Recorded source bin: {item.source_bin}. Confirm the current physical location separately.</p>}
+    {item.source_bin&&<p>OneNote bin: {item.source_bin}. This location assignment is independent of physical/digital status.</p>}
     {item.source_reason&&<p>{item.source_reason}</p>}
     {item.source_url&&/^https?:/.test(item.source_url)&&<p><a href={item.source_url} target="_blank" rel="noreferrer">Open recorded source link</a></p>}
     <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/>}<figcaption>{file.filename} · {file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>

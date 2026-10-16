@@ -15,6 +15,7 @@ function title(row:Row) { return String(row.name ?? row.label ?? row.design_name
 export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolean}) {
   const [kind,setKind]=useState("shapes"),[rows,setRows]=useState<Row[]>([]),[query,setQuery]=useState("");
   const [lookups,setLookups]=useState<Record<string,Row[]>>({shapes:[],designs:[],locations:[]});
+  const [sourceBin,setSourceBin]=useState<string|null>(null);
   const [sizingFields,setSizingFields]=useState(false);
   const activeFields:Field[]=[...sections[kind].fields,...(kind==="physical_cutters"&&sizingFields?[{key:"reference_size_mm",label:"Reference size — longest edge (inches)",type:"number" as const},{key:"slot",label:"Slot (optional)"}]:[])];
   const [dirty,setDirty]=useState(false);
@@ -39,7 +40,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     setLookups(Object.fromEntries(entries));
   }
   useEffect(()=>{setBusy(true);Promise.all([load("shapes",""),choices()]).catch(error=>setStatus(error.message)).finally(()=>setBusy(false));},[]);
-  function reset() {setDirty(false);setRevision("");setEditing("");setActiveName("");setValues({...defaults});}
+  function reset() {setSourceBin(null);setDirty(false);setRevision("");setEditing("");setActiveName("");setValues({...defaults});}
   async function switchSection(section:string) {
     if(dirty&&!window.confirm("Switch sections and discard unsaved form changes?"))return;
     setKind(section);setQuery("");reset();setBusy(true);setStatus("");
@@ -69,9 +70,9 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     setBusy(true);
     try {
       const response=await fetch("/api/catalog/"+kind+"/"+row.id,{cache:"no-store"});
-      const body=await response.json() as {record:Row;revision:string;error?:string};
+      const body=await response.json() as {record:Row;revision:string;error?:string;sourceBin?:string|null};
       if(!response.ok)throw Error(body.error??"Record could not load.");
-      setDirty(false);setRevision(body.revision);setEditing(String(body.record.id));setActiveName(recordName({...row,...body.record},title(row)));setValues(Object.fromEntries(activeFields.map(field=>[field.key,String(field.key==="reference_size_mm"&&body.record[field.key]!=null?Number((Number(body.record[field.key])/25.4).toFixed(8)):body.record[field.key]??"")])));
+      setSourceBin(body.sourceBin??null);setDirty(false);setRevision(body.revision);setEditing(String(body.record.id));setActiveName(recordName({...row,...body.record},title(row)));setValues(Object.fromEntries(activeFields.map(field=>[field.key,String(field.key==="reference_size_mm"&&body.record[field.key]!=null?Number((Number(body.record[field.key])/25.4).toFixed(8)):body.record[field.key]??"")])));
       setStatus((canEdit?"Editing ":"Viewing ")+title(body.record)+".");
     }catch(error){setStatus((error as Error).message);}finally{setBusy(false);}
   }
@@ -101,6 +102,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     {nextOffset!==null && <button disabled={busy} onClick={()=>search(undefined,nextOffset)}>Next page</button>}
     {(canEdit || editing) && <>
     <h3>{editing?`${canEdit?"Editing":"Viewing"}: ${activeName}`:"New record"}</h3>
+    {editing&&sourceBin&&kind==="physical_cutters"&&<p>OneNote bin: {sourceBin}. Used automatically unless a different storage location is selected. Update the location when needed; Physical/Digital is independent.</p>}
     {editing&&<p>Record ID for linking an import review: <code>{editing}</code></p>}
     {canEdit && editing && <button disabled={busy} onClick={()=>{if(!dirty||window.confirm("Start a new record and discard unsaved form changes?"))reset();}}>Start a new record</button>}
     <form onSubmit={event => { if (canEdit) void save(event); else event.preventDefault(); }}>
@@ -110,7 +112,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
         const options=field.lookup?lookups[field.lookup]:[];
         return <div key={field.key} style={{margin:"10px 0"}}><label>{field.label}{field.required?" *":""}<br />
           {field.lookup?<select required={field.required} disabled={busy} value={value} onChange={event=>change(event.target.value)}>
-            <option value="">Choose a record</option>{value && !options.some(row=>row.id===value) && <option value={value}>Current record ({value})</option>}
+            <option value="">{field.key==="location_id"&&sourceBin?"Use OneNote bin ("+sourceBin+")":"Choose a record"}</option>{value && !options.some(row=>row.id===value) && <option value={value}>Current record ({value})</option>}
             {options.map(row=><option key={String(row.id)} value={String(row.id)}>{title(row)}</option>)}
           </select>:field.choices?<select disabled={busy} value={value} onChange={event=>change(event.target.value)}>{field.choices.map(choice=><option key={choice} value={choice}>{field.key==="mirrored"?(choice==="1"?"Yes":"No"):choice}</option>)}</select>
             :field.type==="textarea"?<textarea disabled={busy} maxLength={4000} value={value} onChange={event=>change(event.target.value)} />

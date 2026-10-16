@@ -1,3 +1,4 @@
+import {recordedLocation} from '../source-location';
 import { sourceReference, suggestion } from '../quick-classification';
 import { openReview } from './import-reviews';
 import { sha256 } from './development-backup';
@@ -140,9 +141,9 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
         const key = await digest([saved.manifest.sourceNamespace, item.sourceKey]);
         const shapeId = item.kind === 'physical_cutter' ? (target?.shape_id ?? sourceShape?.id ?? choice.shapeId ?? (differentKnownSizes && sameName.length === 1 ? sameName[0].id : groupedShapeId ?? 'shape_import_' + key)) : null;
         const targetId = target?.id ?? (item.kind === 'design' ? 'design_import_' : 'cutter_import_') + key;
-        const locationLabel = item.reviews?.location?.state === 'complete' && item.reviews.location.evidence?.method === 'visual_review' && item.reviews.location.evidence.reference.trim() ? item.facts?.location?.trim() : undefined;
+        const locationLabel = recordedLocation(item);
         if (locationLabel && locationLabel.length > 200)
-            reasons.push('The confirmed location label exceeds 200 characters.');
+            reasons.push('The recorded location label exceeds 200 characters.');
         const locationId = locationLabel ? (locations.find(l => l.label === locationLabel)?.id ?? 'location_import_' + await digest(locationLabel)) : null;
         rows.push({ sourceKey: item.sourceKey, name: item.name, kind: item.kind, status: reasons.length ? 'blocked' : 'ready', reasons, targetId, candidates,
             choice, itemHash, item, shapeId, locationLabel, locationId });

@@ -11,7 +11,7 @@ const viewer:IdentityVerifier={verify:async()=>({subject:"viewer",email:"viewer@
 test("browse cards preserve unknown details and distinguish reference artwork",()=>{
  const item:BrowseItem={id:"p",shape_id:"s",name:"Synthetic cutter",quantity:1,width_mm:null,height_mm:null,reference_size_mm:95.25,location:null,source_bin:"Bin TEST",slot:null,image_id:"image",image_name:"Synthetic_Reference_Artwork.png"};
  const html=renderToStaticMarkup(React.createElement(CutterCard,{item}));
- assert.match(html,/3.75″ cutter/);assert.match(html,/Reference artwork/);assert.match(html,/Actual cutter photo still needed/);assert.match(html,/Measurements needed/);assert.match(html,/needs confirmation/);assert.doesNotMatch(html,/Create record|Save|Delete/);
+ assert.match(html,/3.75″ cutter/);assert.match(html,/Reference artwork/);assert.match(html,/Actual cutter photo still needed/);assert.match(html,/Measurements needed/);assert.match(html,/Bin TEST/);assert.doesNotMatch(html,/needs confirmation/);assert.doesNotMatch(html,/Create record|Save|Delete/);
 });
 test("viewer browsing is bounded, read-only, searchable, and compatible before and after import migration",async()=>{
  const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:"browse"}}));

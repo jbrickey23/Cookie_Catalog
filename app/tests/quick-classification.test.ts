@@ -6,7 +6,7 @@ const item=(patch:Partial<StagingItem>={}):StagingItem=>({sourceKey:'test',kind:
 const context=(patch:Partial<QuickContext>={}):QuickContext=>({sourceKey:'test',shapeId:'shape',imageId:null,reviewState:'',evidence:'Mentions STL',imported:false,ambiguous:false,...patch});
 test('source suggestions distinguish digital references from physical ownership and preserve measurements and files',()=>{
  const i=item({facts:{widthMm:50},files:[{path:'tree.png',purpose:'source_page'}]});
- assert.equal(suggestion(i,context()).value,'both');assert.equal(i.catalog,undefined);
+ assert.equal(suggestion(i,context()).value,'digital');assert.equal(suggestion(item()).value,null);assert.equal(i.catalog,undefined);
  const result=classify(i,'both',context());assert.equal(result.kind,'physical_cutter');assert.equal(result.catalog?.ownership,'owned');assert.equal(result.catalog?.quantity,undefined);assert.equal(result.facts?.widthMm,50);assert.equal(result.facts?.heightMm,undefined);assert.deepEqual(result.files,i.files);
  validateManifest({format:'cookie-catalog-staging',version:1,sourceNamespace:'TEST',items:[result]});
  const digital=classify(i,'digital',context());assert.equal(digital.kind,'printable_asset');assert.equal(digital.catalog?.ownership,undefined);assert(!digital.files?.some(f=>f.purpose==='printable_original'));

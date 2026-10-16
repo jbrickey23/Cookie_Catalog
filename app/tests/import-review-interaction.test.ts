@@ -136,7 +136,7 @@ test("inventory import UI starts with no selections and requires a plan plus bac
 
 test('quick checklist confirms a filtered group, saves decisions and imports bounded eligible subsets with photos and safe skips',async()=>{
  const {QuickVerification}=await import('../src/QuickVerification');const original=globalThis.fetch,confirm=window.confirm;let completed:any,saved:any;const planned:number[]=[],applied:number[]=[];
- const manifest:any={format:'cookie-catalog-staging',version:1,sourceNamespace:'TEST quick',items:Array.from({length:53},(_,i)=>({sourceKey:'p'+i,kind:'unclassified',name:'TEST cutter '+i,source:{pageId:'page'+i,sectionPath:'Bin 001'}}))};
+ const manifest:any={format:'cookie-catalog-staging',version:1,sourceNamespace:'TEST quick',items:Array.from({length:53},(_,i)=>({sourceKey:'p'+i,kind:'unclassified',name:'TEST cutter '+i,source:{pageId:'page'+i,sectionPath:'Bin 001'},catalog:{ownership:'owned'}}))};
  manifest.items.push({sourceKey:'digital',kind:'unclassified',name:'TEST digital STL',source:{pageId:'digital'},catalog:{printStatus:'not_printed'}});
  manifest.items.push({sourceKey:'set',kind:'unclassified',name:'TEST set of stars',source:{pageId:'set',sectionPath:'Bin 001'}});
  const contexts=manifest.items.map((i:any)=>({sourceKey:i.sourceKey,shapeId:'shape_'+i.sourceKey,imageId:i.sourceKey==='p1'?'private-photo':null,reviewState:'',evidence:'Source evidence',imported:i.sourceKey==='p0',ambiguous:false}));
@@ -158,7 +158,7 @@ test('quick checklist confirms a filtered group, saves decisions and imports bou
   fireEvent.click(screen.getByRole('button',{name:'Save decisions and import confirmed cutters'}));await waitFor(()=>assert.ok(completed));
   assert.deepEqual(planned,[50,49,2]);assert.deepEqual(applied,[49,2]);assert.match(completed.message,/51 physical records imported/);assert.match(completed.message,/1 entries need detailed review/);
   assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='digital').kind,'printable_asset');assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='digital').catalog.ownership,undefined);
-  assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='set').catalog,undefined);assert.equal(saved.manifest.items[0].catalog,undefined);
+  assert.equal(saved.manifest.items.find((i:any)=>i.sourceKey==='set').catalog,undefined);assert.equal(saved.manifest.items[0].catalog.sourceClassification,undefined);
  }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
 });
 

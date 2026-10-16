@@ -1,5 +1,18 @@
 # Cookie_Catalog — TODO
 
+## BIN assignments are independent — October 15, 2026
+
+Owner confirmed 83 physical records imported with zero blocked rows after a locally validated protected pre-change backup (22 tables, 592 originals). Cloud-copy verification remains separate.
+
+Owner explicitly clarified that a bin identified in OneNote is the cutter's assigned location, whether it currently exists physically or will be printed later. Location requires no additional confirmation; the user corrects it when needed. Physical / Digital / Both is an independent classification, and a bin alone must not suggest physical ownership.
+
+Implemented: existing imported cutters inherit their recorded source location for browsing, bin search, details, the location editor and review queue. Explicit later catalog location assignments take priority. New imports use a recorded source bin/location without a visual-confirmation prerequisite. Existing source snapshots, shape/photo IDs and inventory rows are preserved; there is no migration or bulk data rewrite. The detailed review no longer requests evidence for an already recorded location. Unknown locations remain missing assignments. Quick verification offers explicit filtered-group classification alongside source suggestions.
+
+Validation: 106 application tests plus build and the existing helper/schema/recovery checks pass. Focused acceptance covers new and existing imports, leading-zero bin IDs, search matches, read-only inheritance, manual moves, conflicting source bins and independence from physical/digital status. Published current feature-head checks must be verified in GitHub; actual owner browser acceptance remains pending.
+
+Next active work: CC-TODO-013, app-managed backup and restore. Owner explicitly wants to review/approve operations, without exporting files, running CMDs or pasting backup references. Prioritize automatic complete pre-change backup and automated integrity checks before risky operations; normal backup and restore from inside the app; resumable jobs and clear progress; then a genuine scheduled fresh-export option. OneDrive folder movement alone does not solve the handoff. No automatic pruning, paid resource, production release or unattended credential bypass has been activated. Preserve already accepted Windows/manual recovery as the fallback while replacing the routine workflow.
+
+
 ## Quick verification implemented — October 15, 2026
 
 The Physical / Digital / Both checklist is now implemented on `feature/cc-infrastructure-foundation`, draft PR #1. It opens a saved source review, retrieves private source-reference evidence/photos, suggests classifications and supports name/bin filtering, paged rows, confirming all safe suggestions in a filtered group, individual exceptions and a link into detailed review. Suggestions remain unconfirmed until owner/editor action. Digital means a source reference, not possession or upload of an STL/3MF original.
@@ -376,3 +389,9 @@ Scope and acceptance:
 ## Ongoing user documentation
 
 Maintain docs/User_Companion.md alongside user-visible changes. First version is implemented, linked from README and reviewed against current controls/server search fields. Keep technical evidence/runbooks distinct, avoid promising unavailable features, and include owner review/intended-device usability in acceptance. This is continuing documentation within existing component tasks, not a replacement priority or a new task ID.
+
+## CC-TODO-013 — App-managed automatic backup and restore
+
+Status: explicitly authorized October 15; active after publishing BIN work. Replace routine manual exports/CMDs/filename handoffs with in-app backup, automatic protected snapshots before risky actions, automated completeness/hash checks, restore preview and user approval before live restoration. Evaluate a real scheduled fresh-export path alongside single-click operation. Keep independent off-provider export, retention and recovery drills distinct from per-backup integrity checks. No new paid resource, production restoration, automatic pruning or new credential grant is inferred. Preserve existing safety checks and last known-good backup formats until their replacements are proven.
+
+Next unused task ID: CC-TODO-014.

@@ -11,7 +11,7 @@ export function suggestion(item:StagingItem,context?:QuickContext):{value:Classi
   const physicalBlocked=item.catalog?.ownership==='not_owned'||item.catalog?.printStatus==='not_printed'||!corrected&&(/not[ _-]*(printed|purchased|owned)|unprinted/i.test(text));
   const ambiguous=!!context?.ambiguous||/set_review|variant_review|duplicate_review/.test(context?.reviewState??'')||/\b(set|kit|bundle|assorted|multiple sizes|size variants|duplicate)\b/i.test(text);
   const digital=item.kind==='printable_asset'||item.files?.some(f=>f.purpose==='printable_original')||/\b(stl|3mf|digital|printable)\b/i.test(text);
-  const physical=!physicalBlocked&&(item.kind==='physical_cutter'||item.catalog?.ownership==='owned'||item.catalog?.printStatus==='printed'||/\bbin\s*#?\s*\d+/i.test(item.source.sectionPath??''));
+  const physical=!physicalBlocked&&(item.kind==='physical_cutter'||item.catalog?.ownership==='owned'||item.catalog?.printStatus==='printed');
   if(item.kind==='design'||ambiguous)return {value:null,reason:item.kind==='design'?'Decorating design: use the detailed review.':'Set, size variants or possible duplicate: review individual items first.',physicalBlocked,ambiguous:true};
   return {value:physical?digital?'both':'physical':digital?'digital':null,reason:physicalBlocked?'Source says not printed or not purchased. Physical stock stays blocked until corrected in the detailed review.':physical?'Physical suggestion from source or existing review; confirm ownership.':digital?'Digital source reference; possession of an original STL/3MF is unverified.':'Insufficient evidence. Choose a classification or leave for later.',physicalBlocked,ambiguous};
 }

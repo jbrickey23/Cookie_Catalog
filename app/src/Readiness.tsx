@@ -16,7 +16,7 @@ export function Readiness() {
   useEffect(()=>{void load(kind);},[kind]);
   return <section aria-labelledby="readiness-heading">
     <h2 id="readiness-heading">Catalog review queue</h2>
-    <p>See what needs collecting next. Existing values and linked files still need human verification. This queue does not change your records.</p>
+    <p>See what needs collecting next. Recorded locations are accepted. Images, measurements and other unverified details remain separate checks. This queue does not change your records.</p>
     <label>Review item type <select value={kind} disabled={busy} onChange={e=>setKind(e.target.value)}>
       <option value="physical_cutter">Physical cutters</option><option value="printable_asset">Printable files</option><option value="design">Decorating designs</option><option value="unclassified">Shapes with no physical cutter or printable file recorded</option>
     </select></label>{" "}<button disabled={busy} onClick={()=>load(kind)}>Refresh review queue</button>

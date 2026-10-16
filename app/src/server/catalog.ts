@@ -1,3 +1,5 @@
+import {sourceLocation} from '../source-location';
+import {hasSourceMappings,sourceEvidenceSql,sourceSectionSql} from './source-location';
 type Value = string | number | null;
 const ID = /^[a-zA-Z0-9_-]{1,128}$/;
 const specs = {
@@ -56,8 +58,8 @@ async function revision(kind:Kind,record:Record<string,unknown>):Promise<string>
   const hash=new Uint8Array(await crypto.subtle.digest("SHA-256",bytes));
   return '"'+Array.from(hash,n=>n.toString(16).padStart(2,"0")).join("")+'"';
 }
-async function recordResponse(kind:Kind,record:Record<string,unknown>,status=200):Promise<Response> {
-  const token=await revision(kind,record),response=json({record,revision:token},status);response.headers.set("etag",token);return response;
+async function recordResponse(kind:Kind,record:Record<string,unknown>,status=200,extra:Record<string,unknown>={}):Promise<Response> {
+  const token=await revision(kind,record),response=json({record,revision:token,...extra},status);response.headers.set("etag",token);return response;
 }
 async function body(request: Request): Promise<unknown> {
   if(!request.headers.get("content-type")?.startsWith("application/json")) throw new InputError("JSON request required.");
@@ -71,10 +73,10 @@ async function body(request: Request): Promise<unknown> {
   try {return JSON.parse(new TextDecoder().decode(bytes));}catch{throw new InputError("Invalid JSON record.");}
 }
 type SearchField = { column:string; field:string; label:string };
-function selection(kind: Kind): { sql: string; fields: SearchField[]; order: string } {
+function selection(kind: Kind,mappings=false): { sql: string; fields: SearchField[]; order: string } {
   if(kind==="physical_cutters")return {
-    sql:"SELECT c.*,s.name AS shape_name,l.label AS location_label FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id",
-    fields:[{column:"s.name",field:"shape_name",label:"Cutter shape name"},{column:"l.label",field:"location_label",label:"Storage location"},{column:"c.notes",field:"notes",label:"Cutter notes"},{column:"c.origin",field:"origin",label:"Origin"},{column:"c.width_mm",field:"width_mm",label:"Width (mm)"},{column:"c.height_mm",field:"height_mm",label:"Height (mm)"},{column:"c.quantity",field:"quantity",label:"Quantity"}],order:"s.name,c.id"};
+    sql:`SELECT c.*,s.name AS shape_name,l.label AS location_label,${sourceEvidenceSql(mappings)} AS source_evidence FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id`,
+    fields:[{column:"s.name",field:"shape_name",label:"Cutter shape name"},{column:`COALESCE(l.label,${sourceSectionSql(mappings)})`,field:"location_label",label:"Storage location"},{column:"c.notes",field:"notes",label:"Cutter notes"},{column:"c.origin",field:"origin",label:"Origin"},{column:"c.width_mm",field:"width_mm",label:"Width (mm)"},{column:"c.height_mm",field:"height_mm",label:"Height (mm)"},{column:"c.quantity",field:"quantity",label:"Quantity"}],order:"s.name,c.id"};
   if(kind==="design_shape_links")return {
     sql:"SELECT l.*,d.name AS design_name,s.name AS shape_name FROM design_shape_links l JOIN designs d ON d.id=l.design_id JOIN shapes s ON s.id=l.shape_id",
     fields:[{column:"d.name",field:"design_name",label:"Design name"},{column:"s.name",field:"shape_name",label:"Cutter shape name"},{column:"l.use_type",field:"use_type",label:"Use type"},{column:"l.status",field:"status",label:"Compatibility status"},{column:"l.instructions",field:"instructions",label:"Mapping instructions"}],order:"d.name,s.name,l.id"};
@@ -108,21 +110,23 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
     const columns=kind==="physical_cutters"?(await database.prepare("PRAGMA table_info(physical_cutters)").all<{name:string}>()).results.map(r=>r.name):[];
     const fields:readonly string[]=[...specs[kind].fields,...(columns.includes("reference_size_mm")?["reference_size_mm","slot"]:[])];
     if(request.method==="GET") {
+      const mappings=kind==="physical_cutters"&&await hasSourceMappings(database);
       if(id) {
         const record=await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first<Record<string,unknown>>();
-        return record ? recordResponse(kind,record):json({error:"Record not found."},404);
+        const evidence=record&&kind==="physical_cutters"?await database.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence FROM physical_cutters c WHERE c.id=?`).bind(id).first<{evidence:string}>():null;
+        return record ? recordResponse(kind,record,200,{...(kind==="physical_cutters"?{sourceBin:sourceLocation(evidence?.evidence)}:{})}):json({error:"Record not found."},404);
       }
       const q=(url.searchParams.get("q")??"").trim();
       if(q.length>120)return json({error:"Search is limited to 120 characters."},400);
       const offset=Number(url.searchParams.get("offset")??"0");
       if(!Number.isSafeInteger(offset)||offset<0||offset>100000)return json({error:"Invalid page offset."},400);
-      const select=selection(kind);
+      const select=selection(kind,mappings);
       const expressions=select.fields.map(field=>"COALESCE(CAST("+field.column+" AS TEXT),'')");
       const sql=select.sql.replace("SELECT ","SELECT "+expressions.map((expression,i)=>expression+" AS __search"+i).join(",")+", ");
       // Separate field predicates prevent a phrase from matching across unrelated values.
       const where=expressions.map(expression=>"instr(lower("+expression+"),lower(?))>0").join(" OR ");
       const result=await database.prepare(sql+" WHERE ("+where+") ORDER BY "+select.order+" LIMIT 201 OFFSET ?").bind(...expressions.map(()=>q),offset).all<Record<string,unknown>>();
-      return json({records:result.results.slice(0,200).map(row=>explain(row,select.fields,q)),fields,query:q,nextOffset:result.results.length>200 ? offset+200:null});
+      return json({records:result.results.slice(0,200).map(row=>{if(kind==="physical_cutters"){const bin=sourceLocation(row.source_evidence);delete row.source_evidence;row.source_bin=bin;row.location_label=row.location_label??bin;}return explain(row,select.fields,q);}),fields,query:q,nextOffset:result.results.length>200 ? offset+200:null});
     }
     if((request.method==="POST" && id) || (request.method==="PUT" && !id) || !["POST","PUT"].includes(request.method))return json({error:"Method not allowed."},405);
     const values=validate(kind,await body(request),fields);
