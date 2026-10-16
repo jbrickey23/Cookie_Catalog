@@ -1,5 +1,9 @@
 # First-release layout refinement — October 16, 2026
 
+## Verified full-height acceptance
+
+Development source `863e2f2` passed build/type-check, both CI checks and Workers deployment. Live desktop measurements matched both pane top/bottom edges exactly at a height of 1751.40625 pixels; results scrollHeight was 3459 pixels, so independent scrolling remains. Two focused images and the first results thumbnail each measured 200 × 200 pixels. Bottom-edge screenshot passed; no catalog/original mutation. See [sanitized geometry/deployment evidence](evidence/Layout_Full_Height_20261016.json). This supersedes pending-acceptance wording in the implementation checkpoint.
+
 ## Full-height and thumbnail refinement
 
 October 16 owner screenshot: extend right-side scroll to the bottom of the focused card. Desktop panes now align to the full focused-card height; an out-of-flow results grid keeps the record count from inflating that height. Both focus and scroll image areas use a shared 200 × 200-pixel display box with responsive width clamp and contain fitting. Read-only open/download actions and dirty switching remain. This is display-only; originals and the deferred image-standards backlog are unchanged.
