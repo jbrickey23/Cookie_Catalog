@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## Requested read-only image pop-outs — October 16, 2026 (Pacific)
+
+Owner requested click-to-open images from the focused card, preserving the catalog and its inline draft. Available focused-card images and an explicit Open image link now request a separate browser pop-up using the existing authenticated checksum-verified GET image route; browser may choose a tab or block pop-ups. Original download links remain. New windows have no opener and no image-write controls; viewing/snipping/saving a local copy does not alter stored originals. No catalog writes, new image editor, upload/replacement behavior, schema or access change. Native modified/new-tab link behavior remains. 142 application tests and build/type-check pass, including a popup test preserving an unsaved inline draft and emitting no writes. Development deployment/visual checks follow; no live acceptance is claimed yet. Continue 014 within the first-release feature cut.
+
 ## Owner-confirmed browser and intended-admin acceptance — October 16, 2026, 11:15 Pacific
 
 Owner reports the intended second administrator can independently log in, browse and make edits, and both Chrome and Edge work. Record as owner-reported real-user acceptance, not assistant cloud evidence. First-release Windows Chrome/Edge browsing/editing acceptance and the second-admin independent sign-in/edit workflow are passed. Exact browser/OS versions, original-download checks in this session, admin-only destructive/backup controls and operational account recovery were not separately reported; do not invent those results or rerun accepted behavior merely for screenshots. Safari remains outside first-release scope.

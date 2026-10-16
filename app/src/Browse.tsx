@@ -48,13 +48,22 @@ export function Browse({version=0,canEdit=false,canDelete=false}:{version?:numbe
   </section>;
 }
 
+function ImageWindowLink({id,filename,children}:{id:string;filename:string;children:React.ReactNode}) {
+ const url="/api/attachments/"+encodeURIComponent(id)+"?view=image";
+ return <a className="image-window-link" href={url} target="_blank" rel="noopener noreferrer" aria-label={"Open "+filename+" in a read-only image window"} onClick={event=>{
+  if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  event.preventDefault();
+  window.open(url,"_blank","popup=yes,width=1100,height=850,noopener,noreferrer");
+ }}>{children}</a>;
+}
+
 function CutterDetails({item,onClose,canEdit,canDelete,onDirty,onSaved,onDeleted}:{item:BrowseItem;onClose:()=>void;canEdit:boolean;canDelete:boolean;onDirty:(dirty:boolean,busy?:boolean)=>void;onSaved:(entry:any)=>void;onDeleted:()=>void}) {
   const panel=useRef<HTMLElement>(null);
   useEffect(()=>{panel.current?.focus();},[]);
   const [files,setFiles]=useState<{id:string;filename:string;mediaType:string;available:boolean}[]>([]),[status,setStatus]=useState("Loading files…");
   useEffect(()=>{let active=true;fetch("/api/attachments?kind=shape&recordId="+encodeURIComponent(item.shape_id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw Error();return await r.json() as {attachments:{id:string;filename:string;mediaType:string;available:boolean}[]};}).then(body=>{if(active){setFiles(body.attachments);setStatus(body.attachments.length?"":"No files attached.");}}).catch(()=>{if(active)setStatus("Files could not load. Close and reopen this cutter to retry.");});return()=>{active=false;};},[item.shape_id]);
   return <section ref={panel} tabIndex={-1} className="cutter-detail" aria-label={"Viewing "+item.name}><div className="browse-heading"><h3>Viewing: {item.name}</h3><button onClick={onClose}>Close cutter details</button></div>
-    <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/>}<figcaption>{file.filename} · {file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>
+    <p role="status">{status}</p><div className="detail-images">{files.map(file=><figure key={file.id}>{file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<ImageWindowLink id={file.id} filename={file.filename}><img src={"/api/attachments/"+encodeURIComponent(file.id)+"?view=image"} alt={file.filename} loading="lazy"/></ImageWindowLink>}<figcaption>{file.filename} · {file.available&&["image/png","image/jpeg","image/webp"].includes(file.mediaType)&&<><ImageWindowLink id={file.id} filename={file.filename}>Open image</ImageWindowLink>{" · "}</>}{file.available?<a href={"/api/attachments/"+encodeURIComponent(file.id)}>Download original</a>:"Original unavailable"}</figcaption></figure>)}</div>
     {item.record_kind==='reference'&&<p>Assigned BIN: {item.location??item.source_bin??'Not recorded'}. Location is independent of physical/digital status.</p>}
     <EntryEditor kind={item.record_kind==='reference'?'shapes':'cutters'} id={item.record_kind==='reference'?item.shape_id:item.id} canEdit={canEdit} canDelete={canDelete} onDirty={onDirty} onSaved={onSaved} onDeleted={onDeleted}/>
     {item.source_reason&&<p>{item.source_reason}</p>}

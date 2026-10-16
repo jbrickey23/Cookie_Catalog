@@ -7,6 +7,10 @@ Select a result card to open details on the left and scroll remaining results on
 BIN/location uses an existing assignment. A selected physical location overrides the original OneNote assignment; clearing it returns to that source assignment. Location does not confirm physical ownership or printing. Admin deletion asks for confirmation, protects the current state, and blocks linked records rather than deleting related inventory/files/history. Conflicts keep your draft; compare with the latest record before retrying. Designs and compatibility mapping management remain in the advanced catalog section.
 
 
+## Open an image without leaving your card
+
+In a focused cutter card, click any available photo or its Open image link. It opens the original in a separate read-only browser window so you can inspect, snip or save it. Close that window to continue at the same focused card; unsaved field edits stay in the catalog tab. Download original remains beside every available file. The browser may choose a tab instead of a window or require allowing pop-ups for this site. Ctrl-click/open-in-new-tab remains available. Viewing or saving a local copy does not update the catalog original; changing the stored file still uses the website attachment workflow.
+
 ## Undo a routine record change
 
 Admin/owner can expand **Undo recent record changes**, select **Review change**, and then **Undo this change** after reviewing it. This restores that entry's previous values when its current saved state still matches the recorded result. Newer changes and new linked records block undo. Failed attempts may appear in the list but cannot overwrite unrelated state. Images and originals stay shared and in place. Undo also retains a recovery copy of the values it replaces.

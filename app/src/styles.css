@@ -142,3 +142,6 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .browse-workspace.expanded .cutter-card dd {text-align:right}
 .browse-workspace.expanded .view-cutter {margin-top:.5rem;padding:.4rem .55rem;font-size:.8rem}
 .browse-workspace.expanded .cutter-grid {gap:.6rem}
+
+.detail-images>figure>.image-window-link {display:block;border-radius:8px;cursor:zoom-in}
+.detail-images>figure>.image-window-link:hover {outline:2px solid #6c8a75;outline-offset:2px}
