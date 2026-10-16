@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-10-16T20:48:00Z",
+  "branch": "release/r1-production",
+  "source": "48e8b0adefb2966d7433fdeb8a79873c755d81b5",
+  "previousSource": "795c9a921be0e809ab9e6a959a5e830575974278",
+  "tree": "a9b60f948e1c8e8688e15b63a09ab9a23e058e37",
+  "sourceChanged": false,
+  "ownerConfirmed": {
+    "buildsEnabled": true,
+    "deployCommandIncludesDryRun": true
+  },
+  "checks": [
+    {
+      "name": "Workers Builds: cookie-catalog-prod",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-prod/production/builds/5cb3f2d4-8773-4c48-b50f-095a5c7ab77e",
+      "summary": "\nBuild ID: [5cb3f2d4-8773-4c48-b50f-095a5c7ab77e](https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-prod/production/builds/5cb3f2d4-8773-4c48-b50f-095a5c7ab77e)\nScript: [cookie-catalog-prod](https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-prod/production)\n"
+    }
+  ],
+  "buildId": "5cb3f2d4-8773-4c48-b50f-095a5c7ab77e",
+  "productionCatalogDeploymentAuthorized": false,
+  "dataCutoverAuthorized": false,
+  "limits": [
+    "Success observed through GitHub Workers Builds check; full Cloudflare build log unavailable to the remote browser.",
+    "Runtime secret values, production role behavior, data schema, private bucket settings and transfer remain unverified.",
+    "No production version ID was reported by this dry-run check."
+  ]
+}

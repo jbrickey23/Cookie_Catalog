@@ -1,5 +1,11 @@
 # Production provisioning status — October 16, 2026, Pacific
 
+## Cloud dry-run passed — 13:48 Pacific
+
+Owner confirmed builds enabled and Deploy command includes --dry-run. Pushed source-identical checkpoint 48e8b0adefb2966d7433fdeb8a79873c755d81b5 to release/r1-production, retaining tree a9b60f948e1c8e8688e15b63a09ab9a23e058e37. GitHub Workers Builds: cookie-catalog-prod completed success, build 5cb3f2d4-8773-4c48-b50f-095a5c7ab77e. No production version ID reported. Full build log not accessible through the blocked remote dashboard; retain owner-confirmed --dry-run distinction rather than treating build success as a live deployment. Evidence: evidence/Production_Dry_Run_20261016.json.
+
+Keep --dry-run in place. Next is fresh checked source backup / independently verified private recovery copy and reviewed transfer preparation, followed by separately approved actual deployment/cutover, target readback and Access/role smoke checks. Do not remove --dry-run or push a deployment command change without actual production deployment approval. Existing development remains authoritative. Runtime secret values, production data and bucket privacy are not attested by the build check.
+
 ## Current checkpoint — 13:36 Pacific
 
 Owner screenshot confirms Worker cookie-catalog-prod and runtime Secret entries OWNER_EMAIL / CATALOG_MEMBERS, both encrypted; values were not read or validated. Bindings currently show none, consistent with no successful application deployment. Earlier build c2a61198 stopped at cloning because main lacked root app; it did not reach deployment. Subsequent screenshot confirms production branch release/r1-production and root app. Owner reported renaming the Worker and disabling builds; command fields disappear when builds are disabled. Build token settings and Access/R2 privacy still need actual readback.
