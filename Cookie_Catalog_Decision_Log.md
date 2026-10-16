@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## First-release layout refinement — October 16, 2026 (Pacific)
+
+Continue from verified v0.1.0-rc.1 / 0fe7e40; owner said to proceed. A CSS-only refinement improves long focused-card headings, caption/image wrapping, sticky Save/Cancel wrapping, backup-list action separation, and narrow-screen 44-pixel controls/16-pixel edit inputs. Images remain above editable fields. No data, API, schema, save/recovery logic, retention, permission or schedule changes. Build/type-check passed; development publication and visual check follow. Actual Windows Chrome/Edge, iPhone Safari and intended-admin acceptance remain owner-device work; no such outcome is inferred from CSS. Production target/cutover remains separately unapproved. Preserve all completed work and checked backups.
+
 ## October 16 — v0.1.0-rc.1 accepted in development
 
 251bebd passed CI/Workers and authenticated exact-source/health checks. Live usage/protection view passed with all three checked snapshots preserved and daily backups off. First feature candidate is ready for intended-device/admin acceptance and a concrete production/cutover decision under existing architecture; no automatic pruning, new paid resource or production release. See docs/evidence/Retention_Release_Candidate_20261016.json.

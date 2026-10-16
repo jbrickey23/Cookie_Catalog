@@ -1,5 +1,9 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## First-release layout refinement — October 16, 2026 (Pacific)
+
+Continue from verified v0.1.0-rc.1 / 0fe7e40; owner said to proceed. A CSS-only refinement improves long focused-card headings, caption/image wrapping, sticky Save/Cancel wrapping, backup-list action separation, and narrow-screen 44-pixel controls/16-pixel edit inputs. Images remain above editable fields. No data, API, schema, save/recovery logic, retention, permission or schedule changes. Build/type-check passed; development publication and visual check follow. Actual Windows Chrome/Edge, iPhone Safari and intended-admin acceptance remain owner-device work; no such outcome is inferred from CSS. Production target/cutover remains separately unapproved. Preserve all completed work and checked backups.
+
 ## v0.1.0-rc.1 deployed and checked — October 16, 2026 (UTC)
 
 Development application 251bebda01dc4a5337200d9702619b6f06d4c371 passed both GitHub runs 38855813166 / 38855816581 and Workers Build 57c87f62-a953-472f-a082-d83fed4a34b6 (Worker version 01c7810d-99a7-41d9-ac04-e641caec7bf9). Authenticated read-only report at 05:28:32 UTC matched version 0.1.0-rc.1 and that exact SHA: 22 tables, all four migrations, zero foreign-key violations, five sampled originals with no missing/size mismatches; counts remain 345 shapes / 208 physical / two designs / two mappings (including demonstrations), 344 non-demo browse entries.
