@@ -85,3 +85,17 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .browse-workspace:not(.expanded) .cutter-card {display:grid;grid-template-columns:minmax(8rem,12rem) minmax(0,1fr);cursor:pointer}
 .browse-workspace .cutter-card:hover {border-color:#6c8a75}
 @media(max-width:480px){.browse-workspace:not(.expanded) .cutter-card{grid-template-columns:6rem minmax(0,1fr)}.browse-workspace:not(.expanded) .cutter-image{aspect-ratio:auto;min-height:7rem}}
+.backup-retention {margin-top:1.2rem;border-top:1px solid #d9ded8;padding-top:1rem}
+.backup-retention summary {cursor:pointer;font-weight:650}
+.backup-usage {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.backup-usage div {padding:.8rem;background:#f2f5ef;border-radius:8px}
+.backup-usage dt {font-size:.85rem;color:#526158}
+.backup-usage dd {margin:.3rem 0 0;font-size:1.1rem;font-weight:650}
+.backup-table-scroll {overflow-x:auto;margin:1rem 0}
+.backup-retention table {border-collapse:collapse;width:100%;font-size:.9rem}
+.backup-retention th,.backup-retention td {text-align:left;padding:.6rem;border-bottom:1px solid #d9ded8;vertical-align:top}
+.backup-retention td button {display:block;margin-top:.4rem}
+.retention-review {border:1px solid #6c8a75;border-radius:8px;padding:1rem;margin-top:1rem}
+.retention-review label {display:block;margin:1rem 0}
+.retention-review button {margin-right:.5rem;margin-top:.5rem}
+@media(max-width:600px){.backup-usage{grid-template-columns:1fr}.backup-retention th,.backup-retention td{padding:.4rem}}

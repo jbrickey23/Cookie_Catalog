@@ -188,7 +188,7 @@ export async function handleCatalogImport(request: Request, db: D1Database, subj
         if(/^backup_[a-f0-9]{32}$/.test(backupReference)){
             if(!files)throw new InputError('Managed backup storage unavailable.');
             const savedBackup=await completeBackup(files,backupReference);
-            if(savedBackup.job.kind!=='pre-change')throw new InputError('Use a protected pre-change snapshot.');
+            if(savedBackup.job.kind!=='pre-change'||savedBackup.job.protectionReleasedAt)throw new InputError('Use a protected pre-change snapshot whose protection has not been released.');
             const covered=await db.prepare('SELECT count(*) AS n FROM catalog_import_batches WHERE workspace_id=? AND revision=? AND backup_reference=? AND created_by=?').bind(id,planned.saved.head.current_revision,backupReference,subject).first<{n:number}>();
             if(!covered?.n)await assertFreshBackup(db,files,backupReference);
         }

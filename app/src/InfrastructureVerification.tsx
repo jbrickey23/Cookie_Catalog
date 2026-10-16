@@ -1,7 +1,7 @@
 import React,{useState} from "react";
 interface Report {
   checksPassed:boolean;
-  worker:{build:{commit:string|null;branch:string|null;source:string;buildNode:string|null};sourceCommitAvailable:boolean};
+  worker:{build:{version?:string|null;commit:string|null;branch:string|null;source:string;buildNode:string|null};sourceCommitAvailable:boolean};
   database:{reviewStorageReady?:boolean;schemaTables:number;requiredMigrationsApplied:boolean;foreignKeyViolations:number};
   storage:{bindingReadable:boolean;sampledAttachments:number;missingOriginals:number;sizeMismatches:number};
 }
@@ -37,7 +37,7 @@ export function InfrastructureVerification() {
     <button disabled={busy||missingBusy} onClick={check}>{busy?"Checking…":"Verify development infrastructure"}</button>
     <p role="status" aria-live="polite">{message}</p>
     {report&&<div>
-      <p>Source commit: <code>{report.worker.build.commit??"Not available — deployment traceability not yet verified"}</code><br />Branch: {report.worker.build.branch??"unknown"}<br />Build source: {report.worker.build.source}</p>
+      <p>Version: {report.worker.build.version??"Not available"}<br />Source commit: <code>{report.worker.build.commit??"Not available — deployment traceability not yet verified"}</code><br />Branch: {report.worker.build.branch??"unknown"}<br />Build source: {report.worker.build.source}</p>
       <p>D1: {report.database.schemaTables} tables; migrations {report.database.requiredMigrationsApplied?"present":"missing"}; {report.database.foreignKeyViolations} foreign-key violations.</p>
       <p>Saved review storage: {report.database.reviewStorageReady?"ready":"not activated; review migration required"}.</p>
       <p>R2 binding readable: {report.storage.bindingReadable?"yes":"no"}; {report.storage.sampledAttachments} linked originals sampled; {report.storage.missingOriginals} missing; {report.storage.sizeMismatches} size mismatches.</p>

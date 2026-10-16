@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## October 16 — reviewed retention and first feature candidate
+
+Owner authorized progressing the first feature release. v0.1.0-rc.1 includes approved, resumable snapshot retention with protected/shared-file preservation; normal edits remain independent. Retention is reviewed explicitly, never automatically activated. Protection release is separate from removal and requires a newer checked point and verified protected changes. Local 141 app tests, build, 28 helper tests and Python/schema/import checks pass. Concrete scope and remaining production/device decision: docs/Release_Candidate_v0.1.0.md. No new resource, paid plan, production deployment or real backup removal.
+
 ## October 16 — quick inline editing accepted live
 
 3734795 passed CI, deployment and authenticated source/health checks. Disposable create/edit/delete/undo passed with individual observed actions around one second; image-first focused detail was verified. Test rows were cleaned up. Full-catalog checks are removed from routine inline Save/Delete. See docs/evidence/Fast_Inline_Acceptance_20261016.json.

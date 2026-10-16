@@ -1,3 +1,4 @@
+import {withBackupStorageLock} from './server/backup-storage-lock';
 import {handleWorkspace} from './server/workspace';
 import {handleManagedBackups,restoreInProgress,scheduledBackups} from './server/managed-backups';
 import {quickReviewContext} from './server/quick-review';
@@ -93,6 +94,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     if(importer){
       if(request.method!=="POST")return json({error:"Method not allowed"},405);
       if(importer[2]==="apply"&&user.role!=="owner")return json({error:"Owner/admin access required to import inventory"},403);
+      if(importer[2]==="apply"&&files){try{return await withBackupStorageLock(files,locked=>handleCatalogImport(request,database,user.subject,importer[1],true,locked));}catch(error){return json({error:(error as Error).message},409);}}
       return handleCatalogImport(request,database,user.subject,importer[1],importer[2]==="apply",files);
     }
     return handleImportReviews(request,database,user.subject);

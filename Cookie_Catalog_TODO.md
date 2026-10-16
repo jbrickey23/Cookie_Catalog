@@ -1,5 +1,15 @@
 # Cookie_Catalog — TODO
 
+## First feature release candidate and reviewed retention — October 16, 2026 (UTC)
+
+The owner authorized finishing the first feature release, with remaining cosmetic refinement kept small. Candidate package version is 0.1.0-rc.1. See docs/Release_Candidate_v0.1.0.md for the concrete included scope, evidence and remaining production/device decision. Preserve all prior completed application work; this builds on deployed a191d8b.
+
+CC-TODO-013 reviewed retention/reclamation is implemented: on-demand deduplicated storage usage, keep-seven normal recommendation, exact reviewed cleanup preview/approval, immutable shared-file preservation, newest normal/recovery protections, separately reviewed pre-change protection release and durable bounded resumption. A conditional backup-storage lease coordinates full backups/import/restore/cleanup. Ordinary inline Save/Delete and small record Undo remain independent of this work. No automatic pruning or schedule activation. No real retained snapshot or protection is removed as a smoke test.
+
+Validation: 141 application tests; TypeScript/frontend/Worker build; 28 offline helper tests; SQLite schema and synthetic import; eight Python recovery and three OneNote audit tests passed. No schema migration, dependency, new external resource or paid plan. Development publication, CI and authenticated live retention/source checks follow this source checkpoint; do not claim them passed until separately recorded.
+
+CC-TODO-014 retains intended Windows Chrome/Edge and iPhone Safari acceptance, and independent intended-admin access/recovery. CC-TODO-013 independent off-provider automation remains later scope. No production resource or main merge/tag is authorized by this candidate. Existing architecture requires a concrete separately approved production target/data cutover. See docs/Backup_Retention.md and docs/Release_Candidate_v0.1.0.md. Next unused task remains CC-TODO-015.
+
 ## Fast inline Save/Delete and top images accepted — October 16, 2026 (UTC)
 
 Published and independently verified development application `37347952cf64417c632038258ff44c248784febc`. Both CI runs 38836165318 / 38836170744 and Workers Builds 4d54766d-0f4c-4ae8-afb0-6c9a9cd05658 passed (version f2dfb225-d02a-4770-94a5-0e584dde500c). An authenticated infrastructure report matches the exact SHA, 22 tables/four migrations, zero foreign-key violations, and five sampled originals without missing/size mismatches. After test cleanup totals are back to 345 shapes / 208 physical cutters / two designs / two mappings, including demonstration rows. Browse reports 344 non-demo entries.
