@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-16T19:13:00Z",
+  "source": "def1006f5d8597d0bcd17fc7c2ad1405aca5bbe3",
+  "checks": [
+    {
+      "name": "Workers Builds: cookie-catalog-dev",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-dev/production/builds/1c8bccd6-a859-42f0-a225-0eb5a39a4755"
+    },
+    {
+      "name": "sqlite",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38953199556/job/117149462308"
+    },
+    {
+      "name": "sqlite",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38953194214/job/117149445089"
+    }
+  ],
+  "workersBuild": "1c8bccd6-a859-42f0-a225-0eb5a39a4755",
+  "workersVersion": "5a7c7ec8-505c-44e9-b49f-dee7e8e45fd7",
+  "local": {
+    "suitePassed": 150,
+    "additionalInteractionPassed": true,
+    "buildPassed": true
+  },
+  "live": {
+    "referenceAction": true,
+    "linkedDraftInventoryFields": true,
+    "sharedImagePreserved": true,
+    "sourceBinPreserved": true,
+    "cancelReturnedToReference": true,
+    "helpRailNoOverlap": true,
+    "helpRailRight": 322,
+    "focusedCardLeft": 342,
+    "realRecordWrites": false
+  },
+  "scope": "Current catalog features plus remaining infrastructure/release work; new features deferred unless compelling release blocker."
+}
