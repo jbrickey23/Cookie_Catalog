@@ -1,5 +1,11 @@
 # Production provisioning status — October 16, 2026, Pacific
 
+## Current checkpoint — 13:36 Pacific
+
+Owner screenshot confirms Worker cookie-catalog-prod and runtime Secret entries OWNER_EMAIL / CATALOG_MEMBERS, both encrypted; values were not read or validated. Bindings currently show none, consistent with no successful application deployment. Earlier build c2a61198 stopped at cloning because main lacked root app; it did not reach deployment. Subsequent screenshot confirms production branch release/r1-production and root app. Owner reported renaming the Worker and disabling builds; command fields disappear when builds are disabled. Build token settings and Access/R2 privacy still need actual readback.
+
+Release application source 795c9a921be0e809ab9e6a959a5e830575974278 passed both GitHub CI checks and development Workers deployment. Production config/build/dry-run passed locally. Next: temporarily enable only the configured release build with explicit production build command and deployment --dry-run. Start a NEW build for release/r1-production, not Retry of the old main commit. This does not authorize a real production application deployment or data cutover. Verify source/binding report, then return to build hold while preparing checked transfer/access/cutover. Do not initialize production schema twice; final transfer package already contains schema and migration rows.
+
 Owner approved separate free production resource creation at 12:49. Catalog deployment, data cutover and final merge/tag remain separate. Remote dashboard login 403 is a known blocker; use owner dashboard guidance, not repeated remote sign-in attempts.
 
 | Resource | Current evidence |
