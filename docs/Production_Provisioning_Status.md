@@ -1,0 +1,22 @@
+# Production provisioning status — October 16, 2026, Pacific
+
+Owner approved separate free production resource creation at 12:49. Catalog deployment, data cutover and final merge/tag remain separate. Remote dashboard login 403 is a known blocker; use owner dashboard guidance, not repeated remote sign-in attempts.
+
+| Resource | Current evidence |
+| --- | --- |
+| D1 cookie-catalog-prod | Owner supplied ID 9428a5b4-4675-4f45-9ec8-aba243848e27 after creation; instructed to remain empty. Distinct from development. Remote inventory/schema verification pending. |
+| R2 cookie-catalog-prod-private | Owner reported ready after Standard/Automatic/private instructions; actual public-access/bucket settings readback pending. |
+| Access Cookie Catalog Production | Owner created self-hosted app for cookie-catalog-prod.j-brickey.workers.dev and supplied AUD 47fc0140931f95ca368ec190f86ce65307e8bd198f133bb148b4dab4ee26f720. Screenshot confirmed existing Cookie Catalog Dev - Jay Allow policy selected. Persisted settings/private access test pending. |
+| Worker cookie-catalog-prod | GitHub create-app wizard open, repository selected, path app, previews disabled and protection all traffic instructed. No catalog deployment approved or observed. |
+
+app/wrangler.production.ready.jsonc contains the non-secret supplied identifiers; no credentials or member emails. Configuration gate, Vite production-selected build, generated binding readback and Wrangler deployment dry-run pass. Generated deploy configuration is app/dist/cookie_catalog_prod/wrangler.json. Default development config is unchanged.
+
+Prepare release/r1-production from the reviewed source plus this wiring; development continues on feature/cc-infrastructure-foundation. After the production Worker exists, select the release branch explicitly rather than accepting main or feature deployment defaults. Production automatic deployment must remain held until release approval.
+
+Intended production build (root app): `node ../tools/check-production-config.mjs wrangler.production.ready.jsonc && CC_WRANGLER_CONFIG=wrangler.production.ready.jsonc npm run build`.
+
+Intended deployment after approval (root app): `npx wrangler deploy --config dist/cookie_catalog_prod/wrangler.json`.
+
+To create the Git-connected Worker without deploying catalog code when the wizard does not expose branch selection, use an explicit initial build hold: `node -e "console.error('Provisioning only: catalog deployment is held'); process.exit(1)"`. The deliberate build stop is expected, not an application failure. Then configure the release branch and deployment hold before installing the real commands. Review existing self-hosted Access coverage to avoid duplicate application destinations from automatic wizard protection. Verify owner/member runtime secrets privately before any real application deployment.
+
+Still required: actual Worker/Access/R2/account settings, free-resource verification, filled production build evidence in cloud, operational recovery owner, coordinated freeze/fresh checked source archive and independently verified private copy, exact transfer/readback, role/private-image smoke, separate catalog deployment/cutover approval and final release review. No data transfer/migration or production deployment occurred during local checks.

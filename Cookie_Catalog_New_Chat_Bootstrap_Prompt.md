@@ -1,5 +1,9 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Production identifiers supplied; wiring validated — October 16, 2026, 13:08 Pacific
+
+Owner supplied production D1 and Access AUD and reported production R2 ready. Screenshot verified production hostname and existing Allow policy selection; no production catalog deployment occurred. Separate app/wrangler.production.ready.jsonc passes config gate, selected production build, generated binding readback and Wrangler dry-run. See docs/Production_Provisioning_Status.md for exact identifiers, owner-report vs verified distinctions, release/r1-production branch preparation and remaining setup. Development config/resources stay unchanged. Production provisioning approval persists; catalog deployment/cutover/main/tag are separate. Next user step: finish safe Worker creation with deployment held, explicitly select the production release branch, verify access/private resources and private runtime secrets. Do not let default main/development config deploy from the wizard.
+
 ## Production provisioning APPROVED; dashboard access blocked — October 16, 2026, 12:49 Pacific
 
 Owner explicitly APPROVED creation of the separate free production resources proposed in the preceding review: cookie-catalog-prod Worker and D1, cookie-catalog-prod-private R2, Cookie Catalog Production Access application on the existing account, preserving development. Do not ask for the same provisioning approval again. Paid resources/upgrades, data cutover, production application deployment and final merge/tag remain outside that provisioning approval.
