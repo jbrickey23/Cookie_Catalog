@@ -173,3 +173,11 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .field-help-popover>span {display:block;margin-bottom:.5rem}
 .field-help-popover a {color:#1769aa;display:inline-block;padding:.2rem 0}
 @media(max-width:760px){.field-help-trigger{width:1.6rem;height:1.6rem}}
+
+/* Quick help has its own left rail so it never covers focused values. */
+.browse-workspace.expanded.with-help {grid-template-columns:minmax(10rem,13rem) minmax(0,1.4fr) minmax(14rem,1fr)}
+.field-help-rail {position:sticky;top:1rem;align-self:start;min-width:0;padding:.85rem;background:#fff;border:1px solid #829786;border-radius:10px;font-size:.85rem;line-height:1.5;box-sizing:border-box}
+.field-help-heading h3 {font-size:1rem;margin:0 0 .5rem}
+.field-help-heading button {font-size:.8rem;padding:.35rem .5rem}
+.field-help-rail a {color:#1769aa;display:inline-block;padding:.25rem 0}
+@media(max-width:760px){.browse-workspace.expanded.with-help{grid-template-columns:1fr}.field-help-rail{position:static}}

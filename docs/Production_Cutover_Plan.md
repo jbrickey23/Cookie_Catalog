@@ -45,4 +45,4 @@ After production accepts writes, development becomes stale. Stop edits and captu
 - Verified resource IDs/audience/hostname; environment/provenance compatibility implementation and transfer validation.
 - Fresh source archive and independently verified private recovery copy at the agreed cutover window.
 
-See [current release status](First_Release_Status.md), [device checks](Device_Acceptance.md) and [existing deployment/rollback runbook](Deployment_Runbook.md). Next unused task remains CC-TODO-015; this continues 004/005/006/014.
+See [current release status](First_Release_Status.md), [device checks](Device_Acceptance.md) and [existing deployment/rollback runbook](Deployment_Runbook.md). Next unused task is CC-TODO-018; this continues 004/005/006/014.

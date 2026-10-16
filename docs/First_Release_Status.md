@@ -1,5 +1,11 @@
 # First release status — October 16, 2026, Pacific
 
+## R1 scope fixed by owner — October 16, 2026, 12:09 Pacific
+
+R1 is the current catalog feature set, the inline reference-to-physical action, and remaining infrastructure/release tasks. Add new scope only for a compelling release blocker. CC-TODO-017: Add physical cutter on a focused reference reuses its stable shape, tags and files, opens physical inventory inline, and creates only on Save. Cancel returns to the reference without writes; dirty reference changes require discard confirmation before starting. Existing revision checks, atomic recovery and role permissions apply. The reference design survives; physical inventory is linked, not a destructive conversion. Left-side context help is separate from the focused card, persists for reading, closes with Close help/Escape and stacks above on narrow screens. Local 150-test suite/build and the additional linked-create/Cancel/dirty-guard interaction test pass (151 total cases); development deployment acceptance pending.
+
+R1 remaining: verify this final feature deployment, resolve environment/backup-provenance compatibility and current-schema transfer validation, confirm operational access recovery, prepare the exact separate production targets/cutover with fresh verified independent recovery copy, then final approved release/merge/tag/deployment. Existing Chrome/Edge and second-admin browse/edit acceptance remains passed. Production provisioning/deployment still requires the previously specified separate authorization. Canva/image standards (015), broader integrations and cosmetic expansion stay after R1. Slot help content (016) remains explicitly Missing and optional. Next unused task: CC-TODO-018.
+
 **v0.1.0-rc.1 is implemented, tested and deployed to development. It has not been released to production.** This is the current release checklist; older chronological entries describe earlier states and do not reopen completed work.
 
 Latest refinement: 500 × 500-pixel fitted read-only image viewer, two-column image/name/location thumbnails and guarded focus switching; local 143 tests/build pass. [Image standards proposal](Image_Asset_Standards_Proposal.md) preserves originals and separates display/Canva/outline derivatives; not an upload-rule change.

@@ -4,6 +4,10 @@ Hover a focused-card field label or its ? link to see a short explanation and ex
 
 `app/src/field-help.ts` is the shared content/status registry used by both quick help and the complete HTML page. `quickHelp: Ready` means authored brief/example/details are available; it is not a claim of owner content approval. `Missing` shows a friendly placeholder and remains a tracked content item. A test requires a registry entry for every focused inline field plus Tags and complete content for every Ready entry. Unknown future fields must be registered explicitly.
 
+## Verified development acceptance
+
+Source `2de1175` passed 149 application tests, build/type-check, both CI checks and Workers deployment. Live cloud Chrome showed the BIN explanation/example, opened the separate full HTML guide at the correct section, returned to the same focused card on close, dismissed help with Escape and displayed Slot's Missing placeholder. No record or original was changed. Hover and unsaved-draft preservation are covered by local interaction tests. Empty applicable record fields still appear as Not recorded; quick-help readiness is a separate status. See [sanitized acceptance evidence](evidence/Context_Help_20261016.json).
+
 ## CC-TODO-016 content tracker
 
 Status: foundation implemented; owner requested nice-to-have for R1. Missing text is **not an R1 release blocker**.
@@ -29,3 +33,7 @@ Status: foundation implemented; owner requested nice-to-have for R1. Missing tex
 - [ ] Extend the same pattern to other screens/fields when useful; keep their content readiness explicit.
 
 The full guide is read-only GET HTML behind the existing role/authentication boundary, usable by existing owner/editor/viewer roles. It requires no catalog DB/file bindings, has no scripts/forms/write controls and no new resource or permission grant. Existing form labels, inline edits, Save/Cancel, image links and record-change guards remain. No membership, schema, data, upload standard or production change. Next unused task is CC-TODO-017.
+
+## Left-side placement
+
+Focused-card help appears in a separate sticky panel to the left, so no fields are covered. It stays open after the pointer leaves; Close help or Escape dismisses it, and switching records clears it. Narrow screens stack help above the focused card. Standalone editors retain the compact local fallback. No record writes or original changes occur.
