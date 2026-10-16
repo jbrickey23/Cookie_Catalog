@@ -1,5 +1,12 @@
 # Cookie Catalog — User Companion
 
+## Browse and edit in place
+
+Select a result card to open details on the left and scroll remaining results on the right. Click a value to change it. Save/Cancel appear only while values differ; switching or closing asks before discarding a draft. Save creates and checks its recovery point automatically. Tags can be searched or drafted here; new tags and shapes are saved only with the entry. Cancel creates no vocabulary. Existing shape values and files are shared across size variants. New physical cutter can select an existing shape or draft a named new shape; New shape reference adds no physical stock.
+
+BIN/location uses an existing assignment. A selected physical location overrides the original OneNote assignment; clearing it returns to that source assignment. Location does not confirm physical ownership or printing. Admin deletion asks for confirmation, protects the current state, and blocks linked records rather than deleting related inventory/files/history. Conflicts keep your draft; compare with the latest record before retrying. Designs and compatibility mapping management remain in the advanced catalog section.
+
+
 ## Backups and recovery from inside the app
 
 Use the Backups and recovery panel. **Back up now** saves and checks a private app-managed snapshot. No CMD, file download or pasted reference is required. **Back up and import confirmed cutters** automatically creates and checks its protected snapshot before importing. The advanced existing-backup option is optional compatibility support.

@@ -1,7 +1,7 @@
+import {requestJson} from "./request-json";
 export type ManagedBackup={id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables?:number;records?:number;exportedAt:string};
 export async function backupApi<T>(path:string,body?:unknown):Promise<T>{
- const response=await fetch('/api/backups'+path,{method:body===undefined?'GET':'POST',cache:'no-store',headers:{'content-type':'application/json','X-Cookie-Catalog-Check':'managed-backup'},...(body===undefined?{}:{body:JSON.stringify(body)})});
- const result=await response.json() as any;if(!response.ok)throw Error(result.error??'Backup operation failed. No successful completion was recorded.');return result as T;
+ return requestJson<T>('/api/backups'+path,{method:body===undefined?'GET':'POST',cache:'no-store',headers:{'content-type':'application/json','X-Cookie-Catalog-Check':'managed-backup'},...(body===undefined?{}:{body:JSON.stringify(body)})},body===undefined||/\/(advance|fresh|preview)$/.test(path));
 }
 export async function managedBackup(status:(message:string)=>void,kind:'normal'|'pre-change'='pre-change',resumeId?:string){
  let job=resumeId?await backupApi<ManagedBackup>('/'+resumeId+'/advance',{}):await backupApi<ManagedBackup>('',{kind});

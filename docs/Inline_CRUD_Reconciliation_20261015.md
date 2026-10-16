@@ -33,3 +33,14 @@ Status: approved design direction, NOT implemented or deployed. Preserve existin
 5. Use feature branch/PR, tests and protected main. No production release or paid resources without separate approval.
 
 No application implementation is claimed by this document.
+
+## Development reconciliation — 2026-10-16
+
+The approved decision above is preserved. Source branch `df377933d98b3010def851ed0fd0c85fa498e8a4` added this document only, based on protected main. Continuing implementation remains on `feature/cc-infrastructure-foundation` / draft PR #1 so newer BIN/import/backup work is retained.
+
+- BIN alignment deployed in `ae39eb5`; managed archive/restore deployed in `3f2457a`. Both heads passed GitHub checks and Workers Builds.
+- Responsive Browse master-detail, reusable value editors, transactional shape/physical inventory CRUD, staged tags and first-class shape creation are implemented next on that feature branch. Source shape identity/files remain shared. Existing physical-to-shape bindings are preserved; the managed shape picker supports new physical entries. Designs and compatibility mappings retain their existing management workspace.
+- Explicit physical location selection uses an existing canonical location ID; no arbitrary BIN creation. It overrides inherited OneNote location. Clearing it restores inheritance. Original source snapshots remain immutable; later source review/reimport must not overwrite an explicit catalog move. If OneNote changes later, show/reconcile that disagreement explicitly rather than automatically applying it. Source-only references retain their original OneNote assignment.
+- Current schema was inspected (four migrations / 22-table supported archive profile); no schema migration is introduced. User notes edit `catalogNotes` inside existing imported notes metadata, preserving its source/review provenance. Records, associations and vocabulary remain in D1; editor metadata is presentation configuration only.
+- New inline Save/Delete automatically obtains a complete, fresh pre-change recovery point. Record fields and tag associations commit in one guarded D1 transaction. Delete is owner-only and rejects every inbound relationship, including associations normally covered by cascade. Removing a tag association never deletes the shared tag. Recovery point/change-intent metadata records actor, operation and revision; an intent is not proof a transaction committed.
+- Current-data counts and the real-original backup acceptance are recorded in the current Context checkpoint. Historical export counts alone are not treated as current-state proof. No live catalog restore is used as an acceptance test.

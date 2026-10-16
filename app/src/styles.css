@@ -62,3 +62,26 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .quick-row select { margin:.4rem 0; }
 .quick-evidence { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.8rem; max-height:12rem; overflow:auto; }
 @media(max-width:600px){.quick-verification{padding:.65rem}.quick-row{gap:.65rem}.quick-row img,.quick-no-image{width:64px;height:64px}.quick-row select{width:100%}}
+
+/* Reusable detail/value workspace; result scroll remains mounted when focus changes. */
+.browse-workspace.expanded {display:grid;grid-template-columns:minmax(0, 1.4fr) minmax(18rem, 1fr);gap:1.25rem;align-items:start}
+.browse-workspace.expanded .browse-results {max-height:80vh;overflow-y:auto;scrollbar-gutter:stable;padding:.15rem}
+.browse-workspace.expanded .cutter-grid {grid-template-columns:1fr}
+.browse-detail-column {min-width:0}
+.browse-create {display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0}
+.entry-editor fieldset {border:1px solid #cbd5c9;border-radius:.5rem;margin:1rem 0;padding:1rem;min-width:0}
+.inline-field {display:grid;grid-template-columns:minmax(7rem, .7fr) minmax(0, 1fr);gap:.5rem;align-items:baseline;margin:.6rem 0}
+.inline-field label {font-weight:600}
+.inline-value {text-align:left;border:1px solid transparent;background:transparent;color:inherit;min-height:2.5rem;white-space:pre-wrap;overflow-wrap:anywhere;padding:.4rem}
+.inline-value:hover,.inline-value:focus-visible {border-color:#566c4a;background:#f4f7ef}
+.inline-field input,.inline-field select,.inline-field textarea {box-sizing:border-box;max-width:100%;width:100%;min-height:2.5rem}
+.tag-editor ul,.shape-picker ul {padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+.tag-editor li {border:1px solid #cbd5c9;border-radius:.5rem;padding:.4rem}
+.tag-editor li button {margin-left:.4rem}
+.pending-save {position:sticky;bottom:.5rem;display:flex;gap:.6rem;background:#fff;padding:1rem;border:1px solid #566c4a;box-shadow:0 2px 8px #0002;z-index:1}
+.delete-entry {margin-top:1rem;color:#812e21}
+@media(max-width:760px){.browse-workspace.expanded{grid-template-columns:1fr}.browse-workspace.expanded .browse-results{max-height:55vh}.inline-field{grid-template-columns:1fr;gap:.2rem}.browse-detail-column{order:0}}
+.browse-workspace:not(.expanded) .cutter-grid {grid-template-columns:1fr}
+.browse-workspace:not(.expanded) .cutter-card {display:grid;grid-template-columns:minmax(8rem,12rem) minmax(0,1fr);cursor:pointer}
+.browse-workspace .cutter-card:hover {border-color:#6c8a75}
+@media(max-width:480px){.browse-workspace:not(.expanded) .cutter-card{grid-template-columns:6rem minmax(0,1fr)}.browse-workspace:not(.expanded) .cutter-image{aspect-ratio:auto;min-height:7rem}}

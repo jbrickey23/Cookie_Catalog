@@ -1,5 +1,10 @@
 # Cookie_Catalog — Decision Log
 
+## October 15 (Pacific) — CC-DEC-020 — Reconcile and implement approved inline workspace
+
+Adopt the approved decision from `docs/Inline_CRUD_Reconciliation_20261015.md` while preserving newer feature-branch BIN/import/recovery implementation. Use reusable master-detail and inline field editors, server validation/roles and atomic optimistic transactions. Stage tag/new-shape vocabulary until Save. Canonical location IDs are selected, not created ad hoc. Explicit catalog location overrides immutable OneNote provenance; future source changes require an explicit reconciliation, not silent overwrite. Every new inline mutation obtains an automatic protected snapshot; owner confirms deletion and relationships block it. Preserve protected main, existing development PR and production-release boundaries. Next unused decision: CC-DEC-021.
+
+
 ## October 15 — CC-DEC-019 — App-managed snapshots, approval-based restore and opt-in schedule
 
 Owner requests completion of BIN work followed by removing manual file/CMD/reference handoffs from backup and restore. Use the existing private R2 bucket for app-managed, checksum-checked, resumable snapshots and automatic pre-change protection. Restore requires a current preview and approval; it creates its own protected before-state, holds maintenance through transactional database replacement and permits approved rollback. Enable daily fresh creation only through the owner schedule setting; the worker may resume already approved jobs in the background. Portable off-provider archives remain a distinct layer. No new paid resource, production overwrite, credential bypass or automatic pruning is authorized. See docs/App_Managed_Backups.md for capacity/retention and live-acceptance limits. Next unused decision ID: CC-DEC-020.

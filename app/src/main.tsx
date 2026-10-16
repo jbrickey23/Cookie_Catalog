@@ -106,7 +106,7 @@ function App() {
   return <main className="app-shell">
     <h1>Cookie Catalog</h1>
     <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
-    <Browse version={catalogVersion} />
+    <Browse version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>
     {role === "owner" && <InfrastructureVerification />}

@@ -14,7 +14,7 @@ function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value),{status,headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
 }
 class InputError extends Error {}
-function validate(kind: Kind, input: unknown,fields:readonly string[]=specs[kind].fields): Record<string,Value> {
+export function validate(kind: Kind, input: unknown,fields:readonly string[]=specs[kind].fields): Record<string,Value> {
   if (!input || typeof input !== "object" || Array.isArray(input)) throw new InputError("Record must be a JSON object.");
   const source=input as Record<string,unknown>, spec={...specs[kind],fields};
   if(Object.keys(source).some(key=>!(spec.fields as readonly string[]).includes(key))) throw new InputError("Record contains unsupported fields.");
@@ -61,7 +61,7 @@ async function revision(kind:Kind,record:Record<string,unknown>):Promise<string>
 async function recordResponse(kind:Kind,record:Record<string,unknown>,status=200,extra:Record<string,unknown>={}):Promise<Response> {
   const token=await revision(kind,record),response=json({record,revision:token,...extra},status);response.headers.set("etag",token);return response;
 }
-async function body(request: Request): Promise<unknown> {
+export async function body(request: Request): Promise<unknown> {
   if(!request.headers.get("content-type")?.startsWith("application/json")) throw new InputError("JSON request required.");
   const reader=request.body?.getReader(); if(!reader) throw new InputError("Record is empty.");
   const parts: Uint8Array[]=[];let size=0;

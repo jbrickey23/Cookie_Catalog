@@ -27,7 +27,7 @@ async function checkedObject(files:R2Bucket,o:ArchiveObject){const object=await 
 export async function advanceManagedBackup(files:R2Bucket,id:string){
  const record=await read<BackupJob>(files,key('jobs',id));if(!record)throw Error('Backup job not found.');if(record.value.status==='complete')return record.value;
  const data=await source(files,id),job=record.value;if(await sha256(data.bytes)!==job.manifestSha256)throw Error('Backup job manifest changed.');
- for(const o of data.payload.objects.slice(job.offset,job.offset+8)){
+ for(const o of data.payload.objects.slice(job.offset,job.offset+4)){
   let saved=await files.head(objectKey(o));
   if(!saved){const original=await files.get(o.key,{onlyIf:{etagMatches:o.etag}});if(!original||!('body'in original)||original.size!==o.byteSize)throw Error('An original changed during backup. No risky operation was applied.');saved=await files.put(objectKey(o),original.body,{sha256:o.sha256,onlyIf:{etagDoesNotMatch:'*'},httpMetadata:{contentType:o.contentType??'application/octet-stream'}});}
   await checkedObject(files,o);job.offset++;

@@ -25,8 +25,8 @@ test('managed snapshots checksum originals, deduplicate safely, resume and remai
  const {runtime,db,files,add}=await env();try{
   for(let i=2;i<=10;i++)await add('file_managed_test'+i,i);
   const original=await createDatabaseSnapshot(db,10000),job=await startManagedBackup(db,files,'owner','pre-change');
-  const first=await advanceManagedBackup(files,job.id);assert.equal(first.offset,8);assert.equal(first.status,'copying');
-  const done=await advanceManagedBackup(files,job.id);assert.equal(done.status,'complete');assert.equal(done.objects,10);
+  const first=await advanceManagedBackup(files,job.id);assert.equal(first.offset,4);assert.equal(first.status,'copying');
+  let done=await advanceManagedBackup(files,job.id);while(done.status!=='complete')done=await advanceManagedBackup(files,job.id);assert.equal(done.status,'complete');assert.equal(done.objects,10);
   assert.deepEqual((await completeBackup(files,done.id)).payload.database,original);
   await assertFreshBackup(db,files,done.id);
   const count=(await files.list({prefix:'catalog-backups/objects/'})).objects.length;await backup(db,files);assert.equal((await files.list({prefix:'catalog-backups/objects/'})).objects.length,count);

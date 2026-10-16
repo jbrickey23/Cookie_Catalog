@@ -1,5 +1,20 @@
 # Cookie_Catalog — Context
 
+## Inline workspace implementation and live reconciliation — October 16, 2026 (UTC)
+
+Reconciled the approved document branch `df37793` with current development rather than replacing newer work. BIN (`ae39eb5`) and managed backup/recovery (`3f2457a`) passed both GitHub sqlite checks and Workers Builds; the signed-in development infrastructure report independently confirms `3f2457a`, 22 tables, required migrations and zero foreign-key violations. Five sampled originals were present with matching sizes.
+
+Live Browse now reports 344 non-demo catalog entries and 206 non-demo physical rows. The owner's earlier 83-import receipt is historical, not the current total. A live one-click managed snapshot captured 592 originals. Its foreground copy encountered a transient non-JSON service response; retained progress and minute-cron resumption were observed. Do not call that snapshot verified until the completion receipt exists. This implementation reduces copy batches to four, adds bounded retries for safe progress requests and keeps ordinary record mutations from silently retrying. No live inventory row was changed by this session.
+
+Implemented responsive full-width results and left-detail/right-scroll layout, inline value editing without a page Edit mode, dirty-only Save/Cancel, explicit draft-discard guards, create/read/update/guarded-delete for shape references and physical records. Existing shapes/files stay shared; new physical entries can search/select an existing shape or draft a valid new shape. Searchable tags are staged until Save, normalize duplicate labels, use canonical IDs, and persist associations atomically without deleting shared tags. Explicit physical BIN selection uses existing IDs and overrides immutable OneNote evidence; clearing returns to inheritance. Imported source metadata survives user-note edits. Source-only references retain OneNote location, independently of ownership. Designs/mappings keep their existing advanced management interface.
+
+Every inline Save/Delete obtains a complete fresh protected snapshot automatically. Server role/origin checks, revision and transaction guards protect current state, including managed vocabularies and associations. Delete is owner-only with confirmation and checks all inbound relationships, including cascade associations. R2 change intents link actor/revision/recovery point and do not claim successful SQL completion. No migration/new resource/paid plan/production release/live restore.
+
+Validation: 127 application tests and type-check/frontend/Worker build pass. Focused tests cover real D1/R2 protection, 50 tags within a conservative query budget, stale/racing edits, a real SQL error after inserts with full rollback/no orphan tags, cascade-link deletion rejection, staged-value cancel, conflict-draft retention, unchanged search/result scroll, dirty switching/closing, viewer controls, and transient HTML retry behavior. Next: publish/verify this feature head, finish the live 592-original snapshot and read-only restore preview, and inspect deployed inline behavior without changing real inventory.
+
+CC-TODO-014 tracks inline workspace acceptance and further reuse in design/mapping management. CC-TODO-013 remains open for retention/reclamation approval and independent off-provider automation. Managed snapshots stop at 12 jobs / conservative 2 GiB accounting; no automatic pruning. Daily creation remains opt-in; approved jobs resume by cron. Current backups remain private. Next unused task: CC-TODO-015.
+
+
 ## Inline CRUD reconciliation — October 16, 2026
 
 Read `docs/Inline_CRUD_Reconciliation_20261015.md` from `docs/inline-crud-reconciliation-20261015` at `df377933d98b3010def851ed0fd0c85fa498e8a4`. That branch adds the approved design document only; it does not supersede the newer development implementation. Preserve `feature/cc-infrastructure-foundation` and draft PR #1. The approved design is copied here unchanged. BIN is implemented/deployed; managed backups are implemented locally; master-detail and inline CRUD are next. No design-only claim is treated as deployed code.

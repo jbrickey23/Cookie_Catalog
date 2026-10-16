@@ -1,3 +1,4 @@
+import {handleWorkspace} from './server/workspace';
 import {handleManagedBackups,restoreInProgress,scheduledBackups} from './server/managed-backups';
 import {quickReviewContext} from './server/quick-review';
 import {handleCatalogImportSetup} from "./server/catalog-import-setup";
@@ -33,6 +34,14 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
     return handleManagedBackups(request,database,files,user.subject);
   }
   const restoreGate=async()=>{try{return files&&await restoreInProgress(files)?json({error:"Catalog restore is in progress. Resume or review recovery from Backups."},423):null;}catch{return json({error:"Recovery status unavailable. Retry before accessing catalog data."},503);}};
+  if(pathname.startsWith('/api/workspace/')){
+    if(request.method!=='GET'&&!mayWrite(user))return json({error:'Editing access required'},403);
+    if(!['GET','POST','PUT','DELETE'].includes(request.method))return json({error:'Method not allowed'},405);
+    if(request.method!=='GET'&&(request.headers.get('Origin')!==new URL(request.url).origin||request.headers.get('X-Cookie-Catalog-Check')!=='workspace'))return json({error:'Same-origin workspace request required'},403);
+    if(!database||!files)return json({error:'Workspace resources unavailable'},503);
+    {const blocked=await restoreGate();if(blocked)return blocked;}
+    return handleWorkspace(request,database,files,user.subject,user.role==='owner');
+  }
   // Maintenance, archive/export and synthetic fixtures are owner-only.
   if(pathname.startsWith("/api/dev/") && user.role!=="owner")return json({error:"Owner access required"},403);
   if(pathname === "/api/dev/missing-file-check") {
