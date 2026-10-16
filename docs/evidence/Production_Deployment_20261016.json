@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-10-16T23:37:32Z",
+  "environment": "production",
+  "sourceCommit": "48e8b0adefb2966d7433fdeb8a79873c755d81b5",
+  "versionId": "7c996412-f342-4aa4-aa67-a265564ddf57",
+  "buildId": "2c889231-eedd-442b-9715-bfcec3add4a3",
+  "deploymentEvidence": "owner-supplied successful live deployment log and GitHub successful check",
+  "databaseComparison": {
+    "completeSchemaMatch": true,
+    "completeRowsMatch": true,
+    "tables": 22,
+    "rows": 4048,
+    "foreignKeyViolations": 0,
+    "exportSha256": "73714364c7e799a25aa055054a5bbc4b259f6ea90c02b19197d019537e51c959"
+  },
+  "originals": {
+    "expected": 592,
+    "ownerReportedDownloadedSizeAndSha256Verified": 592,
+    "agentInspectedDownloadedBytes": false,
+    "completeRemoteKeyListingCompared": false
+  },
+  "access": {
+    "ownerBrowseImageCheckReportedPassed": true,
+    "secondUserAccessReportedPassed": true,
+    "bothRolesExplicitlyReverified": false
+  },
+  "remaining": [
+    "production source and private-access verification",
+    "reversible Save and Undo/recovery",
+    "production baseline backup",
+    "operational recovery and final cutover review",
+    "approved main merge and release tag"
+  ],
+  "productionDataImportApproved": true,
+  "productionAppDeploymentApproved": true,
+  "cutoverApproved": false,
+  "mainMerged": false,
+  "releaseTagged": false
+}
