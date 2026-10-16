@@ -128,3 +128,17 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
  .management-panel>ul>li>button {display:block;margin:.4rem 0}
  .management-panel>fieldset>label {display:block;margin:.5rem 0}
 }
+
+/* Keep nearby results compact while a cutter is focused. */
+.browse-workspace.expanded .cutter-card {display:grid;grid-template-columns:5rem minmax(0,1fr)}
+.browse-workspace.expanded .cutter-image {aspect-ratio:auto;min-height:6rem}
+.browse-workspace.expanded .cutter-card-body {padding:.6rem .7rem;min-width:0}
+.browse-workspace.expanded .cutter-card h3 {font-size:.95rem;line-height:1.3;margin:0 0 .35rem}
+.browse-workspace.expanded .image-kind,
+.browse-workspace.expanded .reference-size,
+.browse-workspace.expanded .collection-note,
+.browse-workspace.expanded .cutter-card dl>div:nth-child(n+3) {display:none}
+.browse-workspace.expanded .cutter-card dl>div {display:flex;padding:.2rem 0;font-size:.8rem}
+.browse-workspace.expanded .cutter-card dd {text-align:right}
+.browse-workspace.expanded .view-cutter {margin-top:.5rem;padding:.4rem .55rem;font-size:.8rem}
+.browse-workspace.expanded .cutter-grid {gap:.6rem}
