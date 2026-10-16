@@ -2,6 +2,8 @@
 
 **v0.1.0-rc.1 is implemented, tested and deployed to development. It has not been released to production.** This is the current release checklist; older chronological entries describe earlier states and do not reopen completed work.
 
+Latest refinement: 500 × 500-pixel fitted read-only image viewer, two-column image/name/location thumbnails and guarded focus switching; local 143 tests/build pass. [Image standards proposal](Image_Asset_Standards_Proposal.md) preserves originals and separates display/Canva/outline derivatives; not an upload-rule change.
+
 ## Verified checkpoint
 
 - Application: `4ca1b1ddfff5745e037549ca5415cdc4bfc1efbe`, branch `feature/cc-infrastructure-foundation`.

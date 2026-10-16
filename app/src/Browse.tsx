@@ -49,11 +49,11 @@ export function Browse({version=0,canEdit=false,canDelete=false}:{version?:numbe
 }
 
 function ImageWindowLink({id,filename,children}:{id:string;filename:string;children:React.ReactNode}) {
- const url="/api/attachments/"+encodeURIComponent(id)+"?view=image";
+ const url="/api/attachments/"+encodeURIComponent(id)+"?view=window";
  return <a className="image-window-link" href={url} target="_blank" rel="noopener noreferrer" aria-label={"Open "+filename+" in a read-only image window"} onClick={event=>{
   if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
   event.preventDefault();
-  window.open(url,"_blank","popup=yes,width=1100,height=850,noopener,noreferrer");
+  window.open(url,"_blank","popup=yes,width=500,height=500,noopener,noreferrer");
  }}>{children}</a>;
 }
 

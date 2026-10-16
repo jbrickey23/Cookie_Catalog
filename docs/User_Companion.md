@@ -9,7 +9,7 @@ BIN/location uses an existing assignment. A selected physical location overrides
 
 ## Open an image without leaving your card
 
-In a focused cutter card, click any available photo or its Open image link. It opens the original in a separate read-only browser window so you can inspect, snip or save it. Close that window to continue at the same focused card; unsaved field edits stay in the catalog tab. Download original remains beside every available file. The browser may choose a tab instead of a window or require allowing pop-ups for this site. Ctrl-click/open-in-new-tab remains available. Viewing or saving a local copy does not update the catalog original; changing the stored file still uses the website attachment workflow.
+In a focused cutter card, click any available photo or its Open image link. It requests a consistent 500 × 500-pixel read-only viewer window. The original image fits the viewing area without stretching or cropping and resizes with the window, so you can inspect, snip or save it. A Download original link is also available inside the viewer. Pixel size is a viewing preference, not the cutter's measured size or a guaranteed physical size on every display. Close that window to continue at the same focused card; unsaved field edits stay in the catalog tab. Download original remains beside every available file. The browser may choose a tab instead of a window or require allowing pop-ups for this site. Ctrl-click/open-in-new-tab remains available. Viewing or saving a local copy does not update the catalog original; changing the stored file still uses the website attachment workflow.
 
 ## Undo a routine record change
 

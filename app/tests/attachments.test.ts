@@ -45,6 +45,12 @@ test("persistent photo/design/STL upload, exact-byte private retrieval, associat
       assert.equal(inline.status,name.endsWith(".stl")?415:200);
       if(!name.endsWith(".stl")){assert.equal(inline.headers.get("content-type"),"image/png");assert.match(inline.headers.get("content-disposition")!,/^inline;/);assert.equal(inline.headers.get("cache-control"),"no-store");assert.deepEqual(new Uint8Array(await inline.arrayBuffer()),bytes);}
 
+      const viewer=await handleApiRequest(new Request(origin+"/api/attachments/"+item.id+"?view=window"),owner,db,bucket);
+      assert.equal(viewer.status,name.endsWith(".stl")?415:200);
+      if(!name.endsWith(".stl")){
+        assert.match(viewer.headers.get("content-type")!,/^text\/html/);assert.equal(viewer.headers.get("cache-control"),"no-store");assert.match(viewer.headers.get("content-security-policy")!,/default-src 'none'/);
+        const page=await viewer.text();assert.ok(page.includes('width:100vw;height:100vh;object-fit:contain'));assert.ok(page.includes('/api/attachments/'+item.id+'?view=image'));assert.ok(page.includes('Download original'));assert.ok(!page.includes('<script'));
+      }
       const list=await handleApiRequest(new Request(origin+"/api/attachments?kind="+kind+"&recordId="+id),owner,db,bucket);
       assert.equal((await list.json() as any).attachments[0].available,true);
       if(name.endsWith(".stl")) assert.equal((await db.prepare("SELECT format FROM printable_assets WHERE attachment_id=?").bind(item.id).first<any>())?.format,"stl");
@@ -148,4 +154,14 @@ test("deletion preserves originals used by derived assets and removes size recip
     assert.equal((await handleApiRequest(deletion(id),owner,db,bucket)).status,200);
     assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM printable_size_recipes").first<any>())?.n,0);
   }finally{await runtime.dispose();}
+});
+
+test('read-only image window escapes filenames and leaves original retrieval to the verified image route',async()=>{
+ const {runtime,db,bucket}=await env();
+ try{
+  const uploaded=await handleApiRequest(upload(),owner,db,bucket),{id}=await uploaded.json() as {id:string};
+  await db.prepare('UPDATE attachments SET filename=? WHERE id=?').bind('\"><script>alert(1)</script>.png',id).run();
+  const viewer=await handleApiRequest(new Request(origin+'/api/attachments/'+id+'?view=window'),owner,db,wrap(bucket,'get',(key:string,...args:any[])=>{if(key.startsWith('attachments/'))throw Error('Viewer must not read the image twice');return (bucket.get as any)(key,...args);}));
+  assert.equal(viewer.status,200);const page=await viewer.text();assert.ok(page.includes('&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;.png'));assert.ok(!page.includes('<script>'));assert.ok(!page.includes('<form'));assert.equal(viewer.headers.get('referrer-policy'),'no-referrer');
+ }finally{await runtime.dispose();}
 });

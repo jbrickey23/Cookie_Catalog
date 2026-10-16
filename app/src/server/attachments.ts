@@ -6,6 +6,12 @@ interface Attachment { id: string; storage_key: string; filename: string; media_
 function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json", "cache-control": "no-store", "x-content-type-options": "nosniff" } });
 }
+function imageWindow(row:Attachment){
+ if(!["image/png","image/jpeg","image/webp"].includes(row.media_type))return json({error:"Only supported images can be viewed."},415);
+ const escaped=row.filename.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+ const url="/api/attachments/"+encodeURIComponent(row.id);
+ return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escaped} — image viewer</title><style>html,body{margin:0;width:100%;height:100%;background:#f4f4ee}img{display:block;width:100vw;height:100vh;object-fit:contain}a{position:fixed;right:12px;bottom:12px;padding:9px 12px;background:#fff;color:#253b34;border:1px solid #9cac9e;border-radius:7px;font:14px system-ui}</style></head><body><img src="${url}?view=image" alt="${escaped}"><a href="${url}">Download original</a></body></html>`,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","referrer-policy":"no-referrer","content-security-policy":"default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"}});
+}
 function target(kind: string | null) {
   return kind === "shape" ? { table: "shapes", links: "shape_attachments", column: "shape_id" }
     : kind === "design" ? { table: "designs", links: "design_attachments", column: "design_id" } : null;
@@ -102,6 +108,7 @@ export async function handleAttachments(request: Request, database: D1Database, 
         await remove(database, bucket, row);
         return json({ deleted: true });
       }
+      if(url.searchParams.get("view")==="window")return imageWindow(row);
       const object = await bucket.get(row.storage_key);
       if (!object) return json({ error: "Original file is missing. Metadata is retained for recovery." }, 409);
       if (object.size > MAX_FILE) return json({ error: "Original exceeds the current 25 MiB download limit." }, 413);
