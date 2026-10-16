@@ -2,14 +2,18 @@
 
 Prepared 2026-10-14. Actual owner-device/browser acceptance is not closed by cloud-browser checks.
 
+## October 16 acceptance
+
+At 11:15 Pacific, owner reported the intended second admin can sign in, browse and make edits, and Chrome and Edge both work. This closes the current intended-browser browse/edit acceptance and independent second-admin sign-in workflow. Do not infer a separate original-download or admin-only recovery-control test. Exact versions were not supplied; that metadata gap does not reopen the reported pass.
+
 ## Current scope — October 16 owner decision
 
 First-release targets are **Windows Chrome and Microsoft Edge only**. Safari/iPhone is removed from the active release checklist, not failed or passed. Historical observations below remain evidence of earlier scope.
 
 | Browser | Current release outcome |
 | --- | --- |
-| Windows Chrome | Actual device/browser version and focused-layout/edit/download outcomes pending |
-| Windows Edge | Actual device/browser version and focused-layout/edit/download outcomes pending |
+| Windows Chrome | Owner-confirmed working October 16: sign-in/browse/edit workflow. Exact version and this-session download outcome not recorded |
+| Windows Edge | Owner-confirmed working October 16: sign-in/browse/edit workflow. Exact version and this-session download outcome not recorded |
 
 Use the short owner check below on these two browsers; do not repeat full recovery drills.
 

@@ -24,7 +24,7 @@ Existing offline restore preparation/comparison tooling and isolated restore evi
 
 ## Cutover sequence and acceptance
 
-1. Record Windows Chrome and Edge outcomes, including focused images/compact results, search/BIN, safe synthetic edit/refresh and original download. Record the intended second admin's independent access and who can recover configuration. Do not infer an actual-device/account pass from cloud Chrome.
+1. Preserve October 16 owner-confirmed Chrome/Edge and second-admin sign-in/browse/edit passes. Record any remaining specific download/access-recovery observation without repeating accepted workflows. Confirm who can recover private configuration; do not infer unreported admin-only control tests.
 2. Resolve the preparation findings and prepare an explicit production configuration with actual distinct IDs. Keep development configuration/deployment unchanged. Obtain approval of the named targets, private access settings, transfer procedure and supported users/browsers before creating/changing production resources.
 3. Agree the cutover window and owner responsible for ending edits. Stop catalog/import/file mutations during the final source capture/copy/verification. Keep the source development application and all existing backups intact. A maintenance window is coordinated; no new technical maintenance control is claimed here.
 4. Capture a fresh checked full snapshot and portable private archive of the exact agreed source state, with records, original bytes, hashes, completion receipt and source report. Existing 592-original snapshots remain recovery points, not proof that current catalog rows are unchanged. Record exact counts from this fresh capture. Identify and verify the corresponding independent private recovery copy; never put the payload in Git.
@@ -40,7 +40,7 @@ After production accepts writes, development becomes stale. Stop edits and captu
 
 ## Outstanding inputs
 
-- Actual Chrome/Edge device outcomes and second-admin/recovery acceptance.
+- Chrome/Edge browse/edit and second-admin independent sign-in passed by owner report October 16, 11:15 Pacific. Operational access-recovery ownership remains to be confirmed.
 - Production resource/access authorization and a usable owner-controlled provisioning path; parked Cloudflare login/Windows remediation is not reopened by this plan.
 - Verified resource IDs/audience/hostname; environment/provenance compatibility implementation and transfer validation.
 - Fresh source archive and independently verified private recovery copy at the agreed cutover window.

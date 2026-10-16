@@ -1,5 +1,11 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Owner-confirmed browser and intended-admin acceptance — October 16, 2026, 11:15 Pacific
+
+Owner reports the intended second administrator can independently log in, browse and make edits, and both Chrome and Edge work. Record as owner-reported real-user acceptance, not assistant cloud evidence. First-release Windows Chrome/Edge browsing/editing acceptance and the second-admin independent sign-in/edit workflow are passed. Exact browser/OS versions, original-download checks in this session, admin-only destructive/backup controls and operational account recovery were not separately reported; do not invent those results or rerun accepted behavior merely for screenshots. Safari remains outside first-release scope.
+
+Next: production environment/backup-provenance compatibility and current-schema transfer preparation under docs/Production_Cutover_Plan.md, operational access-recovery ownership and the separately approved production resource/cutover/final release. No new grant, production deployment, record mutation, restore, schedule, cleanup or merge/tag occurs in recording this acceptance. Continue existing tasks 004/005/006/014; next unused CC-TODO-015.
+
 ## First-release browser scope and cutover preparation — October 16, 2026 (Pacific)
 
 Owner explicitly removed Safari/iPhone: first-release support is **Windows Chrome and Microsoft Edge only**. Both actual-device outcomes remain pending; Safari is not a release gate. Earlier broader device lists below are historical. Updated docs/Device_Acceptance.md and current release scope/status accordingly.
