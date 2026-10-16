@@ -6,6 +6,9 @@ export async function browseCatalog(request: Request, db: D1Database): Promise<R
   if(request.method!=="GET")return json({error:"Method not allowed"},405);
   const url=new URL(request.url),q=(url.searchParams.get("q")??"").trim(),offset=Number(url.searchParams.get("offset")??0),kind=url.searchParams.get("kind")??"all";
   if(q.length>120||!Number.isSafeInteger(offset)||offset<0||offset>100000||!["all","physical","reference"].includes(kind))return json({error:"Choose a valid search and page."},400);
+  if((q.match(/"/g)?.length??0)%2)return json({error:'Close each quoted search phrase.'},400);
+  const terms=[...q.matchAll(/"([^"]+)"|([^\s"]+)/g)].filter(m=>m[1]!==undefined||!/^and$/i.test(m[2])).map(m=>(m[1]??m[2]).trim()).filter(Boolean);
+  if(terms.length>8||(q&&!terms.length))return json({error:'Search for one to eight words or quoted phrases.'},400);
   try {
     const columns=await db.prepare("PRAGMA table_info(physical_cutters)").all<{name:string}>();
     const has=(name:string)=>columns.results.some(c=>c.name===name);
@@ -19,9 +22,10 @@ export async function browseCatalog(request: Request, db: D1Database): Promise<R
       CASE WHEN json_valid(s.notes) THEN json_extract(s.notes,'$.reviewState') END AS review_state,s.source_url,CASE WHEN json_valid(s.notes) THEN json_extract(s.notes,'$.reason') END AS source_reason
       FROM shapes s WHERE NOT EXISTS(SELECT 1 FROM physical_cutters c WHERE c.shape_id=s.id)`;
     const base=kind==="physical"?physical:kind==="reference"?references:physical+" UNION ALL "+references;
-    const filter=`WHERE (?=1 OR substr(upper(r.name),1,5)!='DEMO ')
-        AND (instr(lower(r.name),lower(?))>0 OR instr(lower(coalesce(r.location,'')),lower(?))>0 OR instr(lower(coalesce(r.source_bin,'')),lower(?))>0)`;
-    const parameters=[url.searchParams.get("demo")==="true"?1:0,q,q,q];
+    const termFilter=`(instr(lower(r.name),lower(?))>0 OR instr(lower(coalesce(r.location,'')),lower(?))>0 OR instr(lower(coalesce(r.source_bin,'')),lower(?))>0
+      OR EXISTS(SELECT 1 FROM shape_tags st JOIN tags t ON t.id=st.tag_id WHERE st.shape_id=r.shape_id AND instr(lower(t.label),lower(?))>0))`;
+    const filter=`WHERE (?=1 OR substr(upper(r.name),1,5)!='DEMO ')`+terms.map(()=>" AND "+termFilter).join("");
+    const parameters=[url.searchParams.get("demo")==="true"?1:0,...terms.flatMap(term=>[term,term,term,term])];
     const count=await db.prepare(`SELECT count(*) AS total FROM (${base}) r ${filter}`).bind(...parameters).first<{total:number}>();
     const rows=await db.prepare(`SELECT r.*,a.id AS image_id,a.filename AS image_name FROM (${base}) r
       LEFT JOIN attachments a ON a.id=(SELECT a2.id FROM shape_attachments sa JOIN attachments a2 ON a2.id=sa.attachment_id

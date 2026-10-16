@@ -41,3 +41,16 @@ test("viewer browsing is bounded, read-only, searchable, and compatible before a
   assert.equal((await db.prepare("SELECT count(*) AS n FROM physical_cutters").first<any>())?.n,27);
  }finally{await runtime.dispose();}
 });
+
+test('combined search matches every term across names bins and tags without duplicate results',async()=>{
+ const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'terms'}}));
+ try{
+  const db=await runtime.getD1Database('DB') as unknown as D1Database;
+  for(const n of ['0001_initial.sql','0002_variants_components.sql']){const sql=readFileSync('../database/migrations/'+n,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}
+  await db.exec("INSERT INTO shapes(id,name,notes) VALUES ('a','Black Cat',NULL),('b','Cat',NULL),('c','Holiday star',NULL),('d','Cat Holiday',NULL),('e','Black Catfish',NULL); INSERT INTO tags(id,label) VALUES ('t','Holiday'),('u','Holiday Baking'); INSERT INTO shape_tags(shape_id,tag_id) VALUES ('a','t'),('a','u'),('c','t'),('e','t'); INSERT INTO locations(id,label) VALUES ('l','Bin 6'); INSERT INTO physical_cutters(id,shape_id,location_id) VALUES ('p','a','l');");
+  const search=async(q:string,extra='')=>handleApiRequest(new Request('https://catalog.test/api/browse?q='+encodeURIComponent(q)+extra),viewer,db);
+  const ids=async(q:string,extra='')=>((await (await search(q,extra)).json()) as any).items.map((x:any)=>x.shape_id).sort();
+  assert.deepEqual(await ids('cat Holiday'),['a','d','e']);assert.deepEqual(await ids('cat AND Holiday'),['a','d','e']);assert.deepEqual(await ids('"Black Cat" Holiday'),['a','e']);assert.deepEqual(await ids('cat Holiday "Bin 6"'),['a']);assert.deepEqual(await ids('cat Holiday','&kind=reference'),['d','e']);assert.deepEqual(await ids('cat Holiday','&kind=physical'),['a']);assert.deepEqual(await ids('cat Missing'),[]);
+  assert.equal(((await (await search('cat Holiday')).json()) as any).total,3);assert.equal((await search('"unclosed')).status,400);assert.equal((await search('a b c d e f g h i')).status,400);assert.deepEqual(await ids("%_'"),[]);
+ }finally{await runtime.dispose();}
+});

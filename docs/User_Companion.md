@@ -11,6 +11,12 @@ BIN/location uses an existing assignment. A selected physical location overrides
 
 In a focused cutter card, click any available photo or its Open image link. It requests a consistent 500 × 500-pixel read-only viewer window. The original image fits the viewing area without stretching or cropping and resizes with the window, so you can inspect, snip or save it. A Download original link is also available inside the viewer. Pixel size is a viewing preference, not the cutter's measured size or a guaranteed physical size on every display. Close that window to continue at the same focused card; unsaved field edits stay in the catalog tab. Download original remains beside every available file. The browser may choose a tab instead of a window or require allowing pop-ups for this site. Ctrl-click/open-in-new-tab remains available. Viewing or saving a local copy does not update the catalog original; changing the stored file still uses the website attachment workflow.
 
+## Search multiple terms or show the whole catalog
+
+Search matches names, assigned/source BINs and shape tags. Enter `cat Holiday` (or `cat AND Holiday`) to require both terms; each can match a different field. `"black cat" Holiday` keeps black cat together as one phrase. Search is case-insensitive substring matching, not an OR/any-term search. Up to eight terms/phrases and 120 characters are supported. A tag must actually be assigned; search does not infer holidays or objects from image contents.
+
+Reset filters clears typed/submitted search, record-type selection, demo visibility and page position, returning to the default full catalog with demonstration rows hidden. It checks for unsaved focused-card edits before switching, just like selecting another card.
+
 ## Undo a routine record change
 
 Admin/owner can expand **Undo recent record changes**, select **Review change**, and then **Undo this change** after reviewing it. This restores that entry's previous values when its current saved state still matches the recorded result. Newer changes and new linked records block undo. Failed attempts may appear in the list but cannot overwrite unrelated state. Images and originals stay shared and in place. Undo also retains a recovery copy of the values it replaces.

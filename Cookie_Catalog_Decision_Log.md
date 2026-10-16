@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## Reset filters and combined name/BIN/tag search — October 16, 2026 (Pacific)
+
+Owner requested an obvious way back to the full catalog and asked for cat plus Holiday search. Added Reset filters beside Search: clears draft/submitted query, kind, demo flag and paging, closes focus/new-entry only after existing dirty/busy guard. Default full catalog excludes demo rows. Search now requires every whitespace-separated term/quoted phrase across name, assigned/source BIN or shape tags; optional unquoted AND is a separator. Example cat Holiday or cat AND Holiday requires both, possibly across fields. Case-insensitive literal substring matching; no wildcard, OR or image inference. Bound to eight terms/phrases and existing 120 characters, with quoted-phrase validation and helpful UI errors. Tags use EXISTS so multiple matching tags cannot duplicate rows/counts; physical and source-reference records retain existing filters/paging. No record write, schema, resource, backup, image or access change. 146 application tests and build/type-check pass, including real D1 mixed-field/phrase/tag/count/filter cases and reset/error/draft UI cases. Deployment acceptance follows; continue 014. CC-TODO-015 remains deferred to Canva, next unused 016.
+
 ## Full-height results pane and shared thumbnails — October 16, 2026 (Pacific)
 
 Owner screenshot showed unused space beneath the right results pane while the focused card continued below it. Desktop expanded workspace now stretches the independently scrolling two-column results pane to the focused card's full height, including automatic adjustment as its content changes. Results are out of flow within that pane so the number of results does not enlarge the focused card. Narrow stacked layout keeps its bounded scroll behavior. Focused card margin is removed only in the side-by-side layout so both panes share top/bottom alignment.

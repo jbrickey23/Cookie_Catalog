@@ -163,3 +163,6 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
  /* Out of flow so the result count cannot make the focused card taller. */
  .browse-workspace.expanded .browse-results>.cutter-grid {position:absolute;top:.15rem;left:.15rem;right:.15rem;align-content:start}
 }
+
+.browse-search>div {flex-wrap:wrap}
+.browse-search input {flex:1 1 14rem}
