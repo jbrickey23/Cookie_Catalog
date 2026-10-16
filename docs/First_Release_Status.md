@@ -17,7 +17,7 @@
 | --- | --- |
 | Catalog/BIN | Photo-first search and paging; physical/digital status independent of assigned BIN; imported provenance preserved |
 | Routine changes | Inline shape/physical create, edit and guarded delete; staged tags; small durable recovery records and reviewed Undo; no full-catalog pass on routine Save/Delete |
-| Focused layout | Images above editable fields; heading/caption wrapping; compact nearby rows with thumbnail, name, BIN, quantity and View; four full cards plus part of a fifth observed in the cloud desktop viewport |
+| Focused layout | Images above editable fields; heading/caption wrapping; two-column nearby thumbnail cards showing image, name and location, with guarded card-click focus switching; read-only focused-image pop-outs plus original downloads (latest requested refinement) |
 | Private files/imports | Private originals and retrieval, saved source-preserving reviews, classification and bounded guarded inventory import; real source/reference/photo import already completed |
 | Recovery | Checked 592-original snapshot and read-only restore preview; existing local/isolated-cloud sample recovery, missing-file recovery and development code rollback evidence preserved |
 | Backup retention | Usage visibility, reviewed resumable cleanup, shared-file preservation and protected-point acknowledgement; synthetic deletion/interruption tests passed; live view/protection review passed |

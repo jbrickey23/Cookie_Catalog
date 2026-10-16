@@ -129,19 +129,22 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
  .management-panel>fieldset>label {display:block;margin:.5rem 0}
 }
 
-/* Keep nearby results compact while a cutter is focused. */
-.browse-workspace.expanded .cutter-card {display:grid;grid-template-columns:5rem minmax(0,1fr)}
-.browse-workspace.expanded .cutter-image {aspect-ratio:auto;min-height:6rem}
-.browse-workspace.expanded .cutter-card-body {padding:.6rem .7rem;min-width:0}
-.browse-workspace.expanded .cutter-card h3 {font-size:.95rem;line-height:1.3;margin:0 0 .35rem}
+/* Focused workspace: two columns of image/name/location cards. */
+.browse-workspace.expanded .cutter-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+.browse-workspace.expanded .cutter-card {display:block;position:relative;min-width:0}
+.browse-workspace.expanded .cutter-image {aspect-ratio:4/3;min-height:0}
+.browse-workspace.expanded .cutter-card-body {padding:.6rem;min-width:0}
+.browse-workspace.expanded .cutter-card h3 {font-size:.9rem;line-height:1.3;margin:0 0 .35rem}
 .browse-workspace.expanded .image-kind,
 .browse-workspace.expanded .reference-size,
 .browse-workspace.expanded .collection-note,
-.browse-workspace.expanded .cutter-card dl>div:nth-child(n+3) {display:none}
-.browse-workspace.expanded .cutter-card dl>div {display:flex;padding:.2rem 0;font-size:.8rem}
-.browse-workspace.expanded .cutter-card dd {text-align:right}
-.browse-workspace.expanded .view-cutter {margin-top:.5rem;padding:.4rem .55rem;font-size:.8rem}
-.browse-workspace.expanded .cutter-grid {gap:.6rem}
+.browse-workspace.expanded .cutter-card dl>div:nth-child(n+2) {display:none}
+.browse-workspace.expanded .cutter-card dl>div {display:block;padding:.2rem 0;font-size:.8rem;border:0}
+.browse-workspace.expanded .cutter-card dt {display:none}
+.browse-workspace.expanded .cutter-card dd {text-align:left;margin:0;color:#52685b}
+/* The native View button covers its card; its accessible name and keyboard behavior stay. */
+.browse-workspace.expanded .view-cutter {position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0}
+.browse-workspace.expanded .cutter-card:focus-within {outline:3px solid #1769aa;outline-offset:2px}
 
 .detail-images>figure>.image-window-link {display:block;border-radius:8px;cursor:zoom-in}
 .detail-images>figure>.image-window-link:hover {outline:2px solid #6c8a75;outline-offset:2px}

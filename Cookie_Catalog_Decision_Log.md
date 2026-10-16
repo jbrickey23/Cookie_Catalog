@@ -1,5 +1,11 @@
 # Cookie_Catalog — Decision Log
 
+## Two-column thumbnail pane and image-window acceptance — October 16, 2026 (Pacific)
+
+Owner refined the focused workspace: remaining records show image/name/location only in a smaller two-column scrolling pane beside the large focused card. Entire thumbnail cards switch focus through the existing dirty/busy guard; Cancel preserves the old draft, approved discard switches, keyboard View access and result scroll remain. Quantity/measurement/status details stay in the focused editor; normal unfocused browsing is unchanged.
+
+The preceding image-window feature at 799ed53 passed live: clicked a focused image, observed the authenticated original in a separate read-only image window, closed it, and found the same focused record with its unsaved test-name draft retained. Canceled that draft without saving; no catalog/original mutation. Download links remain. Browser popup/tab policy still applies. The two-column change is CSS plus card-click guard test coverage; 142 application tests and build/type-check pass. Development deployment/visual acceptance follows publication. No production or access/configuration change. Continue 014; next unused CC-TODO-015.
+
 ## Requested read-only image pop-outs — October 16, 2026 (Pacific)
 
 Owner requested click-to-open images from the focused card, preserving the catalog and its inline draft. Available focused-card images and an explicit Open image link now request a separate browser pop-up using the existing authenticated checksum-verified GET image route; browser may choose a tab or block pop-ups. Original download links remain. New windows have no opener and no image-write controls; viewing/snipping/saving a local copy does not alter stored originals. No catalog writes, new image editor, upload/replacement behavior, schema or access change. Native modified/new-tab link behavior remains. 142 application tests and build/type-check pass, including a popup test preserving an unsaved inline draft and emitting no writes. Development deployment/visual checks follow; no live acceptance is claimed yet. Continue 014 within the first-release feature cut.
