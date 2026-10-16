@@ -25,11 +25,13 @@
 
 Existing snapshots remain retained. Last observed retention view: three checked snapshots, 46.6 MiB actual managed storage and 88.0 MiB conservative allowance used. These are prior observed values, not current capacity promises. No real backup removal, protection release or schedule activation was used as a test.
 
+Safari/iPhone was removed from first-release scope by the owner on October 16. It is not an outstanding release gate. Production preparation is now concrete in the [cutover proposal](Production_Cutover_Plan.md); environment/backup provenance compatibility and current-schema transfer validation remain before production deployment.
+
 ## Remaining steps, in order
 
 | Order | Task | Who / completion evidence |
 | --- | --- | --- |
-| 1 | Target-device acceptance and any resulting layout fixes (004/014) | Owner on Windows Chrome, Windows Edge and iPhone Safari: record device/browser/version, readable layout, search/BIN, focused images, compact results, safe editing on an intended editing device and original download. Use synthetic/demo data for writes. Fix reported failures only; do not repeat every passed infrastructure drill. |
+| 1 | Target-device acceptance and any resulting layout fixes (004/014) | Owner on Windows Chrome and Microsoft Edge: record device/browser/version, readable layout, search/BIN, focused images, compact results, safe editing on an intended editing device and original download. Use synthetic/demo data for writes. Fix reported failures only; do not repeat every passed infrastructure drill. |
 | 2 | Intended second-admin access and operational recovery (005) | Intended admin independently signs in and confirms the intended role/workflow. Confirm who can recover access; keep identifiers and credentials private. Existing owner/viewer passes do not prove this account. Parked alternate-email/login investigations stay parked. |
 | 3 | Concrete production/cutover decision (004/006) | Prepare and approve exact separate Worker/D1/private R2/Access targets, supported initial users/devices, selected source/verified snapshot, data freeze/copy/readback, independent recovery copy and rollback responsibility. Production targets/credentials are currently unprovisioned or unattested. Preserve development bindings and data. |
 | 4 | Provision and verify the approved production target | After authorization/access: apply reproducible migrations, configure private bindings/access, transfer approved records/originals with checksums, verify counts/FKs/original retrieval and access, and verify cutover/rollback evidence. Do not infer this from a development build labelled Production by Cloudflare. |

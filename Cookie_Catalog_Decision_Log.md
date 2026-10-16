@@ -1,5 +1,13 @@
 # Cookie_Catalog — Decision Log
 
+## First-release browser scope and cutover preparation — October 16, 2026 (Pacific)
+
+Owner explicitly removed Safari/iPhone: first-release support is **Windows Chrome and Microsoft Edge only**. Both actual-device outcomes remain pending; Safari is not a release gate. Earlier broader device lists below are historical. Updated docs/Device_Acceptance.md and current release scope/status accordingly.
+
+Prepared [production cutover proposal](docs/Production_Cutover_Plan.md): proposed separate cookie-catalog-prod Worker/D1, cookie-catalog-prod-private R2 and separate Access application; actual IDs/hostname/access are not provisioned or attested. Exact-copy proposal preserves source/provenance/demo fixtures unless separately reviewed. Fresh frozen-source archive and independent copy, full readback, source deployment and rollback responsibility are explicit. After new production writes, stale development is not a safe automatic rollback target.
+
+Source inspection found development-only config/UI/report/archive labels and archive environment validation. Environment/backup-provenance compatibility and validated current-schema transfer must be resolved before production deployment; this is a concrete preparation finding, not a claim that renaming the Worker is sufficient. No format change, new resource, secret/access grant, paid plan, data transfer, production deployment, merge/tag or schedule/cleanup activation performed. f1cd182 prior reconciliation CI/Workers passed. Continue 004/005/006/014; next unused task remains CC-TODO-015.
+
 ## First-release reconciliation — October 16, 2026 (Pacific)
 
 **Current: v0.1.0-rc.1 deployed to development at 4ca1b1ddfff5745e037549ca5415cdc4bfc1efbe.** Both current-head CI runs (38923760542 / 38923770340) and Workers Build 7571dbaa-043e-460c-a06e-24e1337497d5 passed. Prior authenticated live source/health matched this head, and compact right-pane cards passed visually (four full plus a fifth partial in the observed desktop viewport). Working tree was clean before this documentation update. Retention, fast inline CRUD/Undo, image-first focus and requested compact-card refinement are complete for the development feature cut. Pending-publication/layout wording below is historical.

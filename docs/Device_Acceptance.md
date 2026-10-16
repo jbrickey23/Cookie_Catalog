@@ -2,13 +2,24 @@
 
 Prepared 2026-10-14. Actual owner-device/browser acceptance is not closed by cloud-browser checks.
 
+## Current scope — October 16 owner decision
+
+First-release targets are **Windows Chrome and Microsoft Edge only**. Safari/iPhone is removed from the active release checklist, not failed or passed. Historical observations below remain evidence of earlier scope.
+
+| Browser | Current release outcome |
+| --- | --- |
+| Windows Chrome | Actual device/browser version and focused-layout/edit/download outcomes pending |
+| Windows Edge | Actual device/browser version and focused-layout/edit/download outcomes pending |
+
+Use the short owner check below on these two browsers; do not repeat full recovery drills.
+
 ## October 14 owner-mediated acceptance
 
-Existing owner session displayed Admin / Owner. A separate private-browser viewer session showed read-only access; owner passed tree search, View details and existing-original download with forbidden controls absent. Browser name/version/device for these new observations was not explicitly captured, so do not assign them to Edge or iPhone Safari. Earlier Windows owner evidence and all completed functional passes remain valid. Next device work records remaining exact Chrome/Edge/iPhone targets rather than rerunning every infrastructure check.
+Existing owner session displayed Admin / Owner. A separate private-browser viewer session showed read-only access; owner passed tree search, View details and existing-original download with forbidden controls absent. Browser name/version/device for these new observations was not explicitly captured, so do not assign them to Edge or iPhone Safari. Earlier Windows owner evidence and all completed functional passes remain valid. Next device work records the current Windows Chrome/Edge targets rather than rerunning every infrastructure check.
 
 ## Queued targets and sequencing
 
-Owner specified Chrome and Microsoft Edge on Windows, plus Safari on iPhone on 2026-10-14. “Edge/Explorer” is recorded as modern Edge, with no legacy Internet Explorer support added. These targets are backlog acceptance criteria within CC-TODO-004, not the current implementation priority. Complete the current base-infrastructure follow-ups first; retain actual device verification before release. No compatibility fixes or new device passes are claimed by this update.
+Owner specified Chrome and Microsoft Edge on Windows, plus Safari on iPhone on 2026-10-14. “Edge/Explorer” is recorded as modern Edge, with no legacy Internet Explorer support added. That was the earlier target list; October 16 scope above supersedes it. Current targets are acceptance criteria within CC-TODO-004, not the current implementation priority. Complete the current base-infrastructure follow-ups first; retain actual device verification before release. No compatibility fixes or new device passes are claimed by this update.
 
 ## Evidence and gaps
 
@@ -16,7 +27,7 @@ Owner specified Chrome and Microsoft Edge on Windows, plus Safari on iPhone on 2
 | --- | --- | --- |
 | Assistant cloud Chrome desktop | Owner-authenticated catalog, matched search, original retrieval, archive/local restore, missing-original check, compatible code rollback/roll-forward | Passed for that browser; not a substitute for owner devices |
 | Owner Windows PC | Node v24.21.0/npm.cmd 11.19.0 verified; earlier owner-confirmed UI/search/photo/archive evidence is preserved | Chrome and Edge targeted; exact browser versions and intended-device outcomes pending. Do not reinstall Node or repeat every prior test |
-| Phone/tablet | No completed specific-device acceptance recorded | Safari on iPhone targeted; actual device/version and viewing/editing/upload/download outcomes pending |
+| Phone/tablet | No completed specific-device acceptance recorded | Outside first-release support per October 16 owner decision; no acceptance required for this release |
 | Responsive source setup | app/index.html includes width=device-width, initial-scale=1.0 | Present in source; does not prove mobile usability |
 
 ## Short owner check
