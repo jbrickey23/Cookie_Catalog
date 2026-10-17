@@ -24,16 +24,12 @@
     "secondUserAccessReportedPassed": true,
     "bothRolesExplicitlyReverified": false
   },
-  "remaining": [
-    "CI and approved main merge",
-    "v0.1.0 tag",
-    "final version metadata promotion"
-  ],
+  "remaining": [],
   "productionDataImportApproved": true,
   "productionAppDeploymentApproved": true,
   "cutoverApproved": true,
-  "mainMerged": false,
-  "releaseTagged": false,
+  "mainMerged": true,
+  "releaseTagged": true,
   "closeoutApprovedAt": "2026-10-17T00:17:24Z",
   "productionSoleEditingSite": true,
   "ownerReportedAcceptance": {
@@ -44,5 +40,17 @@
     "managedBackupCompleteOriginals": 592,
     "managedBackupConfirmedAt": "2026-10-17T00:16:29Z"
   },
-  "followUp": "CC-TODO-019 backup pause/resume at 332/592; resumed and verified; root cause unconfirmed"
+  "followUp": "CC-TODO-019 backup pause/resume at 332/592; resumed and verified; root cause unconfirmed",
+  "mainMergeCommit": "c0cb3efa8915d88d95efa28e9dfaec3b4ebd0cda",
+  "releaseTag": "v0.1.0",
+  "releaseUrl": "https://github.com/jbrickey23/Cookie_Catalog/releases/tag/v0.1.0",
+  "productionPromotionCommit": "62e92a16a1e32975ee6bc7f15679183120315411",
+  "manualEditPauseLifted": true,
+  "finalProductionBuild": {
+    "id": "c4a066ba-fb0b-45f9-aa15-d2ed1920478c",
+    "conclusion": "success",
+    "sourceCommit": "62e92a16a1e32975ee6bc7f15679183120315411",
+    "sameTreeAsTag": true,
+    "liveSourceVersionReadbackAfterPromotion": false
+  }
 }

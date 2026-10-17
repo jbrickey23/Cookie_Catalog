@@ -1,5 +1,15 @@
 # Cookie_Catalog — Context
 
+## R1 RELEASED: v0.1.0 — October 16, 2026
+
+PR #1 merged into main at c0cb3efa8915d88d95efa28e9dfaec3b4ebd0cda after both required CI checks and development build passed. Published GitHub release/tag v0.1.0 points to that exact merge commit: https://github.com/jbrickey23/Cookie_Catalog/releases/tag/v0.1.0 . Production-only editing/cutover is approved and effective; the manual pause is lifted. Preserve development for testing, with no real catalog editing there.
+
+Final accepted checks: both users access, browsing/images, Save/refresh, Undo restoring original Notes after refresh, signed-out catalog and direct image authentication, full database schema/4048-row readback, 592 independently downloaded size/hash-verified originals, and completed checked production baseline backup. Source/features are released; no repeat import or approvals needed.
+
+Production final metadata promotion preserves both branch histories at 62e92a16a1e32975ee6bc7f15679183120315411 (tree identical to v0.1.0). See docs/R1_Release_Closeout.md for the latest deployment result and evidence distinctions. GitHub main remains protected; no force updates or branch deletion used.
+
+Next work is after R1: CC-TODO-019 backup pause/resume diagnostics, CC-TODO-018 Change Requests in R1.1, CC-TODO-015 Canva/image standards, optional CC-TODO-016 Slot help. Next unused CC-TODO-020. Keep account recovery credentials private; retain independent recovery copies. Whole-catalog recovery rehearsals require isolated targets. Prior chronological approval-pending statements below are historical.
+
 ## CURRENT: R1 closeout APPROVED — October 16, 2026, 17:17 Pacific
 
 Owner explicitly approved R1 closeout: production is now the sole editing catalog; preserve development for testing, merge release work into main, and tag v0.1.0. This supersedes earlier approval-pending instructions. Do not request these approvals again. Merge/tag execution is recorded in docs/R1_Release_Closeout.md; do not infer success until GitHub confirms.
