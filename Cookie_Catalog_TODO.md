@@ -5,7 +5,7 @@ R1 v0.1.0 released; production is the sole editing catalog. [Release evidence](d
 | ID | Work | Status / next action |
 | --- | --- | --- |
 | CC-TODO-021 | Housekeeping and UX fast fixes | Authorized October 16, 17:34 Pacific; in progress. Current/history split, stale PR review, visible environment/sign-out/Undo and Slot help. |
-| CC-TODO-019 | Backup/restore root cause and reliability | Open. Reproduce/diagnose cloud stall and verify a fix; later successful resume is not resolution. |
+| CC-TODO-019 | Backup/restore root cause and reliability | Open. Progress/lease diagnostics and sanitized timing/error-category logs added. [Investigation](docs/Backup_Reliability_R2.md). Reproduce the cloud stall and verify a fix; later successful resume is not resolution. |
 | CC-TODO-018 | Change Request ingestion | First vertical slice deployed to development (CI passed): private submit/review, owner export and revision-guarded release/TODO assignment; live dev acceptance and operational backup coverage pending. [Workflow](docs/Change_Request_Workflow.md). |
 | CC-TODO-020 | E2E push-button release automation | R2 scenario: Release click is authorization; preflight, deploy, verify, safe rollback and clear result without another final approval. |
 | CC-TODO-022 | Release maintenance gate | Under 020: durable HTTP/scheduled write gate, admission/drain coordination, background-job checks and draft-preserving notice implemented. Machine-auth controller, safe interrupted-worker recovery and live acceptance remain open. [Checkpoint](docs/Release_Automation_R2.md). |
