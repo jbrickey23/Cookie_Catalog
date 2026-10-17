@@ -1,0 +1,48 @@
+{
+  "recordedAt": "2026-10-16T23:37:32Z",
+  "environment": "production",
+  "sourceCommit": "48e8b0adefb2966d7433fdeb8a79873c755d81b5",
+  "versionId": "7c996412-f342-4aa4-aa67-a265564ddf57",
+  "buildId": "2c889231-eedd-442b-9715-bfcec3add4a3",
+  "deploymentEvidence": "owner-supplied successful live deployment log and GitHub successful check",
+  "databaseComparison": {
+    "completeSchemaMatch": true,
+    "completeRowsMatch": true,
+    "tables": 22,
+    "rows": 4048,
+    "foreignKeyViolations": 0,
+    "exportSha256": "73714364c7e799a25aa055054a5bbc4b259f6ea90c02b19197d019537e51c959"
+  },
+  "originals": {
+    "expected": 592,
+    "ownerReportedDownloadedSizeAndSha256Verified": 592,
+    "agentInspectedDownloadedBytes": false,
+    "completeRemoteKeyListingCompared": false
+  },
+  "access": {
+    "ownerBrowseImageCheckReportedPassed": true,
+    "secondUserAccessReportedPassed": true,
+    "bothRolesExplicitlyReverified": false
+  },
+  "remaining": [
+    "CI and approved main merge",
+    "v0.1.0 tag",
+    "final version metadata promotion"
+  ],
+  "productionDataImportApproved": true,
+  "productionAppDeploymentApproved": true,
+  "cutoverApproved": true,
+  "mainMerged": false,
+  "releaseTagged": false,
+  "closeoutApprovedAt": "2026-10-17T00:17:24Z",
+  "productionSoleEditingSite": true,
+  "ownerReportedAcceptance": {
+    "saveRefresh": true,
+    "undoOriginalAfterRefresh": true,
+    "signedOutCatalogBlocked": true,
+    "signedOutDirectImageBlocked": true,
+    "managedBackupCompleteOriginals": 592,
+    "managedBackupConfirmedAt": "2026-10-17T00:16:29Z"
+  },
+  "followUp": "CC-TODO-019 backup pause/resume at 332/592; resumed and verified; root cause unconfirmed"
+}

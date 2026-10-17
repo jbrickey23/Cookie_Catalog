@@ -81,18 +81,37 @@ def prepare(archive, destination):
         migrations = {row["name"] for row in expected["tables"]["d1_migrations"]}
         if migrations != migration_profile(expected["tables"]):
             raise ValueError("Known migration entries must match the schema profile")
-        statements = ["PRAGMA defer_foreign_keys=ON;"]
+        statements = []
         for kind in ("table", "index"):
             statements += [item["sql"].rstrip("; ") + ";" for item in expected["schema"] if item["type"] == kind]
+        pending = []
         for table, rows in expected["tables"].items():
             for row in rows:
-                statements.append(f"INSERT INTO {identifier(table)} ({','.join(map(identifier,row))}) VALUES ({','.join(literal(value) for value in row.values())});")
-        # Cloudflare's documented per-statement limit is 100 KB. Fail before upload.
+                pending.append(f"INSERT INTO {identifier(table)} ({','.join(map(identifier,row))}) VALUES ({','.join(literal(value) for value in row.values())});")
+        # Import services may commit between statements. Emit parents before children,
+        # including self-referencing locations, with enforcement continuously enabled.
+        with sqlite3.connect(":memory:", isolation_level=None) as connection:
+            connection.execute("PRAGMA foreign_keys=ON")
+            for statement in statements:
+                connection.execute(statement)
+            while pending:
+                deferred = []
+                for statement in pending:
+                    try:
+                        connection.execute(statement)
+                    except sqlite3.IntegrityError:
+                        deferred.append(statement)
+                    else:
+                        statements.append(statement)
+                if len(deferred) == len(pending):
+                    raise ValueError("Rows cannot be ordered with immediate foreign-key enforcement")
+                pending = deferred
+            if snapshot(connection) != expected:
+                raise ValueError("Generated SQL failed exact autocommit round-trip")
         if any(len(statement.encode()) > 100000 for statement in statements):
             raise ValueError("SQL statement exceeds the conservative 100000-byte D1 limit")
-        statements.append("PRAGMA defer_foreign_keys=OFF;")
         sql = "\n".join(statements) + "\n"
-        # Exercise the exact generated SQL inside one local transaction, like D1 import.
+        # Also verify execution as a single transaction without deferred constraints.
         with sqlite3.connect(":memory:") as connection:
             connection.execute("PRAGMA foreign_keys=ON")
             connection.executescript("BEGIN;\n" + sql + "COMMIT;")
