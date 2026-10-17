@@ -1,5 +1,17 @@
 # Cookie_Catalog — TODO
 
+## CURRENT: R1 closeout APPROVED — October 16, 2026, 17:17 Pacific
+
+Owner explicitly approved R1 closeout: production is now the sole editing catalog; preserve development for testing, merge release work into main, and tag v0.1.0. This supersedes earlier approval-pending instructions. Do not request these approvals again. Merge/tag execution is recorded in docs/R1_Release_Closeout.md; do not infer success until GitHub confirms.
+
+Final owner acceptance: production Save survived refresh; Undo restored the original Notes after refresh. Both signed-out catalog and direct image URL require authentication. Managed production backup started at 16:48:07 Pacific, paused at 332/592 with storage busy, later resumed and completed; owner supplied exact successful automatic-check message for all 592 originals at 17:16. Backup recovery baseline is complete. Independent pre-cutover recovery TAR, production D1 export, and owner-downloaded hash-verified 592 originals remain retained privately. Existing role configuration and both users' production access are preserved. Owner is release/recovery operator; do not publish credentials, private rows/images or signed export links.
+
+CC-TODO-019 (post-R1): investigate backup pause/resume UX and storage-lease contention. Capture sanitized logs and timing if reproduced; improve progress and bounded resume behavior without weakening serialization/recovery protection. Root cause not confirmed; successful resume is not proof of a specific fault. No routine Save/Delete full-catalog scan may be reintroduced. Logging was discussed/enabled by owner for diagnosis; exact persisted observability settings have not been independently read back.
+
+Runtime app functionality remains the accepted candidate; final package version becomes 0.1.0. No schema/data reimport is needed. Development must not receive real catalog edits. Do not recreate resources, repeat transfer, delete retained snapshots, or restore over live production for testing. Formal whole-catalog disaster-recovery drill remains an operational follow-up requiring an isolated plan, not a live production restore.
+
+After release: Change Requests CC-TODO-018 in R1.1, image/Canva standards CC-TODO-015 deferred, Slot help CC-TODO-016 optional Missing, backup stall CC-TODO-019. Next unused CC-TODO-020. No new R1 features.
+
 ## CURRENT: production deployed; final R1 checks remain — October 16, 2026, 16:37 Pacific
 
 This checkpoint supersedes earlier chronological next steps. Do not repeat provisioning, transfer or deployment approvals. Owner approved production data import at 15:24 and production app deployment at 16:22 Pacific. Paid changes, main merge/tag and final user cutover are not yet approved.

@@ -25,15 +25,24 @@
     "bothRolesExplicitlyReverified": false
   },
   "remaining": [
-    "production source and private-access verification",
-    "reversible Save and Undo/recovery",
-    "production baseline backup",
-    "operational recovery and final cutover review",
-    "approved main merge and release tag"
+    "CI and approved main merge",
+    "v0.1.0 tag",
+    "final version metadata promotion"
   ],
   "productionDataImportApproved": true,
   "productionAppDeploymentApproved": true,
-  "cutoverApproved": false,
+  "cutoverApproved": true,
   "mainMerged": false,
-  "releaseTagged": false
+  "releaseTagged": false,
+  "closeoutApprovedAt": "2026-10-17T00:17:24Z",
+  "productionSoleEditingSite": true,
+  "ownerReportedAcceptance": {
+    "saveRefresh": true,
+    "undoOriginalAfterRefresh": true,
+    "signedOutCatalogBlocked": true,
+    "signedOutDirectImageBlocked": true,
+    "managedBackupCompleteOriginals": 592,
+    "managedBackupConfirmedAt": "2026-10-17T00:16:29Z"
+  },
+  "followUp": "CC-TODO-019 backup pause/resume at 332/592; resumed and verified; root cause unconfirmed"
 }

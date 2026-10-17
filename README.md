@@ -1,6 +1,6 @@
 # Cookie_Catalog
 
-**First feature release candidate: 0.1.0-rc.1.** See [current status and ordered next steps](docs/First_Release_Status.md), plus [release scope, evidence and remaining production decision](docs/Release_Candidate_v0.1.0.md). Routine edits use small record recovery; backup retention is reviewed in-app. Production is not deployed by this candidate.
+**R1 v0.1.0: production accepted; release closeout approved.** Use [Cookie Catalog Production](https://cookie-catalog-prod.j-brickey.workers.dev/) for catalog edits. Development is for testing. See [release closeout](docs/R1_Release_Closeout.md) and [current status](docs/First_Release_Status.md). Routine edits use small record recovery; checked catalog backups remain a separate recovery layer.
 
 Current development: Browse has a responsive master-detail workspace with inline shape/physical inventory editing, staged tags/new shapes, protected Save, guarded owner deletion, and no-command backup/approved recovery. See [reconciled design and implementation](docs/Inline_CRUD_Reconciliation_20261015.md) and the authoritative [current checkpoint](Cookie_Catalog_Context.md). Existing OneNote bins are accepted independently from physical/digital status.
 
