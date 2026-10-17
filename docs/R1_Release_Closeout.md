@@ -13,7 +13,9 @@ Owner approved production-only editing, main merge and v0.1.0 tag on October 16,
 
 ## Release execution
 
-Final package version is 0.1.0. Required CI must pass before merge. Main merge/tag and production release-branch promotion are authorized; execution evidence will be recorded after remote confirmation. Preserve development and recovery branches; no deletion or data reimport is part of closeout.
+Final package version is 0.1.0. Both required CI checks and development build passed on 698de840ba260ecd05e3411fe66ca401a550d97a. PR #1 merged into protected main at c0cb3efa8915d88d95efa28e9dfaec3b4ebd0cda. Published [v0.1.0 release](https://github.com/jbrickey23/Cookie_Catalog/releases/tag/v0.1.0) and tag were independently read back at that exact merge commit. Production-only editing is effective; the manual edit pause is lifted.
+
+Production release branch promotion: 62e92a16a1e32975ee6bc7f15679183120315411 has exactly the tagged tree and preserves the earlier release branch plus main histories. No force update, branch deletion or data reimport was used. GitHub production Workers build c4a066ba-fb0b-45f9-aa15-d2ed1920478c completed successfully. This final check confirms build/deployment success; the accepted owner browser checks were on the earlier source-identical application deployment. Preserve development and recovery branches.
 
 ## Known limitation and follow-up
 
