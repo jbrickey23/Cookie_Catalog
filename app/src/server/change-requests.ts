@@ -1,9 +1,10 @@
+import {requestId,requestHash,validateRequestRecord} from '../request-backup';
 import type {AuthenticatedUser} from './access-identity';
 import type {CatalogEnvironment} from '../catalog-environment';
 const prefix='catalog-requests/v1/';
 const recoveryPrefix='catalog-request-recovery/v1/';
-const validId=(id:unknown):id is string=>typeof id==='string'&&/^request_[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(id);
-const fingerprint=async(raw:string)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+const validId=requestId;
+const fingerprint=requestHash;
 // Small write-ahead recovery copies protect requests without checking the catalog.
 // A copy can represent an attempted write; it is not a committed-change receipt.
 async function protect(files:R2Bucket,id:string,raw:string){
@@ -33,7 +34,20 @@ export async function handleChangeRequests(request:Request,files:R2Bucket,user:A
  if(!['POST','PATCH'].includes(request.method))return reply({error:'Method not allowed'},405);
  if(request.headers.get('Origin')!==new URL(request.url).origin||request.headers.get('X-Cookie-Catalog-Check')!=='change-request')return reply({error:'Same-origin request required'},403);
  if(!request.headers.get('content-type')?.startsWith('application/json'))return reply({error:'JSON required'},415);
- let body:any;try{const reader=request.body?.getReader();let size=0,raw='';const decoder=new TextDecoder('utf-8',{fatal:true});try{if(reader)for(;;){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>16384){await reader.cancel();return reply({error:'Request exceeds 16 KiB'},413);}raw+=decoder.decode(part.value,{stream:true});}raw+=decoder.decode();}finally{reader?.releaseLock();}body=JSON.parse(raw);}catch{return reply({error:'Invalid request JSON'},400);}
+ const missingRecovery=request.method==='POST'&&new URL(request.url).searchParams.get('recover')==='missing';
+ if(missingRecovery&&user.role!=='owner')return reply({error:'Owner access required'},403);
+ const bodyLimit=missingRecovery?65536:16384;
+ let body:any;try{const reader=request.body?.getReader();let size=0,raw='';const decoder=new TextDecoder('utf-8',{fatal:true});try{if(reader)for(;;){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>bodyLimit){await reader.cancel();return reply({error:'Request exceeds the supported size'},413);}raw+=decoder.decode(part.value,{stream:true});}raw+=decoder.decode();}finally{reader?.releaseLock();}body=JSON.parse(raw);}catch{return reply({error:'Invalid request JSON'},400);}
+ if(!body||typeof body!=='object'||Array.isArray(body))return reply({error:'Request JSON must be an object'},400);
+ if(missingRecovery){
+  if(body?.approved!==true||typeof body?.json!=='string'||typeof body?.sha256!=='string')return reply({error:'Review and approve a recovery record.'},400);
+  let record:any;try{if(new TextEncoder().encode(body.json).length>32768||await fingerprint(body.json)!==body.sha256)throw Error('Recovery checksum failed.');record=JSON.parse(body.json);validateRequestRecord(record);if(record.environment!==environment)throw Error('Recovery environment does not match this catalog.');}catch(e){return reply({error:(e as Error).message},400);}
+  try{const key=prefix+record.id+'.json',current=await files.get(key);if(current)return await fingerprint(await current.text())===body.sha256?reply({id:record.id,unchanged:true}):reply({error:'This request already exists with different values; nothing was overwritten.'},409);
+   await protect(files,record.id,body.json);const saved=await files.put(key,body.json,{onlyIf:{etagDoesNotMatch:'*'},httpMetadata:{contentType:'application/json'}});if(!saved)return reply({error:'Request appeared during recovery; review again.'},409);
+   const check=await files.get(key);if(!check||await fingerprint(await check.text())!==body.sha256)return reply({error:'Recovery readback changed; review before retrying.'},409);
+   return reply({id:record.id,recovered:true},201);
+  }catch{return reply({error:'Missing request recovery could not be completed. Retry safely with the same record.'},503);}
+ }
  if(request.method==='PATCH'){
   if(user.role!=='owner')return reply({error:'Owner access required'},403);
   if(!validId(body.id))return reply({error:'Invalid request ID'},400);

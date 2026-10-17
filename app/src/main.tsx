@@ -1,3 +1,4 @@
+import {RequestRecovery} from './RequestRecovery';
 import {ChangeRequest,downloadChangeRequests,type RequestContext} from './ChangeRequest';
 import {AppHeader} from './AppHeader';
 import {RecordRecovery} from './RecordRecovery';
@@ -113,7 +114,7 @@ function App() {
   return <main className="app-shell">
     <AppHeader role={role} environment={environment} onRequest={()=>setRequestOpen(true)} />
     {requestOpen&&<ChangeRequest context={requestContext} onClose={()=>setRequestOpen(false)} />}
-    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests().catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p></details>}
+    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests(environment).catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p><RequestRecovery environment={environment}/></details>}
     <Browse onContextChange={setRequestContext} version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
     {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
