@@ -181,3 +181,15 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .field-help-heading button {font-size:.8rem;padding:.35rem .5rem}
 .field-help-rail a {color:#1769aa;display:inline-block;padding:.25rem 0}
 @media(max-width:760px){.browse-workspace.expanded.with-help{grid-template-columns:1fr}.field-help-rail{position:static}}
+
+/* Housekeeping: visible environment and account/recovery controls. */
+.app-header {display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.app-header h1 {margin-top:0}
+.app-header p {margin:.4rem 0}
+.environment-label {font-size:.9rem;font-weight:650;color:#365944}
+.environment-label.development {color:#84521b}
+.app-header nav {display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding-top:.5rem}
+.app-header a {color:#1769aa}
+.draft-hint {display:block;flex-basis:100%;font-size:.85rem;line-height:1.5;margin-top:.5rem}
+#recent-record-changes {scroll-margin-top:1rem}
+@media(max-width:760px){.app-shell{margin:1.25rem auto}.app-header nav{gap:.8rem}.app-header h1{font-size:2rem}}

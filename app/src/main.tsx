@@ -1,3 +1,4 @@
+import {AppHeader} from './AppHeader';
 import {RecordRecovery} from './RecordRecovery';
 import {ManagedBackups} from "./ManagedBackups";
 import "./styles.css";
@@ -107,8 +108,7 @@ function App() {
   }
   if (!role) return <main style={{fontFamily:"system-ui",padding:"2rem"}}><h1>Cookie Catalog</h1><p role="status">{sessionError || "Checking your access…"}</p></main>;
   return <main className="app-shell">
-    <h1>Cookie Catalog</h1>
-    <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
+    <AppHeader role={role} environment={environment} />
     <Browse version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
     {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
@@ -152,7 +152,7 @@ function App() {
     </button>
     </>}
     </details>}
-    <p>{environment==='production'?'Private production catalog.':'Private development catalog. Production release remains under development.'}</p>
+    <p>{environment==='production'?'Private production catalog.':'Development testing catalog. Use production for your collection.'}</p>
   </main>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);

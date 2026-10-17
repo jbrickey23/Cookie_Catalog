@@ -1,0 +1,4 @@
+import React from 'react';
+export function AppHeader({role,environment}:{role:string;environment:string}) {
+ return <header className="app-header"><div><h1>Cookie Catalog</h1><p className={'environment-label '+environment}>{environment==='production'?'Production · Your live catalog':'Development · Testing only'}</p><p>Access: {role==='owner'?'Admin / Owner':role==='viewer'?'Viewer (read only)':'Editor'}</p></div><nav aria-label="Catalog tools">{role==='owner'&&<button type="button" onClick={()=>window.dispatchEvent(new window.Event('open-record-recovery'))}>Undo saved changes</button>}{environment==='development'&&<a href="https://cookie-catalog-prod.j-brickey.workers.dev/">Open production catalog</a>}<a href="/cdn-cgi/access/logout" title="Ends your Cloudflare Access session, including other protected catalog apps.">Sign out</a></nav></header>;
+}
