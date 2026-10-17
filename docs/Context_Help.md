@@ -24,11 +24,11 @@ Status: foundation implemented; owner requested nice-to-have for R1. Missing tex
 | ReferenceSizeQuickHelp | Ready |
 | WidthQuickHelp | Ready |
 | HeightQuickHelp | Ready |
-| SlotQuickHelp | Missing |
+| SlotQuickHelp | Ready |
 | CutterNotesQuickHelp | Ready |
 | TagsQuickHelp | Ready |
 
-- [ ] Confirm the intended meaning and a useful example for Slot, then replace Missing with reviewed brief/example/full documentation.
+- [x] Author Slot help as an optional within-BIN position label, with a concrete example and no automatic numbering/printing implication. Ready denotes authored content; owner wording review remains open.
 - [ ] Owner reviews Ready wording as the real catalog workflow is exercised; fix reported inaccuracies without reopening passed CRUD/access tests.
 - [ ] Extend the same pattern to other screens/fields when useful; keep their content readiness explicit.
 

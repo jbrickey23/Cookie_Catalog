@@ -1,5 +1,5 @@
 import {requestJson} from "./request-json";
-export type ManagedBackup={id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables?:number;records?:number;exportedAt:string;protectionReleasedAt?:string};
+export type ManagedBackup={lastProgressAt?:string;lastStepMs?:number;id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables?:number;records?:number;exportedAt:string;protectionReleasedAt?:string};
 export async function backupApi<T>(path:string,body?:unknown):Promise<T>{
  return requestJson<T>('/api/backups'+path,{method:body===undefined?'GET':'POST',cache:'no-store',headers:{'content-type':'application/json','X-Cookie-Catalog-Check':'managed-backup'},...(body===undefined?{}:{body:JSON.stringify(body)})},body===undefined||/\/(advance|fresh|preview)$/.test(path));
 }

@@ -1,5 +1,6 @@
+import {backupDiagnostic,backupErrorCode} from './backup-diagnostics';
 import {catalogEnvironment,type CatalogEnvironment} from '../catalog-environment';
-import {withBackupStorageLock,assertNoRetention,retentionInProgress} from './backup-storage-lock';
+import {withBackupStorageLock,assertNoRetention,retentionInProgress,backupStorageStatus} from './backup-storage-lock';
 import {createArchiveManifest} from './archive-backup';
 import {sha256,BACKUP_TABLES,REVIEW_TABLES,IMPORT_TABLES} from './development-backup';
 import type {ArchiveObject} from '../archive-format';
@@ -13,7 +14,7 @@ const hex=(b:ArrayBuffer)=>Array.from(new Uint8Array(b),n=>n.toString(16).padSta
 const digest=(v:unknown)=>sha256(new TextEncoder().encode(JSON.stringify(v)));
 type Payload={environment:string;database:{schema:{type:string;name:string;tbl_name:string;sql:string|null}[];tables:Record<string,Record<string,any>[]>};objects:ArchiveObject[]};
 type Manifest={format:string;version:number;exportedAt:string;payloadJson:string;payloadSha256:string};
-export type BackupJob={id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables:number;records:number;exportedAt:string;createdBy:string;manifestSha256:string;copyPlanSha256?:string;protectionReleasedAt?:string;protectionReleasedBy?:string};
+export type BackupJob={id:string;kind:'normal'|'pre-change';status:'copying'|'complete'|'failed';error?:string;offset:number;objects:number;bytes:number;tables:number;records:number;exportedAt:string;createdBy:string;manifestSha256:string;copyPlanSha256?:string;lastProgressAt?:string;lastStepMs?:number;protectionReleasedAt?:string;protectionReleasedBy?:string};
 async function read<T>(files:R2Bucket,path:string):Promise<{value:T;etag:string}|null>{const object=await files.get(path);if(!object)return null;if(object.size>18*1024**2)throw Error('Backup metadata limit exceeded.');return {value:await object.json<T>(),etag:object.etag};}
 async function put(files:R2Bucket,path:string,value:unknown,etag?:string){const saved=await files.put(path,JSON.stringify(value),{httpMetadata:{contentType:'application/json'},...(etag?{onlyIf:{etagMatches:etag}}:{})});if(!saved)throw Error('Backup progress changed. Refresh and resume.');return saved;}
 async function source(files:R2Bucket,id:string){if(!idPattern.test(id))throw Error('Choose a valid backup.');const raw=await files.get(key('manifests',id));if(!raw||raw.size>16*1024**2)throw Error('Backup manifest is missing or oversized.');const bytes=new Uint8Array(await raw.arrayBuffer()),manifest=JSON.parse(new TextDecoder().decode(bytes)) as Manifest;if(manifest.format!=='cookie-catalog-archive'||manifest.version!==1||await sha256(new TextEncoder().encode(manifest.payloadJson))!==manifest.payloadSha256)throw Error('Backup manifest checksum failed.');return {bytes,manifest,payload:JSON.parse(manifest.payloadJson) as Payload};}
@@ -56,6 +57,7 @@ export async function managedBackupObjects(files:R2Bucket,job:BackupJob){
 async function checkedObject(files:R2Bucket,o:ArchiveObject){const object=await files.head(objectKey(o));if(!object||object.size!==o.byteSize||!object.checksums.sha256||hex(object.checksums.sha256)!==o.sha256)throw Error('A managed original failed its stored checksum.');return object;}
 export async function advanceManagedBackup(files:R2Bucket,id:string){return withBackupStorageLock(files,locked=>advanceManagedBackupUnlocked(locked,id));}
 async function advanceManagedBackupUnlocked(files:R2Bucket,id:string){
+ const startedAt=Date.now();
  const record=await read<BackupJob>(files,key('jobs',id));if(!record)throw Error('Backup job not found.');if(record.value.status==='complete')return record.value;
  const job=record.value,plan=await copyPlan(files,job);
  for(const o of plan.objects.slice(job.offset,job.offset+4)){
@@ -64,7 +66,7 @@ async function advanceManagedBackupUnlocked(files:R2Bucket,id:string){
   await checkedObject(files,o);job.offset++;
  }
  if(job.offset===job.objects){await put(files,key('receipts',id),{format:'cookie-catalog-managed-backup-receipt',version:1,id,manifestSha256:job.manifestSha256,payloadSha256:plan.payloadSha256,objects:job.objects,bytes:job.bytes,verifiedAt:new Date().toISOString(),databaseForeignKeysChecked:true,originalChecksumsChecked:true,independentCopy:false});job.status='complete';}
- await put(files,key('jobs',id),job,record.etag);return job;
+ job.lastProgressAt=new Date().toISOString();job.lastStepMs=Date.now()-startedAt;await put(files,key('jobs',id),job,record.etag);backupDiagnostic('copy-step',{durationMs:job.lastStepMs,offset:job.offset,objects:job.objects});return job;
 }
 export async function completeBackup(files:R2Bucket,id:string){const job=await read<BackupJob>(files,key('jobs',id)),receipt=await read<{manifestSha256:string}>(files,key('receipts',id));if(!job||job.value.status!=='complete'||!receipt||receipt.value.manifestSha256!==job.value.manifestSha256)throw Error('Choose a completed, verified backup.');const data=await source(files,id);if(await sha256(data.bytes)!==job.value.manifestSha256)throw Error('Backup receipt checksum failed.');return {...data,job:job.value};}
 export async function assertFreshBackup(db:D1Database,files:R2Bucket,id:string){await assertNoRetention(files);const saved=await completeBackup(files,id);if(saved.job.protectionReleasedAt)throw Error('This recovery point was released from protection. Take a new protected backup before applying.');const current=JSON.parse(new TextDecoder().decode(await createArchiveManifest(db,files,catalogEnvironment(saved.payload.environment)))) as Manifest;if(current.payloadSha256!==saved.manifest.payloadSha256)throw Error('Catalog changed after this backup. Create a fresh automatic backup before applying.');return saved;}
@@ -130,7 +132,7 @@ export async function scheduledBackups(db:D1Database,files:R2Bucket,now=new Date
  if(await retentionInProgress(files)){const {advanceRetention,retentionState}=await import('./backup-retention');const job=await retentionState(files);if(job?.status==='running')await advanceRetention(files).catch(()=>{});return;}
  if(await restoreInProgress(files)){const state=await read<Restore>(files,lockKey);if(state?.value.paused)return;try{await advanceManagedRestore(db,files);}catch(error){if(/storage is busy|cleanup is in progress/i.test((error as Error).message))return;const current=await read<Restore>(files,lockKey);if(current&&state&&current.etag===state.etag)await put(files,lockKey,{...current.value,paused:true,lastError:(error as Error).message},current.etag);}return;}
  const jobs=await listManagedBackups(files),pending=[...jobs].reverse().find(j=>j.status==='copying');
- if(pending){try{await advanceManagedBackup(files,pending.id);}catch(error){if(/progress changed|storage is busy|cleanup is in progress/i.test((error as Error).message))return;const item=await read<BackupJob>(files,key('jobs',pending.id));if(item&&item.value.status==='copying'&&item.value.offset===pending.offset)await put(files,key('jobs',pending.id),{...item.value,status:'failed',error:(error as Error).message},item.etag);}return;}
+ if(pending){try{await advanceManagedBackup(files,pending.id);}catch(error){backupDiagnostic('scheduled-error',{code:backupErrorCode(error),offset:pending.offset,objects:pending.objects});if(/progress changed|storage is busy|cleanup is in progress/i.test((error as Error).message))return;const item=await read<BackupJob>(files,key('jobs',pending.id));if(item&&item.value.status==='copying'&&item.value.offset===pending.offset)await put(files,key('jobs',pending.id),{...item.value,status:'failed',error:(error as Error).message},item.etag);}return;}
  const record=await read<Schedule>(files,scheduleKey);if(!record?.value.enabled)return;
  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(now),value=(type:string)=>parts.find(p=>p.type===type)!.value;
  const day=value('year')+'-'+value('month')+'-'+value('day');if(Number(value('hour'))<record.value.hour||record.value.lastStartedDay===day)return;
@@ -141,7 +143,7 @@ export async function handleManagedBackups(request:Request,db:D1Database,files:R
  try{
   const path=new URL(request.url).pathname.slice('/api/backups'.length);
   if(path==='/retention'||path.startsWith('/retention/')){const {handleBackupRetention}=await import('./backup-retention');return handleBackupRetention(request,files,subject);}
-  if(request.method==='GET'&&!path)return json({cleanupActive:await retentionInProgress(files),schedule:(await read<Schedule>(files,scheduleKey))?.value??{enabled:false,hour:2,timezone:'America/Los_Angeles'},backups:await listManagedBackups(files),restore:await restoreInProgress(files)?(await read<Restore>(files,lockKey))!.value:null});
+  if(request.method==='GET'&&!path)return json({diagnostics:{serverTime:new Date().toISOString(),storage:await backupStorageStatus(files)},cleanupActive:await retentionInProgress(files),schedule:(await read<Schedule>(files,scheduleKey))?.value??{enabled:false,hour:2,timezone:'America/Los_Angeles'},backups:await listManagedBackups(files),restore:await restoreInProgress(files)?(await read<Restore>(files,lockKey))!.value:null});
   if(request.method!=='POST')return json({error:'Method not allowed'},405);
   const reader=request.body?.getReader();let text='',size=0;const decoder=new TextDecoder('utf-8',{fatal:true});try{if(reader)for(;;){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>4096){await reader.cancel();throw Error('Backup request is too large.');}text+=decoder.decode(part.value,{stream:true});}text+=decoder.decode();}finally{reader?.releaseLock();}const body=text?JSON.parse(text):{};
   if(path==='/schedule'){if(typeof body.enabled!=='boolean'||!Number.isInteger(body.hour)||body.hour<0||body.hour>23)throw Error('Choose a daily backup hour from 0 to 23.');const prior=(await read<Schedule>(files,scheduleKey))?.value;await put(files,scheduleKey,{...prior,enabled:body.enabled,hour:body.hour,timezone:'America/Los_Angeles'});return json({saved:true});}
