@@ -1,0 +1,26 @@
+{
+  "format": "cookie-catalog-saved-review-validation",
+  "version": 1,
+  "appTests": 78,
+  "offlineHelperTests": 16,
+  "pythonRecoveryTests": 8,
+  "htmlAuditTests": 3,
+  "schemaAndSyntheticImport": "passed",
+  "typeCheckAndBuild": "passed",
+  "legacyBackupTables": 16,
+  "reviewBackupTables": 20,
+  "realSourceLocalRoundTrips": [
+    343,
+    10
+  ],
+  "realSourceCatalogWrites": 0,
+  "activationSQL": "Local D1 legacy upgrade and repeat application passed; existing catalog rows preserved",
+  "concurrency": "Racing same-revision saves produce one success and one conflict; version/item snapshots remain atomic",
+  "recovery": "New review version and preview history restored through TAR/helper, JSON and generated SQL in isolated local D1; exact manifest recovered",
+  "constraintFunctionPolicy": "Only json_valid and length allowed during helper schema validation; randomblob schema denied",
+  "deviceAcceptance": false,
+  "liveMigrationApplied": false,
+  "liveSourceUploaded": false,
+  "liveCatalogImported": false,
+  "productionRelease": false
+}

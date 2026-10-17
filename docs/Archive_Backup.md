@@ -10,7 +10,7 @@ Next: CC-TODO-004 development code-rollback/intended-device acceptance; checklis
 
 Approved deletion of the original two synthetic attachments passed; one STL was re-uploaded under a new identity for recovery and remains private. Live original-containing TAR local restore passed: 16 tables, 14 rows, one 5400084-byte original with matching bytes, valid relationships, SQLite integrity and completion receipt. Implementation 1ea5c0e matched the deployed SHA and passed 45 tests/build plus GitHub CI.
 
-Download small TAR archive now supports complete archives up to 32 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
+Download small TAR archive now supports complete archives up to 64 MiB when direct folder saving is unavailable. The direct-save 1 GiB originals ceiling and old JSON limits are unchanged. No payload/database/original is in GitHub.
 
 The controlled live missing-original detection/recovery gate subsequently passed using a unique disposable fixture; see current acceptance above. Cloudflare restore, sync/retention, collaborators, release and real-sample gates remain open. Preserve deferred alternate-email testing and future OneNote/photo/Canva work. Full evidence and recovery checksums: docs/Infrastructure_Verification.md.
 
@@ -18,7 +18,7 @@ Updated 2026-10-14. Local integration/restore passed; live database-only TAR sav
 
 ## Browser workflow and limits
 
-In desktop Chrome/Edge, use Save catalog archive and choose a timestamped TAR in the owner's private OneDrive backup folder. Keep catalog edits, uploads and deletions idle until completion. File picker requires HTTPS and user gesture. If direct folder saving is unavailable or denied, choose Download small TAR archive. It buffers at most 32 MiB of complete TAR data and refuses larger/broken streams before initiating a download. The larger direct-save path does not buffer a 1 GiB archive as one Blob.
+In desktop Chrome/Edge, use Save catalog archive and choose a timestamped TAR in the owner's private OneDrive backup folder. Keep catalog edits, uploads and deletions idle until completion. File picker requires HTTPS and user gesture. If direct folder saving is unavailable or denied, choose Download small TAR archive. It buffers at most 64 MiB of complete TAR data and refuses larger/broken streams before initiating a download. The larger direct-save path does not buffer a 1 GiB archive as one Blob.
 
 Application ceilings: 25 MiB/original, 1000 originals, 1 GiB original bytes total, 10000 rows/table and 16 MiB manifest. These are ceilings, not a tested production capacity. A 5400084-byte original-containing archive has now been downloaded live and restored locally; a separate 26-original collection is locally tested. Provider CPU/D1 response limits and intended devices still need live performance checks. Upload/download original validation is still bounded and buffered per file, not arbitrary multipart model upload.
 

@@ -48,11 +48,16 @@ jobs:
         if: ${{ hashFiles('app/package.json') != '' }}
         run: |
           python tests/test_schema.py
+          python tests/test_cloudflare_restore.py
+          python tests/test_onenote_audit.py
           python samples/import_synthetic.py
       - uses: actions/setup-node@v4
         if: ${{ hashFiles('app/package.json') != '' }}
         with:
-          node-version: "22"
+          node-version: "24"
+      - name: Validate offline backup and staging helpers
+        if: ${{ hashFiles('app/package.json') != '' }}
+        run: node --test tools/tests/*.test.mjs
       - name: Validate application tests, TypeScript and build
         if: ${{ hashFiles('app/package.json') != '' }}
         working-directory: app

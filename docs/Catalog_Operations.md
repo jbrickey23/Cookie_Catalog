@@ -1,0 +1,31 @@
+# CC-TODO-002 — Owner catalog operations
+
+## October 15 — Conditional saves and review preparation
+
+GET /api/catalog/{kind}/{id} now returns the exact record revision in JSON and ETag. PUT requires that single revision in If-Match. Missing revision returns 428; a stale revision or an intervening atomic compare-and-update conflict returns 412 without overwriting the other edit. UPDATE/INSERT RETURNING returns exactly that write's saved row, avoiding a separate readback race. The browser loads the revision when opening Edit and retains its form on error. Refresh old tabs after the upgrade. No schema change is required. Local D1 tests cover stale clients and a write racing after precondition evaluation; DOM tests confirm draft retention.
+
+Linked-record selectors now follow API pages beyond 200 with a visible 10,000-choice limit. /api/readiness is an authenticated read-only paged metadata review endpoint; it does not verify original availability, analyze images or save review decisions. Admin/editor local manifest preparation makes no live import. See [staging](Import_Staging.md).
+
+Catalog continuation, 2026-10-13: owner-only create/full-update/read/literal-search routes and browser controls now cover shapes, designs, flat locations, physical cutters (millimeters/quantity/origin/location) and design/shape links (tested/proposed, standard/flip/combination, instructions/rotation/mirror/width range). Existing schema reused; no migration or provisioning. Generated stable IDs, parameterized queries, bounded JSON/field validation and same-origin mutations; 200-row search pagination. Local 32 Node tests and TypeScript/Vite frontend/Worker build passed. Owner confirmed the live shape create/edit/refresh/search workflow; remaining physical cutter/location/mapping acceptance is open. Record deletion, tags/visual search, full import and collaborator editing remain unimplemented.
+
+## Routes and validation
+
+GET /api/catalog/{shapes|designs|locations|physical_cutters|design_shape_links} supports literal q search (120 characters) and offset pagination (200 records/page). Search covers shape/design/location names and notes, shape maker/source links, design source links, physical cutter shape/location/notes/origin/dimensions/quantity, and mapping shape/design names/use/status/instructions. Each result includes searchHits entries (field, label, snippet, start, length). Snippets bound context around the first match in each field; browser uses escaped React text and mark elements, never HTML injection. Empty browse queries have no hit explanations. Predicates are per field, so phrases cannot hit across unrelated values. Matching follows SQLite lower(): ASCII case-insensitive, non-ASCII literal. Numeric snippets use SQLite CAST text (for example a REAL may display 90.0). This is not tag/visual search. GET /api/catalog/:kind/:id retrieves one record. POST creates a generated stable ID; PUT /:id is a complete field replacement, so omitted optional values become null. Unknown fields, invalid links, malformed/oversized JSON (>16 KiB), enum/number/URL/range errors fail before writing. Dimensions positive and <=10000 mm; quantity integer 0..10000; mirror 0/1; min/max compatibility ordered. Foreign keys and unique location/mapping constraints remain enforced. Linked-record selectors currently show the first 200 choices; large-catalog selection needs searchable pickers.
+
+All routes require verified owner identity; POST/PUT additionally require exact Origin and X-Cookie-Catalog-Check: catalog. SQL identifiers come only from fixed server definitions and values are bound. Record deletion is deliberately unavailable until linked-data lifecycle safeguards are designed. No collaborator authorization exists yet. Refresh before retrying an uncertain create request; automatic retries could create duplicates.
+
+## Browser workflow
+
+Choose Cutter shapes; create TEST tree with notes Christmas. Search for Christmas, edit its name/notes, then reload and search again. Create a design and optional storage location. Add a physical cutter by choosing its shape, location, dimensions, quantity and origin. In Design/cutter mappings choose design and shape, record proposed/tested compatibility and standard/flip/combination instructions. Photo/original links are managed separately under Private files and target choices refresh after a record save.
+
+Keep development examples distinct from real inventory. Larger TAR archives now permit up to 1 GiB originals total/1000 files and 25 MiB/file; legacy JSON remains 4 MiB total/25 objects. Live larger archive/recovery and production needs must be verified before real assets.
+
+## Evidence and remaining acceptance
+
+35 Node tests passed, including actual Miniflare D1 create/link/edit/retrieve/search, FK checks, missing/duplicate links, invalid enums/dimensions/URLs/body/fields, auth/origin enforcement, literal SQL-safe search and 201-row pagination; TypeScript/Vite frontend/Worker build passed. No migration changes; earlier SQLite schema/import validation remains applicable.
+
+Owner live shape creation/edit/search across refresh passed; live hit explanations passed; remaining location/physical-cutter/mapping workflows are pending. Remaining: deletion, tags/visual browse/search, multiple-component/sizing UX, representative real samples, import, collaborator roles, usable large-catalog selectors, concurrency/version conflict handling and production acceptance.
+
+## Metadata boundary
+
+2026-10-13 search refinement: owner confirmed the live test shape create/edit/refresh/search flow passed, then requested an explanation of each search match. Results now include labelled matched fields with a bounded highlighted excerpt; all matching fields are reported. Search is literal within each field rather than concatenating unrelated field values. Existing names/notes plus maker/source link, physical cutter location/origin/width/height/quantity, and mapping names/use/status/instructions are searchable. Metadata is stored in D1 catalog rows and does not rewrite photo/STL/3MF originals. Tag tables exist; tag entry/search UI, custom metadata and embedded-file metadata extraction remain unimplemented. Local 35 Node tests and type-check/frontend/Worker build passed; live highlight acceptance pending. No schema migration, provisioning, paid resource or production change.

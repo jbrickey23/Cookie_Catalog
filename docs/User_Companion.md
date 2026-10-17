@@ -1,16 +1,85 @@
 # Cookie Catalog — User Companion
 
+## Browse and edit in place
+
+Select a result card to open details in the large pane on the left. Remaining records appear in a smaller two-column scrolling pane on the right, showing only each image, name and location. On the side-by-side desktop layout that scrolling pane extends to the bottom of the focused card. Both panes use matching 200 × 200-pixel thumbnail areas, fitting the full design without cropping; narrow screens may reduce their width. Click anywhere on a thumbnail card (or use its keyboard-accessible View control) to focus it; unsaved edits are checked before switching. Attached cutter images appear at the top of the focused card, above the editable fields. Click a value to change it. Save/Cancel appear only while values differ; switching or closing asks before discarding a draft. Save keeps a small recovery copy of the affected entry automatically; it does not wait for a full-catalog backup or file scan. Tags can be searched or drafted here; new tags and shapes are saved only with the entry. Cancel creates no vocabulary. Existing shape values and files are shared across size variants. New physical cutter can select an existing shape or draft a named new shape; New shape reference adds no physical stock.
+
+BIN/location uses an existing assignment. A selected physical location overrides the original OneNote assignment; clearing it returns to that source assignment. Location does not confirm physical ownership or printing. Admin deletion asks for confirmation, protects the current state, and blocks linked records rather than deleting related inventory/files/history. Conflicts keep your draft; compare with the latest record before retrying. Designs and compatibility mapping management remain in the advanced catalog section.
+
+
+## Open an image without leaving your card
+
+In a focused cutter card, click any available photo or its Open image link. It requests a consistent 500 × 500-pixel read-only viewer window. The original image fits the viewing area without stretching or cropping and resizes with the window, so you can inspect, snip or save it. A Download original link is also available inside the viewer. Pixel size is a viewing preference, not the cutter's measured size or a guaranteed physical size on every display. Close that window to continue at the same focused card; unsaved field edits stay in the catalog tab. Download original remains beside every available file. The browser may choose a tab instead of a window or require allowing pop-ups for this site. Ctrl-click/open-in-new-tab remains available. Viewing or saving a local copy does not update the catalog original; changing the stored file still uses the website attachment workflow.
+
+## Search multiple terms or show the whole catalog
+
+Search matches names, assigned/source BINs and shape tags. Enter `cat Holiday` (or `cat AND Holiday`) to require both terms; each can match a different field. `"black cat" Holiday` keeps black cat together as one phrase. Search is case-insensitive substring matching, not an OR/any-term search. Up to eight terms/phrases and 120 characters are supported. A tag must actually be assigned; search does not infer holidays or objects from image contents.
+
+Reset filters clears typed/submitted search, record-type selection, demo visibility and page position, returning to the default full catalog with demonstration rows hidden. It checks for unsaved focused-card edits before switching, just like selecting another card.
+
+## Field help while editing
+
+Hover a focused-card field label or its ? link for a short explanation and example. You can also reach ? with the keyboard; Escape closes the popup. Click ? or Full documentation to open a separate HTML field guide. Closing the guide returns you to the same card, with unsaved values retained. Help being prepared means the field's explanation is still Missing in the content tracker; it does not disable the field.
+
+## Undo a routine record change
+
+Admin/owner can expand **Undo recent record changes**, select **Review change**, and then **Undo this change** after reviewing it. This restores that entry's previous values when its current saved state still matches the recorded result. Newer changes and new linked records block undo. Failed attempts may appear in the list but cannot overwrite unrelated state. Images and originals stay shared and in place. Undo also retains a recovery copy of the values it replaces.
+
+## Backups and recovery from inside the app
+
+Use the Backups and recovery panel. **Back up now** saves and checks a private app-managed snapshot. No CMD, file download or pasted reference is required. **Back up and import confirmed cutters** automatically creates and checks its protected snapshot before importing. The advanced existing-backup option is optional compatibility support.
+
+For recovery, choose **Review restore**, review the selected snapshot and current physical-cutter counts, then **Approve restore**. The app protects the current state first. It holds catalog maintenance until the selected data/originals and database readback are consistent. Interrupted operations can be resumed, or rolled back to their automatic pre-restore snapshot after approval. Publishing the app does not restore your data.
+
+Daily fresh backups are off initially. Enable them and save a Pacific-time hour to schedule them. Approved work resumes in the background if the browser closes. Complete/checked snapshots are shown in the list. Open **Storage and backup cleanup** to see storage usage and review selected removals. The newest checked points stay protected. Older protected points require reviewed protection release before a separate cleanup approval. Incomplete jobs need an explicit discard acknowledgement. Approved cleanup resumes if the page closes and preserves shared files, live originals and record Undo history. App-managed snapshots share the existing private storage provider; independent OneDrive/off-provider copies remain a separate protection layer. See [managed backups](App_Managed_Backups.md).
+
+## Bins and Physical/Digital are separate
+
+The bin identified by OneNote is the recorded location. It needs no extra confirmation. Existing imports use that bin automatically; new imports record it. If a cutter moves or the source was incorrect, edit its Storage location. The editor's Use OneNote bin option retains the inherited assignment. A chosen storage location overrides it.
+
+Physical / Digital / Both describes the collection status independently. Digital entries can have an assigned bin without claiming that a physical cutter already exists. A bin assignment never proves physical ownership. Recorded locations are complete in the review queue; missing sizes, originals and other checks remain separate.
+
+## Quickly confirm Physical / Digital / Both
+
+Open Import preparation workspace, list/open the existing saved review, then choose Open quick verification. Search by name or bin and review thumbnails/source evidence. Physical means an owned cutter; Digital records a source reference, not an original STL/3MF on file. Both records both classifications.
+
+Choose Confirm safe suggestions in this group to confirm all matching unconfirmed entries, including other pages. Change individual choices as needed. Sets, size variants, possible duplicates and unknown suggestions stay for detailed review. Not-printed/not-purchased evidence blocks physical stock until explicitly corrected under Review details.
+
+Save checklist decisions keeps your work without creating inventory. Admin/owner can supply a verified protected pre-change backup reference, check its confirmation, then choose Save decisions and import confirmed cutters. The app saves decisions, plans batches and imports eligible individual cutters; blocked entries stay for review. Digital-only choices create no stock or originals. Existing source shapes/photos are reused, already imported entries are skipped, and catalog browsing refreshes. Keep edits idle while importing. If a request fails, reopen the latest review; completed source mappings prevent duplicate inventory on retry. Missing measurements and locations remain collection tasks.
+
+This is development functionality; actual device and owner acceptance still apply. See [Quick verification](Quick_Verification.md).
+
+## Save your import review work
+
+After the saved-review development activation, Import preparation workspace can save and reopen a prepared review across sessions. Save new review keeps classifications, ownership, quantity unknowns, Bin/optional Slot, longest-edge reference size, original size labels, source references and review notes. Download reviewed manifest still gives you a separate copy. Save review changes retains earlier versions and protects against overwriting somebody else's work.
+
+Record import preview summarizes gaps in a saved version. This does not create inventory or upload originals. Earlier versions can be opened as drafts; saving creates a new version. Changing item type resets ownership/quantity assertions and completion, retaining applicable source notes. Actual bulk catalog import remains a separate next step. See [saved review instructions](Saved_Import_Reviews.md).
+
 Updated October 14, 2026. This guide describes the current development app and will be updated when its behavior changes.
+
+## Access roles
+
+Admin and owner currently have identical catalog permissions: all existing editing, file deletion, backup/export and maintenance controls. Viewer access is read only: browse, search, view record details and download originals. Viewers do not receive editing, upload, deletion, backup/export or maintenance controls. Accounts are managed through private Cloudflare settings; there is no user-management screen in the app. Catalog roles do not grant Cloudflare dashboard access.
 
 ## Start here
 
 Cookie Catalog helps you find a decorating design, identify the cutter shape it uses, locate a physical cutter, and retrieve its photo or printable original.
 
-The current site is a private development version. Use clearly labelled TEST or DEMO examples while acceptance work continues. Owner sign-in works; access for additional people is still being developed.
+The current site is a private development version. Use clearly labelled TEST or DEMO examples while acceptance work continues. Owner sign-in works. Approved admin/viewer accounts are configured privately. Existing-owner and viewer sign-in/read-only workflows passed owner checks; the second admin's separate sign-in remains pending.
 
 Open the development site at https://cookie-catalog-dev.j-brickey.workers.dev/ and use its email-code sign-in. Enter sign-in codes on the sign-in page, never in a chat.
 
 For a first example, create a shape, a storage location, a physical cutter, a design, and a mapping between the design and shape. Add originals afterward under Private files.
+
+## Find missing catalog details
+
+Catalog review queue shows physical cutters, printable files, designs and unclassified shapes. Open an item to see missing or unverified dimensions, location, images, scale reference or provenance. Existing values are not automatically verified. Printable-only entries do not request a physical storage location. This queue is read only and does not save completion decisions yet.
+
+Admins/editors can expand Import preparation workspace to open a prepared JSON manifest. Classify an item, split another item from the same source page, enter dimensions/location, label source-file references and record review notes/evidence. Download reviewed manifest to keep changes. It stays in the current tab until saved; no manifest or source payload is uploaded and no live import occurs. Viewers do not receive this workspace. Keep original exports and downloaded drafts private. See [workflow](Catalog_Completion_Workflow.md) for details.
+
+## Avoid overwriting another editor
+
+Edit opens the latest saved record. If someone changes it before you save, your save is refused and your draft stays in the form. Copy your draft, reopen the latest record and compare the changes before saving. After an application upgrade, refresh older tabs before beginning a new edit. Unsaved-change prompts help when switching records/sections, but keep a copy before leaving a page.
 
 ## What each record means
 
@@ -117,6 +186,8 @@ Storage cleanup checks for originals without catalog metadata after an interrupt
 GitHub holds application source and instructions. Full catalog archives and originals belong in a private backup folder, such as your personal OneDrive Cookie_Catalog/Backups folder.
 
 Keep edits, uploads and deletions idle while creating a backup.
+
+Approved backup routine: Jay saves a complete TAR to private OneDrive after meaningful catalog changes and before imports or bulk edits/deletions. Keep the latest seven normal backups plus a protected pre-change backup until the changes and recoverability are verified. Retention is manual; automatic deletion is not enabled. A backup helper with an optional PowerShell launcher is implemented under CC-TODO-012 and awaits Windows acceptance. See [Backup helper](Backup_Helper.md). It validates/copies TARs, writes receipts and reviews retention without deleting backups.
 
 | Control | When to use it |
 | --- | --- |

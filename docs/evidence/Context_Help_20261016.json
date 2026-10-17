@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-16",
+  "environment": "development",
+  "applicationCommit": "2de1175d2c5b3743b008137eed9a6d23221305c3",
+  "appTests": 149,
+  "buildAndTypecheck": "passed",
+  "ci": "both sqlite checks succeeded",
+  "workersBuild": "d3f6d035-11d8-4428-9e9f-a6126d4f90a1",
+  "workersVersion": "238ee948-aefb-4510-875c-fea0165b6d07",
+  "liveCloudChrome": {
+    "binQuickHelp": "brief, example and Full documentation displayed on keyboard focus",
+    "fullGuide": "opened separate authenticated HTML page at /api/help/fields#bin with complete BIN guidance",
+    "closingGuide": "same focused catalog card retained",
+    "escapeDismissal": "passed",
+    "missingHelp": "Slot displayed help being prepared and full-guide link",
+    "catalogWrites": false,
+    "originalFileWrites": false
+  },
+  "content": {
+    "Ready": 12,
+    "Missing": [
+      "SlotQuickHelp"
+    ],
+    "task": "CC-TODO-016",
+    "r1ContentCompletionRequired": false
+  },
+  "precedingSearchAcceptance": {
+    "applicationCommit": "28d13353543b033f403eb42e3bb5ee5829e06c6f",
+    "catResults": 5,
+    "catHolidayResults": 0,
+    "resetDefaultCatalogCount": 344,
+    "tagOrRecordWrites": false
+  },
+  "limits": [
+    "Owner-confirmed Chrome/Edge and intended-admin acceptance remain prior evidence, not a new per-browser help test.",
+    "Hover behavior covered by local interaction tests; live check used keyboard focus and full-guide navigation.",
+    "Help Ready/Missing describes guidance content, not a catalog field value."
+  ]
+}

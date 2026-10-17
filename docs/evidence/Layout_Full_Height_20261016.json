@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-16",
+  "environment": "development",
+  "applicationCommit": "863e2f27d8edf06e76ff3654cdc39ff0134ce7fc",
+  "workersBuild": "6737c854-cacc-431e-9cfd-c9c36dcf5595",
+  "workersVersion": "5a416e43-e9c5-4dd8-8a58-991f012031d5",
+  "ci": "both sqlite checks and Workers build succeeded",
+  "buildAndTypecheck": "passed",
+  "liveCloudChrome": {
+    "focusedCard": {
+      "top": 231.953125,
+      "bottom": 1983.359375,
+      "height": 1751.40625
+    },
+    "resultsPane": {
+      "top": 231.953125,
+      "bottom": 1983.359375,
+      "height": 1751.40625,
+      "clientHeight": 1751,
+      "scrollHeight": 3459
+    },
+    "focusedImageAreas": [
+      {
+        "width": 200,
+        "height": 200
+      },
+      {
+        "width": 200,
+        "height": 200
+      }
+    ],
+    "firstScrollThumbnail": {
+      "width": 200,
+      "height": 200
+    },
+    "paneBottomScreenshot": "captured privately",
+    "catalogWrites": false,
+    "originalFileWrites": false
+  },
+  "limits": [
+    "Desktop cloud-browser observation; narrower responsive layouts retain bounded stacked scrolling.",
+    "Display sizing only: no physical size or resampling of originals."
+  ]
+}

@@ -1,5 +1,144 @@
 # Cookie_Catalog — Decision Log
 
+## Optional field context help and content readiness — October 16, 2026 (Pacific)
+
+Owner requested hover context help with a brief explanation/example and a link to full HTML documentation; nice-to-have for R1, incomplete content allowed when tracked. Added reusable help around focused inline labels and Tags. Hover/focus shows local content; ? or Full documentation opens an authenticated separate HTML field guide. Escape dismisses; help does not write records or discard drafts. Shared source registry app/src/field-help.ts supplies quick and full help: 12 Ready items and SlotQuickHelp=Missing. Every focused field has an explicit registry status; Ready requires brief/example/details. CC-TODO-016 tracks content completion/review and later coverage, without blocking R1. Next unused CC-TODO-017. See docs/Context_Help.md.
+
+Preceding search/reset at 28d1335 passed local 146 tests/build, both CI checks and Workers deployment. Live read-only search cat showed five results; adding Holiday showed none in current data (no tag inferred), Reset restored 344 normal entries. No real tag/record change was made to fabricate results. 149 application tests and build/type-check pass, including registry completeness/status, hover/focus/Escape and draft preservation, authenticated GET-only HTML with no DB/file bindings. Context-help deployment acceptance follows. Existing Chrome/Edge and second-admin sign-in/browse/edit passes stay accepted. Production remains separately unapproved; CC-TODO-015 stays deferred to Canva.
+
+## Reset filters and combined name/BIN/tag search — October 16, 2026 (Pacific)
+
+Owner requested an obvious way back to the full catalog and asked for cat plus Holiday search. Added Reset filters beside Search: clears draft/submitted query, kind, demo flag and paging, closes focus/new-entry only after existing dirty/busy guard. Default full catalog excludes demo rows. Search now requires every whitespace-separated term/quoted phrase across name, assigned/source BIN or shape tags; optional unquoted AND is a separator. Example cat Holiday or cat AND Holiday requires both, possibly across fields. Case-insensitive literal substring matching; no wildcard, OR or image inference. Bound to eight terms/phrases and existing 120 characters, with quoted-phrase validation and helpful UI errors. Tags use EXISTS so multiple matching tags cannot duplicate rows/counts; physical and source-reference records retain existing filters/paging. No record write, schema, resource, backup, image or access change. 146 application tests and build/type-check pass, including real D1 mixed-field/phrase/tag/count/filter cases and reset/error/draft UI cases. Deployment acceptance follows; continue 014. CC-TODO-015 remains deferred to Canva, next unused 016.
+
+## Full-height results pane and shared thumbnails — October 16, 2026 (Pacific)
+
+Owner screenshot showed unused space beneath the right results pane while the focused card continued below it. Desktop expanded workspace now stretches the independently scrolling two-column results pane to the focused card's full height, including automatic adjustment as its content changes. Results are out of flow within that pane so the number of results does not enlarge the focused card. Narrow stacked layout keeps its bounded scroll behavior. Focused card margin is removed only in the side-by-side layout so both panes share top/bottom alignment.
+
+Focused photos and right-pane thumbnail image areas now share a 200 × 200-pixel display box (responsive width clamp), with object-fit:contain preserving the complete design without stretching/cropping. Focused-image pop-out and original download links, guarded thumbnail focus switching and inline drafts are unchanged. This is CSS display sizing, not conversion, stored-image editing, physical scale or the deferred CC-TODO-015 asset-standards work. Screenshot attachment was successfully read at its supplied path; the pasted missing-file message did not prevent inspection. Build/type-check passed; deployment/visual acceptance follows. No data/API/schema/access/resource change.
+
+## R1 viewer/workspace acceptance; Canva standards deferred — October 16, 2026 (Pacific)
+
+Application 0b23bdb129fea4652d9570433aa53d15315e903a contains the requested two-column image/name/location thumbnail pane and 500 × 500-pixel requested read-only image viewer. Local 143 tests/build passed. Live cloud Chrome acceptance: thumbnail switch prompted for unsaved changes, dismiss kept the same record/draft, Cancel removed only the temporary draft, and a clean whole-card click changed focus. Fitted viewer displayed the original with Download original and no editing controls; closing returned to the same focused card. Browser decides final popup/tab dimensions; cloud renderer did not attest a physical-inch or exact 500-pixel window. No real catalog/original write occurred during these tests. CI/deployment evidence is retained on the application commit.
+
+Owner explicitly deferred the wider image-size/DPI/Canva/outline standards discussion to Canva workflow integration. Catalog it as CC-TODO-015 below; it is not an R1 gate or upload-validation change. Next unused task is CC-TODO-016. Next R1 action is owner/wife check of the new viewer/two-column flow, then environment/provenance compatibility, operational recovery ownership and separately approved production target/cutover/release per docs/Production_Cutover_Plan.md. Previously reported Chrome/Edge and independent admin login/browse/edit passes remain accepted.
+
+## Consistent fitted image viewer — October 16, 2026 (Pacific)
+
+Owner clarified a consistent small square image window rather than a large arbitrary pop-out. Requested size is now 500 × 500 pixels (browser controls/display scaling may differ; no physical-inch or cutter-scale promise). Focused image links open a read-only authenticated HTML viewer with the image filling the available viewport using object-fit:contain, preserving aspect ratio and the full image. Window resizing refits it. A private original-download link is available inside as well as on the focused card. The viewer contains no scripts/forms/editor or file-write route; filename HTML is escaped and CSP limits sources. Verified image bytes remain on the existing checksum-checked route, without a second original read to generate the viewer shell. Catalog focus/drafts and guarded two-column thumbnail switching remain intact. 143 application tests and build/type-check pass; viewer tests cover safe filename escaping, image-only types, no scripts/forms and no duplicate original retrieval. Latest deployment acceptance follows. Earlier d067744 CI had one optional workerd-platform package installation failure while its other CI run and Workers build passed; this was runner dependency setup, not a failed application assertion. Owner also raised image-input/Canva/outline standards: docs/Image_Asset_Standards_Proposal.md records a proposal to preserve originals and derive previews/exports with calibrated geometry. No upload-standard enforcement is activated. No migration, resource, access, schedule, restore, original edit or production change.
+
+## Two-column thumbnail pane and image-window acceptance — October 16, 2026 (Pacific)
+
+Owner refined the focused workspace: remaining records show image/name/location only in a smaller two-column scrolling pane beside the large focused card. Entire thumbnail cards switch focus through the existing dirty/busy guard; Cancel preserves the old draft, approved discard switches, keyboard View access and result scroll remain. Quantity/measurement/status details stay in the focused editor; normal unfocused browsing is unchanged.
+
+The preceding image-window feature at 799ed53 passed live: clicked a focused image, observed the authenticated original in a separate read-only image window, closed it, and found the same focused record with its unsaved test-name draft retained. Canceled that draft without saving; no catalog/original mutation. Download links remain. Browser popup/tab policy still applies. The two-column change is CSS plus card-click guard test coverage; 142 application tests and build/type-check pass. Development deployment/visual acceptance follows publication. No production or access/configuration change. Continue 014; next unused CC-TODO-015.
+
+## Requested read-only image pop-outs — October 16, 2026 (Pacific)
+
+Owner requested click-to-open images from the focused card, preserving the catalog and its inline draft. Available focused-card images and an explicit Open image link now request a separate browser pop-up using the existing authenticated checksum-verified GET image route; browser may choose a tab or block pop-ups. Original download links remain. New windows have no opener and no image-write controls; viewing/snipping/saving a local copy does not alter stored originals. No catalog writes, new image editor, upload/replacement behavior, schema or access change. Native modified/new-tab link behavior remains. 142 application tests and build/type-check pass, including a popup test preserving an unsaved inline draft and emitting no writes. Development deployment/visual checks follow; no live acceptance is claimed yet. Continue 014 within the first-release feature cut.
+
+## Owner-confirmed browser and intended-admin acceptance — October 16, 2026, 11:15 Pacific
+
+Owner reports the intended second administrator can independently log in, browse and make edits, and both Chrome and Edge work. Record as owner-reported real-user acceptance, not assistant cloud evidence. First-release Windows Chrome/Edge browsing/editing acceptance and the second-admin independent sign-in/edit workflow are passed. Exact browser/OS versions, original-download checks in this session, admin-only destructive/backup controls and operational account recovery were not separately reported; do not invent those results or rerun accepted behavior merely for screenshots. Safari remains outside first-release scope.
+
+Next: production environment/backup-provenance compatibility and current-schema transfer preparation under docs/Production_Cutover_Plan.md, operational access-recovery ownership and the separately approved production resource/cutover/final release. No new grant, production deployment, record mutation, restore, schedule, cleanup or merge/tag occurs in recording this acceptance. Continue existing tasks 004/005/006/014; next unused CC-TODO-015.
+
+## First-release browser scope and cutover preparation — October 16, 2026 (Pacific)
+
+Owner explicitly removed Safari/iPhone: first-release support is **Windows Chrome and Microsoft Edge only**. Both actual-device outcomes remain pending; Safari is not a release gate. Earlier broader device lists below are historical. Updated docs/Device_Acceptance.md and current release scope/status accordingly.
+
+Prepared [production cutover proposal](docs/Production_Cutover_Plan.md): proposed separate cookie-catalog-prod Worker/D1, cookie-catalog-prod-private R2 and separate Access application; actual IDs/hostname/access are not provisioned or attested. Exact-copy proposal preserves source/provenance/demo fixtures unless separately reviewed. Fresh frozen-source archive and independent copy, full readback, source deployment and rollback responsibility are explicit. After new production writes, stale development is not a safe automatic rollback target.
+
+Source inspection found development-only config/UI/report/archive labels and archive environment validation. Environment/backup-provenance compatibility and validated current-schema transfer must be resolved before production deployment; this is a concrete preparation finding, not a claim that renaming the Worker is sufficient. No format change, new resource, secret/access grant, paid plan, data transfer, production deployment, merge/tag or schedule/cleanup activation performed. f1cd182 prior reconciliation CI/Workers passed. Continue 004/005/006/014; next unused task remains CC-TODO-015.
+
+## First-release reconciliation — October 16, 2026 (Pacific)
+
+**Current: v0.1.0-rc.1 deployed to development at 4ca1b1ddfff5745e037549ca5415cdc4bfc1efbe.** Both current-head CI runs (38923760542 / 38923770340) and Workers Build 7571dbaa-043e-460c-a06e-24e1337497d5 passed. Prior authenticated live source/health matched this head, and compact right-pane cards passed visually (four full plus a fifth partial in the observed desktop viewport). Working tree was clean before this documentation update. Retention, fast inline CRUD/Undo, image-first focus and requested compact-card refinement are complete for the development feature cut. Pending-publication/layout wording below is historical.
+
+Authoritative current status and ordered next steps: [First release status](docs/First_Release_Status.md). Remaining release requirements: actual Windows Chrome/Edge and iPhone Safari acceptance, independent intended second-admin/access recovery, then concrete separate production target/data-cutover approval and verification, followed by protected PR/final release. Preserve all completed imports, 592-original snapshot/preview and prior recovery evidence. No new full infrastructure workstream or automatic pruning. Off-provider automation, broader integrations and further cosmetic polish are follow-up scope; current production cutover still needs an identified independent recovery copy. No production resource, access/cost change, merge/tag or real cleanup is performed by this reconciliation. Next unused task: CC-TODO-015.
+
+## First-release layout refinement — October 16, 2026 (Pacific)
+
+Continue from verified v0.1.0-rc.1 / 0fe7e40; owner said to proceed. A CSS-only refinement improves long focused-card headings, caption/image wrapping, sticky Save/Cancel wrapping, backup-list action separation, and narrow-screen 44-pixel controls/16-pixel edit inputs. Images remain above editable fields. No data, API, schema, save/recovery logic, retention, permission or schedule changes. Build/type-check passed; development publication and visual check follow. Actual Windows Chrome/Edge, iPhone Safari and intended-admin acceptance remain owner-device work; no such outcome is inferred from CSS. Production target/cutover remains separately unapproved. Preserve all completed work and checked backups.
+
+## October 16 — v0.1.0-rc.1 accepted in development
+
+251bebd passed CI/Workers and authenticated exact-source/health checks. Live usage/protection view passed with all three checked snapshots preserved and daily backups off. First feature candidate is ready for intended-device/admin acceptance and a concrete production/cutover decision under existing architecture; no automatic pruning, new paid resource or production release. See docs/evidence/Retention_Release_Candidate_20261016.json.
+
+## October 16 — reviewed retention and first feature candidate
+
+Owner authorized progressing the first feature release. v0.1.0-rc.1 includes approved, resumable snapshot retention with protected/shared-file preservation; normal edits remain independent. Retention is reviewed explicitly, never automatically activated. Protection release is separate from removal and requires a newer checked point and verified protected changes. Local 141 app tests, build, 28 helper tests and Python/schema/import checks pass. Concrete scope and remaining production/device decision: docs/Release_Candidate_v0.1.0.md. No new resource, paid plan, production deployment or real backup removal.
+
+## October 16 — quick inline editing accepted live
+
+3734795 passed CI, deployment and authenticated source/health checks. Disposable create/edit/delete/undo passed with individual observed actions around one second; image-first focused detail was verified. Test rows were cleaned up. Full-catalog checks are removed from routine inline Save/Delete. See docs/evidence/Fast_Inline_Acceptance_20261016.json.
+
+## October 16 — routine edits use bounded record recovery
+
+Owner explicitly prioritizes quick, economical Save/Delete. Full-catalog checks on each edit are superseded by durable per-entry before/after records plus guarded D1 transactions and owner-reviewed conflict-safe undo. Whole snapshots remain for bulk import, full restore and backup scheduling. Focused card images move above editable fields. See docs/Record_Recovery.md. No migration, paid resources, automatic pruning or production release.
+
+## October 16 — publication and managed backup acceptance
+
+Owner approved publication; exact tested source tree is deployed as 8043509 with passing CI/Workers Builds and authenticated source verification. The original snapshot completed 592 checked originals and read-only restore preview passed (22 tables / 4,040 rows). No live restore or inventory change. Daily creation remains off and no pruning is activated. This supersedes the earlier publication block and incomplete snapshot status. See docs/Interrupted_Worker_Reconciliation_20261016.md and sanitized evidence.
+
+## October 16 — interrupted worker continuity
+
+Preserve the canonical development commits and original retained backup. The 324/592 snapshot is incomplete; no successful live restore/complete receipt is claimed. Compact copy-plan mitigation is locally tested in 4626eb4 but publication is blocked by automatic approval review pending explicit destination/branch authorization. Continue from [the current recovery checkpoint](docs/Interrupted_Worker_Reconciliation_20261016.md). No new product decision, production release, live restore, schedule or pruning was authorized.
+
+## October 15 (Pacific) — CC-DEC-020 — Reconcile and implement approved inline workspace
+
+Adopt the approved decision from `docs/Inline_CRUD_Reconciliation_20261015.md` while preserving newer feature-branch BIN/import/recovery implementation. Use reusable master-detail and inline field editors, server validation/roles and atomic optimistic transactions. Stage tag/new-shape vocabulary until Save. Canonical location IDs are selected, not created ad hoc. Explicit catalog location overrides immutable OneNote provenance; future source changes require an explicit reconciliation, not silent overwrite. Every new inline mutation obtains an automatic protected snapshot; owner confirms deletion and relationships block it. Preserve protected main, existing development PR and production-release boundaries. Next unused decision: CC-DEC-021.
+
+
+## October 15 — CC-DEC-019 — App-managed snapshots, approval-based restore and opt-in schedule
+
+Owner requests completion of BIN work followed by removing manual file/CMD/reference handoffs from backup and restore. Use the existing private R2 bucket for app-managed, checksum-checked, resumable snapshots and automatic pre-change protection. Restore requires a current preview and approval; it creates its own protected before-state, holds maintenance through transactional database replacement and permits approved rollback. Enable daily fresh creation only through the owner schedule setting; the worker may resume already approved jobs in the background. Portable off-provider archives remain a distinct layer. No new paid resource, production overwrite, credential bypass or automatic pruning is authorized. See docs/App_Managed_Backups.md for capacity/retention and live-acceptance limits. Next unused decision ID: CC-DEC-020.
+
+## October 15 — CC-DEC-017 — Recorded BIN location and independent inventory status
+
+Owner explicitly accepts the bin identified by OneNote as the recorded current/intended location, without a second verification task. Incorrect locations are corrected later. Physical/Digital classification alone handles physical existence; location never establishes ownership or print status. Existing source assignments are inherited until an explicit catalog move overrides them; future imports persist recorded locations. No source rewrite, destructive migration or live inventory bulk edit is required.
+
+## October 15 — CC-DEC-018 — Remove the manual backup handoff
+
+Owner authorizes investment in single-click and/or scheduled backup/restore, with the user reviewing and approving operations rather than exporting, running CMDs and pasting references. Each fresh backup still needs automated completeness/integrity checks; a full restoration drill is a separate acceptance check after format/schema changes and at recovery checkpoints. Automatic pre-change backups should precede risky imports/bulk edits/migrations. Local versus OneDrive folder naming does not remove the handoff; app-managed operation is the current objective under CC-TODO-013. This approves implementation direction, not paid resources, production overwrite, automatic pruning or weakened authentication.
+
+Next unused decision ID: CC-DEC-019.
+
+## October 15 — Quick verification implementation (routine authorized engineering)
+
+Implemented the previously authorized checklist using saved review versions and existing guarded catalog import routes. Optional sourceClassification metadata preserves Physical / Digital / Both independently from file possession. Group confirmation does not invent individual quantities for sets/variants, and negative physical-source evidence remains blocked until explicitly corrected. Exact source-reference shapes/photos are reused; corrected review metadata does not reimport already mapped inventory. No new architecture decision, task ID, schema migration, real inventory application, resource, cost or production release. User and technical instructions: [Quick verification](docs/Quick_Verification.md).
+
+## October 15 — Quick source classification and bulk verification
+
+Owner requests OneNote-derived suggestions with a compact Physical / Digital / Both checklist, grouped confirmation and bulk import. Preserve source references and photos; promote only confirmed eligible physical individuals using existing shape IDs. Digital reference status does not assert original STL/3MF possession. Sets, sizes and duplicate ambiguities remain explicit. This records the requested design; implementation is pending. See the authoritative current checkpoint in Cookie_Catalog_Context.md.
+
+## October 15 — CC-DEC-016 — Reference sizing, bins and representative source
+
+Owner confirmed personal OneDrive notebook. Reference/catalog size is the longest measured dimension: 4 by 2 inches is called a 4 inch cookie. Retain both measured axes, orientation, units and evidence; do not infer diagonal or photo-based measurements. Physical location convention is Bin #, optional future Slot #. Representative demonstration combines mixed item cases with a familiar theme. Q2 needs the existing source, beginning with a readable PDF section/sample and original notebook export ZIP, plus separate related originals when available. No notebook content or new live schema was imported/applied by recording these answers.
+
+Next unused decision ID: CC-DEC-017.
+
+## October 15 — CC-DEC-015 — Autonomous engineering and import-completion scope
+
+Owner explicitly authorized going as far as possible on reversible work while they are away, using recommended defaults, batching open decisions and following source-verified application-development guidance. Costly/dependency-heavy improvements must be cataloged instead of blocking unrelated progress. This does not authorize production release, paid resources, destructive migration, source OneNote edits or external messages.
+
+The source-import milestone (CC-TODO-009) includes a workflow to identify and collect missing size/location/photos/scale references and other applicable details. Importing incomplete records is allowed; guessed dimensions/ownership or automatically verified photos are not. Recommended initial implementation uses a read-only live queue and private editable staging drafts, preserving the validated live schema/archive format until source analysis supports a coordinated migration. Applied defaults and bulk Q1–Q5 are in docs/Batch_Review_20261015.md. Evidence references, reasons for exceptions and physical/file-only distinction are explicit; no real notebook source has been supplied/analyzed by this batch.
+
+Historical checkpoint then: next unused decision ID was CC-DEC-016.
+
+## October 14 — Confirmed access decisions and acceptance
+
+Owner explicitly set admin equal to owner for now. Two privately specified accounts receive owner-equivalent access; the business info account is viewer only. Optional private Worker CATALOG_MEMBERS configuration implements the small fixed role list; existing signed Access identity and bootstrap OWNER_EMAIL remain. No real account identity is committed here. In-app membership editing and Cloudflare dashboard privileges are separate from catalog roles. Owner confirmed policy/secret Save/Deploy, existing admin session and viewer search/details/download acceptance; second admin sign-in remains pending. This supersedes the earlier distinction proposed between owner and admin and the earlier statement that all collaborator activation is pending. No new decision ID is allocated by this reconciliation.
+
+## 2026-10-14 — CC-DEC-014 — Manual backup cadence, retention and owner
+
+Status: explicitly approved by owner. Jay maintains complete TAR backups in private OneDrive after meaningful changes and before imports/bulk edits/deletions. Keep latest seven normal snapshots plus protected pre-change snapshots until changed-state checks and recoverability are verified. No automatic deletion/transfer/scheduling is enabled. User also requested scripting follow-up CC-TODO-012, accepting PowerShell for manual-step assistance. Scripting is a TODO, not an implemented backup service. Preserve owner-mediated verified cloud-copy and isolated data/original recovery evidence and the separately recorded metadata/runtime/scale limitations.
+
+## 2026-10-14 — Isolated recovery import tooling prepared
+
+CC-TODO-006 now has offline TAR-to-D1 SQL preparation and exact recovery comparison in tools/prepare_cloudflare_restore.py. Generated private output is refused inside git checkouts; existing destinations are preserved. Eight Python tests plus the expanded large-original local D1 integration pass; full 49 Node tests, schema/import and type-check/frontend/Worker build passed. Generated SQL imports into a separate local Miniflare D1 with all 16 tables/complete records retained. No remote restore is claimed, no private archive was used in this session, and no Cloudflare resources/settings were changed.
+
+Next prerequisite: authenticated read-only Cloudflare inventory, then confirmed empty separate recovery targets and free-tier capacity/new-resource authorization. Proposed names: D1 cookie-catalog-recovery-20261014 and private R2 cookie-catalog-recovery-20261014-private. These do not exist as verified targets. Secure Cloudflare sign-in was attempted after preparation; the page rejected POST /api/v4/login with 403. No authenticated resource inventory is available; stop this browser attempt. GitHub Actions 38645828796 and 38645836608 both passed for tooling commit 15302ec. The plugin directory returned no Cloudflare integration. Preserve active cookie-catalog-dev and cookie-catalog-dev-private; no rebind, overwrite, paid resources, production release or automatic cleanup. See docs/Isolated_Cloudflare_Restore.md for the concrete preparation/import/download/comparison procedure and limits. Cloud execution, privacy/provenance, independent sync, retention and scale remain open. Device acceptance, roles, samples and deferred OneNote/photo/Canva sequencing are unchanged.
+
 ## 2026-10-14, 20:15 UTC — Development code rollback acceptance
 
 The development code rollback and roll-forward drill passed. Exact deployed sources: baseline 489ed640 → compatible previous app redeployment 26c2425e → restored current app 0a613893. Signed-in owner reads, same-value synthetic-location saves, exact-byte original downloads and restored phase archives passed. All phases retained identical schema, all 14 rows across 16 tables, and the one 5400084-byte STL; integrity/FKs passed. CI and Workers Builds passed. No migration, data restore, resource/security change or production release occurred.
@@ -72,7 +211,7 @@ Prepared two byte-identical UTC-named JSON snapshots, a checksum/size/migration/
 
 Latest-seven normal snapshots after meaningful changes/before imports remains proposed, not an approved or activated pruning/scheduling policy. No automatic transfer, new subscription or production change was activated. See docs/Backup_Recovery_Plan.md.
 
-Next unused decision ID: CC-DEC-014.
+Historical checkpoint then: next unused decision ID was CC-DEC-015.
 
 ## 2026-10-14 — Infrastructure acceptance evidence (routine engineering)
 

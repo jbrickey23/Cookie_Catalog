@@ -1,0 +1,40 @@
+{
+  "name": "cookie-catalog-dev",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api",
+      "/api/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cookie-catalog-dev",
+      "database_id": "5f55c974-16a0-4252-a0b7-34e2a915b1d2",
+      "migrations_dir": "../database/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "cookie-catalog-dev-private"
+    }
+  ],
+  "triggers": {"crons": ["* * * * *"]},
+  "workers_dev": true,
+  "preview_urls": true,
+  "vars": {
+    "CATALOG_ENVIRONMENT": "development",
+    "ACCESS_TEAM_DOMAIN": "cookie-catalog-jbrickey.cloudflareaccess.com",
+    "ACCESS_AUD": "98ebc56d367291cd85bf0d932caa6e1e2b1d24151f58c4c1f8d7a7b586d17438"
+  },
+  "secrets": {
+    "required": [
+      "OWNER_EMAIL"
+    ]
+  }
+}

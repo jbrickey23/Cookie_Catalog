@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-10-16T19:35:00Z",
+  "source": "d7543703587b1efe33f41aed046d578167feeaa4",
+  "checks": [
+    {
+      "name": "Workers Builds: cookie-catalog-dev",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-dev/production/builds/3e33b21d-6eb6-47a6-b473-af3f08ae0712",
+      "summary": "\nBuild ID: [3e33b21d-6eb6-47a6-b473-af3f08ae0712](https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-dev/production/builds/3e33b21d-6eb6-47a6-b473-af3f08ae0712)\nScript: [cookie-catalog-dev](https://dash.cloudflare.com/f26c90862e3d1d2d8d52a3b999ef0ac0/workers/services/view/cookie-catalog-dev/production)\nVersion ID: 9c0c395d-73af-4a9d-83d0-c33233331761\n"
+    },
+    {
+      "name": "sqlite",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38955682212/job/117157832930",
+      "summary": null
+    },
+    {
+      "name": "sqlite",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/jbrickey23/Cookie_Catalog/actions/runs/38955674794/job/117157808243",
+      "summary": null
+    }
+  ],
+  "local": {
+    "appTests": 154,
+    "build": true,
+    "offlineTransferTests": 9,
+    "helperTests": 31
+  },
+  "live": {
+    "mode": "read-only",
+    "version": "0.1.0-rc.1",
+    "source": "d7543703587b1efe33f41aed046d578167feeaa4",
+    "schemaTables": 22,
+    "migrationsPresent": true,
+    "foreignKeyViolations": 0,
+    "sampledOriginals": 5,
+    "missingOriginals": 0,
+    "sizeMismatches": 0
+  },
+  "production": {
+    "provisioned": false,
+    "deployed": false,
+    "actualTargetIdsVerified": false,
+    "independentCutoverCopyVerified": false
+  },
+  "postR1": {
+    "task": "CC-TODO-018",
+    "feature": "Inline Change Requests",
+    "nextUnused": "CC-TODO-019"
+  }
+}

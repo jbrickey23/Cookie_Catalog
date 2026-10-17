@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.dev.vars*
+.env*
+.wrangler/
+*.sqlite
+*.sqlite3
+*.db
+.DS_Store
+__pycache__/
+*.pyc
+
+app/wrangler.production.jsonc
