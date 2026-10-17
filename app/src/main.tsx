@@ -1,3 +1,4 @@
+import {ReleaseNotice} from './ReleaseNotice';
 import {RequestRecovery} from './RequestRecovery';
 import {ChangeRequest,downloadChangeRequests,type RequestContext} from './ChangeRequest';
 import {AppHeader} from './AppHeader';
@@ -161,4 +162,4 @@ function App() {
     <p>{environment==='production'?'Private production catalog.':'Development testing catalog. Use production for your collection.'}</p>
   </main>;
 }
-createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);
+createRoot(document.getElementById("root")!).render(<React.StrictMode><ReleaseNotice><App /></ReleaseNotice></React.StrictMode>);

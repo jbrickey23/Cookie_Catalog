@@ -1,3 +1,4 @@
+import {withReleaseWrite,handleReleaseMaintenance,ReleaseGateError} from './server/release-maintenance';
 import {handleChangeRequests} from './server/change-requests';
 import {catalogEnvironment,type CatalogEnvironment} from './catalog-environment';
 import {fieldHelpPage} from './field-help';
@@ -208,15 +209,25 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   // General catalog CRUD and collaborator membership remain unavailable.
   return json({ error: "Catalog API unavailable until membership and storage validation are complete" }, 503);
 }
+export async function handleReleaseGuardedApi(request:Request,verifier:IdentityVerifier,database?:D1Database,files?:R2Bucket,environment:CatalogEnvironment='development'):Promise<Response>{
+ const user=await verifier.verify(request);if(!user||!mayRead(user))return json({error:'Unauthorized'},401);
+ const memo={verify:async()=>user};
+ try{
+  if(new URL(request.url).pathname==='/api/release-maintenance'){if(!files)return json({error:'Release storage unavailable'},503);return await handleReleaseMaintenance(request,files,user.subject,user.role==='owner');}
+  if(['GET','HEAD','OPTIONS'].includes(request.method))return handleApiRequest(request,memo,database,files,environment);
+  if(!files)return json({error:'Release safety storage unavailable'},503);
+  return await withReleaseWrite(files,()=>handleApiRequest(request,memo,database,files,environment));
+ }catch(error){return json({error:error instanceof ReleaseGateError?error.message:'Release safety status unavailable. Keep your draft and retry.'},error instanceof ReleaseGateError?error.status:503);}
+}
 export default {
-  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT)));},
+  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,()=>scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT))).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
   async fetch(request: Request, env: Env): Promise<Response> {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       if (!accessIsConfigured(env)) return json({ error: "Authentication configuration incomplete" }, 503);
       let environment:CatalogEnvironment;
       try{environment=catalogEnvironment(env.CATALOG_ENVIRONMENT);}catch{return json({error:'Invalid catalog environment configuration'},503);}
-      return handleApiRequest(request, new AccessIdentityVerifier(env), env.DB, env.FILES, environment);
+      return handleReleaseGuardedApi(request, new AccessIdentityVerifier(env), env.DB, env.FILES, environment);
     }
     return env.ASSETS.fetch(request);
   }

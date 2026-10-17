@@ -8,7 +8,7 @@ R1 v0.1.0 released; production is the sole editing catalog. [Release evidence](d
 | CC-TODO-019 | Backup/restore root cause and reliability | Open. Reproduce/diagnose cloud stall and verify a fix; later successful resume is not resolution. |
 | CC-TODO-018 | Change Request ingestion | First vertical slice deployed to development (CI passed): private submit/review, owner export and revision-guarded release/TODO assignment; live dev acceptance and operational backup coverage pending. [Workflow](docs/Change_Request_Workflow.md). |
 | CC-TODO-020 | E2E push-button release automation | R2 scenario: Release click is authorization; preflight, deploy, verify, safe rollback and clear result without another final approval. |
-| CC-TODO-022 | Release maintenance gate | Under 020: durable server-side live-write gate, in-flight coordination, draft-preserving notice, safe success/rollback unlock and interrupted-release recovery. |
+| CC-TODO-022 | Release maintenance gate | Under 020: durable HTTP/scheduled write gate, admission/drain coordination, background-job checks and draft-preserving notice implemented. Machine-auth controller, safe interrupted-worker recovery and live acceptance remain open. [Checkpoint](docs/Release_Automation_R2.md). |
 | CC-TODO-010 | Photo inbox and ingestion workers | Authorized R2; extraction, preview, approval, validated submit. Preserve originals/provenance and missing/confidence/scale distinctions. |
 | CC-TODO-015 | Image standards / Canva and outlines | Deferred design input; no blanket upload rescaling/DPI restrictions approved. |
 | CC-TODO-016 | Field help content | Slot authored Ready in current UX batch; owner wording feedback remains welcome. |

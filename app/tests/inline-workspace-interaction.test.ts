@@ -111,3 +111,14 @@ test('reference adds linked physical inventory inline only on Save and Cancel pr
   fireEvent.click(screen.getByRole('button',{name:'Add physical cutter'}));await screen.findByRole('group',{name:'Physical inventory'});fireEvent.click(screen.getByRole('button',{name:'Save changes'}));await waitFor(()=>assert.equal(writes.length,1));assert.equal(writes[0].path,'/api/workspace/cutters');assert.equal(writes[0].body.existingShapeId,'s1');assert.equal(writes[0].body.shapeRevision,'"revision-1"');assert.equal(writes[0].body.shape.name,'TEST Star');assert.deepEqual(writes[0].body.tags,[{id:'t1'}]);await screen.findByRole('button',{name:'Delete physical record'});assert.equal(screen.queryByRole('button',{name:'Add physical cutter'}),null);
  }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
 });
+
+test('release pause disables saving without replacing the draft; saving resumes after status clears',async()=>{
+ const {ReleaseNotice}=await import('../src/ReleaseNotice');const originalFetch=globalThis.fetch,originalInterval=globalThis.setInterval,originalClear=globalThis.clearInterval;let poll:(()=>void)|undefined,paused=true;
+ globalThis.setInterval=((fn:()=>void,delay:number,...args:any[])=>{if(delay===15000){poll=fn;return -123;}return originalInterval(fn,delay,...args);}) as any;globalThis.clearInterval=((id:any)=>{if(id!==-123)originalClear(id);}) as any;
+ globalThis.fetch=async(input)=>Response.json(String(input)==='/api/release-maintenance'?{active:paused}:String(input).endsWith('/vocabulary')?vocabulary:entry());
+ try{render(React.createElement(ReleaseNotice,{children:React.createElement(EntryEditor,props)}));await screen.findByText(/Catalog update in progress/);await screen.findByRole('button',{name:'Change Name'});
+ fireEvent.click(screen.getByRole('button',{name:'Change Name'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST kept during release'}});
+ assert.equal((screen.getByRole('button',{name:'Save changes'}) as HTMLButtonElement).disabled,true);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST kept during release');
+ paused=false;poll!();await waitFor(()=>assert.equal((screen.getByRole('button',{name:'Save changes'}) as HTMLButtonElement).disabled,false));assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST kept during release');
+ }finally{cleanup();globalThis.fetch=originalFetch;globalThis.setInterval=originalInterval;globalThis.clearInterval=originalClear;}
+});

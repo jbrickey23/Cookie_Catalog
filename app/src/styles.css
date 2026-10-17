@@ -195,3 +195,5 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 @media(max-width:760px){.app-shell{margin:1.25rem auto}.app-header nav{gap:.8rem}.app-header h1{font-size:2rem}}
 
 .change-request{background:#fff;border:1px solid #829786;border-radius:10px;padding:1rem;margin:1rem 0}.change-request label{display:block;margin-top:1rem}.change-request input,.change-request select{display:block;width:100%;font:inherit;padding:.6rem}.request-text{white-space:pre-wrap}
+
+.maintenance-notice { margin: 0; padding: .8rem 1.2rem; background: #fff0c2; color: #493600; border-bottom: 1px solid #d5bd71; }
