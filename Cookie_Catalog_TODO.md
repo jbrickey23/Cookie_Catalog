@@ -6,7 +6,7 @@ R1 v0.1.0 released; production is the sole editing catalog. [Release evidence](d
 | --- | --- | --- |
 | CC-TODO-021 | Housekeeping and UX fast fixes | Authorized October 16, 17:34 Pacific; in progress. Current/history split, stale PR review, visible environment/sign-out/Undo and Slot help. |
 | CC-TODO-019 | Backup/restore root cause and reliability | Open. Reproduce/diagnose cloud stall and verify a fix; later successful resume is not resolution. |
-| CC-TODO-018 | Change Request ingestion | First vertical slice implemented locally: private submit/review, owner export and revision-guarded release/TODO assignment; live dev acceptance and operational backup coverage pending. [Workflow](docs/Change_Request_Workflow.md). |
+| CC-TODO-018 | Change Request ingestion | First vertical slice deployed to development (CI passed): private submit/review, owner export and revision-guarded release/TODO assignment; live dev acceptance and operational backup coverage pending. [Workflow](docs/Change_Request_Workflow.md). |
 | CC-TODO-020 | E2E push-button release automation | R2 scenario: Release click is authorization; preflight, deploy, verify, safe rollback and clear result without another final approval. |
 | CC-TODO-022 | Release maintenance gate | Under 020: durable server-side live-write gate, in-flight coordination, draft-preserving notice, safe success/rollback unlock and interrupted-release recovery. |
 | CC-TODO-010 | Photo inbox and ingestion workers | Authorized R2; extraction, preview, approval, validated submit. Preserve originals/provenance and missing/confidence/scale distinctions. |
@@ -21,4 +21,6 @@ Operational follow-ups: cadence/retention/independent copies, account recovery a
 
 [Historical task details and checkpoints](Cookie_Catalog_TODO_History.md) preserve original IDs and acceptance. Old completion-pending text is historical; use the current table and release evidence first.
 
-CC-TODO-023 — Include private request-prefix data in operational recovery/export verification before request ingestion release completion. Catalog backups currently do not include requests. Next unused ID: CC-TODO-024.
+CC-TODO-023 — In progress: checksum-verified write-ahead request copies and owner-only revision-guarded recovery implemented; targeted recovery tests and production build passed. Independent export coverage, missing-key recovery and isolated restore rehearsal remain open. Catalog backups currently do not include requests. Next unused ID: CC-TODO-024.
+
+October 16, 2026, 18:28 Pacific: owner confirmed the R2 preview email was sent. R2 development head 7bb1967 passed both sqlite checks and the Cloudflare development build; live authenticated acceptance remains pending.

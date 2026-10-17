@@ -19,7 +19,20 @@ test('requests save privately without catalog DB, survive repeat submission and 
  assert.equal((await handleApiRequest(planning('stale'),identity(),undefined,files as any)).status,412);
  assert.equal((await handleApiRequest(planning(exported.requests[0].revision),identity(),undefined,files as any)).status,200);
  const updated=await (await handleApiRequest(get,identity(),undefined,files as any)).json() as any;assert.equal(updated.requests[0].release,'R2');assert.equal(updated.requests[0].todo,'CC-TODO-018');
- assert.equal((await files.list()).objects.length,1);
+ const history=new Request('https://catalog.test/api/change-requests?history='+receipt.id);
+ assert.equal((await handleApiRequest(history,identity('viewer'),undefined,files as any)).status,403);
+ const recovery=await (await handleApiRequest(history,identity(),undefined,files as any)).json() as any;
+ assert.equal(recovery.versions.length,2);
+ const original=recovery.versions.find((v:any)=>v.request.release===null);
+ const restore=(revision:string)=>new Request('https://catalog.test/api/change-requests',{method:'PATCH',headers:{Origin:'https://catalog.test','content-type':'application/json','X-Cookie-Catalog-Check':'change-request','if-match':revision},body:JSON.stringify({id:receipt.id,restoreSha256:original.sha256,approved:true})});
+ assert.equal((await handleApiRequest(restore('stale'),identity(),undefined,files as any)).status,412);
+ assert.equal((await handleApiRequest(restore(updated.requests[0].revision),identity(),undefined,files as any)).status,200);
+ const restored=await (await handleApiRequest(get,identity(),undefined,files as any)).json() as any;
+ assert.equal(restored.requests[0].release,null);assert.equal(restored.requests[0].title,draft.title);
+ await files.put('catalog-request-recovery/v1/'+receipt.id+'/'+original.sha256+'.json','corrupt');
+ assert.equal((await handleApiRequest(history,identity(),undefined,files as any)).status,503);
+ assert.equal((await handleApiRequest(restore(restored.requests[0].revision),identity(),undefined,files as any)).status,409);
+ assert.equal((await files.list({prefix:'catalog-requests/v1/'})).objects.length,1);
  }finally{await mf.dispose();}
 });
 test('request API rejects unauthenticated, cross-origin, unconfirmed, oversized and invalid submissions before writing',async()=>{
@@ -29,5 +42,8 @@ test('request API rejects unauthenticated, cross-origin, unconfirmed, oversized 
  assert.equal((await call(req(draft,{Origin:'https://other.test'}))).status,403);
  for(const body of [{...draft,approved:false},{...draft,type:'unknown'},{...draft,title:''},{...draft,title:'x'.repeat(121)},{...draft,context:{recordName:'x'.repeat(201)}}])assert.equal((await call(req(body))).status,400);
  assert.equal((await call(req({...draft,description:'x'.repeat(17000)}))).status,413);assert.equal((await files.list()).objects.length,0);
+ const failing=new Proxy(files,{get(target,key){if(key==='put')return async()=>{throw Error('TEST recovery storage unavailable');};const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;}});
+ assert.equal((await handleApiRequest(req(),identity(),undefined,failing as any)).status,503);
+ assert.equal((await files.list({prefix:'catalog-requests/v1/'})).objects.length,0);
  }finally{await mf.dispose();}
 });

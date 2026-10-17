@@ -1,4 +1,6 @@
-# R2 user preview email — draft, not sent
+# R2 user preview email — sent by owner
+
+Owner confirmed sent October 16, 2026, 18:28 Pacific. Text below preserves the prepared preview; no automated delivery was performed.
 
 Subject: Cookie Catalog: what we’re working on next
 
