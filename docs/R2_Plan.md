@@ -21,7 +21,7 @@ Photo ingestion must handle duplicate/retry detection, confidence and missing va
 
 Finish the currently authorized housekeeping and easy UX batch first. Then plan the smallest usable Change Request flow and release-automation foundation, address backup root cause, and prepare an independently useful photo inbox/preview/approval vertical slice. R2 implementation is authorized. Detailed acceptance criteria are refined per vertical slice; independently progress authorized work and only raise decisions that materially affect workflow, scope, cost, access or production data. This does not authorize unbounded integrations or destructive production migrations.
 
-Next unused work item: CC-TODO-023.
+Next unused work item: CC-TODO-024.
 
 ## Release scenario decisions — October 16, 2026, 17:54 Pacific
 
@@ -34,7 +34,7 @@ Owner authorizes temporarily disabling live edits during release. Gate catalog m
 
 Use an exclusive, durable release owner/state and verify identity before reopening writes. Release snapshots, migrations and deployment follow the established gate; verify then reopen after success or verified rollback. On an interrupted/uncertain release, keep writes safely paused, show Needs attention, and provide a reviewed recovery/unlock path so maintenance cannot silently persist forever. Include concurrent-write, interrupted-release and successful/rollback unlock tests. This reduces release-time races; it does not replace migration compatibility, recovery integrity or stale-edit revision checks after reopening.
 
-This is a small work item under CC-TODO-020, not an independent new feature track. Next unused work item: CC-TODO-023. Photo ingestion decisions are recorded below.
+This is a small work item under CC-TODO-020, not an independent new feature track. Next unused work item: CC-TODO-024. Photo ingestion decisions are recorded below.
 
 ## Photo ingestion scenario — confirmed October 16, 2026, 18:03 Pacific
 
@@ -45,3 +45,7 @@ A site preview shows originals, extracted proposed fields, missing/uncertain val
 ## Discovery and scope control
 
 Expect additional details as each slice is unpacked. Record discoveries, preserve current task IDs, and raise changes to scope/cost/workflow instead of silently expanding the release. Owner does not need to approve routine reversible implementation choices. User email below is a planned-feature preview, not release availability or a delivery-date commitment.
+
+## First implementation checkpoint
+
+Housekeeping/UX and roadmap committed to development in PR #7. Initial local Change Request slice includes private durable submission, context capture, validation/review, idempotent retry, owner-only paginated reconciliation export and revision-guarded release/TODO planning API. Broad lifecycle/reply UI remains deferred. Screenshot uploads/version capture and operational request backup coverage (CC-TODO-023) are still pending. Live visual acceptance was blocked by the expired agent browser catalog session; do not mark it passed or promote unverified new request workflows as R2 complete. Next unused CC-TODO-024.

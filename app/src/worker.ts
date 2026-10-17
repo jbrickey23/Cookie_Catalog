@@ -1,3 +1,4 @@
+import {handleChangeRequests} from './server/change-requests';
 import {catalogEnvironment,type CatalogEnvironment} from './catalog-environment';
 import {fieldHelpPage} from './field-help';
 import {withBackupStorageLock} from './server/backup-storage-lock';
@@ -31,6 +32,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   if (!mayRead(user)) return json({ error: "Unauthorized" }, 401);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if(pathname==='/api/change-requests'){if(!files)return json({error:'Request storage unavailable'},503);return handleChangeRequests(request,files,user,environment);}
   if(pathname==='/api/help/fields'){
     if(request.method!=='GET')return json({error:'Method not allowed'},405);
     return new Response(fieldHelpPage(),{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"}});

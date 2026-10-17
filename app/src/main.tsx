@@ -1,3 +1,4 @@
+import {ChangeRequest,downloadChangeRequests,type RequestContext} from './ChangeRequest';
 import {AppHeader} from './AppHeader';
 import {RecordRecovery} from './RecordRecovery';
 import {ManagedBackups} from "./ManagedBackups";
@@ -15,6 +16,8 @@ import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
 
 function App() {
+  const [requestOpen,setRequestOpen]=useState(false),[requestContext,setRequestContext]=useState<RequestContext>({}),[requestExportError,setRequestExportError]=useState('');
+
   const [role,setRole] = useState<"owner"|"editor"|"viewer"|null>(null);
   const [environment,setEnvironment]=useState<'development'|'production'>('development');
   const [sessionError,setSessionError] = useState("");
@@ -108,8 +111,10 @@ function App() {
   }
   if (!role) return <main style={{fontFamily:"system-ui",padding:"2rem"}}><h1>Cookie Catalog</h1><p role="status">{sessionError || "Checking your access…"}</p></main>;
   return <main className="app-shell">
-    <AppHeader role={role} environment={environment} />
-    <Browse version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
+    <AppHeader role={role} environment={environment} onRequest={()=>setRequestOpen(true)} />
+    {requestOpen&&<ChangeRequest context={requestContext} onClose={()=>setRequestOpen(false)} />}
+    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests().catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p></details>}
+    <Browse onContextChange={setRequestContext} version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
     {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>

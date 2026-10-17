@@ -13,3 +13,7 @@ Owner authorized housekeeping and small UX fixes October 16 at 17:34 Pacific (CC
 CC-TODO-019 backup/restore stall remains unresolved: root cause and a verified fix are required. Cloud in-app backup is separate from the managed-PC npm block. Preserve safe locks and fast bounded Save/Delete. No real catalog data, images, credentials, private emails or signed links belong in Git. Remote Cloudflare dashboard login remains blocked; owner dashboard and wife's unmanaged-PC Wrangler worked. Do not bypass managed Windows protections or repeat the transfer.
 
 [Current TODO](Cookie_Catalog_TODO.md) · [Project charter](docs/Project_Charter.md) · [Historical context](Cookie_Catalog_Context_History.md). Historical checkpoints preserve evidence; their old pending instructions do not override this page.
+
+## Latest R2 implementation checkpoint
+
+PR #7 holds the housekeeping/UX batch and reconciled R2 plan. Local 156-test/build pass and remote CI/development build passed for 2c6daeebd9f5caa0b286abaef634888ed42e6f7d. Authenticated browser visual check could not continue because its catalog session expired; no live visual/logout pass is claimed. First Change Request slice passed 159 application tests and build/type-check and is being published to development; see docs/Change_Request_Workflow.md. Request data needs its own operational recovery coverage (CC-TODO-023); do not claim catalog TAR includes it. Production remains the accepted R1 build pending development acceptance. Next unused CC-TODO-024.

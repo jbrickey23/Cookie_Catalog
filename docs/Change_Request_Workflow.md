@@ -1,9 +1,17 @@
-# Inline Change Requests — after R1
+# Private Change Requests — R2 first slice
 
-CC-TODO-018. Owner accepted deferral October 16, 2026, 12:22 Pacific. Target R1.1; not a release blocker.
+CC-TODO-018. R2 scenario accepted October 16, 2026. A signed-in user opens Request a change from the header. Available focused record identity/name and current search are captured at opening. Required fields: type, title (120 characters), requested change (4000) and reason (1000). Context is an advisory snapshot, not verified record provenance. Server records authenticated subject, source environment and timestamp; no private email is copied to GitHub. Inline explanations and validation precede a review step and explicit Confirm and save request.
 
-User opens Change Request from the catalog. Capture available focused record identity, view/search and application version automatically. Required fields: summary, requested change and reason. Optional screenshot and additional context. Capture submission identity and timestamp from the authenticated session. Provide quick help, field type/length/allowed-value checks and accessible validation feedback. Show a review step and explicit Save request confirmation; retain the draft on validation/save failure.
+Submission retains the catalog position/draft and creates no catalog mutation. Validation/save failure preserves the request draft. Closing a populated unsaved request asks before discard; leaving the page uses the browser unsaved-change warning. The request is not saved locally across a browser restart; explicit save is needed for durable persistence. A stable per-form UUID and payload fingerprint make response-loss retries idempotent; changed payloads cannot overwrite an existing request.
 
-Persist a durable request ID, created time, status and context. Requests must be discoverable in the next reconciliation/TODO review rather than existing only in browser memory. Submission creates a request, not a catalog edit. Acknowledge the request ID and keep the catalog position. Decide the private durable storage and review integration before implementation; do not silently publish user screenshots, catalog context or identities to the public GitHub repository. Suggested statuses: New, Triaged, Planned, Done, Declined. Do not promise a delivery date from submission.
+Private storage is the existing FILES bucket under catalog-requests/v1/, separate from originals and snapshots. No schema migration, new membership, external service, paid resource or public GitHub issue is introduced. The API requires authenticated membership; submission is available to existing owner/editor/viewer users. GET/export and release/TODO assignment are owner-only. State-changing requests require exact same-origin and the change-request header; JSON is streamed with a 16 KiB bound. R2 conditional writes prevent overwrite races.
 
-R1 continues to use the existing conversation for feedback. Future request capture does not expand current production/release scope.
+## Reconciliation without a new tracking dashboard
+
+Owner expands Request reconciliation and downloads the private JSON export. Pagination is bounded to 20 records per request; exports stop without partial download if their cap is exceeded. The next reconcile reads this export along with current TODOs, sanitizes any public work item and maps request IDs to planned work. Private data is never automatically published. The owner-only PATCH /api/change-requests API assigns release (R2 or v0.2.0) and TODO (CC-TODO-018), using the exported revision in If-Match. It rejects stale writes. No broad user status, reply or planning interface is built yet; those are deferred until requested.
+
+**Recovery coverage:** the catalog TAR/managed backup currently covers catalog tables and originals, not this new operational request prefix. Keep downloaded request exports privately; integrating requests into independent operational backup/restore is an explicit remaining R2 recovery requirement. Do not claim catalog backup automatically protects these requests.
+
+## Still pending
+
+Live authenticated development acceptance, production promotion and operational export/reconcile trial remain pending. Screenshot attachments and full application-version capture are not in this first slice. Add request-prefix recovery/export verification before calling the entire ingestion feature release-complete. Follow-up UI only on demonstrated need. No delivery date is promised by submission.
