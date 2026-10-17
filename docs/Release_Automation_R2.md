@@ -25,3 +25,9 @@ The remaining controller must pin the exact commit/tree/configuration, require t
 ## Validation
 
 Automated tests cover admitted work draining, new HTTP mutation rejection, browse/session availability, registration races, invalid/unauthorized controls, corrupt state failing closed, persistent interrupted registrations, unfinished background work, explicit cancellation and durable unlock receipts. Live browser acceptance and a production rehearsal remain pending.
+
+## Read-only preflight foundation
+
+The manual Release preflight (no deployment) workflow pins a full target SHA and current production release-branch baseline, validates the production configuration, requires a newer stable package version, rejects tracked dirty work and any SQL change in the routine path, runs candidate application tests and a production build/dry-run, and preserves a release-plan artifact. Concurrency is serialized and permissions are read-only. Build provenance uses the selected candidate SHA, not the workflow dispatch branch. The plan deliberately leaves remote recovery, maintenance and deployment verification false. Passing local planning never means Released.
+
+The current R2 development package remains 0.1.0 and must be versioned for an actual candidate; the routine preflight correctly blocks releasing it again as v0.1.0. The workflow becomes dispatchable through the repository after its definition reaches the default branch. No production ref is moved, no cloud credentials are introduced and no deployment runs from this workflow.

@@ -1,0 +1,52 @@
+name: Release preflight (no deployment)
+on:
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: Exact full candidate commit SHA (already reviewed)
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: cookie-catalog-release-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Pin production baseline and validate routine release plan
+        env:
+          RELEASE_TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          export RELEASE_BASELINE_SHA="$(git rev-parse origin/release/r1-production)"
+          node tools/release-preflight.mjs
+      - name: Install and test exact candidate
+        working-directory: app
+        run: |
+          npm ci --no-audit --no-fund
+          npm run test:auth
+      - name: Build approved production configuration without deployment
+        working-directory: app
+        env:
+          CC_WRANGLER_CONFIG: wrangler.production.ready.jsonc
+          GITHUB_SHA: ${{ inputs.target_sha }}
+          GITHUB_REF_NAME: release-preflight
+        run: |
+          npm run build
+          npx wrangler deploy --dry-run --config dist/cookie_catalog_prod/wrangler.json
+      - name: Preserve read-only preflight plan
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-preflight-plan
+          path: release-plan.json
+          if-no-files-found: warn

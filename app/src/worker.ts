@@ -1,3 +1,4 @@
+import {handlePhotoInbox,preparePhotoInbox} from './server/photo-inbox';
 import {withReleaseWrite,handleReleaseMaintenance,ReleaseGateError} from './server/release-maintenance';
 import {handleChangeRequests} from './server/change-requests';
 import {catalogEnvironment,type CatalogEnvironment} from './catalog-environment';
@@ -33,6 +34,7 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   if (!mayRead(user)) return json({ error: "Unauthorized" }, 401);
   if (!user) return json({ error: "Unauthorized" }, 401);
   const pathname = new URL(request.url).pathname;
+  if(pathname==='/api/photo-inbox'||pathname.startsWith('/api/photo-inbox/')){if(!files)return json({error:'Photo storage unavailable'},503);return handlePhotoInbox(request,files,user);}
   if(pathname==='/api/change-requests'){if(!files)return json({error:'Request storage unavailable'},503);return handleChangeRequests(request,files,user,environment);}
   if(pathname==='/api/help/fields'){
     if(request.method!=='GET')return json({error:'Method not allowed'},405);
@@ -220,7 +222,7 @@ export async function handleReleaseGuardedApi(request:Request,verifier:IdentityV
  }catch(error){return json({error:error instanceof ReleaseGateError?error.message:'Release safety status unavailable. Keep your draft and retry.'},error instanceof ReleaseGateError?error.status:503);}
 }
 export default {
-  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,()=>scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT))).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
+  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{await scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT));await preparePhotoInbox(env.FILES);}).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
   async fetch(request: Request, env: Env): Promise<Response> {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {

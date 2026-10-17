@@ -197,3 +197,8 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .change-request{background:#fff;border:1px solid #829786;border-radius:10px;padding:1rem;margin:1rem 0}.change-request label{display:block;margin-top:1rem}.change-request input,.change-request select{display:block;width:100%;font:inherit;padding:.6rem}.request-text{white-space:pre-wrap}
 
 .maintenance-notice { margin: 0; padding: .8rem 1.2rem; background: #fff0c2; color: #493600; border-bottom: 1px solid #d5bd71; }
+
+.photo-inbox-items { list-style: none; padding: 0; display: grid; gap: 1rem; }
+.photo-inbox-items > li { display: flex; gap: 1rem; padding: .8rem; border: 1px solid #c4cfc5; border-radius: .5rem; }
+.photo-inbox-items img { width: 140px; height: 140px; object-fit: contain; background: #f4f4ee; }
+@media(max-width: 550px) { .photo-inbox-items > li { flex-wrap: wrap; } }

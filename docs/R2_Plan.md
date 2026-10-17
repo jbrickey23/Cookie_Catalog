@@ -49,3 +49,7 @@ Expect additional details as each slice is unpacked. Record discoveries, preserv
 ## First implementation checkpoint
 
 Housekeeping/UX and roadmap committed to development in PR #7. Initial local Change Request slice includes private durable submission, context capture, validation/review, idempotent retry, owner-only paginated reconciliation export and revision-guarded release/TODO planning API. Broad lifecycle/reply UI remains deferred. Screenshot uploads/version capture and operational request backup coverage (CC-TODO-023) are still pending. Live visual acceptance was blocked by the expired agent browser catalog session; do not mark it passed or promote unverified new request workflows as R2 complete. Next unused CC-TODO-024.
+
+## Overnight implementation checkpoint — October 16, 22:05 Pacific authorization
+
+Owner instructed continued autonomous R2 work. Portable request backups and missing-request recovery passed an isolated source-disposed rehearsal. Release editing gate and draft-preserving notice passed 168 application tests; production automation is blocked on narrowly scoped machine authentication and safe interrupted-worker recovery. Backup progress/lease diagnostics added; the original root cause remains unproven. Private photo inbox/queue is implemented as a foundation without configured extraction or catalog submission. See current TODO and the dedicated workflow/reliability/release/photo checkpoint documents for exact pending acceptance. Production remains R1.

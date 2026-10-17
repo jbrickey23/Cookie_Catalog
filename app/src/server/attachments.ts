@@ -35,7 +35,7 @@ async function boundedBody(request: Request): Promise<Uint8Array> {
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
   return bytes;
 }
-function media(filename: string, bytes: Uint8Array): string | null {
+export function attachmentMedia(filename: string, bytes: Uint8Array): string | null {
   const extension = filename.split(".").pop()?.toLowerCase();
   if (extension === "png" && [137,80,78,71,13,10,26,10].every((n,i) => bytes[i] === n)) return "image/png";
   if (["jpg","jpeg"].includes(extension ?? "") && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";
@@ -117,7 +117,7 @@ export async function handleAttachments(request: Request, database: D1Database, 
       const hash = Array.from(digest, n => n.toString(16).padStart(2,"0")).join("");
       if (bytes.byteLength !== row.byte_size || hash !== row.sha256) return json({ error: "Original file failed integrity verification." }, 409);
       const inline=url.searchParams.get("view")==="image";
-      const detected=media(row.filename,new Uint8Array(bytes));
+      const detected=attachmentMedia(row.filename,new Uint8Array(bytes));
       if(inline && (!detected?.startsWith("image/") || detected!==row.media_type)) return json({error:"Only supported verified images can be displayed."},415);
       return new Response(bytes, { headers: {
         "content-type": inline ? detected! : "application/octet-stream", "cache-control": "no-store", "x-content-type-options": "nosniff",
@@ -153,7 +153,7 @@ export async function handleAttachments(request: Request, database: D1Database, 
     if (file.size === 0 || file.size > MAX_FILE) return json({ error: "File must contain bytes and be at most 25 MiB." }, 413);
     const filename = file.name.normalize("NFC").replace(/[\\/\x00-\x1f\x7f]/g, "_").slice(0,160);
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const type = media(filename, bytes);
+    const type = attachmentMedia(filename, bytes);
     if (!type || (kind === "design" && !type.startsWith("image/"))) return json({ error: "Use PNG, JPEG or WebP images; cutter records also accept STL and 3MF originals." }, 415);
     if (!await database.prepare(`SELECT id FROM ${t.table} WHERE id=?`).bind(id).first()) return json({ error: "Catalog record not found." }, 404);
     const attachmentId = "file_" + crypto.randomUUID().replace(/-/g, "");
