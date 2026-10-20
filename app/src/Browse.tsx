@@ -3,13 +3,13 @@ import {MasterDetailWorkspace} from "./MasterDetailWorkspace";
 import {RecordPhotos} from './RecordPhotos';
 import {EntryEditor} from "./EntryEditor";
 export interface BrowseItem {id:string;shape_id:string;source_bin:string|null;name:string;maker?:string;quantity:number|null;record_kind?:"physical"|"reference";review_state?:string|null;source_url?:string|null;source_reason?:string|null;width_mm:number|null;height_mm:number|null;reference_size_mm:number|null;location:string|null;slot:string|null;image_id:string|null;image_name:string|null}
-const reviewLabel=(state:string|null|undefined)=>({not_printed:"Not printed",not_owned:"Not purchased",set_review:"Set / components need review",variant_review:"Size variants need review",duplicate_review:"Possible duplicate",print_review:"Print status needs review"}[state??""]??"Inventory needs review");
+const reviewLabel=(state:string|null|undefined)=>state==null?'Producer reference':({not_printed:"Not printed",not_owned:"Not purchased",set_review:"Set / components need review",variant_review:"Size variants need review",duplicate_review:"Possible duplicate",print_review:"Print status needs review"}[state??""]??"Inventory needs review");
 const number=(n:number)=>Number(n.toFixed(2)).toString();
 export function CutterCard({item,onOpen}:{item:BrowseItem;onOpen?:()=>void}) {
   const [failed,setFailed]=useState(false);
   const artwork=/reference[ _-]*artwork/i.test(item.image_name??"");
   return <article className="cutter-card" onClick={onOpen}>
-    <div className="cutter-image">{item.image_id&&!failed?<img loading="lazy" src={"/api/attachments/"+encodeURIComponent(item.image_id)+"?view=image"} alt={artwork?"Reference artwork for "+item.name:item.name+" — catalog image"} onError={()=>setFailed(true)}/>:<span>{failed?"Image unavailable":"Image needed"}</span>}</div>
+    <div className="cutter-image">{item.image_id&&!failed?<img loading="lazy" src={"/api/attachments/"+encodeURIComponent(item.image_id)+"?view=image"} alt={artwork?"Reference artwork for "+item.name:item.name+" — catalog image"} onError={()=>setFailed(true)}/>:<span>{failed?"Image unavailable":"No image attached"}</span>}</div>
     <div className="cutter-card-body"><p className="image-kind">{artwork?"Reference artwork":item.image_id?"Reference image":"No image attached"}</p><h3>{item.name}</h3><p>{item.maker??"Producer not recorded"}</p>
     <p className="reference-size">{item.record_kind==="reference"?reviewLabel(item.review_state):item.reference_size_mm?number(item.reference_size_mm/25.4)+'″ cutter':"Reference size needed"}</p>
     <dl><div><dt>Location</dt><dd>{item.location??item.source_bin??"Not recorded"}{item.slot?" · Slot "+item.slot:""}</dd></div><div><dt>Quantity</dt><dd>{item.quantity??"Not recorded as inventory"}</dd></div><div><dt>Width × height</dt><dd>{item.width_mm&&item.height_mm?`${number(item.width_mm)} × ${number(item.height_mm)} mm`:"Measurements needed"}</dd></div></dl>
@@ -41,7 +41,7 @@ export function Browse({version=0,canEdit=false,canDelete=false,onContextChange}
     <label className="demo-toggle"><input type="checkbox" checked={demo} onChange={e=>{if(!allowChange())return;setDemo(e.target.checked);setSelected(null);setNewKind(null);setOffset(0);}}/> Show demonstration records</label>
     <p role="status" aria-live="polite">{busy?"Loading cutters…":error||`Showing ${items.length?offset+1:0}–${offset+items.length} of ${total} catalog entries.`}</p>
     {!busy&&!error&&items.length===0&&<p>No cutters match this search.</p>}
-    {canEdit&&<div className="browse-create"><button onClick={()=>{if(allowChange()){setSelected(null);setNewKind('cutters');}}}>New physical cutter</button><button onClick={()=>{if(allowChange()){setSelected(null);setNewKind('shapes');}}}>New reference</button></div>}
+    {canEdit&&<div className="browse-create"><button disabled={locked} onClick={()=>{if(allowChange()){setSelected(null);setNewKind('cutters');}}}>New physical cutter</button><button disabled={locked} onClick={()=>{if(allowChange()){setSelected(null);setNewKind('shapes');}}}>New reference</button></div>}
     <p role="status">{savedNotice}</p><MasterDetailWorkspace detailKey={selected?.id??newKind} detail={(selected||newKind)?<>
       {newKind?<section className="cutter-detail" aria-label="New catalog entry"><div className="browse-heading"><h3>{newKind==='cutters'?'New physical inventory':'New producer reference'}</h3><button onClick={()=>{if(allowChange())setNewKind(null);}}>Close new entry</button></div><EntryEditor key={'new-'+newKind} kind={newKind} canEdit={canEdit} canDelete={false} onDirty={reportDirty} onSaved={entry=>{setNewKind(null);setSelected(focused(entry));setSavedNotice(entry.photoStatus??'Saved. Viewing the persisted record.');setRefresh(v=>v+1);}} onDeleted={()=>{}}/></section>:selected&&<CutterDetails key={selected.id} item={selected} canEdit={canEdit} canDelete={canDelete} onDirty={reportDirty} onNavigate={entry=>{setSelected(focused(entry));}} onSaved={entry=>{setSavedNotice(entry.photoStatus??'Saved.');setSelected(focused(entry));setRefresh(v=>v+1);}} onDeleted={()=>{setSelected(null);setRefresh(v=>v+1);}} onClose={()=>{if(!allowChange())return;setSelected(null);requestAnimationFrame(()=>document.getElementById("view-"+selected.id)?.focus());}}/>}
     </>:null}>
@@ -66,6 +66,7 @@ function CutterDetails({item,onClose,canEdit,canDelete,onDirty,onSaved,onDeleted
   const [adding,setAdding]=useState(false),[photoDirty,setPhotoDirty]=useState(false),[photoBusy,setPhotoBusy]=useState(false),[entryDirty,setEntryDirty]=useState(false),[entryBusy,setEntryBusy]=useState(false);
   const reportEntry=useCallback((dirty:boolean,busy=false)=>{setEntryDirty(dirty);setEntryBusy(busy);},[]);
   useEffect(()=>{onDirty(entryDirty||photoDirty,entryBusy||photoBusy);},[entryDirty,entryBusy,photoDirty,photoBusy,onDirty]);
+  useEffect(()=>()=>onDirty(false,false),[onDirty]);
   const reportPhoto=useCallback((dirty:boolean,busy:boolean)=>{setPhotoDirty(dirty);setPhotoBusy(busy);},[]);
   useEffect(()=>{panel.current?.focus();},[]);
   const [photoVersion,setPhotoVersion]=useState(0),[inventory,setInventory]=useState<any[]>([]);

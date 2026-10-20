@@ -36,7 +36,7 @@ Existing tags, dimensions, origin, BIN/location, Slot, guarded revisions, privat
 
 The exact 23-table/five-migration profile is added to app snapshots, managed restore, offline Python restore/preparation, Node archive validation and regenerated backup-kit installer/checksum. Legacy 16/20/22-table profiles remain supported. Import setup and infrastructure checks recognize the new profile. Unknown/incomplete schemas still fail closed. The new FK also prevents deleting/Undo-removing a physical record while its photograph remains linked. Removing an original remains an explicit owner operation; this batch does not remove retained originals.
 
-**Development activation is not automatic on a branch build.** Use the established authorized development D1 tooling, not production configuration. Inspect migration status and a protected, verified recovery copy first. Expected prerequisite: migrations 0001–0004 applied; the only pending migration must be 0005. From `app`, list with `npx wrangler d1 migrations list cookie-catalog-dev --remote --config wrangler.jsonc`; after verifying the exact development binding and recovery point, apply through the existing authorized workflow with `npx wrangler d1 migrations apply cookie-catalog-dev --remote --config wrangler.jsonc`. Stop if other migrations/schema drift appear or recovery cannot be verified. This worker has no authenticated Cloudflare CLI/session and does not claim remote activation. Do not add credentials or change the build/deployment command to force it.
+**Development activation is not automatic on a branch build.** Use the established authorized development D1 tooling, not production configuration. Inspect migration status and a protected, verified recovery copy first. Expected prerequisite: migrations 0001–0004 applied; the only pending migration must be 0005. From `app`, list with `npx wrangler d1 migrations list cookie-catalog-dev --remote --config wrangler.jsonc`; after verifying the exact development binding and recovery point, apply through the existing authorized workflow with `npx wrangler d1 migrations apply cookie-catalog-dev --remote --config wrangler.jsonc`. Stop if other migrations/schema drift appear or recovery cannot be verified. This worker has no authenticated Cloudflare CLI and does not claim remote activation. A development app session was subsequently established for synthetic UI checks; it does not grant dashboard/CLI migration access. Do not add credentials or change the build/deployment command to force it.
 
 Refresh the backup tools before validating a new-profile archive. Preserve older backups. A code rollback must understand the new profile; an old binary/tool may refuse it. Do not drop the junction or restore data automatically to make an older build work. Production migration/transition requires its own approval and recovery review. CC-TODO-019 cloud backup stall remains unresolved; local archive tests do not establish cloud backup reliability or production readiness.
 
@@ -59,7 +59,7 @@ Record actual commit, browser/device, test IDs and results. These steps are an o
 
 ## Validation checkpoint
 
-Automated evidence and exact remote publication/CI state are recorded in the closing checkpoint below. The actual cloud browser reached **Log in to Cookie Catalog Dev** on October 20; no authenticated UX interaction or remote migration was executed. All ten live scenarios and owner acceptance therefore remain pending. Do not label a build or DOM interaction test as live browser success.
+Automated evidence and exact remote publication/CI state are recorded in the closing checkpoint below. The cloud browser initially stopped at Access sign-in, then completed secure owner sign-in. The live development checks below supersede that initial blocker. No remote migration was executed. Owner acceptance and the blocked physical-photograph scenario remain pending; do not equate agent browser tests with owner acceptance.
 
 ### Local evidence before publication
 
@@ -67,4 +67,35 @@ Automated evidence and exact remote publication/CI state are recorded in the clo
 - Final UI/selected-reference refinement: **33 focused tests passed**, including two additional creation/photo-caption interactions; TypeScript and frontend/Worker build passed. Exact-head CI must run the resulting **182-test** suite.
 - Offline tools: **33 passed**; SQLite schema smoke, **11** recovery/preparation tests (including new-profile photo link/original recovery and Node archive validation), **3** OneNote audit tests and synthetic import passed. Legacy archive profiles remain covered.
 - Documentation relative-link/JSON checks, policy manifest/digest verification and whitespace checks are required before publication.
-- No production or cloud D1 migration/rehearsal, live-data write or credential provisioning performed. Remote commit/check/development-build evidence follows after publication.
+- No production or cloud D1 migration/rehearsal, real catalog-row/original modification or credential provisioning performed. Only the synthetic development fixtures below were created. Remote commit/check/development-build evidence follows after publication.
+
+### Remote/browser checkpoint — October 20, 2026 UTC
+
+Implementation commit `41dab1bae685c67081fe40ee5a90de78e66a9e3b` was fetched back with tree `d512171078dc17ee6639f31bb77c9c96cc8ad954`. Cloudflare development build `1f88f615-46a7-4f38-9ccb-a319e8f1fe3f`, version `861ad1ee-2d02-4728-bd6c-f1689abec19d`, succeeded. Authenticated `/api/dev/infrastructure-check` independently attested that exact commit/branch; schema was 22 tables, migrations 0001–0004, supported, with zero FK violations. **0005 is not active.**
+
+The initial sqlite run [39489334920](https://github.com/JBrickey23/Cookie_Catalog/actions/runs/39489334920) failed because the new Python recovery test invoked the Node 24 helper before CI's Node setup stage. No app deployment failure was inferred. Commit `e06d70bec4c2cb7fe1fcbf1e180027802d3f2100` moves that assertion into the Node-stage managed-backup test without changing workflows/triggers. [sqlite run 39490539899](https://github.com/JBrickey23/Cookie_Catalog/actions/runs/39490539899/job/118862213533) passed: **182 application tests**, 33 tooling tests, schema/11 recovery/3 audit/synthetic-import checks and build. Final browser-driven cleanup below adds one regression test; final exact-head CI must verify **183** app tests. PR #7's current check/description is the final-publication evidence; no merge is performed.
+
+| Scenario | Actual live development evidence on the implementation (not owner acceptance) |
+| --- | --- |
+| New reference | Producer A and B's identically named Christmas Tree references persisted separately and opened normal Focus Cards. |
+| New reference + physical record | Combined **New physical cutter → Create a new reference** created the Snowflake reference/inventory, with no source URL, images or digital files. Visible new-reference confirmation and saved normal Focus Card observed. |
+| Medium / Large | 76.2 mm and 101.6 mm records share Producer A's Christmas Tree reference; both appeared in Associated inventory. |
+| Quantity | Medium persisted as one inventory row with quantity 2; Large remained quantity 1. |
+| Producer separation / duplicates | Reference filter exposed two different Tree IDs. Repeating name + Producer A was rejected; Name highlighted and input retained. |
+| Photographs | Synthetic reference PNG uploaded and displayed as Reference photograph / digital file. Medium's physical PNG was explicitly rejected before upload because 0005 is absent. Distinct physical-photo rendering/persistence/isolation passed automated tests, **not live acceptance**. |
+| Optional files | Both combined Snowflake and Medium/Large inventory saved without photograph/STL/source requirements. |
+| Invalid URL | `example.test/tree` was retained unchanged, error highlighted Source link, actual focus moved to `inline-shape-source_url`; correction to `https://example.test/tree` saved. |
+| Focus Card | Persisted records opened directly with normal Change controls, correct quantities/sizes and reference navigation. |
+| Search / navigation | Name search and References filter found separate producer records; shared-reference/associated-inventory links navigated correctly. Quoted-producer/tag search and post-refresh checks belong to final verification/owner retest. |
+
+Live testing found a workspace dirty-state cleanup bug after a failed photo draft was explicitly discarded: a later creation could prompt again. Fixed by clearing combined dirty/busy state when the focused panel unmounts; added a DOM interaction regression. Create buttons now visibly disable during a busy operation. Fresh valid references are labeled Producer reference rather than incorrectly requiring inventory review, and absent optional images are labeled No image attached. **21 focused browser-interaction/browse tests and type-check/Worker/frontend build passed** after this refinement. Final deployed cleanup retest is recorded in PR #7's closing checkpoint.
+
+Retained synthetic fixtures only (do not recreate them blindly):
+
+- Tree Producer A reference: `shape_dce00219f42f4bf98c2182f939f51446`.
+- Tree Producer B reference: `shape_02ca2837be04465687684aafdc9092d7`.
+- Medium quantity 2: `cutter_8086b08ab0bc48779a8db4a72e496b49`; Large quantity 1: `cutter_af0578d8044e43ca8217ff55dcb6630c`.
+- Combined Snowflake reference: `shape_994664c521c34c50bbfa410abfd2b27f`; its physical record is discoverable by the same synthetic name.
+- One synthetic `test-finished-cookie.png` original is retained on Producer A. The rejected physical PNG did not become an inventory attachment. No existing originals or real catalog rows were edited/deleted.
+
+Remaining: verified recovery/development migration activation for 0005, live distinct physical-photo acceptance after activation, final owner acceptance on intended devices, pre-existing PR #7/main conflicts, and separately unresolved CC-TODO-019. Do not activate production, merge #7/#12, bypass authentication, or expand extraction/release scope to close these gaps. No additional product/identity decision is required for this slice; development migration access/recovery and owner retesting are the immediate continuation.
