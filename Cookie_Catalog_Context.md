@@ -1,5 +1,13 @@
 # Cookie_Catalog — Context
 
+## R2 release automation — Phase 1 investigation, 2026-10-19 Pacific
+
+**CC-TODO-020 / CC-TODO-022: investigation/design validation complete; recommendation PROPOSED, Phase 2 not authorized by this batch.** See [Phase 1 recommendation and acceptance plan](docs/R2_Release_Automation_Phase1_20261019.md) for verified platform/source evidence, trust boundaries, scenarios, bootstrap limits, rejected alternatives, credentials/costs and acceptance tests. Recommend GitHub Actions release/recovery workflows plus Cloudflare native version upload/deploy/rollback and the existing durable gate, with targeted machine-auth/lifecycle/stale-client fixes; no separate hosted controller initially.
+
+Owner decisions before Phase 2: native GitHub launch vs in-catalog button; constrained machine trust and one production deployment writer; one-time R1-compatible bridge/maintenance procedure. Recovery is bounded and fail-closed, with no guaranteed recovery start time or timeout unlock. Bootstrap drain of old R1 writers still needs a defensible rehearsal; R1 lacks the gate. CC-TODO-019 remains a separate unresolved cloud-backup readiness dependency, unrelated to Windows tooling restrictions.
+
+This documentation-only investigation does not implement application/workflow code, push the R2 deployment branch, merge PR #7, deploy, provision credentials, modify data or change approved R2 sequencing. Restore main `4cf0cc22c34928fa79e4e10c1418f9ed7c28c15f` plus inspected R2 PR #7 head `912e0981c9ec4a1c2b7e8ce954561f29fd9433c8`; inspect newer heads before future execution. Return to the owner for the Phase 2 design decision after this checkpoint is published. Next unused task **CC-TODO-025**; decision **CC-DEC-023**. Prior framework closeout and CC-TODO-001 evidence limits remain unchanged.
+
 ## Operating-framework closeout — 2026-10-19 Pacific
 
 CC-TODO-024 / CC-DEC-022 adoption is complete (main PR #8 and active R2 documentation sync). CC-TODO-001 is **PARTIALLY VERIFIED**: accept the owner's reported independent fresh-chat behavioral pass for v1.0.0, R1/R2 boundaries, PR #7, priorities, Guided Switching and read-only initialization. The supplied report omits the archived chat's exact next task/action, so that original acceptance subcriterion remains unverified. No archived trace or hidden-history audit is claimed; this worker's history-assisted restore is not the independent test. See [closeout evidence and criterion matrix](docs/Operating_Framework_Closeout_20261019.md) for exact original criteria, supported passes and evidence limits.

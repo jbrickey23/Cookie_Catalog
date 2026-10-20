@@ -7,6 +7,8 @@ Current development: Browse has a responsive master-detail workspace with inline
 
 ## Durable workflow
 
+[R2 release automation Phase 1](docs/R2_Release_Automation_Phase1_20261019.md): evidence-based proposal, four-scenario gap analysis and Phase 2 acceptance plan. Investigation only; implementation and production bootstrap await owner approval.
+
 [Operating-framework closeout](docs/Operating_Framework_Closeout_20261019.md): adoption complete; reported fresh-chat behavior accepted, with exact next-task reconstruction still unverified under CC-TODO-001. Redundant charter PR #5 closed; R2 PR #7 remains open. Return to R2 design; no release or deployment is implied.
 
 Cookie_Catalog adopts Durable_CHATGPT **v1.0.0** through [the version/source/digest pin](policies/README.md) and verified local policy copies. [Session initialization, audit, execution handoff and reconciliation](docs/Durable_Workflow_Adoption_20261019.md) apply alongside existing [development guidelines](docs/Development_Guidelines.md). Main adoption is effective when the protected documentation PR merges; verify GitHub state. Runtime/production release state is unchanged by this adoption.
