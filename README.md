@@ -5,6 +5,11 @@
 Current development: Browse has a responsive master-detail workspace with inline shape/physical inventory editing, staged tags/new shapes, protected Save, guarded owner deletion, and no-command backup/approved recovery. See [reconciled design and implementation](docs/Inline_CRUD_Reconciliation_20261015.md) and the authoritative [current checkpoint](Cookie_Catalog_Context.md). Existing OneNote bins are accepted independently from physical/digital status.
 
 
+## Durable workflow
+
+Cookie_Catalog adopts Durable_CHATGPT **v1.0.0** through [the version/source/digest pin](policies/README.md) and verified local policy copies. [Session initialization, audit, execution handoff and reconciliation](docs/Durable_Workflow_Adoption_20261019.md) apply alongside existing [development guidelines](docs/Development_Guidelines.md). Main adoption is effective when the protected documentation PR merges; verify GitHub state. Runtime/production release state is unchanged by this adoption.
+
+
 ## App-managed backups and recovery
 
 The development app now provides in-app snapshots, automatic pre-change protection for quick imports, approved restore/rollback and opt-in daily fresh backups. The routine workflow has no CMD or filename handoff. BIN location assignments are independent of Physical/Digital status. See [managed backups](docs/App_Managed_Backups.md) and the latest Context checkpoint for acceptance and retention limits.

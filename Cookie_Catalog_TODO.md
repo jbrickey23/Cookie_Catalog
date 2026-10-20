@@ -1,5 +1,15 @@
 # Cookie_Catalog — TODO
 
+## Current workflow checkpoint — 2026-10-19 Pacific
+
+Durable_CHATGPT **1.0.0** adoption: **CC-TODO-024 / CC-DEC-022**. [Version/source/digest pin](policies/README.md) · [audit, session initialization, handoff and reconciliation](docs/Durable_Workflow_Adoption_20261019.md). This documentation batch is user-approved; repository changes are implemented and locally validated on its adoption branch, with main adoption effective only after the protected PR merges. Verify commit/PR evidence rather than assuming publication or deployment.
+
+R1 v0.1.0 remains released; production is the sole editing catalog, development is for testing. See [R1 closeout](docs/R1_Release_Closeout.md). R2 implementation is already authorized and underway in open PR #7 (`feature/cc-infrastructure-foundation`, inspected head `9f53bf618a5b5ae7d88d1cdd2d6a030b34efc3b2`); this adoption batch does not implement or merge those features. Restore that branch’s current Context/TODO/Bootstrap, `docs/R2_Plan.md` and `docs/Project_Charter.md` before resuming R2. It owns CC-TODO-020 release automation, 021 UX, 022 maintenance gate and 023 request recovery. Preserve CC-TODO-019 diagnostics and the four authorized R2 tracks; do not revert them to older main-only sequencing. Next unused task: **CC-TODO-025**. Do not reopen R1 provisioning, transfer or release approvals. Earlier dated entries below are historical evidence; their old “next unused” and approval-pending statements do not override this checkpoint or current specialized release records.
+
+### CC-TODO-024 — Adopt Durable_CHATGPT v1.0.0
+
+Status: implementation/local validation complete; protected PR publication/merge is verified separately in GitHub and the completion report. Scope: audit current conventions and R1/R2 boundaries, adopt verified policy copies/pin without exceptions, integrate bootstrap and existing engineering judgment, validate, commit, reconcile. No feature work, live-data change, resource creation or production release is included. Do not close CC-TODO-001's independent history-free restore test from this session.
+
 ## R1 RELEASED: v0.1.0 — October 16, 2026
 
 PR #1 merged into main at c0cb3efa8915d88d95efa28e9dfaec3b4ebd0cda after both required CI checks and development build passed. Published GitHub release/tag v0.1.0 points to that exact merge commit: https://github.com/jbrickey23/Cookie_Catalog/releases/tag/v0.1.0 . Production-only editing/cutover is approved and effective; the manual pause is lifted. Preserve development for testing, with no real catalog editing there.
