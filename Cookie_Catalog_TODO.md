@@ -1,5 +1,12 @@
 # Cookie Catalog — current TODO
 
+## Approved KISS release decision — 2026-10-20 Pacific
+
+Owner approved **PREP → CLOSE SHOP → DRAIN → RELEASE → OPEN SHOP** under existing CC-TODO-020 / CC-TODO-022. Routine backward-compatible releases use a practical bounded settling check of known operations; exhaustive historical Worker census/provider retirement proof is **superseded as a universal prerequisite**. Preserve the earlier investigations as historical evidence. No proxy/controller or disposable cloud resources are required by this decision. Separate breaking/destructive changes require explicit planning/approval. Retain server-side maintenance, known-operation checks, exact reviewed artifacts, compatible verified rollback, stale-client protection and independent recovery evidence. CC-TODO-019 remains unresolved and blocks release readiness.
+
+This handoff authorizes isolated-branch engineering/local tests and draft-PR reconciliation only. Initial R1 still needs a separately approved external restriction/cron pause and a first-transition runbook with explicit limited visibility/residual risk; known active/uncertain high-risk work or unverified recovery stops release. No production maintenance/deployment, credential/Access/production-trigger change, cloud resource, live-data operation, destructive migration or merge of #7/#12 is authorized. Next unused IDs remain CC-TODO-025 / CC-DEC-023.
+
+
 ## R1 quiescence investigation — 2026-10-19 Pacific
 
 CC-TODO-020 / CC-TODO-022: [evidence, alternatives, exact rehearsal proposal and independent engineering sequence](docs/R1_Quiescence_Investigation_20261019.md). **No unconditional production drain proof established.** R1 daily schedule disable does not stop pending backup/restore/retention continuation; the expiring backup lease excludes normal edits. Access/cron restrictions do not prove admitted HTTP/backend work ended. A temporary proxy misses earlier writers; do not add one merely to count future traffic. Proposed: native provider-backed retirement evidence plus a compatible passive-stage rehearsal; first gate stays unarmed until legacy proof exists. Proposed disposable Worker/D1/bucket: cookie-catalog-r1-quiescence-test / same D1 name / cookie-catalog-r1-quiescence-test-private, separate test Access, quotas verified before any creation. Owner approval required; no target/configuration/execution performed. Existing dev resources are not presumed synthetic or safe to interrupt.

@@ -1,5 +1,7 @@
 # R2 release automation — Phase 1 design validation
 
+**2026-10-20 owner supersession:** exhaustive legacy invocation/retirement proof is no longer a universal gate for routine compatible releases. The approved five-stage KISS process governs continuation; factual limitations and historical results below remain evidence. Known high-risk uncertainty and unverified recovery still stop release. See current Context/Decision Log.
+
 Date: 2026-10-19 Pacific. Work: **CC-TODO-020 / CC-TODO-022**; backup dependency **CC-TODO-019**. **Recommendation proposed; Phase 2 is not authorized by this document.** No new task or decision ID is allocated. Next unused: CC-TODO-025 / CC-DEC-023.
 
 ## Recommendation and approval boundary

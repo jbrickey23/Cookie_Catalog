@@ -1,5 +1,7 @@
 # R2 release automation — Phase 2 engineering checkpoint
 
+**2026-10-20 owner supersession:** exhaustive legacy invocation/retirement proof is no longer a universal gate for routine compatible releases. The approved five-stage KISS process governs continuation; factual limitations and historical results below remain evidence. Known high-risk uncertainty and unverified recovery still stop release. See current Context/Decision Log.
+
 Latest investigation: [R1 quiescence evidence and proposed staged bootstrap](R1_Quiescence_Investigation_20261019.md). Native legacy drain is unproven; passive installation versus gate arming is a proposed distinction, not an approved production change. Preserve historical evidence below.
 
 Work: **CC-TODO-020 / CC-TODO-022**, dependency **CC-TODO-019**. Framework: Durable_CHATGPT v1.0.0, unchanged [pin](../policies/README.md). This checkpoint is implemented engineering for review, **not completion of the full Phase 2 acceptance matrix or production readiness**. No new task/decision ID; next unused CC-TODO-025 / CC-DEC-023.

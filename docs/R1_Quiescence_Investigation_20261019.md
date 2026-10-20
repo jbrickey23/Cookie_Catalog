@@ -1,5 +1,7 @@
 # R1 quiescence investigation — decision checkpoint
 
+**2026-10-20 owner supersession:** exhaustive legacy invocation/retirement proof is no longer a universal gate for routine compatible releases. The approved five-stage KISS process governs continuation; factual limitations and historical results below remain evidence. Known high-risk uncertainty and unverified recovery still stop release. See current Context/Decision Log.
+
 Date: **2026-10-19 Pacific**. CC-TODO-020 / CC-TODO-022; dependency CC-TODO-019. Investigation and documentation only. **No defensible unconditional production drain procedure has been established for the currently evidenced architecture.** Do not begin the production bridge transition. The recommendation below is conditional, with explicit stopping predicates, not production readiness.
 
 ## Recommendation
