@@ -1,5 +1,11 @@
 # Cookie_Catalog — Decision Log
 
+## 2026-10-19 — Operating-framework closeout under existing CC-DEC-007 / CC-DEC-022
+
+Owner authorized the narrow closeout. Accept owner-reported independent fresh-chat functional restoration results to the supported extent; CC-TODO-001 stays PARTIALLY VERIFIED for missing exact next-task reconstruction. Preserve provenance limits and original criteria in [closeout evidence and criterion matrix](docs/Operating_Framework_Closeout_20261019.md). The archived test was not reopened or independently audited by this worker.
+
+CC-TODO-024 adoption remains complete. PR #5 closed unmerged because active R2's charter preserves its full requirements and adds current execution context. No new policy/decision/task ID is allocated. PR #7 remains open, its head/sequence untouched; no deployment, live-data change or production promotion is part of closeout. Return to ordinary Chat for R2 design. Next unused decision CC-DEC-023; task CC-TODO-025.
+
 ## 2026-10-19 — CC-DEC-022 — Adopt Durable_CHATGPT v1.0.0
 
 Status: user approved adoption/execution; implemented and locally validated in the documentation adoption branch; main publication follows the protected PR/check workflow.

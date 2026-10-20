@@ -1,5 +1,15 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## Operating-framework closeout — 2026-10-19 Pacific
+
+CC-TODO-024 / CC-DEC-022 adoption is complete (main PR #8 and active R2 documentation sync). CC-TODO-001 is **PARTIALLY VERIFIED**: accept the owner's reported independent fresh-chat behavioral pass for v1.0.0, R1/R2 boundaries, PR #7, priorities, Guided Switching and read-only initialization. The supplied report omits the archived chat's exact next task/action, so that original acceptance subcriterion remains unverified. No archived trace or hidden-history audit is claimed; this worker's history-assisted restore is not the independent test. See [closeout evidence and criterion matrix](docs/Operating_Framework_Closeout_20261019.md) for exact original criteria, supported passes and evidence limits.
+
+PR #5 is closed unmerged as fully superseded by the charter in active R2 PR #7; all requirements are preserved there. PR #7 remains open at inspected head `912e0981c9ec4a1c2b7e8ce954561f29fd9433c8`. Do not reopen the charter PR or duplicate its policy. This closeout updates main documentation only; active R2 is not pushed because its push-triggered development deployment is outside this no-deploy batch. R1 production and approved R2 execution sequencing stay unchanged.
+
+Immediate continuation: return to **R2 design in ordinary Chat** from current R2 records/charter; no new implementation launch is implied. The narrow CC-TODO-001 gap is non-blocking and stays under that ID. No new IDs: next unused task **CC-TODO-025**, decision **CC-DEC-023**. This newer closeout supersedes earlier blanket statements that no independent test has occurred; historical records remain intact.
+
+Restore the current main closeout alongside active R2 before interpreting older adoption notes. Do not reopen completed adoption/charter cleanup or mark CC-TODO-001 wholly passed without the remaining evidence. Preserve the existing policy restore, authorization boundaries and historical sections below.
+
 ## First action — restore current Cookie_Catalog state
 
 Verify GitHub access and read current README, Context, TODO, Decision Log, this bootstrap, [policy pin](policies/README.md), both pinned local policies, applicable AGENTS.md if present, and specialized records needed for the next task. Inspect current branches/open PRs before writing. Use current primary evidence, specialized authoritative records, Context/TODO/Decision Log, Bootstrap, older documents, then old conversations/memory. Read current contents/SHAs, preserve unrelated changes, and verify writes. Report the restored checkpoint and next action; do not render initialization as permission to start unrelated work.
