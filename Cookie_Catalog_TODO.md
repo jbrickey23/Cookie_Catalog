@@ -1,5 +1,9 @@
 # Cookie_Catalog — TODO
 
+## CC-TODO-001 — OWNER-ACCEPTED CLOSED (2026-10-19 Pacific)
+
+Owner explicitly accepted closure after the independent fresh-chat initialization report and authorized committing the durable record. **Status: CLOSED — owner-accepted functional restoration.** The reported fresh chat restored Durable_CHATGPT v1.0.0, R1/R2 boundaries, open PR #7, priorities, Guided Switching, and read-only behavior. The original exact-next-task/action subcriterion was not reproduced verbatim in the archived report; its trace remains unverified and is not represented as independently proven. The owner accepts this bounded evidence and waives further testing for task closure. Preserve the earlier partial-verification record as historical evidence; do not reopen initialization or create another task. R2 sequence and production boundaries are unchanged. Next unused task CC-TODO-025; decision CC-DEC-023.
+
 ## Operating-framework closeout — 2026-10-19 Pacific
 
 CC-TODO-024 / CC-DEC-022 adoption is complete (main PR #8 and active R2 documentation sync). CC-TODO-001 is **PARTIALLY VERIFIED**: accept the owner's reported independent fresh-chat behavioral pass for v1.0.0, R1/R2 boundaries, PR #7, priorities, Guided Switching and read-only initialization. The supplied report omits the archived chat's exact next task/action, so that original acceptance subcriterion remains unverified. No archived trace or hidden-history audit is claimed; this worker's history-assisted restore is not the independent test. See [closeout evidence and criterion matrix](docs/Operating_Framework_Closeout_20261019.md) for exact original criteria, supported passes and evidence limits.
