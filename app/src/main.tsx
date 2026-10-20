@@ -1,3 +1,4 @@
+import {installReleaseFetch} from './release-client';
 import {PhotoInbox} from './PhotoInbox';
 import {ReleaseNotice} from './ReleaseNotice';
 import {RequestRecovery} from './RequestRecovery';
@@ -17,6 +18,8 @@ import { Browse } from "./Browse";
 import { Catalog } from "./Catalog";
 import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
+
+installReleaseFetch();
 
 function App() {
   const [requestOpen,setRequestOpen]=useState(false),[requestContext,setRequestContext]=useState<RequestContext>({}),[requestExportError,setRequestExportError]=useState('');

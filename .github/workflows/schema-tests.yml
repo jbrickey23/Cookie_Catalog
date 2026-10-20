@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -65,3 +67,5 @@ jobs:
           npm ci --no-audit --no-fund
           npm run test:auth
           npm run build
+          cd ..
+          node tools/check-r1-release-bridge.mjs

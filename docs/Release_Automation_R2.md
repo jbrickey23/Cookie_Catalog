@@ -1,5 +1,7 @@
 # R2 release automation — implementation checkpoint
 
+Latest: [Phase 2 engineering checkpoint](R2_Release_Automation_Phase2_20261019.md), owner approvals, local evidence and unresolved integration/bootstrap acceptance. Historical statements below remain dated evidence.
+
 CC-TODO-020 / CC-TODO-022. Pressing Release authorizes the routine release; a second final approval is not part of the intended flow. Production stays R1 until R2 acceptance/promotion.
 
 ## Durable editing gate

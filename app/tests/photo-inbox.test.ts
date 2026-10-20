@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
-import {handleReleaseGuardedApi} from '../src/worker';
+import {handleReleaseGuardedApi as guarded} from '../src/worker';
 import {preparePhotoInbox} from '../src/server/photo-inbox';
+const handleReleaseGuardedApi=(request:Request,verifier:any,db?:any,files?:any)=>{const headers=new Headers(request.headers);headers.set('X-Catalog-Epoch','initial');headers.set('X-Catalog-Build','a'.repeat(40));return guarded(new Request(request,{headers}),verifier,db,files,'development','a'.repeat(40));};
 const identity=(role:'owner'|'editor'|'viewer'='owner')=>({verify:async()=>({role,subject:'TEST '+role,email:null})});
 const id='a1234567-1234-4123-8123-123456789abc',origin='https://catalog.test';
 const png=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);

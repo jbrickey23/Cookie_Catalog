@@ -1,8 +1,9 @@
-const stateKey='catalog-release/control/maintenance.json';
+import type {MachineGate} from './release-machine';
+export const stateKey='catalog-release/control/maintenance.json';
 const leasePrefix='catalog-release/active/';
-type Gate={id:string;active:boolean;targetSha:string;startedAt:string;startedBy:string;finishedAt?:string;finishedBy?:string;outcome?:'verified'|'rolled-back'|'canceled'};
+export type Gate={machine?:MachineGate;id:string;active:boolean;targetSha:string;startedAt:string;startedBy:string;finishedAt?:string;finishedBy?:string;outcome?:'verified'|'rolled-back'|'canceled'};
 export class ReleaseGateError extends Error{constructor(message:string,public status=423){super(message);}}
-async function state(files:R2Bucket){const object=await files.get(stateKey);if(!object)return null;const value=await object.json<Gate>();if(!value||typeof value.active!=='boolean'||!/^release_[a-f0-9-]{36}$/.test(value.id)||!/^[a-f0-9]{40}$/.test(value.targetSha))throw Error('Invalid release safety state');return {value,etag:object.etag};}
+export async function state(files:R2Bucket){const object=await files.get(stateKey);if(!object)return null;const value=await object.json<Gate>();if(!value||typeof value.active!=='boolean'||!/^release_[a-f0-9-]{36}$/.test(value.id)||!/^[a-f0-9]{40}$/.test(value.targetSha))throw Error('Invalid release safety state');if(value.machine){const m=value.machine;if(!/^[a-f0-9]{40}$/.test(m.controllerSha)||!/^\d+$/.test(m.run)||!Number.isSafeInteger(m.attempt)||m.attempt<1||!Number.isSafeInteger(m.sequence)||m.sequence<1||!['paused','deploying','verifying','recovering','needs-attention','complete'].includes(m.phase)||!/^[a-f0-9]{64}$/.test(m.digest)||!/^[a-f0-9]{64}$/.test(m.planHash)||!/^[a-f0-9]{40}$/.test(m.baselineSha)||!/^[a-f0-9-]{36}$/.test(m.baselineVersion)||!/^[a-f0-9-]{36}$/.test(m.candidateVersion))throw Error('Invalid machine release state');}return {value,etag:object.etag};}
 async function backgroundWork(files:R2Bucket){
  const pending:string[]=[];
  for(const [key,done] of [['catalog-backups/control/restore.json','phase'],['catalog-backups/control/retention.json','status']] as const){const object=await files.get(key);if(object){const value=await object.json<Record<string,unknown>>();if(value[done]!=='complete')pending.push(key);}}
@@ -11,7 +12,7 @@ async function backgroundWork(files:R2Bucket){
  return pending;
 }
 export async function releaseStatus(files:R2Bucket,owner=false){
- const gate=await state(files);if(!owner)return {active:!!gate?.value.active};
+ const gate=await state(files);if(!owner)return {active:!!gate?.value.active,epoch:gate?.value.id??'initial'};
  const page=await files.list({prefix:leasePrefix,limit:1000,include:['customMetadata']});
  const pending=await backgroundWork(files),drained=!page.truncated&&page.objects.length===0;
  return {active:!!gate?.value.active,gate:gate?.value??null,pendingBackgroundWork:pending,drained,inFlight:page.objects.map(o=>({id:o.key.slice(leasePrefix.length),startedAt:o.customMetadata?.startedAt??o.uploaded.toISOString()})),moreInFlight:page.truncated,ready:!!gate?.value.active&&drained&&pending.length===0};
@@ -22,8 +23,8 @@ export async function releaseStatus(files:R2Bucket,owner=false){
 export async function withReleaseWrite<T>(files:R2Bucket,action:()=>Promise<T>):Promise<T>{
  const admittedState=await state(files);if(admittedState?.value.active)throw new ReleaseGateError('A catalog release is in progress. Your draft is kept; retry after editing resumes.');
  const key=leasePrefix+crypto.randomUUID();const registered=await files.put(key,'active',{onlyIf:{etagDoesNotMatch:'*'},customMetadata:{startedAt:new Date().toISOString()}});if(!registered)throw Error('Write registration failed');
- try{const current=await state(files);if(current?.value.active||current?.value.id!==admittedState?.value.id)throw new ReleaseGateError('A catalog release is in progress. Your draft is kept; retry after editing resumes.');return await action();}
- finally{await files.delete(key);}
+ try{const current=await state(files);if(current?.value.active||current?.value.id!==admittedState?.value.id)throw new ReleaseGateError('A catalog release is in progress. Your draft is kept; retry after editing resumes.');const result=await action();if(result instanceof Response&&result.status>=500)throw Error('Write outcome requires review');await files.delete(key);return result;}
+ catch(error){if(error instanceof ReleaseGateError)await files.delete(key);throw error;}
 }
 export async function handleReleaseMaintenance(request:Request,files:R2Bucket,subject:string,owner:boolean){
  const reply=(body:unknown,status=200)=>Response.json(body,{status,headers:{'cache-control':'no-store','x-content-type-options':'nosniff'}});
@@ -44,6 +45,7 @@ export async function handleReleaseMaintenance(request:Request,files:R2Bucket,su
   return saved?reply(await releaseStatus(files,true),201):reply({error:'Release state changed; refresh'},409);
  }
  if(body.action==='finish'){
+  if(previous?.value.machine)return reply({error:'Machine-owned releases require verified machine recovery'},403);
   if(!previous?.value.active||body.id!==previous.value.id||body.targetSha!==previous.value.targetSha)return reply({error:'Release identity changed; refresh'},409);
   if(!['verified','rolled-back','canceled'].includes(body.outcome)||body.confirmed!==true)return reply({error:'A verified outcome or explicit cancellation is required'},400);
   const status=await releaseStatus(files,true);if(!status.drained||(body.outcome!=='canceled'&&!status.ready))return reply({error:'Writes are still active or interrupted. Keep maintenance on and review them.'},409);

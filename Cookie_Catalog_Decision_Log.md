@@ -1,5 +1,10 @@
 # Cookie_Catalog — Decision Log
 
+## Phase 2 engineering checkpoint — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022 remain **in progress**. [Implementation, tests, gaps and handoff](docs/R2_Release_Automation_Phase2_20261019.md): machine identity/control, ownership/epoch fencing, fail-closed recovery components, browser protections and a synthetic R1 bridge rehearsal implemented for review on an isolated branch. Full production workflow integration and cloud/browser acceptance remain open. The real R1 transition is blocked on defensible pre-gate write quiescence; [production bridge proposal](docs/R1_Bridge_Production_Proposal.md) requires later owner approval. CC-TODO-019 remains unresolved. No deployment, credentials, live data or R2 PR #7 merge. Next unused CC-TODO-025 / CC-DEC-023.
+
+
 ## Phase 2 authorization checkpoint — 2026-10-19 Pacific
 
 CC-TODO-020 / CC-TODO-022: owner approved Phase 2 engineering, isolated tests and a reviewable PR using the [merged Phase 1 design](docs/R2_Release_Automation_Phase1_20261019.md). Approved choices: native GitHub **Run workflow** (in-catalog button deferred); dedicated scoped Access machine identity plus independent GitHub OIDC and one production deployment writer; engineering and synthetic rehearsal of an R1-compatible bridge. These are architectural and implementation approvals, **not production authorization**.
