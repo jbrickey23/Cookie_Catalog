@@ -1,3 +1,8 @@
+import {PhotoInbox} from './PhotoInbox';
+import {ReleaseNotice} from './ReleaseNotice';
+import {RequestRecovery} from './RequestRecovery';
+import {ChangeRequest,downloadChangeRequests,type RequestContext} from './ChangeRequest';
+import {AppHeader} from './AppHeader';
 import {RecordRecovery} from './RecordRecovery';
 import {ManagedBackups} from "./ManagedBackups";
 import "./styles.css";
@@ -14,6 +19,8 @@ import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
 
 function App() {
+  const [requestOpen,setRequestOpen]=useState(false),[requestContext,setRequestContext]=useState<RequestContext>({}),[requestExportError,setRequestExportError]=useState('');
+
   const [role,setRole] = useState<"owner"|"editor"|"viewer"|null>(null);
   const [environment,setEnvironment]=useState<'development'|'production'>('development');
   const [sessionError,setSessionError] = useState("");
@@ -107,9 +114,11 @@ function App() {
   }
   if (!role) return <main style={{fontFamily:"system-ui",padding:"2rem"}}><h1>Cookie Catalog</h1><p role="status">{sessionError || "Checking your access…"}</p></main>;
   return <main className="app-shell">
-    <h1>Cookie Catalog</h1>
-    <p>Access: {role === "owner" ? "Admin / Owner" : role === "viewer" ? "Viewer (read only)" : "Editor"}</p>
-    <Browse version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
+    <AppHeader role={role} environment={environment} onRequest={()=>setRequestOpen(true)} />
+    {requestOpen&&<ChangeRequest context={requestContext} onClose={()=>setRequestOpen(false)} />}
+    {(role==='owner'||role==='editor')&&<PhotoInbox context={requestContext}/>}
+    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests(environment).catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p><RequestRecovery environment={environment}/></details>}
+    <Browse onContextChange={setRequestContext} version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
     {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Manage catalog and review missing details</summary>
@@ -152,7 +161,7 @@ function App() {
     </button>
     </>}
     </details>}
-    <p>{environment==='production'?'Private production catalog.':'Private development catalog. Production release remains under development.'}</p>
+    <p>{environment==='production'?'Private production catalog.':'Development testing catalog. Use production for your collection.'}</p>
   </main>;
 }
-createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);
+createRoot(document.getElementById("root")!).render(<React.StrictMode><ReleaseNotice><App /></ReleaseNotice></React.StrictMode>);

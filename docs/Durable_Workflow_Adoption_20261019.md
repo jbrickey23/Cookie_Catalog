@@ -63,3 +63,7 @@ Immediate continuation: complete the protected documentation PR, inspect CI/merg
 ## Validation evidence
 
 Local validation passed for 51 Markdown files / 131 local links, documentation and policy JSON, complete repository layout, both source-manifest SHA-256 digests, pin parity, preserved historical record bodies, scoped documentation-only diff, SQLite schema and synthetic import, ten recovery tests and three OneNote audit tests. Plain `git diff --check` flags six upstream Markdown hard-break lines; those two-space line endings are preserved to keep policy copies byte-identical. Other new text passes whitespace validation. Required GitHub `sqlite` CI runs the existing helper/app tests and build before protected-main merge. Exact CI and merge results are recorded by the PR and completion report.
+
+## Active R2 documentation integration
+
+After the protected-main adoption PR, synchronize only the adopted documentation into the active R2 branch using a merge commit that preserves both parent histories. Keep the R2 current/history split and its current task states, add policy restoration to its concise bootstrap, retain existing R2 authorization and charter, and advance its next-unused task to 025. Preserve every runtime/config/schema/tool/test/history blob from the inspected R2 parent. Do not merge R2 application code into main or production as part of this integration. Verify the resulting tree and exact-head CI; GitHub commit/PR records establish completed publication, not this procedural text alone.

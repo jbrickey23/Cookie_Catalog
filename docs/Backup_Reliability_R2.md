@@ -1,0 +1,11 @@
+# Backup reliability investigation — CC-TODO-019
+
+The R1 owner-observed backup stalled at 332/592 originals, later resumed, and eventually completed with 592 automatically verified originals. A later successful retry is not root-cause resolution. The original failing execution logs were unavailable; do not infer a cause from the 15-minute storage lease alone.
+
+Managed backups and continuation execute in Cloudflare, via HTTP and the scheduled Worker. They do not execute npm on the owner's computer. Managed-PC PowerShell/Defender restrictions prevented local tooling but do not explain a cloud job stalling after hundreds of originals. This separates two failure domains; it does not establish what failed in the cloud.
+
+R2 adds lastProgressAt and lastStepMs to successful copy steps, owner-only storage-lease status/server time, and a Backup diagnostics section. Older jobs may lack timing fields. Server structured logs use component catalog-backup with storage-acquired/storage-busy/storage-finished/copy-step/scheduled-error/operation-error events, durations/counts and fixed error categories. No filename, record contents, identity or raw exception is added to these logs. Existing owner-visible failure details remain unchanged.
+
+When a development rehearsal stalls, preserve the job offset, last progress time, diagnostic server time/storage status and matching sanitized Worker log events before resuming. Distinguish storage contention, progress races, changed/missing originals, checksum/copy-plan failures and provider/runtime failures. Use the log interval around the first missing progress step. A recovered lease or successful manual resume is supporting evidence only.
+
+Next: authenticated development batch/retry test with actual scheduled continuation, capture both normal and intentionally interrupted progress, measure duration per batch and server subrequest/CPU limits, reproduce the observed failure class, then verify its fix. Do not reproduce by damaging production originals or deleting live lock keys. Production R1 has not yet received this instrumentation. Automated local tests check diagnostics, lock release on failure and backup/restore behavior; live root cause remains open.

@@ -25,7 +25,7 @@ test('managed snapshots checksum originals, deduplicate safely, resume and remai
  const {runtime,db,files,add}=await env();try{
   for(let i=2;i<=10;i++)await add('file_managed_test'+i,i);
   const original=await createDatabaseSnapshot(db,10000),job=await startManagedBackup(db,files,'owner','pre-change');
-  const first=await advanceManagedBackup(files,job.id);assert.equal(first.offset,4);assert.equal(first.status,'copying');
+  const first=await advanceManagedBackup(files,job.id);assert.equal(first.offset,4);assert.equal(first.status,'copying');assert(Number.isFinite(Date.parse(first.lastProgressAt!)));assert((first.lastStepMs??-1)>=0);
   let done=await advanceManagedBackup(files,job.id);while(done.status!=='complete')done=await advanceManagedBackup(files,job.id);assert.equal(done.status,'complete');assert.equal(done.objects,10);
   assert.deepEqual((await completeBackup(files,done.id)).payload.database,original);
   await assertFreshBackup(db,files,done.id);
@@ -86,7 +86,7 @@ test('scheduled jobs create fresh daily snapshots at the configured Pacific hour
  const {scheduledBackups}=await import('../src/server/managed-backups');const {runtime,db,files}=await env();try{
   const request=new Request(origin+'/api/backups/schedule',{method:'POST',headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'managed-backup'},body:JSON.stringify({enabled:true,hour:2})});assert.equal((await handleApiRequest(request,owner,db,files)).status,200);
   await scheduledBackups(db,files,new Date('2026-10-16T09:00:00Z')); // 02:00 Pacific daylight time.
-  const jobs=await files.list({prefix:'catalog-backups/jobs/'});assert.equal(jobs.objects.length,1);const first=await (await files.get(jobs.objects[0].key))!.json<any>();assert.equal(first.status,'copying');
+  const jobs=await files.list({prefix:'catalog-backups/jobs/'});assert.equal(jobs.objects.length,1);const first=await (await files.get(jobs.objects[0].key))!.json<any>();assert.equal(first.status,'copying');assert.equal(first.lastProgressAt,undefined);
   await scheduledBackups(db,files,new Date('2026-10-16T09:01:00Z'));assert.equal((await (await files.get(jobs.objects[0].key))!.json<any>()).status,'complete');
   await scheduledBackups(db,files,new Date('2026-10-16T09:02:00Z'));assert.equal((await files.list({prefix:'catalog-backups/jobs/'})).objects.length,1);
   await db.prepare("UPDATE shapes SET name='TEST fresh tomorrow' WHERE id='test-shape'").run();await scheduledBackups(db,files,new Date('2026-10-17T09:00:00Z'));assert.equal((await files.list({prefix:'catalog-backups/jobs/'})).objects.length,2);
