@@ -1,5 +1,11 @@
 # Cookie Catalog — current TODO
 
+## CC-TODO-024 — Adopt Durable_CHATGPT v1.0.0
+
+Implementation and local validation complete: source/digest pin, unmodified policy copies, restore/Guided Switching/handoff/reconciliation instructions, engineering judgment integrated in existing guidelines. Documentation-only protected-main PR plus docs sync into active R2; verify merge/commit and exact-head CI in GitHub for publication status. No policy exceptions, feature/source/schema/data change, new resource or production promotion. Preserve current/history records, task IDs 020–023 and all R2 acceptance gaps below. Next unused task: **CC-TODO-025**.
+
+[Policy pin](policies/README.md) · [Audit and procedures](docs/Durable_Workflow_Adoption_20261019.md). CC-TODO-001's history-free fresh-chat test is not closed by this history-assisted session.
+
 R1 v0.1.0 released; production is the sole editing catalog. [Release evidence](docs/R1_Release_Closeout.md).
 
 | ID | Work | Status / next action |
@@ -15,12 +21,12 @@ R1 v0.1.0 released; production is the sole editing catalog. [Release evidence](d
 | CC-TODO-008/009 | Legacy source audit/migration | Source-specific follow-up; preserve completed imports and evidence. No standing OneNote connector implied. |
 | CC-TODO-011 | Canva/artwork interoperability | Later integration; not automatically part of R2 photo inbox. |
 
-[R2 scope and sequencing](docs/R2_Plan.md). Next unused ID: CC-TODO-024.
+[R2 scope and sequencing](docs/R2_Plan.md). Next unused ID: CC-TODO-025.
 
 Operational follow-ups: cadence/retention/independent copies, account recovery arrangements and an isolated disaster-recovery rehearsal. Do not restore over live production just to test it. Preserve current roles, protected main, development separation and retained recovery evidence.
 
 [Historical task details and checkpoints](Cookie_Catalog_TODO_History.md) preserve original IDs and acceptance. Old completion-pending text is historical; use the current table and release evidence first.
 
-CC-TODO-023 — In progress: checksum-verified write-ahead request copies and owner-only revision-guarded recovery implemented; targeted recovery tests and production build passed. Portable checksum-verified export, owner-reviewed missing-key recovery and an isolated synthetic restore rehearsal implemented; live browser acceptance and owner retention of an independent copy remain open. Catalog backups currently do not include requests. Next unused ID: CC-TODO-024.
+CC-TODO-023 — In progress: checksum-verified write-ahead request copies and owner-only revision-guarded recovery implemented; targeted recovery tests and production build passed. Portable checksum-verified export, owner-reviewed missing-key recovery and an isolated synthetic restore rehearsal implemented; live browser acceptance and owner retention of an independent copy remain open. Catalog backups currently do not include requests. Next unused ID: CC-TODO-025.
 
 October 16, 2026, 18:28 Pacific: owner confirmed the R2 preview email was sent. R2 development head 7bb1967 passed both sqlite checks and the Cloudflare development build; live authenticated acceptance remains pending.

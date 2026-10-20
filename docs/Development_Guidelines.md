@@ -15,6 +15,12 @@ These are project engineering conventions, approved for autonomous work on Octob
 - Treat schema, importer and backup/restore versioning as one change. Do not activate a new migration while the exact-table archive validators still expect the old schema. Prepare data reconciliation and a compatible rollback/recovery plan first.
 - Use existing development deployment only. Production release, paid resources, destructive/bulk source migration, external messages and security-policy bypass remain outside this batch. Preserve parked device/security/access tests.
 
+## Critical engineering judgment
+
+Apply existing CC-DEC-010 architecture-by-exception governance with independent technical judgment: check assumptions against current evidence, explain material risks and tradeoffs, and recommend a better approach when a request conflicts with maintainability, correctness, recoverability or the approved architecture. State disagreement and uncertainty plainly; do not treat agreement or a proposal as proof. Record rationale and verification once in the appropriate project record. Make routine reversible decisions autonomously within the approved batch; return material functionality/cost, hard-to-reverse or out-of-scope decisions to the owner. Respect an informed owner decision within the authorized boundaries.
+
+Session routing and usage behavior inherit the [pinned global policies](../policies/README.md); use [the local handoff/reconciliation procedure](Durable_Workflow_Adoption_20261019.md). Do not copy or redefine those policies here. The historical development-only batch limits above do not reopen accepted R1 release approvals; current release evidence and the current batch's explicit authorization govern.
+
 ## Source-verified choices (checked October 15, 2026 UTC)
 
 | Source | Verified platform guidance | Project application |

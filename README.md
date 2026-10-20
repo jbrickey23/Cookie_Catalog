@@ -14,3 +14,7 @@ The app provides inline editing and record Undo, focused image cards and downloa
 - [Historical delivery notes](README_History.md)
 
 Private catalog content and credentials are excluded from this public repository. Backup reliability root-cause work remains tracked after R1; completed recovery checks do not close that investigation.
+
+## Durable workflow
+
+Adopts Durable_CHATGPT **v1.0.0** via [the version/source/digest pin](policies/README.md) and verified local copies. See [session initialization, audit, handoff and reconciliation](docs/Durable_Workflow_Adoption_20261019.md) and [development guidelines](docs/Development_Guidelines.md). CC-TODO-024 is documentation adoption; R2 execution approvals and R1 production boundaries are preserved.

@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "approved_date": "2026-10-19",
+  "source_repository": "JBrickey23/Durable_CHATGPT",
+  "policies": [
+    {
+      "id": "DCHAT-POL-001",
+      "path": "policies/v1.0.0/Guided_Switching.md",
+      "sha256": "53d3bcc2efaf93b6a31dd6671734e5199801bed792e0c221beca5b1c103c411c"
+    },
+    {
+      "id": "DCHAT-POL-002",
+      "path": "policies/v1.0.0/Usage_Efficiency.md",
+      "sha256": "ad00e2f52fc4a0a47aa36f75a13e1c999d7994927fecdcca1456396830477727"
+    }
+  ]
+}
