@@ -64,7 +64,7 @@ export function validateArchive(file) {
     const payload=JSON.parse(envelope.payloadJson),{tables,schema}=payload.database??{};
     const reviewTables=['import_review_workspaces','import_review_versions','import_review_items','import_review_runs'];
     const importTables=["catalog_import_batches","catalog_source_mappings"];
-    const TABLES=[LEGACY_TABLES,[...LEGACY_TABLES,...reviewTables],[...LEGACY_TABLES,...reviewTables,...importTables]].find(profile=>tables&&same(Object.keys(tables).sort(),[...profile].sort()));
+    const TABLES=[LEGACY_TABLES,[...LEGACY_TABLES,...reviewTables],[...LEGACY_TABLES,...reviewTables,...importTables],[...LEGACY_TABLES,...reviewTables,...importTables,"physical_cutter_attachments"]].find(profile=>tables&&same(Object.keys(tables).sort(),[...profile].sort()));
     if(!['development','production'].includes(payload.environment)||!TABLES||!tables||!same(Object.keys(tables).sort(),[...TABLES].sort())||!Array.isArray(schema)
         ||!same(schema.filter(s=>s.type==='table').map(s=>s.name).sort(),[...TABLES].sort())
         ||schema.some(s=>!['table','index'].includes(s.type)||!TABLES.includes(s.tbl_name))) throw Error('Unexpected database schema.');
@@ -112,7 +112,7 @@ export function validateArchive(file) {
     if(!same(actualTables,[...TABLES].sort())||db.prepare('PRAGMA foreign_key_check').all().length
         ||Object.values(db.prepare('PRAGMA integrity_check').get())[0]!=='ok')throw Error('Database integrity or relationships failed.');
     const migrations=db.prepare('SELECT name FROM d1_migrations ORDER BY name').all().map(r=>r.name);
-    if(!same(migrations,['0001_initial.sql','0002_variants_components.sql',...(TABLES.includes("import_review_runs")?['0003_import_reviews.sql']:[]),...(TABLES.includes('catalog_source_mappings')?['0004_catalog_imports.sql']:[])]))throw Error('Known migrations missing or unexpected.');
+    if(!same(migrations,['0001_initial.sql','0002_variants_components.sql',...(TABLES.includes("import_review_runs")?['0003_import_reviews.sql']:[]),...(TABLES.includes('catalog_source_mappings')?['0004_catalog_imports.sql']:[]),...(TABLES.includes('physical_cutter_attachments')?['0005_physical_photographs.sql']:[])]))throw Error('Known migrations missing or unexpected.');
     db.exec('COMMIT');
     for(const object of objects) {
       const part=member('objects/'+object.key,25*1024**2,object.byteSize);

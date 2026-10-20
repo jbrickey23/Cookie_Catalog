@@ -202,3 +202,7 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .photo-inbox-items > li { display: flex; gap: 1rem; padding: .8rem; border: 1px solid #c4cfc5; border-radius: .5rem; }
 .photo-inbox-items img { width: 140px; height: 140px; object-fit: contain; background: #f4f4ee; }
 @media(max-width: 550px) { .photo-inbox-items > li { flex-wrap: wrap; } }
+
+.invalid-field {border-left:4px solid #b12d24;padding-left:12px;}
+.field-error {color:#9b251d;font-weight:600;}
+input[aria-invalid="true"] {outline:2px solid #b12d24;}

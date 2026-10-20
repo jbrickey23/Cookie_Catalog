@@ -14,10 +14,11 @@ export async function inspectInfrastructure(database:D1Database,files:R2Bucket,e
   const missingTables=BACKUP_TABLES.filter(name=>!names.includes(name));
   const hasReviews=REVIEW_TABLES.every(name=>names.includes(name));
   const hasImporter=IMPORT_TABLES.every(name=>names.includes(name));
+  const hasPhysicalPhotos=names.includes('physical_cutter_attachments');
   const supportedSchema=names.length===BACKUP_TABLES.length&&!REVIEW_TABLES.some(name=>names.includes(name))
     ||names.length===BACKUP_TABLES.length+REVIEW_TABLES.length&&hasReviews
-    ||names.length===BACKUP_TABLES.length+REVIEW_TABLES.length+IMPORT_TABLES.length&&hasReviews&&hasImporter;
-  const requiredMigrations=["0001_initial.sql","0002_variants_components.sql",...(hasReviews?["0003_import_reviews.sql"]:[]),...(hasImporter?["0004_catalog_imports.sql"]:[])];
+    ||names.length===BACKUP_TABLES.length+REVIEW_TABLES.length+IMPORT_TABLES.length+(hasPhysicalPhotos?1:0)&&hasReviews&&hasImporter;
+  const requiredMigrations=["0001_initial.sql","0002_variants_components.sql",...(hasReviews?["0003_import_reviews.sql"]:[]),...(hasImporter?["0004_catalog_imports.sql"]:[]),...(hasPhysicalPhotos?["0005_physical_photographs.sql"]:[])];
   const reviewStorageReady=hasReviews&&applied.includes("0003_import_reviews.sql");
   const listing=await files.list({limit:100});
   let missingOriginals=0,sizeMismatches=0;

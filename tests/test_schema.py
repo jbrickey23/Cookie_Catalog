@@ -51,6 +51,10 @@ def test_schema():
     assert db.execute("SELECT width_mm,reference_size_mm,slot FROM physical_cutters WHERE id='cutter-1'").fetchone() == (90.0, None, None)
     db.execute("UPDATE physical_cutters SET reference_size_mm=?,slot=? WHERE id='cutter-1'", (101.6, "A"))
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
+    db.executescript((SCHEMA.parent / "0005_physical_photographs.sql").read_text(encoding="utf-8"))
+    db.execute("INSERT INTO physical_cutter_attachments VALUES ('cutter-1','att-1','photo')")
+    assert db.execute("SELECT cutter_id FROM physical_cutter_attachments").fetchone()[0] == 'cutter-1'
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
     db.close()
 
 if __name__ == "__main__":

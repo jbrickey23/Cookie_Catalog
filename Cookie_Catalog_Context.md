@@ -1,5 +1,13 @@
 # Cookie Catalog — current context
 
+## Reference and inventory UX — October 20, 2026 UTC
+
+Owner-approved CC-TODO-021, coordinated with CC-TODO-010, now targets the bounded reference/physical-inventory slice on `feature/cc-infrastructure-foundation` / PR #7. [Model, implementation, schema/recovery safeguards, validation and exact development walkthrough](docs/Reference_Inventory_UX_R2.md) is the current checkpoint for this batch. Preserve stable reference IDs, separate producer designs, grouped interchangeable quantities and distinct physical-photo ownership. No universal category parent or inferred photo dimensions/ownership.
+
+Implementation/local validation, remote CI/deployment and owner browser acceptance are distinct. Physical-photo migration 0005 requires verified development activation; branch deployment does not apply it. Authenticated cloud-browser acceptance is blocked at Access sign-in. Do not claim live UX or production readiness. CC-TODO-019 remains unresolved; release automation stays isolated in draft PR #12. Production and PR #7/#12 merges remain unauthorized. Next unused CC-TODO-025 / CC-DEC-023.
+
+Main's later framework closeout remains accepted: CC-TODO-024 complete; CC-TODO-001 partially verified (exact next-task subcriterion unverified). Earlier blanket pending-test statements below are historical. Return to owner UX retesting after exact-head checks; do not start deferred extraction or unrelated release work.
+
 ## Global workflow adoption — 2026-10-19 Pacific
 
 Adopted Durable_CHATGPT **v1.0.0** under CC-DEC-022 / CC-TODO-024: [source commit/digest pin](policies/README.md), verified local policies, [audit and handoff/reconciliation](docs/Durable_Workflow_Adoption_20261019.md). Documentation-only adoption preserves the R2 current/history split and existing execution approvals. Source/production state remains as recorded below; this is not a new R2 feature or production release. Verify the adoption merge/sync commits and exact-head CI in GitHub.

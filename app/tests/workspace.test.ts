@@ -8,7 +8,7 @@ import type {IdentityVerifier} from '../src/server/access-identity';
 const origin='https://catalog.example.test';
 const identity=(role:'owner'|'editor'|'viewer'):IdentityVerifier=>({verify:async()=>({subject:role,email:role+'@example.test',role})});
 const owner=identity('owner');
-async function env(){const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'workspace'},r2Buckets:['FILES']}));const db=await runtime.getD1Database('DB') as unknown as D1Database,files=await runtime.getR2Bucket('FILES') as unknown as R2Bucket;const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql'];for(const name of names){const sql=readFileSync('../database/migrations/'+name,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}await db.prepare('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)').run();await db.batch(names.map((n,i)=>db.prepare('INSERT INTO d1_migrations VALUES(?,?,?)').bind(i+1,n,'TEST')));return {runtime,db,files};}
+async function env(){const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'workspace'},r2Buckets:['FILES']}));const db=await runtime.getD1Database('DB') as unknown as D1Database,files=await runtime.getR2Bucket('FILES') as unknown as R2Bucket;const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql','0005_physical_photographs.sql'];for(const name of names){const sql=readFileSync('../database/migrations/'+name,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}await db.prepare('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)').run();await db.batch(names.map((n,i)=>db.prepare('INSERT INTO d1_migrations VALUES(?,?,?)').bind(i+1,n,'TEST')));return {runtime,db,files};}
 function request(path:string,method='GET',value?:unknown,revision?:string,backup?:string){return new Request(origin+'/api/workspace'+path,{method,headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'workspace',...(revision?{'if-match':revision}:{}),...(backup?{'x-catalog-backup':backup}:{})},...(value===undefined?{}:{body:JSON.stringify(value)})});}
 async function checkpoint(db:D1Database,files:R2Bucket){let job=await startManagedBackup(db,files,'owner','pre-change');while(job.status!=='complete')job=await advanceManagedBackup(files,job.id);return job.id;}
 const cutter=()=>({location_id:null,quantity:1,origin:'unknown',reference_size_mm:95.25,width_mm:null,height_mm:null,slot:null,notes:null});
@@ -39,7 +39,7 @@ test('invalid shape, arbitrary BIN and stale selected shape create no records or
   await db.prepare("INSERT INTO shapes(id,name) VALUES('existing','Existing')").run();const existing=await success(await call(db,files,'/shapes/existing'));
   const input:any=draft('Existing');input.existingShapeId='existing';input.shapeRevision=existing.revision;
   await db.prepare("UPDATE shapes SET maker='Changed' WHERE id='existing'").run();assert.equal((await call(db,files,'/cutters','POST',input,undefined,await checkpoint(db,files))).status,412);
-  input.existingShapeId=undefined;input.shapeRevision=undefined;assert.equal((await call(db,files,'/cutters','POST',input)).status,409);
+  input.existingShapeId=undefined;input.shapeRevision=undefined;input.shape.maker='Changed';assert.equal((await call(db,files,'/cutters','POST',input)).status,409);
  }finally{await runtime.dispose();}
 });
 test('delete requires owner confirmation and record protection, checks inbound relationships, and preserves shared shapes',async()=>{
@@ -131,5 +131,26 @@ test('undo restores fifty tag associations within a bounded query budget and rej
   const latest=await success(await call(db,files,'/cutters/'+saved.cutter.id));input.cutter.quantity=2;const changed=await success(await call(db,files,'/cutters/'+saved.cutter.id,'PUT',input,latest.revision));const fresh=await success(await call(db,files,'/recovery/'+changed.recoveryId));
   let batches=0;const racing=new Proxy(db,{get(target,key){if(key==='batch')return async(statements:D1PreparedStatement[])=>{if(++batches===2)await target.prepare('UPDATE physical_cutters SET quantity=8 WHERE id=?').bind(saved.cutter.id).run();return target.batch(statements);};const v=Reflect.get(target,key);return typeof v==='function'?v.bind(target):v;}});
   assert.equal((await call(racing,files,'/recovery/'+changed.recoveryId,'POST',{approved:true},fresh.revision)).status,409);assert.equal((await db.prepare('SELECT quantity FROM physical_cutters').first<any>())?.quantity,8);
+ }finally{await runtime.dispose();}
+});
+
+
+test('producer references stay distinct; linked inventory is physical-only and quantity and sizes share identity',async()=>{
+ const {runtime,db,files}=await env();try{
+  const ref=async(maker:string)=>success(await call(db,files,'/shapes','POST',{shape:{name:'TEST Christmas Tree',maker,source_url:null,notes:null},tags:[],cutter:null}),201);
+  const a=await ref('Producer A'),b=await ref('Producer B');assert.notEqual(a.shape.id,b.shape.id);
+  assert.equal((await call(db,files,'/shapes','POST',{shape:{name:' TEST Christmas Tree ',maker:'producer a'},tags:[],cutter:null})).status,409);
+  const input:any={shape:{name:a.shape.name,maker:a.shape.maker,source_url:null,notes:null},tags:[],existingShapeId:a.shape.id,shapeRevision:a.revision,cutter:{...cutter(),quantity:2,reference_size_mm:76.2,notes:'Medium; interchangeable copies'}};
+  const medium=await success(await call(db,files,'/cutters','POST',input),201);assert.equal(medium.cutter.quantity,2);
+  input.cutter={...cutter(),reference_size_mm:101.6,notes:'Large'};const large=await success(await call(db,files,'/cutters','POST',input),201);
+  assert.equal(large.shape.id,medium.shape.id);assert.notEqual(large.cutter.id,medium.cutter.id);
+  assert.equal((await success(await call(db,files,'/shapes/'+a.shape.id))).revision,a.revision,'physical creation preserves reference revision');
+  input.shape.name='Do not change shared reference';assert.equal((await call(db,files,'/cutters','POST',input)).status,400);
+  const related=await success(await call(db,files,'/shapes/'+a.shape.id+'/inventory'));assert.equal(related.items.length,2);
+  const browse=async(q:string,kind='all')=>success(await handleApiRequest(new Request(origin+'/api/browse?q='+encodeURIComponent(q)+'&kind='+kind),owner,db,files));
+  assert.equal((await browse('"Producer A"')).items.length,2);assert.equal((await browse('Christmas Tree','reference')).items.length,2);
+  const before=(await db.prepare('SELECT count(*) n FROM shapes').first<any>())!.n;
+  for(const url of ['example.test','https:example.test','javascript:alert(1)'])assert.equal((await call(db,files,'/shapes','POST',{shape:{name:'TEST invalid URL',source_url:url},tags:[],cutter:null})).status,400);
+  assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())!.n,before);
  }finally{await runtime.dispose();}
 });

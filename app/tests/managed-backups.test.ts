@@ -9,10 +9,10 @@ import {createDatabaseSnapshot,sha256} from '../src/server/development-backup';
 import type {IdentityVerifier} from '../src/server/access-identity';
 const origin='https://catalog.example.test';
 const owner:IdentityVerifier={verify:async()=>({subject:'owner',email:'owner@example.test',role:'owner'})};
-async function env(){
+async function env(physical=false){
  const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'managed'},r2Buckets:['FILES']}));
  const db=await runtime.getD1Database('DB') as unknown as D1Database,files=await runtime.getR2Bucket('FILES') as unknown as R2Bucket;
- const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql'];
+ const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql',...(physical?['0005_physical_photographs.sql']:[])];
  for(const name of names){const sql=readFileSync('../database/migrations/'+name,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}
  await db.prepare('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)').run();await db.batch(names.map((n,i)=>db.prepare('INSERT INTO d1_migrations VALUES(?,?,?)').bind(i+1,n,'TEST')));
  await db.prepare("INSERT INTO shapes(id,name) VALUES('test-shape','TEST original')").run();
@@ -121,5 +121,19 @@ test('production snapshots keep source provenance, remain fresh, and expose sour
   assert.equal((await restorePreview(db,files,job.id)).sourceEnvironment,'production');
   const legacy=await backup(db,files);assert.equal((await completeBackup(files,legacy.id)).payload.environment,'development');await assertFreshBackup(db,files,legacy.id);
   const response=await handleApiRequest(new Request(origin+'/api/backups',{method:'POST',headers:{Origin:origin,'X-Cookie-Catalog-Check':'managed-backup','content-type':'application/json'},body:'{}'}),owner,db,files,'production');assert.equal(response.status,201);const created=await response.json() as {id:string};const object=await files.get('catalog-backups/manifests/'+created.id+'.json');assert.equal(JSON.parse((await object!.json<any>()).payloadJson).environment,'production');
+ }finally{await runtime.dispose();}
+});
+
+
+test('managed restore retains physical photograph relationships and exact original bytes under migration 0005',async()=>{
+ const {runtime,db,files}=await env(true);try{
+  await db.prepare("INSERT INTO physical_cutters(id,shape_id,quantity) VALUES('inventory','test-shape',2)").run();
+  await db.prepare("INSERT INTO physical_cutter_attachments VALUES('inventory','file_managed_test1','photo')").run();
+  const original=await createDatabaseSnapshot(db,10000),saved=await backup(db,files);
+  await db.prepare("UPDATE physical_cutters SET quantity=3 WHERE id='inventory'").run();
+  const preview=await restorePreview(db,files,saved.id),before=await backup(db,files,'pre-change');
+  await startManagedRestore(db,files,'owner',saved.id,before.id,preview.previewSha256);await restore(db,files);
+  assert.deepEqual(await createDatabaseSnapshot(db,10000),original);
+  const object=await files.get('attachments/file_managed_test1/original');assert.deepEqual(new Uint8Array(await object!.arrayBuffer()),new Uint8Array(256).fill(1));
  }finally{await runtime.dispose();}
 });

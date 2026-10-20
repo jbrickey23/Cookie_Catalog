@@ -20,8 +20,9 @@ async function status(db: D1Database) {
     const base = ['0001_initial.sql', '0002_variants_components.sql', '0003_import_reviews.sql'];
     if (same(tables, [...BACKUP_TABLES, ...REVIEW_TABLES]) && same(migrations, base) && !columns.includes('reference_size_mm') && !columns.includes('slot'))
         return { ready: false, tables: 20, migrations: 3 };
-    if (same(tables, [...BACKUP_TABLES, ...REVIEW_TABLES, ...IMPORT_TABLES]) && same(migrations, [...base, '0004_catalog_imports.sql']) && columns.includes('reference_size_mm') && columns.includes('slot'))
-        return { ready: true, tables: 22, migrations: 4 };
+    const physical=tables.includes('physical_cutter_attachments');
+    if (same(tables, [...BACKUP_TABLES, ...REVIEW_TABLES, ...IMPORT_TABLES,...(physical?['physical_cutter_attachments']:[])]) && same(migrations, [...base, '0004_catalog_imports.sql',...(physical?['0005_physical_photographs.sql']:[])]) && columns.includes('reference_size_mm') && columns.includes('slot'))
+        return { ready: true, tables: physical?23:22, migrations: physical?5:4 };
     throw Error('Unexpected schema');
 }
 export async function handleCatalogImportSetup(request: Request, db: D1Database) {

@@ -18,13 +18,15 @@ async function state(db:D1Database,kind:string,id:string){
  return {shape,cutter,tags:await tags(db,shape.id)};
 }
 function guard(db:D1Database,table:string,row:Row){const fields=Object.keys(row);return db.prepare(`SELECT CASE WHEN EXISTS(SELECT 1 FROM ${table} WHERE ${fields.map(f=>f+' IS ?').join(' AND ')}) THEN 1 ELSE json('workspace conflict') END`).bind(...fields.map(f=>row[f]));}
-async function vocabulary(db:D1Database,includeShapes=true){const [shapes,tags,locations]=await db.batch([db.prepare(includeShapes?'SELECT id,name FROM shapes ORDER BY id LIMIT 10001':'SELECT id,name FROM shapes WHERE 0'),db.prepare('SELECT * FROM tags ORDER BY id LIMIT 1001'),db.prepare('SELECT id,label FROM locations ORDER BY label LIMIT 1001')]);if(shapes.results.length>10000||tags.results.length>1000||locations.results.length>1000)throw Error('Vocabulary exceeds the supported workspace limit.');return {shapes:shapes.results as Row[],tags:tags.results as Row[],locations:locations.results as Row[]};}
+async function vocabulary(db:D1Database,includeShapes=true){const [shapes,tags,locations]=await db.batch([db.prepare(includeShapes?'SELECT id,name,maker,source_url FROM shapes ORDER BY id LIMIT 10001':'SELECT id,name,maker,source_url FROM shapes WHERE 0'),db.prepare('SELECT * FROM tags ORDER BY id LIMIT 1001'),db.prepare('SELECT id,label FROM locations ORDER BY label LIMIT 1001')]);if(shapes.results.length>10000||tags.results.length>1000||locations.results.length>1000)throw Error('Vocabulary exceeds the supported workspace limit.');return {shapes:shapes.results as Row[],tags:tags.results as Row[],locations:locations.results as Row[]};}
 // Guard a vocabulary snapshot so duplicate detection cannot race another writer.
-function vocabularyGuard(db:D1Database,table:'shapes'|'tags',rows:Row[]){const fields=table==='shapes'?['id','name']:['id','label','category'];return db.prepare(`SELECT CASE WHEN (SELECT json_group_array(json_array(${fields.join(',')})) FROM (SELECT * FROM ${table} ORDER BY id))=? THEN 1 ELSE json('workspace conflict') END`).bind(JSON.stringify(rows.map(r=>fields.map(f=>r[f]??null))));}
+function vocabularyGuard(db:D1Database,table:'shapes'|'tags',rows:Row[]){const fields=table==='shapes'?['id','name','maker','source_url']:['id','label','category'];return db.prepare(`SELECT CASE WHEN (SELECT json_group_array(json_array(${fields.join(',')})) FROM (SELECT * FROM ${table} ORDER BY id))=? THEN 1 ELSE json('workspace conflict') END`).bind(JSON.stringify(rows.map(r=>fields.map(f=>r[f]??null))));}
 export async function handleWorkspace(request:Request,db:D1Database,files:R2Bucket,subject:string,owner:boolean,environment:CatalogEnvironment='development'){
  try{
   const path=new URL(request.url).pathname.slice('/api/workspace'.length);
   if(path==='/recovery'||path.startsWith('/recovery/'))return handleRecordRecovery(request,db,files,subject,owner);
+  const related=/^\/shapes\/([a-zA-Z0-9_-]{1,128})\/inventory$/.exec(path);
+  if(related&&request.method==='GET')return json({items:(await db.prepare('SELECT id,shape_id,quantity,reference_size_mm,width_mm,height_mm,slot FROM physical_cutters WHERE shape_id=? ORDER BY id LIMIT 200').bind(related[1]).all()).results});
   if(path==='/vocabulary'&&request.method==='GET')return json(await vocabulary(db));
   // Editors may create/advance their own protection point, without archive/restore access.
   if(path==='/checkpoint'&&request.method==='POST'){
@@ -40,7 +42,7 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
   const [,kind,id]=match;
   const previous=id?await state(db,kind,id):null;
   if(id&&!previous)return json({error:'Entry not found.'},404);
-  if(request.method==='GET'&&previous){const mappings=await hasSourceMappings(db);const evidence=previous.cutter?await db.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence FROM physical_cutters c WHERE c.id=?`).bind(id).first<{evidence:string}>():null;return json({...previous,revision:await token(previous),sourceBin:sourceLocation(evidence?.evidence??previous.shape.notes)});}
+  if(request.method==='GET'&&previous){const mappings=await hasSourceMappings(db);const evidence=previous.cutter?await db.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence FROM physical_cutters c WHERE c.id=?`).bind(id).first<{evidence:string}>():null;return json({...previous,sizes:(await db.prepare('SELECT id,label,target_width_mm,target_height_mm FROM shape_size_variants WHERE shape_id=? ORDER BY label LIMIT 200').bind(previous.shape.id).all()).results,revision:await token(previous),sourceBin:sourceLocation(evidence?.evidence??previous.shape.notes)});}
   if(!['POST','PUT','DELETE'].includes(request.method)||request.method==='POST'&&id||request.method!=='POST'&&!id)return json({error:'Method not allowed.'},405);
   if(previous&&request.headers.get('if-match')!==await token(previous))return json({error:'This entry changed. Your draft is kept. Compare with the latest record before saving.'},412);
   if(request.method==='DELETE'&&!owner)return json({error:'Owner approval is required to delete entries.'},403);
@@ -64,12 +66,26 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
    const vocab=await vocabulary(db,!previous&&!input.existingShapeId);let target=previous;
    if(!previous&&input.existingShapeId){if(typeof input.existingShapeId!=='string'||!idPattern.test(input.existingShapeId))throw Error('Invalid shape reference.');target=await state(db,'shapes',input.existingShapeId);if(!target||input.shapeRevision!==await token(target))return json({error:'The selected shape changed. Select it again before saving.'},412);shapeId=target.shape.id;statements.push(guard(db,'shapes',target.shape));statements.push(db.prepare("SELECT CASE WHEN (SELECT json_group_array(tag_id) FROM (SELECT tag_id FROM shape_tags WHERE shape_id=? ORDER BY tag_id))=? THEN 1 ELSE json('workspace conflict') END").bind(shapeId,JSON.stringify(target.tags.map(t=>t.id))));}
    recoveryBefore=target??{shape:null,cutter:null,tags:[]};
-   const shape=validate('shapes',input.shape);
+   const linkedCreate=!previous&&!!input.existingShapeId;
+   let shape:Row;
+   if(linkedCreate){
+    if(kind!=='cutters')return json({error:'Select an existing reference only when adding physical inventory.'},400);
+    const expectedShape={...target!.shape};
+    try{const metadata=JSON.parse(expectedShape.notes);if(metadata?.source)expectedShape.notes=metadata.catalogNotes??'';}catch{/* Plain notes stay plain. */}
+    const editable={name:expectedShape.name,maker:expectedShape.maker,source_url:expectedShape.source_url,notes:expectedShape.notes};
+    const expectedTags=target!.tags.map(t=>t.id).sort();
+    if(!Array.isArray(input.tags)||JSON.stringify(input.tags.map((t:Row)=>t?.id).sort())!==JSON.stringify(expectedTags)||!input.shape||Object.keys(input.shape).some(k=>!Object.hasOwn(editable,k))||Object.entries(editable).some(([key,value])=>String(input.shape[key]??'').trim()!==String(value??'').trim()))
+     return json({error:'Add to Inventory cannot change the shared reference. Re-select it and edit physical details only.'},400);
+    shape={...target!.shape};
+   }else shape=validate('shapes',input.shape);
    // Imported notes also hold immutable source provenance. Only catalogNotes is editable.
-   if(target?.shape.notes){try{const metadata=JSON.parse(target.shape.notes);if(metadata&&typeof metadata==='object'&&!Array.isArray(metadata)&&metadata.source)shape.notes=JSON.stringify({...metadata,catalogNotes:shape.notes});}catch{/* Plain notes stay plain. */}}
-   if(!shapeId){const normalized=normalize(String(shape.name));if(vocab.shapes.some(s=>normalize(s.name)===normalized))return json({error:'A shape with this name already exists. Select the existing shape.'},409);shapeId='shape_'+crypto.randomUUID().replaceAll('-','');statements.push(vocabularyGuard(db,'shapes',vocab.shapes));const createdAt=new Date().toISOString();statements.push(db.prepare('INSERT INTO shapes(id,name,maker,source_url,notes,created_at) VALUES (?,?,?,?,?,?)').bind(shapeId,shape.name,shape.maker,shape.source_url,shape.notes,createdAt));recoveryAfter.shape={id:shapeId,...shape,created_at:createdAt};}
-   else {statements.push(db.prepare('UPDATE shapes SET name=?,maker=?,source_url=?,notes=? WHERE id=?').bind(shape.name,shape.maker,shape.source_url,shape.notes,shapeId));recoveryAfter.shape={...target!.shape,...shape};}
+   if(!linkedCreate&&target?.shape.notes){try{const metadata=JSON.parse(target.shape.notes);if(metadata&&typeof metadata==='object'&&!Array.isArray(metadata)&&metadata.source)shape.notes=JSON.stringify({...metadata,catalogNotes:shape.notes});}catch{/* Plain notes stay plain. */}}
+   if(!shapeId){const normalized=normalize(String(shape.name));if(vocab.shapes.some(s=>normalize(s.name)===normalized&&normalize(s.maker??'')===normalize(String(shape.maker??''))))return json({error:'A reference with this name and producer already exists. Select it to add inventory, or distinguish the producer/design in the name.'},409);shapeId='shape_'+crypto.randomUUID().replaceAll('-','');statements.push(vocabularyGuard(db,'shapes',vocab.shapes));const createdAt=new Date().toISOString();statements.push(db.prepare('INSERT INTO shapes(id,name,maker,source_url,notes,created_at) VALUES (?,?,?,?,?,?)').bind(shapeId,shape.name,shape.maker,shape.source_url,shape.notes,createdAt));recoveryAfter.shape={id:shapeId,...shape,created_at:createdAt};}
+   else if(!linkedCreate){statements.push(db.prepare('UPDATE shapes SET name=?,maker=?,source_url=?,notes=? WHERE id=?').bind(shape.name,shape.maker,shape.source_url,shape.notes,shapeId));recoveryAfter.shape={...target!.shape,...shape};}
+   if(linkedCreate)recoveryAfter.shape={...target!.shape};
    if(!Array.isArray(input.tags)||input.tags.length>50)return json({error:'Choose at most 50 tags.'},400);
+   if(linkedCreate)recoveryAfter.tags=target!.tags;
+   else {
    statements.push(vocabularyGuard(db,'tags',vocab.tags));const selected=new Set<string>(),createdTags=new Map<string,string>();
    for(const t of input.tags){if(!t||typeof t!=='object'||Array.isArray(t)||Object.keys(t).some(k=>!['id','label'].includes(k)))return json({error:'Invalid tag.'},400);let tagId:string;
     if(t.id){const found=vocab.tags.find(tag=>tag.id===t.id);if(!found)return json({error:'A selected tag no longer exists.'},409);tagId=found.id;}
@@ -79,6 +95,7 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
    recoveryAfter.tags=[...selected].sort().map(id=>vocab.tags.find(t=>t.id===id)??{id,label:createdTags.get(id)!,category:null});
    if(createdTags.size)statements.push(db.prepare("INSERT INTO tags(id,label) SELECT json_extract(value,'$[0]'),json_extract(value,'$[1]') FROM json_each(?) WHERE true ON CONFLICT(id) DO NOTHING").bind(JSON.stringify([...createdTags])));
    statements.push(db.prepare('DELETE FROM shape_tags WHERE shape_id=?').bind(shapeId));if(selected.size)statements.push(db.prepare('INSERT INTO shape_tags(shape_id,tag_id) SELECT ?,value FROM json_each(?)').bind(shapeId,JSON.stringify([...selected])));
+   }
    if(kind==='cutters'){
     if(!input.cutter||Object.hasOwn(input.cutter,'shape_id'))return json({error:'Choose the shape through the shape reference.'},400);
     const columns=(await db.prepare('PRAGMA table_info(physical_cutters)').all<{name:string}>()).results.map(r=>r.name);

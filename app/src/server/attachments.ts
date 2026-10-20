@@ -14,6 +14,7 @@ function imageWindow(row:Attachment){
 }
 function target(kind: string | null) {
   return kind === "shape" ? { table: "shapes", links: "shape_attachments", column: "shape_id" }
+    : kind === "cutter" ? { table: "physical_cutters", links: "physical_cutter_attachments", column: "cutter_id" }
     : kind === "design" ? { table: "designs", links: "design_attachments", column: "design_id" } : null;
 }
 async function boundedBody(request: Request): Promise<Uint8Array> {
@@ -53,7 +54,9 @@ async function remove(database: D1Database, bucket: R2Bucket, row: Attachment) {
   // Keep metadata if object deletion fails; the owner can retry the same operation.
   await bucket.delete(row.storage_key);
   if (await bucket.head(row.storage_key)) throw new Error("Object deletion not confirmed");
+  const physical=await database.prepare("SELECT name FROM sqlite_schema WHERE name='physical_cutter_attachments'").first();
   await database.batch([
+    ...(physical?[database.prepare("DELETE FROM physical_cutter_attachments WHERE attachment_id=?").bind(row.id)]:[]),
     database.prepare("DELETE FROM shape_attachments WHERE attachment_id = ?").bind(row.id),
     database.prepare("DELETE FROM design_attachments WHERE attachment_id = ?").bind(row.id),
     database.prepare("DELETE FROM printable_size_recipes WHERE printable_asset_id IN (SELECT id FROM printable_assets WHERE attachment_id=?)").bind(row.id),
@@ -129,6 +132,7 @@ export async function handleAttachments(request: Request, database: D1Database, 
       const t = target(url.searchParams.get("kind"));
       const id = url.searchParams.get("recordId") ?? "";
       if (!t || !ID.test(id)) return json({ error: "Choose a valid catalog record." }, 400);
+      if(t.table==="physical_cutters"&&!await database.prepare("SELECT name FROM sqlite_schema WHERE name='physical_cutter_attachments'").first())return json({attachments:[],migrationRequired:true});
       const rows = await database.prepare(`SELECT a.* FROM attachments a JOIN ${t.links} l ON l.attachment_id=a.id WHERE l.${t.column}=? ORDER BY a.created_at,a.id LIMIT 200`).bind(id).all<Attachment>();
       const items = await Promise.all(rows.results.map(async row => ({
         id: row.id, filename: row.filename, mediaType: row.media_type, byteSize: row.byte_size, sha256: row.sha256,
@@ -154,7 +158,8 @@ export async function handleAttachments(request: Request, database: D1Database, 
     const filename = file.name.normalize("NFC").replace(/[\\/\x00-\x1f\x7f]/g, "_").slice(0,160);
     const bytes = new Uint8Array(await file.arrayBuffer());
     const type = attachmentMedia(filename, bytes);
-    if (!type || (kind === "design" && !type.startsWith("image/"))) return json({ error: "Use PNG, JPEG or WebP images; cutter records also accept STL and 3MF originals." }, 415);
+    if (!type || (kind !== "shape" && !type.startsWith("image/"))) return json({ error: "Use PNG, JPEG or WebP images; cutter records also accept STL and 3MF originals." }, 415);
+    if(kind==="cutter"&&!await database.prepare("SELECT name FROM sqlite_schema WHERE name='physical_cutter_attachments'").first())return json({error:"Physical photographs require development migration 0005. Your record is saved; no file was uploaded."},409);
     if (!await database.prepare(`SELECT id FROM ${t.table} WHERE id=?`).bind(id).first()) return json({ error: "Catalog record not found." }, 404);
     const attachmentId = "file_" + crypto.randomUUID().replace(/-/g, "");
     const key = "attachments/" + attachmentId + "/original";

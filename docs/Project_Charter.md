@@ -1,5 +1,9 @@
 # Cookie_Catalog — Project Charter: Execution Governance
 
+## Current authorized UX slice — October 20, 2026
+
+Owner explicitly authorized [Reference and Inventory UX](Reference_Inventory_UX_R2.md) under CC-TODO-021 / CC-TODO-010 on existing PR #7. Apply the approved producer-reference/physical-inventory model and bounded acceptance checklist. Development testing/deployment is authorized; production, merges, destructive changes, paid resources and unrelated release automation remain excluded. This does not reorder deferred R2 work or replace the existing charter/pinned operating policies.
+
 ## Feature prioritization and execution continuity
 
 **Policy:** Design discussions, feature exploration, and architectural proposals do not alter approved priorities or the active execution sequence unless they materially block completion of the currently authorized feature or feature set. Only the project owner may explicitly reprioritize work.

@@ -14,9 +14,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 from prepare_cloudflare_restore import prepare, verify, snapshot
 
 
-def fixture(path, missing_migration=False, large=False, current=False, environment='development'):
+def fixture(path, missing_migration=False, large=False, current=False, physical=False, environment='development'):
     with sqlite3.connect(":memory:") as db:
-        names = ["0001_initial.sql", "0002_variants_components.sql"] + (["0003_import_reviews.sql", "0004_catalog_imports.sql"] if current else [])
+        names = ["0001_initial.sql", "0002_variants_components.sql"] + (["0003_import_reviews.sql", "0004_catalog_imports.sql"] if current else []) + (["0005_physical_photographs.sql"] if physical else [])
         for migration in [ROOT / "database/migrations" / name for name in names]:
             db.executescript(migration.read_text())
         db.execute("CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY, name TEXT, applied_at TEXT)")
@@ -37,6 +37,9 @@ def fixture(path, missing_migration=False, large=False, current=False, environme
             db.execute("INSERT INTO import_review_versions VALUES ('review_test',1,'TEST hash',1,'TEST owner','TEST')")
             db.execute("INSERT INTO import_review_items VALUES ('review_test',1,'TEST key',0,'{}')")
             db.execute("INSERT INTO catalog_import_batches VALUES ('batch_test','review_test',1,'TEST request','TEST plan','TEST backup','TEST owner','TEST',1,'{}')")
+        if physical:
+            db.execute("INSERT INTO physical_cutters(id,shape_id) VALUES ('test_cutter','shape_test')")
+            db.execute("INSERT INTO physical_cutter_attachments VALUES ('test_cutter','file_test_01','photo')")
         db.commit()
         database = snapshot(db)
     item = {"attachmentId":"file_test_01", "key":key, "byteSize":len(data), "sha256":checksum, "contentType":"application/octet-stream"}
@@ -90,6 +93,20 @@ class PreparationTests(unittest.TestCase):
             self.assertEqual(evidence['counts']['catalog_import_batches'], 1)
             self.assertEqual(evidence['counts']['d1_migrations'], 4)
             shutil.rmtree(self.package)
+
+    def test_physical_photo_archive_restores_links_bytes_and_migration(self):
+        fixture(self.archive, current=True, physical=True)
+        result = prepare(self.archive, self.package)
+        self.assertEqual(result['tables'], 23)
+        self.assertTrue(self.compare()['dataComparisonPassed'])
+        with sqlite3.connect(self.package / 'catalog.sqlite') as db:
+            self.assertEqual(db.execute('SELECT * FROM physical_cutter_attachments').fetchone(), ('test_cutter','file_test_01','photo'))
+            self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+            self.assertEqual(db.execute('SELECT count(*) FROM d1_migrations').fetchone()[0], 5)
+        import subprocess
+        report=json.loads(subprocess.check_output(['node', str(ROOT / 'tools/backup-helper.mjs'), 'validate', str(self.archive)], text=True))
+        self.assertEqual(report['tables'],23)
+        self.assertEqual(report['objects'],1)
 
     def test_current_import_passes_each_statement_with_immediate_constraints(self):
         fixture(self.archive, current=True)

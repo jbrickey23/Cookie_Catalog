@@ -1,5 +1,11 @@
 # Cookie_Catalog — Decision Log
 
+## October 20, 2026 — Approved reference/inventory model and UX slice (CC-TODO-021 / CC-TODO-010)
+
+Status: owner approved implementation and established development deployment; no production or PR merge approval. Reuse shapes as distinct producer references, stable IDs with editable descriptions, and physical_cutters as zero-or-more inventory records. Quantity groups interchangeable copies; size/geometry/location/tracking differences may justify separate physical records. Color/material are optional, not automatic identity boundaries. Reference images normally depict finished cookies; actual cutter photographs belong only to the relevant physical record. Similar producer designs remain separate searchable/tagged references. No universal category parent or automatic merge.
+
+[Current implementation, acceptance and recovery checkpoint](docs/Reference_Inventory_UX_R2.md) records reuse/gaps, additive photo links, read-only Add to Inventory, persisted Focus Cards, explicit-scheme URL validation and pending live acceptance. This is a refinement within existing 021/010, not a duplicate policy or new feature track. Preserve existing evidence, CC-TODO-019 and draft PR #12. Next unused task CC-TODO-025; decision CC-DEC-023.
+
 ## 2026-10-19 — CC-DEC-022 — Adopt Durable_CHATGPT v1.0.0
 
 Status: user approved adoption/execution; implemented and locally validated in the documentation adoption branch; main publication follows the protected PR/check workflow.

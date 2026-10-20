@@ -165,3 +165,18 @@ test('read-only image window escapes filenames and leaves original retrieval to 
   assert.equal(viewer.status,200);const page=await viewer.text();assert.ok(page.includes('&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;.png'));assert.ok(!page.includes('<script>'));assert.ok(!page.includes('<form'));assert.equal(viewer.headers.get('referrer-policy'),'no-referrer');
  }finally{await runtime.dispose();}
 });
+
+
+test('physical photographs remain scoped to one inventory record and old databases fail safely until migration',async()=>{
+ const {runtime,db,bucket}=await env();try{
+  await db.exec("INSERT INTO physical_cutters(id,shape_id) VALUES('medium','shape_test'),('large','shape_test')");
+  const blocked=await handleApiRequest(upload(png,'physical.png','cutter','medium'),owner,db,bucket);assert.equal(blocked.status,409);
+  const sql=readFileSync('../database/migrations/0005_physical_photographs.sql','utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));
+  const saved=await handleApiRequest(upload(png,'physical.png','cutter','medium'),owner,db,bucket);assert.equal(saved.status,201,await saved.clone().text());const photo=await saved.json() as any;
+  const list=async(kind:string,id:string)=>(await (await handleApiRequest(new Request(origin+'/api/attachments?kind='+kind+'&recordId='+id),owner,db,bucket)).json()) as any;
+  assert.equal((await list('cutter','medium')).attachments[0].id,photo.id);assert.equal((await list('cutter','large')).attachments.length,0);assert.equal((await list('shape','shape_test')).attachments.length,0);
+  assert.equal((await handleApiRequest(upload(stl,'test.stl','cutter','medium'),owner,db,bucket)).status,415);
+  await assert.rejects(db.prepare("DELETE FROM physical_cutters WHERE id='medium'").run());
+  assert.equal((await handleApiRequest(deletion(photo.id),owner,db,bucket)).status,200);assert.equal((await list('cutter','medium')).attachments.length,0);
+ }finally{await runtime.dispose();}
+});

@@ -14,18 +14,18 @@ export async function browseCatalog(request: Request, db: D1Database): Promise<R
     const has=(name:string)=>columns.results.some(c=>c.name===name);
     const mapping=await db.prepare("SELECT name FROM sqlite_schema WHERE type='table' AND name='catalog_source_mappings'").first();
     const sourceBin=sourceSectionSql(!!mapping);
-    const physical=`SELECT c.id,c.shape_id,s.name,${sourceBin} AS source_bin,${sourceEvidenceSql(!!mapping)} AS source_evidence,c.quantity,c.width_mm,c.height_mm,l.label AS location,
+    const physical=`SELECT c.id,c.shape_id,s.name,s.maker,${sourceBin} AS source_bin,${sourceEvidenceSql(!!mapping)} AS source_evidence,c.quantity,c.width_mm,c.height_mm,l.label AS location,
       ${has("reference_size_mm")?"c.reference_size_mm":"NULL AS reference_size_mm"},${has("slot")?"c.slot":"NULL AS slot"},'physical' AS record_kind,NULL AS review_state,s.source_url,NULL AS source_reason
       FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id`;
-    const references=`SELECT s.id,s.id AS shape_id,s.name,CASE WHEN json_valid(s.notes) THEN json_extract(s.notes,'$.source.sectionPath') END AS source_bin,
+    const references=`SELECT s.id,s.id AS shape_id,s.name,s.maker,CASE WHEN json_valid(s.notes) THEN json_extract(s.notes,'$.source.sectionPath') END AS source_bin,
       s.notes AS source_evidence,NULL AS quantity,NULL AS width_mm,NULL AS height_mm,NULL AS location,NULL AS reference_size_mm,NULL AS slot,'reference' AS record_kind,
       CASE WHEN json_valid(s.notes) THEN json_extract(s.notes,'$.reviewState') END AS review_state,s.source_url,CASE WHEN json_valid(s.notes) THEN json_extract(s.notes,'$.reason') END AS source_reason
-      FROM shapes s WHERE NOT EXISTS(SELECT 1 FROM physical_cutters c WHERE c.shape_id=s.id)`;
-    const base=kind==="physical"?physical:kind==="reference"?references:physical+" UNION ALL "+references;
-    const termFilter=`(instr(lower(r.name),lower(?))>0 OR instr(lower(coalesce(r.location,'')),lower(?))>0 OR instr(lower(coalesce(r.source_bin,'')),lower(?))>0
+      FROM shapes s`;
+    const base=kind==="physical"?physical:kind==="reference"?references:physical+" UNION ALL "+references+" WHERE NOT EXISTS(SELECT 1 FROM physical_cutters c WHERE c.shape_id=s.id)";
+    const termFilter=`(instr(lower(r.name),lower(?))>0 OR instr(lower(coalesce(r.maker,'')),lower(?))>0 OR instr(lower(coalesce(r.location,'')),lower(?))>0 OR instr(lower(coalesce(r.source_bin,'')),lower(?))>0
       OR EXISTS(SELECT 1 FROM shape_tags st JOIN tags t ON t.id=st.tag_id WHERE st.shape_id=r.shape_id AND instr(lower(t.label),lower(?))>0))`;
     const filter=`WHERE (?=1 OR substr(upper(r.name),1,5)!='DEMO ')`+terms.map(()=>" AND "+termFilter).join("");
-    const parameters=[url.searchParams.get("demo")==="true"?1:0,...terms.flatMap(term=>[term,term,term,term])];
+    const parameters=[url.searchParams.get("demo")==="true"?1:0,...terms.flatMap(term=>[term,term,term,term,term])];
     const count=await db.prepare(`SELECT count(*) AS total FROM (${base}) r ${filter}`).bind(...parameters).first<{total:number}>();
     const rows=await db.prepare(`SELECT r.*,a.id AS image_id,a.filename AS image_name FROM (${base}) r
       LEFT JOIN attachments a ON a.id=(SELECT a2.id FROM shape_attachments sa JOIN attachments a2 ON a2.id=sa.attachment_id

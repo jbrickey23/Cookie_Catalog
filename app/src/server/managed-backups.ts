@@ -84,7 +84,7 @@ async function startManagedRestoreUnlocked(db:D1Database,files:R2Bucket,subject:
 function quote(s:string){if(!/^[a-z_][a-z0-9_]*$/.test(s))throw Error('Invalid restore identifier.');return '"'+s+'"';}
 function chunks(rows:Record<string,any>[]){const output:Record<string,any>[][]=[];let current:Record<string,any>[]=[],length=2;for(const row of rows){const size=JSON.stringify(row).length+1;if(size>80000)throw Error('A restored row exceeds the supported statement limit.');if(length+size>80000){output.push(current);current=[];length=2;}current.push(row);length+=size;}if(current.length)output.push(current);return output;}
 async function replaceDatabase(db:D1Database,target:Payload,before:Payload){
- const names=Object.keys(target.database.tables),known=[...BACKUP_TABLES,...REVIEW_TABLES,...IMPORT_TABLES] as string[];
+ const names=Object.keys(target.database.tables),known=[...BACKUP_TABLES,...REVIEW_TABLES,...IMPORT_TABLES,"physical_cutter_attachments"] as string[];
  if(names.some(n=>!known.includes(n))||JSON.stringify([...names].sort())!==JSON.stringify(Object.keys(before.database.tables).sort()))throw Error('Unsupported restore table profile.');
  const columns=await db.batch(names.map(n=>db.prepare('PRAGMA table_info('+quote(n)+')'))),statements:D1PreparedStatement[]=[db.prepare('PRAGMA defer_foreign_keys=ON')];
  for(let i=0;i<names.length;i++){

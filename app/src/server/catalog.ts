@@ -44,7 +44,7 @@ export function validate(kind: Kind, input: unknown,fields:readonly string[]=spe
     if(key === "use_type" && !["standard","flip","combination"].includes(text)) throw new InputError("Choose standard, flip or combination.");
     if(key === "origin" && !["purchased","printed","unknown"].includes(text)) throw new InputError("Choose purchased, printed or unknown.");
     if(key === "source_url" && text) {
-      try { if(!["https:","http:"].includes(new URL(text).protocol)) throw Error(); }
+      try { if(!/^https?:\/\//i.test(text)||!["https:","http:"].includes(new URL(text).protocol)) throw Error(); }
       catch { throw new InputError("Source URL must begin with http:// or https://."); }
     }
     values[key]=text || null;

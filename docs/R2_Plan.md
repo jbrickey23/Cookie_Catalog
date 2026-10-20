@@ -1,5 +1,9 @@
 # R2 — fast follow scope
 
+## Current authorized UX slice — October 20, 2026
+
+Owner explicitly authorized [Reference and Inventory UX](Reference_Inventory_UX_R2.md) under CC-TODO-021 / CC-TODO-010 on existing PR #7. Apply the approved producer-reference/physical-inventory model and bounded acceptance checklist. Development testing/deployment is authorized; production, merges, destructive changes, paid resources and unrelated release automation remain excluded. This does not reorder deferred R2 work or replace the existing charter/pinned operating policies.
+
 Owner established these four R2 tracks October 16, 2026 at 17:43 Pacific, confirmed enough detail to start at 18:03 and explicitly authorized implementation/reconciliation at 18:05. Begin with the housekeeping/UX batch already in progress, then the private Change Request ingestion foundation. Preserve R1 production while developing R2; paid services, new credential grants and destructive migrations still require concrete review.
 
 | Track | Work item | Outcome |

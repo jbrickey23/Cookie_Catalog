@@ -46,7 +46,7 @@ export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canM
   useEffect(() => {
     let cancelled = false;
     Promise.all([catalogChoices("shapes"),catalogChoices("designs")]).then(([shapes,designs])=>{
-      if(!cancelled)setTargets({shapes:shapes.map(row=>({id:row.id,name:row.name!})),designs:designs.map(row=>({id:row.id,name:row.name!}))});
+      if(!cancelled)setTargets({shapes:shapes.map(row=>({id:row.id,name:row.name!+(row.maker?' — '+row.maker:' — producer not recorded')})),designs:designs.map(row=>({id:row.id,name:row.name!}))});
     }).catch(error=>{if(!cancelled)setStatus(error.message);});
     return () => { cancelled = true; };
   }, []);
@@ -87,7 +87,7 @@ export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canM
   const records = kind === "shape" ? targets.shapes : targets.designs;
   return <section>
     <h2>Private files</h2>
-    <p>Choose a cutter shape or design, then keep its photo or original printable file here.</p>
+    <p>Reference photographs normally show the finished cookie. Choose its producer reference for a reference image or digital file. Add actual cutter photographs from the physical inventory Focus Card.</p>
     <p>Use small test files while development continues.</p>
     <label>Record type <select value={kind} disabled={busy} onChange={event => select(event.target.value,"")}>
       <option value="shape">Cutter shape</option><option value="design">Decorating design</option>

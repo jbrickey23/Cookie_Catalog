@@ -21,12 +21,12 @@ IMPORT_TABLES = {"catalog_import_batches", "catalog_source_mappings"}
 
 def table_profile(names):
     names = set(names)
-    if names not in (TABLES, TABLES | REVIEW_TABLES, TABLES | REVIEW_TABLES | IMPORT_TABLES):
+    if names not in (TABLES, TABLES | REVIEW_TABLES, TABLES | REVIEW_TABLES | IMPORT_TABLES, TABLES | REVIEW_TABLES | IMPORT_TABLES | {"physical_cutter_attachments"}):
         raise ValueError("Unexpected or incomplete schema")
     return names
 
 def migration_profile(tables):
-    return {"0001_initial.sql", "0002_variants_components.sql"} | ({"0003_import_reviews.sql"} if REVIEW_TABLES <= set(tables) else set()) | ({"0004_catalog_imports.sql"} if IMPORT_TABLES <= set(tables) else set())
+    return {"0001_initial.sql", "0002_variants_components.sql"} | ({"0003_import_reviews.sql"} if REVIEW_TABLES <= set(tables) else set()) | ({"0004_catalog_imports.sql"} if IMPORT_TABLES <= set(tables) else set()) | ({"0005_physical_photographs.sql"} if "physical_cutter_attachments" in tables else set())
 
 def identifier(value):
     if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", value):
