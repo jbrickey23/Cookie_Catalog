@@ -1,12 +1,12 @@
 import {buildInformation} from './server/build-information';
-export type ReleaseView={active:boolean;epoch:string;build:string};
+export type ReleaseView={active:boolean;epoch:string;build:string;notice?:{startsAt:string}|null;outcome?:string|null};
 /** One page lifetime pins one epoch/build. Reading a new token never refreshes a
  * stale page's authority. All writes, including uploads and Undo, share this path. */
 export class ReleaseSession {
  private first?:ReleaseView;private current?:ReleaseView;private uncertain=false;
- observe(value:ReleaseView){if(typeof value.active!=='boolean'||!value.epoch||!value.build)throw Error('Release state unavailable');this.first??={...value};this.current={...value};}
+ observe(value:ReleaseView){if(typeof value.active!=='boolean'||!value.epoch||!value.build||value.notice&&!Number.isFinite(Date.parse(value.notice.startsAt)))throw Error('Release state unavailable');this.first??={...value};this.current={...value};}
  get changed(){return !!this.first&&!!this.current&&(this.first.epoch!==this.current.epoch||this.first.build!==this.current.build);}
- get paused(){return !this.current||this.current.active||this.changed||this.uncertain;}
+ get paused(){return !this.current||this.current.active||!!this.current.notice&&Date.parse(this.current.notice.startsAt)<=Date.now()||this.changed||this.uncertain;}
  get hasUncertainWrite(){return this.uncertain;}
  headers(build:string){if(this.paused||build!==this.first?.build)throw Error('Keep your draft. Refresh and review the catalog version before saving.');return {'X-Catalog-Epoch':this.first!.epoch,'X-Catalog-Build':build};}
  unknownWrite(){this.uncertain=true;}

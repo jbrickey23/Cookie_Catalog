@@ -23,7 +23,7 @@ export function r1ReleaseBridge(original:{fetch:Function;scheduled:Function},api
   },
   async scheduled(event:ScheduledController,env:BridgeEnv,ctx:ExecutionContext){
    // Capture all R1 waitUntil promises inside the registered operation.
-   ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{const pending:Promise<unknown>[]=[];await original.scheduled(event,env,{...ctx,waitUntil:(p:Promise<unknown>)=>pending.push(p)});await Promise.all(pending);}).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));
+   ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{const pending:Promise<unknown>[]=[];await original.scheduled(event,env,{...ctx,waitUntil:(p:Promise<unknown>)=>pending.push(p)});await Promise.all(pending);},true).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));
   }
  };
 }

@@ -26,6 +26,6 @@ jobs:
         run: |
           node --test tools/tests/release-*.test.mjs
           cd app
-          node --import tsx --test tests/release-machine.test.ts tests/release-maintenance.test.ts tests/r1-release-bridge.test.ts
+          node --import tsx --test tests/release-machine.test.ts tests/release-maintenance.test.ts tests/release-kiss.test.ts tests/r1-release-bridge.test.ts tests/inline-workspace-interaction.test.ts
       - name: Compile accepted R1 overlay without deployment
         run: node tools/check-r1-release-bridge.mjs

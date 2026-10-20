@@ -1,3 +1,25 @@
+# R1 bridge first transition — KISS proposal, execution not authorized
+
+**Owner KISS decision 2026-10-20 supersedes the universal legacy-retirement prerequisite below.** CC-TODO-020 / CC-TODO-022; CC-TODO-019 remains unresolved. [Current routine design](KISS_Release_Automation_R2.md). This is a separate first-transition approval packet, not permission to execute production maintenance, deploy, configure Access/cron/credentials or alter live data.
+
+## Proposed first-window checklist
+
+1. **PREP:** owner names the exact release window (including a finite abort/review deadline), compatible R1 bridge SHA/artifact/config hashes and version, accepted R1 rollback UUID and healthy baseline. Verify actual independent recovery evidence and CC-TODO-019 readiness. Confirm no schema, format, binding or destructive data change. Coordinate both users directly: finish/save acknowledged work, copy any draft, keep unknown-save details for review. Existing R1 cannot display the new in-app countdown; do not promise that capability before installing the bridge. No human browser token goes into CI.
+2. **CLOSE SHOP:** owner applies the separately reviewed external API restriction, checks both existing and fresh sessions/entry URLs, and suspends the **actual scheduled trigger**, including pending backup/restore/retention continuation. Turning off the in-app daily-backup preference is insufficient. Preserve reversible configuration snapshots and normal human authentication; do not delete a Worker, data or lock. Any propagation settling is an operational precaution, not a drain certificate.
+3. **DRAIN:** inspect both users' known in-flight requests and acknowledgments, import/restore/retention/copy state, lease status and available logs/readback. Distinguish completed, active, failed and unknown. Let ordinary known work finish within the approved budget. Stop release for any active/uncertain high-risk operation, missing recovery evidence, conflicting deployment or inability to bound the review. Do not clear registrations/leases or claim an exhaustive historical Worker drain. Record the limited R1 visibility and residual unobserved legacy-request risk accepted for this compatible transition.
+4. **RELEASE:** while external restrictions remain held, install only the exact reviewed R1-compatible bridge (not full R2 features/migrations). Verify runtime SHA/native UUID/package version, schema/format/binding compatibility, original human auth, narrow machine controls, maintenance/known-operation checks and health. If deployment outcome is uncertain, investigate; do not blindly issue rollback or retry. If failure is known settled and rollback is compatible, restore the exact recorded R1 code UUID while external restrictions and scheduling suspension remain held. Never automatically restore D1/R2 data.
+5. **OPEN SHOP:** verify the chosen bridge or R1 baseline is healthy and known work is safe before owner-controlled reopening of external restrictions/scheduling. Old R1 cannot honor an R2 gate: successful rollback still requires external protection until verification. If the bridge succeeded, refresh both browsers into cooperative maintenance/epoch support and verify draft handling. Unknown state stays Needs attention; no elapsed-time unlock. Routine R2 feature release follows separately with its own acceptance.
+
+## Required concrete owner approval
+
+Approve the exact target/bridge artifact, window/abort budget, recovery receipt and rollback UUID, named external restriction/cron operations and their reversal, residual compatible-release risk, acceptance checks and explicit execution grant. Resource/route/access inventory informs that packet; it is not a mandate to build a new controller or obtain mathematical global quiescence proof. No new paid resources are proposed. Existing private credentials remain private and separately scoped; no production credential is provisioned here.
+
+If a check fails, abort the **release**, preserve external protection while reconciling known risk, and reopen the verified baseline only after it is demonstrably safe. Do not keep experimenting past the agreed window or use its deadline as permission to reopen.
+
+## Historical proposal — retained evidence, superseded prerequisites
+
+The following records the earlier investigation-driven proposal. Its universal retirement-proof, passive-stage and disposable-target recommendations are superseded by the approved KISS decision where they conflict. Factual limitations and the prohibitions on unsafe reopening/data restore remain relevant.
+
 # R1 bridge production transition — proposed, not authorized
 
 Latest investigation: [R1 quiescence evidence and proposed staged bootstrap](R1_Quiescence_Investigation_20261019.md). Native legacy drain is unproven; passive installation versus gate arming is a proposed distinction, not an approved production change. Preserve historical evidence below.

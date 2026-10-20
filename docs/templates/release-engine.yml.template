@@ -1,0 +1,99 @@
+# INACTIVE TEMPLATE. Owner approval/configuration required before installation.
+# Caller: native workflow_dispatch on main, using this engine at an immutable SHA.
+name: Cookie Catalog release engine
+on:
+  workflow_call:
+    inputs:
+      countdown_minutes:
+        type: number
+        default: 5
+    secrets:
+      CC_RELEASE_CLIENT_ID: {required: true}
+      CC_RELEASE_CLIENT_SECRET: {required: true}
+      CLOUDFLARE_API_TOKEN: {required: true}
+permissions:
+  contents: read
+concurrency:
+  group: cookie-catalog-production-release
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: {contents: read}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ github.sha }}', persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - working-directory: app
+        env: {CC_WRANGLER_CONFIG: wrangler.production.ready.jsonc}
+        run: |
+          npm ci --no-audit --no-fund
+          npm run test:auth
+          npm run build
+      - name: Package immutable prebuilt bytes; no production environment or credentials
+        run: |
+          mkdir -p bundle/dist/worker bundle/dist/client
+          cp -R app/dist/cookie_catalog_prod/. bundle/dist/worker/
+          rm bundle/dist/worker/wrangler.json
+          cp -R app/dist/client/. bundle/dist/client/
+          node --input-type=module <<'JS'
+          import {writeFileSync,readFileSync} from 'node:fs';
+          import {artifactDigest} from './tools/release-artifact.mjs';
+          writeFileSync('bundle/candidate.json',JSON.stringify({sha:process.env.GITHUB_SHA,run:process.env.GITHUB_RUN_ID,version:JSON.parse(readFileSync('app/package.json')).version,artifactHash:artifactDigest('bundle/dist')}));
+          JS
+      - uses: actions/upload-artifact@v4
+        with: {name: cookie-release-build, path: bundle, retention-days: 7, include-hidden-files: true}
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: cookie-catalog-production-release
+    timeout-minutes: 90
+    permissions: {contents: read, actions: read, id-token: write}
+    steps:
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - name: Determine this pinned engine's own commit before checking out code
+        id: engine
+        run: |
+          node --input-type=module <<'JS'
+          import {appendFileSync} from 'node:fs';
+          const response=await fetch(process.env.ACTIONS_ID_TOKEN_REQUEST_URL,{headers:{Authorization:'Bearer '+process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}});
+          if(!response.ok)throw Error('OIDC unavailable');
+          const {value}=await response.json(),claims=JSON.parse(Buffer.from(value.split('.')[1],'base64url'));
+          const identity=String(claims.job_workflow_ref).split('/');identity[0]=identity[0].toLowerCase();identity[1]=identity[1]?.toLowerCase();
+          if(!/^[a-f0-9]{40}$/.test(claims.job_workflow_sha)||identity.join('/')!==`jbrickey23/cookie_catalog/.github/workflows/release-engine.yml@${claims.job_workflow_sha}`)throw Error('Immutable reusable engine required');
+          appendFileSync(process.env.GITHUB_OUTPUT,'sha='+claims.job_workflow_sha+'\n');
+          JS
+      - uses: actions/checkout@v4
+        with: {ref: '${{ steps.engine.outputs.sha }}', fetch-depth: 0, persist-credentials: false}
+      - name: Install trusted engine toolchain without candidate scripts
+        working-directory: app
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/download-artifact@v4
+        with: {name: cookie-release-build, path: bundle}
+      - uses: actions/download-artifact@v4
+        id: previous
+        continue-on-error: true
+        with: {name: cookie-release-plan, path: recovery}
+      - name: Plan or recover the original run
+        env: &release_environment
+          CC_RELEASE_READINESS: '${{ vars.CC_RELEASE_READINESS }}'
+          CC_RELEASE_MINUTES: '${{ inputs.countdown_minutes }}'
+          CC_RELEASE_OIDC_AUD: '${{ vars.CC_RELEASE_OIDC_AUD }}'
+          CC_RELEASE_CLIENT_ID: '${{ secrets.CC_RELEASE_CLIENT_ID }}'
+          CC_RELEASE_CLIENT_SECRET: '${{ secrets.CC_RELEASE_CLIENT_SECRET }}'
+          CLOUDFLARE_ACCOUNT_ID: '${{ vars.CLOUDFLARE_ACCOUNT_ID }}'
+          CLOUDFLARE_API_TOKEN: '${{ secrets.CLOUDFLARE_API_TOKEN }}'
+        run: node tools/release-command.mjs plan bundle recovery
+      - uses: actions/upload-artifact@v4
+        if: steps.previous.outcome != 'success'
+        with: {name: cookie-release-plan, path: recovery, retention-days: 7, include-hidden-files: true}
+      - name: PREP, CLOSE SHOP, DRAIN, RELEASE, OPEN SHOP
+        env: *release_environment
+        run: |
+          export CC_RECOVERY_PLAN_HASH="$(node --input-type=module -e "import {readFileSync} from 'node:fs';import {digest} from './tools/release-orchestrator.mjs';console.log(digest(JSON.parse(readFileSync('recovery/plan.json'))))")"
+          node tools/release-command.mjs apply bundle recovery
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: 'cookie-release-evidence-${{ github.run_attempt }}', path: recovery/journal.jsonl, retention-days: 7}

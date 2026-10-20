@@ -226,13 +226,13 @@ export async function handleReleaseGuardedApi(request:Request,verifier:IdentityV
  }catch(error){return json({error:error instanceof ReleaseGateError?error.message:'Release safety status unavailable. Keep your draft and retry.'},error instanceof ReleaseGateError?error.status:503);}
 }
 export default {
-  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{await scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT));await preparePhotoInbox(env.FILES);}).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
+  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{await scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT));await preparePhotoInbox(env.FILES);},true).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
   async fetch(request: Request, env: Env): Promise<Response> {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       if(pathname.startsWith('/api/release-automation/')){
         const principal=await verifyReleaseMachine(request,env);if(!principal)return json({error:'Machine authorization denied'},401);
-        try{return await handleReleaseMachine(request,env.FILES,principal,{sha:buildInformation().commit??'',version:env.CF_VERSION_METADATA?.id??'',health:await releaseHealth(env.DB,env.FILES)});}catch{return json({error:'Release safety state unavailable'},503);}
+        try{return await handleReleaseMachine(request,env.FILES,principal,{sha:buildInformation().commit??'',version:env.CF_VERSION_METADATA?.id??'',packageVersion:buildInformation().version??'',health:await releaseHealth(env.DB,env.FILES)});}catch{return json({error:'Release safety state unavailable'},503);}
       }
       if (!accessIsConfigured(env)) return json({ error: "Authentication configuration incomplete" }, 503);
       let environment:CatalogEnvironment;

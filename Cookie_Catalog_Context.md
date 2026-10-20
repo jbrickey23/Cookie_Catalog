@@ -1,5 +1,12 @@
 # Cookie Catalog — current context
 
+## KISS engineering checkpoint — 2026-10-20 Pacific
+
+[Current five-stage design, component disposition, workflow boundary and remaining production packet](docs/KISS_Release_Automation_R2.md). Implemented on isolated draft #12: durable PREP countdown/window, known-operation status, bounded DRAIN, shared HTTP/scheduled closure, disabled edits with retained drafts/stale-session review, and composed exact-version release/verified code rollback. Automatic cross-run observer removed; recovery is explicit through the original workflow run. Inactive native dispatch/trusted engine templates and a plan/apply command are reviewable; **no production trigger or credential activated**. R2 package 0.2.0 is an unreleased candidate, not a deployed release. Tests/CI must be verified on the final PR head.
+
+Initial R1 uses the [updated separate-approval first-window runbook](docs/R1_Bridge_Production_Proposal.md), external restriction and actual scheduler pause, known-operation checks and explicit limited-visibility/residual-risk record. No new cloud test target or universal legacy census is a routine prerequisite. CC-TODO-019 remains unresolved and release-blocking. Preserve #12 draft/#7 unmerged and the R2 sequence; next unused CC-TODO-025 / CC-DEC-023. Next boundary is the concrete readiness/first-transition/production-configuration approval, not further theoretical quiescence research.
+
+
 ## Approved KISS release decision — 2026-10-20 Pacific
 
 Owner approved **PREP → CLOSE SHOP → DRAIN → RELEASE → OPEN SHOP** under existing CC-TODO-020 / CC-TODO-022. Routine backward-compatible releases use a practical bounded settling check of known operations; exhaustive historical Worker census/provider retirement proof is **superseded as a universal prerequisite**. Preserve the earlier investigations as historical evidence. No proxy/controller or disposable cloud resources are required by this decision. Separate breaking/destructive changes require explicit planning/approval. Retain server-side maintenance, known-operation checks, exact reviewed artifacts, compatible verified rollback, stale-client protection and independent recovery evidence. CC-TODO-019 remains unresolved and blocks release readiness.
