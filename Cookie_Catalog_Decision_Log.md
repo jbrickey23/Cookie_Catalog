@@ -1,5 +1,13 @@
 # Cookie_Catalog — Decision Log
 
+## 2026-10-19 — CC-DEC-022 — Adopt Durable_CHATGPT v1.0.0
+
+Status: user approved adoption/execution; implemented and locally validated in the documentation adoption branch; main publication follows the protected PR/check workflow.
+
+Adopt DCHAT-POL-001 Guided Switching and DCHAT-POL-002 Usage Efficiency at source commit `53aa39ccedce935a702f44072cc647231c8cc02e`. [Policy pin and verified local copies](policies/README.md); no exceptions. Preserve CC-DEC-004/005/007 root/source/restore conventions, CC-DEC-010 engineering autonomy and material decision boundaries, and existing main safeguards. Critical engineering judgment is made explicit once in existing development guidelines, not duplicated as a new global policy.
+
+Plan in Chat, prepare a design-ready execution handoff and let the user authorize launch; continue approved batches autonomously through validation, commit and reconciliation. Current instructions govern authorization; preserve status/evidence distinctions. This adoption does not authorize R2 features, production release/deployment, schema/data/resource changes, paid services, edits to Durable_CHATGPT or external Project Instructions. See [audit and procedures](docs/Durable_Workflow_Adoption_20261019.md). Previous dated entries remain evidence of their then-current state; current R1 closeout controls release status. Next unused decision ID: CC-DEC-023.
+
 ## Optional field context help and content readiness — October 16, 2026 (Pacific)
 
 Owner requested hover context help with a brief explanation/example and a link to full HTML documentation; nice-to-have for R1, incomplete content allowed when tracked. Added reusable help around focused inline labels and Tags. Hover/focus shows local content; ? or Full documentation opens an authenticated separate HTML field guide. Escape dismisses; help does not write records or discard drafts. Shared source registry app/src/field-help.ts supplies quick and full help: 12 Ready items and SlotQuickHelp=Missing. Every focused field has an explicit registry status; Ready requires brief/example/details. CC-TODO-016 tracks content completion/review and later coverage, without blocking R1. Next unused CC-TODO-017. See docs/Context_Help.md.

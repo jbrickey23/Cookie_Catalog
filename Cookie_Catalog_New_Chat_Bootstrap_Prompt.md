@@ -1,5 +1,25 @@
 # Cookie_Catalog — New Chat Bootstrap Prompt
 
+## First action — restore current Cookie_Catalog state
+
+Verify GitHub access and read current README, Context, TODO, Decision Log, this bootstrap, [policy pin](policies/README.md), both pinned local policies, applicable AGENTS.md if present, and specialized records needed for the next task. Inspect current branches/open PRs before writing. Use current primary evidence, specialized authoritative records, Context/TODO/Decision Log, Bootstrap, older documents, then old conversations/memory. Read current contents/SHAs, preserve unrelated changes, and verify writes. Report the restored checkpoint and next action; do not render initialization as permission to start unrelated work.
+
+Apply the adopted Guided Switching and usage-efficiency policies through [the local workflow](docs/Durable_Workflow_Adoption_20261019.md). Plan in ordinary Chat; proactively recognize design-ready work, prepare a handoff, recommend Work/Codex and let the user authorize launch. Execute an already approved batch autonomously. Stop for completion, material decisions, blockers or unjustified usage; checkpoint meaningful milestones. Use [existing critical engineering judgment](docs/Development_Guidelines.md#critical-engineering-judgment). Distinguish proposed, approved, implemented and validated states, and local commits, open PRs, merged main and production deployments. No automatic mode switching is implied.
+
+## Current workflow checkpoint — 2026-10-19 Pacific
+
+Durable_CHATGPT **1.0.0** adoption: **CC-TODO-024 / CC-DEC-022**. [Version/source/digest pin](policies/README.md) · [audit, session initialization, handoff and reconciliation](docs/Durable_Workflow_Adoption_20261019.md). This documentation batch is user-approved; repository changes are implemented and locally validated on its adoption branch, with main adoption effective only after the protected PR merges. Verify commit/PR evidence rather than assuming publication or deployment.
+
+R1 v0.1.0 remains released; production is the sole editing catalog, development is for testing. See [R1 closeout](docs/R1_Release_Closeout.md). R2 implementation is already authorized and underway in open PR #7 (`feature/cc-infrastructure-foundation`, inspected head `9f53bf618a5b5ae7d88d1cdd2d6a030b34efc3b2`); this adoption batch does not implement or merge those features. Restore that branch’s current Context/TODO/Bootstrap, `docs/R2_Plan.md` and `docs/Project_Charter.md` before resuming R2. It owns CC-TODO-020 release automation, 021 UX, 022 maintenance gate and 023 request recovery. Preserve CC-TODO-019 diagnostics and the four authorized R2 tracks; do not revert them to older main-only sequencing. Next unused task: **CC-TODO-025**. Do not reopen R1 provisioning, transfer or release approvals. Earlier dated entries below are historical evidence; their old “next unused” and approval-pending statements do not override this checkpoint or current specialized release records.
+
+## Immediate continuation and do not repeat
+
+Verify the documentation adoption PR/check/merge outcome if this is a mid-publication restore. Then restore active PR #7 for R2 continuation under its existing approvals; prepare a handoff for any new batch when ready. This docs-only adoption does not displace already authorized R2 work. Do not recreate setup, reimport data, repeat accepted R1 gates, restore over production for testing, retag releases or create paid resources. External Project Instructions were not automatically edited. This session does not establish history-free fresh-chat acceptance.
+
+## Prior checkpoint history
+
+Preserved below for evidence; restore from the current entry above.
+
 ## R1 RELEASED: v0.1.0 — October 16, 2026
 
 PR #1 merged into main at c0cb3efa8915d88d95efa28e9dfaec3b4ebd0cda after both required CI checks and development build passed. Published GitHub release/tag v0.1.0 points to that exact merge commit: https://github.com/jbrickey23/Cookie_Catalog/releases/tag/v0.1.0 . Production-only editing/cutover is approved and effective; the manual pause is lifted. Preserve development for testing, with no real catalog editing there.
