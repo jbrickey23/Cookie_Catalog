@@ -1,5 +1,25 @@
 # Cookie_Catalog — Decision Log
 
+## Phase 2 authorization checkpoint — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022: owner approved Phase 2 engineering, isolated tests and a reviewable PR using the [merged Phase 1 design](docs/R2_Release_Automation_Phase1_20261019.md). Approved choices: native GitHub **Run workflow** (in-catalog button deferred); dedicated scoped Access machine identity plus independent GitHub OIDC and one production deployment writer; engineering and synthetic rehearsal of an R1-compatible bridge. These are architectural and implementation approvals, **not production authorization**.
+
+No deployment, production maintenance, credential provisioning, Access-policy or production-trigger change, live-data change, paid resource or merge of R2 PR #7 is authorized. Implement on an isolated branch; pushing the active feature branch can deploy development and requires separate authorization. Preserve existing R2 sequence. CC-TODO-019 remains an unresolved release-readiness dependency. Implementation, local tests, remote CI and isolated rehearsal must be reported separately. Next unused: CC-TODO-025 / CC-DEC-023.
+
+
+
+## 2026-10-19 — R2 release automation Phase 1 findings under CC-TODO-020 / CC-TODO-022
+
+Status: investigation and documentation authorized; architecture recommendation **PROPOSED**, not an approved implementation/credential/deployment decision. [Phase 1 recommendation and acceptance plan](docs/R2_Release_Automation_Phase1_20261019.md) records official capability evidence and code gaps. Recommend Actions/native Cloudflare versions plus existing gate, conditional on constrained machine verification, single production writer, compatible rollback floor and separately approved R1 bridge bootstrap. Native GitHub launch is the simplest proposed entry; in-catalog launch requires a separate constrained dispatch credential if chosen.
+
+Bounded automatic recovery may escalate uncertainty with writes paused; no timer-based orphan deletion or assured recovery deadline. CC-TODO-019 stays separate and unresolved. No R2 feature sequence, original decision, approved policy or existing task numbering is changed. Phase 2 needs explicit approval. Next unused CC-DEC-023 / CC-TODO-025.
+
+## 2026-10-19 — Operating-framework closeout under existing CC-DEC-007 / CC-DEC-022
+
+Owner authorized the narrow closeout. Accept owner-reported independent fresh-chat functional restoration results to the supported extent; CC-TODO-001 stays PARTIALLY VERIFIED for missing exact next-task reconstruction. Preserve provenance limits and original criteria in [closeout evidence and criterion matrix](docs/Operating_Framework_Closeout_20261019.md). The archived test was not reopened or independently audited by this worker.
+
+CC-TODO-024 adoption remains complete. PR #5 closed unmerged because active R2's charter preserves its full requirements and adds current execution context. No new policy/decision/task ID is allocated. PR #7 remains open, its head/sequence untouched; no deployment, live-data change or production promotion is part of closeout. Return to ordinary Chat for R2 design. Next unused decision CC-DEC-023; task CC-TODO-025.
+
 ## 2026-10-19 — CC-DEC-022 — Adopt Durable_CHATGPT v1.0.0
 
 Status: user approved adoption/execution; implemented and locally validated in the documentation adoption branch; main publication follows the protected PR/check workflow.

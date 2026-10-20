@@ -1,5 +1,12 @@
 # Cookie Catalog — current context
 
+## Phase 2 authorization checkpoint — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022: owner approved Phase 2 engineering, isolated tests and a reviewable PR using the [merged Phase 1 design](docs/R2_Release_Automation_Phase1_20261019.md). Approved choices: native GitHub **Run workflow** (in-catalog button deferred); dedicated scoped Access machine identity plus independent GitHub OIDC and one production deployment writer; engineering and synthetic rehearsal of an R1-compatible bridge. These are architectural and implementation approvals, **not production authorization**.
+
+No deployment, production maintenance, credential provisioning, Access-policy or production-trigger change, live-data change, paid resource or merge of R2 PR #7 is authorized. Implement on an isolated branch; pushing the active feature branch can deploy development and requires separate authorization. Preserve existing R2 sequence. CC-TODO-019 remains an unresolved release-readiness dependency. Implementation, local tests, remote CI and isolated rehearsal must be reported separately. Next unused: CC-TODO-025 / CC-DEC-023.
+
+
 ## Global workflow adoption — 2026-10-19 Pacific
 
 Adopted Durable_CHATGPT **v1.0.0** under CC-DEC-022 / CC-TODO-024: [source commit/digest pin](policies/README.md), verified local policies, [audit and handoff/reconciliation](docs/Durable_Workflow_Adoption_20261019.md). Documentation-only adoption preserves the R2 current/history split and existing execution approvals. Source/production state remains as recorded below; this is not a new R2 feature or production release. Verify the adoption merge/sync commits and exact-head CI in GitHub.
