@@ -1,5 +1,17 @@
 # Cookie_Catalog — TODO
 
+## Operating-framework closeout — 2026-10-19 Pacific
+
+CC-TODO-024 / CC-DEC-022 adoption is complete (main PR #8 and active R2 documentation sync). CC-TODO-001 is **PARTIALLY VERIFIED**: accept the owner's reported independent fresh-chat behavioral pass for v1.0.0, R1/R2 boundaries, PR #7, priorities, Guided Switching and read-only initialization. The supplied report omits the archived chat's exact next task/action, so that original acceptance subcriterion remains unverified. No archived trace or hidden-history audit is claimed; this worker's history-assisted restore is not the independent test. See [closeout evidence and criterion matrix](docs/Operating_Framework_Closeout_20261019.md) for exact original criteria, supported passes and evidence limits.
+
+PR #5 is closed unmerged as fully superseded by the charter in active R2 PR #7; all requirements are preserved there. PR #7 remains open at inspected head `912e0981c9ec4a1c2b7e8ce954561f29fd9433c8`. Do not reopen the charter PR or duplicate its policy. This closeout updates main documentation only; active R2 is not pushed because its push-triggered development deployment is outside this no-deploy batch. R1 production and approved R2 execution sequencing stay unchanged.
+
+Immediate continuation: return to **R2 design in ordinary Chat** from current R2 records/charter; no new implementation launch is implied. The narrow CC-TODO-001 gap is non-blocking and stays under that ID. No new IDs: next unused task **CC-TODO-025**, decision **CC-DEC-023**. This newer closeout supersedes earlier blanket statements that no independent test has occurred; historical records remain intact.
+
+### CC-TODO-001 — Current restoration acceptance addendum
+
+Status: PARTIALLY VERIFIED. Remote bootstrap/source ownership/actual branch recording pass; owner-reported functional fresh-chat checks pass to the extent documented above. Exact next-task reconstruction remains unverified because the supplied archived-chat report does not give that selected action. Retain original criteria/history below. CC-TODO-024 remains complete; this is acceptance reconciliation under existing IDs, not renewed setup or a reprioritization of R2.
+
 ## Current workflow checkpoint — 2026-10-19 Pacific
 
 Durable_CHATGPT **1.0.0** adoption: **CC-TODO-024 / CC-DEC-022**. [Version/source/digest pin](policies/README.md) · [audit, session initialization, handoff and reconciliation](docs/Durable_Workflow_Adoption_20261019.md). This documentation batch is user-approved; repository changes are implemented and locally validated on its adoption branch, with main adoption effective only after the protected PR merges. Verify commit/PR evidence rather than assuming publication or deployment.
