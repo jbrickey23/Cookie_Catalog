@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {readFileSync} from 'node:fs';
+import {readFileSync,mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
+import {execFileSync} from 'node:child_process';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {handleApiRequest} from '../src/worker';
 import {startManagedBackup,advanceManagedBackup,completeBackup,assertFreshBackup,restorePreview,startManagedRestore,advanceManagedRestore,rollbackManagedRestore,restoreInProgress} from '../src/server/managed-backups';
-import {createArchiveManifest} from '../src/server/archive-backup';
+import {createArchiveBackup,createArchiveManifest} from '../src/server/archive-backup';
 import {createDatabaseSnapshot,sha256} from '../src/server/development-backup';
 import type {IdentityVerifier} from '../src/server/access-identity';
 const origin='https://catalog.example.test';
@@ -135,5 +138,10 @@ test('managed restore retains physical photograph relationships and exact origin
   await startManagedRestore(db,files,'owner',saved.id,before.id,preview.previewSha256);await restore(db,files);
   assert.deepEqual(await createDatabaseSnapshot(db,10000),original);
   const object=await files.get('attachments/file_managed_test1/original');assert.deepEqual(new Uint8Array(await object!.arrayBuffer()),new Uint8Array(256).fill(1));
+  const directory=mkdtempSync(join(tmpdir(),'cc-physical-photo-'));
+  try{
+   const archive=join(directory,'synthetic.tar');writeFileSync(archive,Buffer.from(await new Response(await createArchiveBackup(db,files)).arrayBuffer()));
+   const result=JSON.parse(execFileSync(process.execPath,['../tools/backup-helper.mjs','validate',archive],{encoding:'utf8'}));assert.equal(result.tables,23);assert.equal(result.objects,1);assert.equal(result.complete,true);
+  }finally{rmSync(directory,{recursive:true,force:true});}
  }finally{await runtime.dispose();}
 });

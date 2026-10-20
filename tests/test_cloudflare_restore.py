@@ -103,10 +103,6 @@ class PreparationTests(unittest.TestCase):
             self.assertEqual(db.execute('SELECT * FROM physical_cutter_attachments').fetchone(), ('test_cutter','file_test_01','photo'))
             self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
             self.assertEqual(db.execute('SELECT count(*) FROM d1_migrations').fetchone()[0], 5)
-        import subprocess
-        report=json.loads(subprocess.check_output(['node', str(ROOT / 'tools/backup-helper.mjs'), 'validate', str(self.archive)], text=True))
-        self.assertEqual(report['tables'],23)
-        self.assertEqual(report['objects'],1)
 
     def test_current_import_passes_each_statement_with_immediate_constraints(self):
         fixture(self.archive, current=True)
