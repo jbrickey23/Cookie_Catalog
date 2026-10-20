@@ -19,6 +19,7 @@ export async function handleReleaseMachine(request:Request,files:R2Bucket,princi
  const previous=await state(files),old=previous?.value,m=old?.machine;
  const window=await releaseWindow(files);
  if(b.action==='prepare'){
+  if(window&&window.value.id===b.id&&window.value.status==='canceled')return json({error:'Canceled window cannot be reused; schedule a fresh release'},409);
   if(old?.active||window?.value.status==='prepared'){
    const same=window?.value;if(same&&same.id===b.id&&same.run===principal.run&&same.attempt===principal.attempt&&same.planHash===b.planHash&&same.targetSha===b.targetSha&&same.startsAt===b.startsAt&&same.baselineSha===b.baselineSha&&same.baselineVersion===b.baselineVersion&&same.candidateVersion===b.candidateVersion)return json({window:same,replayed:true});
    return json({error:'A release window or maintenance is already active'},409);
@@ -34,11 +35,14 @@ export async function handleReleaseMachine(request:Request,files:R2Bucket,princi
   const next={...w,attempt:principal.attempt};return await files.put(windowKey,JSON.stringify(next),{onlyIf:{etagMatches:window.etag}})?json({window:next}):json({error:'Release window changed'},409);
  }
  if(b.action==='cancel-prep'){
-  const w=window?.value;if(!window||!w||w.id!==b.id||w.run!==principal.run||w.attempt!==principal.attempt||w.status!=='prepared'||old?.active)return json({error:'Matching original prepared run required'},409);
+  const w=window?.value;if(!window||!w||w.id!==b.id||w.run!==principal.run||w.attempt!==principal.attempt||old?.active)return json({error:'Matching original prepared run required'},409);
+  if(w.status==='canceled')return json({canceled:true,replayed:true});
+  if(w.status!=='prepared')return json({error:'Window is already complete'},409);
   if(Date.now()>=Date.parse(w.startsAt)){const status=await releaseStatus(files,true);if(!status.drained||status.pendingBackgroundWork.length||runtime.health!==true||runtime.sha!==w.baselineSha||runtime.version!==w.baselineVersion)return json({error:'Verified healthy baseline and settled known work required to cancel closed PREP'},409);}
+  // Reuse the existing small release receipt store to prevent canceled-window replay.
+  await files.put('catalog-release/receipts/'+w.id+'.json',JSON.stringify({...w,status:'canceled'}),{onlyIf:{etagDoesNotMatch:'*'}});
   return await files.put(windowKey,JSON.stringify({...w,status:'canceled'}),{onlyIf:{etagMatches:window.etag}})?json({canceled:true}):json({error:'Release window changed'},409);
  }
-
  if(m&&b.id===old?.id&&m.run===principal.run&&m.attempt===principal.attempt&&m.sequence===b.sequence&&m.digest===digest)return json({gate:old,replayed:true});
  let value:Gate;
  if(b.action==='begin'){
