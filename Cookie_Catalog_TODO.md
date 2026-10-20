@@ -1,5 +1,12 @@
 # Cookie Catalog — current TODO
 
+## R1 quiescence investigation — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022: [evidence, alternatives, exact rehearsal proposal and independent engineering sequence](docs/R1_Quiescence_Investigation_20261019.md). **No unconditional production drain proof established.** R1 daily schedule disable does not stop pending backup/restore/retention continuation; the expiring backup lease excludes normal edits. Access/cron restrictions do not prove admitted HTTP/backend work ended. A temporary proxy misses earlier writers; do not add one merely to count future traffic. Proposed: native provider-backed retirement evidence plus a compatible passive-stage rehearsal; first gate stays unarmed until legacy proof exists. Proposed disposable Worker/D1/bucket: cookie-catalog-r1-quiescence-test / same D1 name / cookie-catalog-r1-quiescence-test-private, separate test Access, quotas verified before any creation. Owner approval required; no target/configuration/execution performed. Existing dev resources are not presumed synthetic or safe to interrupt.
+
+This batch is investigation/docs only; keep #12 draft, #7 unmerged, 019 unresolved. Credential-free artifact/workflow composition/failure/browser engineering can proceed in a separately scoped continuation without waiting for bootstrap. No production change, cloud rehearsal, credential, application/schema change or new policy/ID. Next unused CC-TODO-025 / CC-DEC-023. Return to Chat for the specific target/passive-stage/provider-evidence approval described in the report.
+
+
 ## Phase 2 engineering checkpoint — 2026-10-19 Pacific
 
 CC-TODO-020 / CC-TODO-022 remain **in progress**. [Implementation, tests, gaps and handoff](docs/R2_Release_Automation_Phase2_20261019.md): machine identity/control, ownership/epoch fencing, fail-closed recovery components, browser protections and a synthetic R1 bridge rehearsal implemented for review on an isolated branch. Full production workflow integration and cloud/browser acceptance remain open. The real R1 transition is blocked on defensible pre-gate write quiescence; [production bridge proposal](docs/R1_Bridge_Production_Proposal.md) requires later owner approval. CC-TODO-019 remains unresolved. No deployment, credentials, live data or R2 PR #7 merge. Next unused CC-TODO-025 / CC-DEC-023.

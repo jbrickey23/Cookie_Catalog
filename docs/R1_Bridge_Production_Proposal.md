@@ -1,5 +1,7 @@
 # R1 bridge production transition — proposed, not authorized
 
+Latest investigation: [R1 quiescence evidence and proposed staged bootstrap](R1_Quiescence_Investigation_20261019.md). Native legacy drain is unproven; passive installation versus gate arming is a proposed distinction, not an approved production change. Preserve historical evidence below.
+
 Work: CC-TODO-020 / CC-TODO-022. This is a review checklist/runbook proposal, **not an executable production grant**. Production stays on accepted R1. [Phase 2 evidence and gaps](R2_Release_Automation_Phase2_20261019.md) govern readiness.
 
 ## Required approval packet

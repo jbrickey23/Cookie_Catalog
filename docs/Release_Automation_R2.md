@@ -1,5 +1,7 @@
 # R2 release automation — implementation checkpoint
 
+Latest investigation: [R1 quiescence evidence and proposed staged bootstrap](R1_Quiescence_Investigation_20261019.md). Native legacy drain is unproven; passive installation versus gate arming is a proposed distinction, not an approved production change. Preserve historical evidence below.
+
 Latest: [Phase 2 engineering checkpoint](R2_Release_Automation_Phase2_20261019.md), owner approvals, local evidence and unresolved integration/bootstrap acceptance. Historical statements below remain dated evidence.
 
 CC-TODO-020 / CC-TODO-022. Pressing Release authorizes the routine release; a second final approval is not part of the intended flow. Production stays R1 until R2 acceptance/promotion.
