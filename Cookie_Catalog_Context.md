@@ -1,5 +1,38 @@
 # Cookie Catalog — current context
 
+## KISS engineering checkpoint — 2026-10-20 Pacific
+
+[Current five-stage design, component disposition, workflow boundary and remaining production packet](docs/KISS_Release_Automation_R2.md). Implemented on isolated draft #12: durable PREP countdown/window, known-operation status, bounded DRAIN, shared HTTP/scheduled closure, disabled edits with retained drafts/stale-session review, and composed exact-version release/verified code rollback. Automatic cross-run observer removed; recovery is explicit through the original workflow run. Inactive native dispatch/trusted engine templates and a plan/apply command are reviewable; **no production trigger or credential activated**. R2 package 0.2.0 is an unreleased candidate, not a deployed release. Tests/CI must be verified on the final PR head.
+
+Initial R1 uses the [updated separate-approval first-window runbook](docs/R1_Bridge_Production_Proposal.md), external restriction and actual scheduler pause, known-operation checks and explicit limited-visibility/residual-risk record. No new cloud test target or universal legacy census is a routine prerequisite. CC-TODO-019 remains unresolved and release-blocking. Preserve #12 draft/#7 unmerged and the R2 sequence; next unused CC-TODO-025 / CC-DEC-023. Next boundary is the concrete readiness/first-transition/production-configuration approval, not further theoretical quiescence research.
+
+
+## Approved KISS release decision — 2026-10-20 Pacific
+
+Owner approved **PREP → CLOSE SHOP → DRAIN → RELEASE → OPEN SHOP** under existing CC-TODO-020 / CC-TODO-022. Routine backward-compatible releases use a practical bounded settling check of known operations; exhaustive historical Worker census/provider retirement proof is **superseded as a universal prerequisite**. Preserve the earlier investigations as historical evidence. No proxy/controller or disposable cloud resources are required by this decision. Separate breaking/destructive changes require explicit planning/approval. Retain server-side maintenance, known-operation checks, exact reviewed artifacts, compatible verified rollback, stale-client protection and independent recovery evidence. CC-TODO-019 remains unresolved and blocks release readiness.
+
+This handoff authorizes isolated-branch engineering/local tests and draft-PR reconciliation only. Initial R1 still needs a separately approved external restriction/cron pause and a first-transition runbook with explicit limited visibility/residual risk; known active/uncertain high-risk work or unverified recovery stops release. No production maintenance/deployment, credential/Access/production-trigger change, cloud resource, live-data operation, destructive migration or merge of #7/#12 is authorized. Next unused IDs remain CC-TODO-025 / CC-DEC-023.
+
+
+## R1 quiescence investigation — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022: [evidence, alternatives, exact rehearsal proposal and independent engineering sequence](docs/R1_Quiescence_Investigation_20261019.md). **No unconditional production drain proof established.** R1 daily schedule disable does not stop pending backup/restore/retention continuation; the expiring backup lease excludes normal edits. Access/cron restrictions do not prove admitted HTTP/backend work ended. A temporary proxy misses earlier writers; do not add one merely to count future traffic. Proposed: native provider-backed retirement evidence plus a compatible passive-stage rehearsal; first gate stays unarmed until legacy proof exists. Proposed disposable Worker/D1/bucket: cookie-catalog-r1-quiescence-test / same D1 name / cookie-catalog-r1-quiescence-test-private, separate test Access, quotas verified before any creation. Owner approval required; no target/configuration/execution performed. Existing dev resources are not presumed synthetic or safe to interrupt.
+
+This batch is investigation/docs only; keep #12 draft, #7 unmerged, 019 unresolved. Credential-free artifact/workflow composition/failure/browser engineering can proceed in a separately scoped continuation without waiting for bootstrap. No production change, cloud rehearsal, credential, application/schema change or new policy/ID. Next unused CC-TODO-025 / CC-DEC-023. Return to Chat for the specific target/passive-stage/provider-evidence approval described in the report.
+
+
+## Phase 2 engineering checkpoint — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022 remain **in progress**. [Implementation, tests, gaps and handoff](docs/R2_Release_Automation_Phase2_20261019.md): machine identity/control, ownership/epoch fencing, fail-closed recovery components, browser protections and a synthetic R1 bridge rehearsal implemented for review on an isolated branch. Full production workflow integration and cloud/browser acceptance remain open. The real R1 transition is blocked on defensible pre-gate write quiescence; [production bridge proposal](docs/R1_Bridge_Production_Proposal.md) requires later owner approval. CC-TODO-019 remains unresolved. No deployment, credentials, live data or R2 PR #7 merge. Next unused CC-TODO-025 / CC-DEC-023.
+
+
+## Phase 2 authorization checkpoint — 2026-10-19 Pacific
+
+CC-TODO-020 / CC-TODO-022: owner approved Phase 2 engineering, isolated tests and a reviewable PR using the [merged Phase 1 design](docs/R2_Release_Automation_Phase1_20261019.md). Approved choices: native GitHub **Run workflow** (in-catalog button deferred); dedicated scoped Access machine identity plus independent GitHub OIDC and one production deployment writer; engineering and synthetic rehearsal of an R1-compatible bridge. These are architectural and implementation approvals, **not production authorization**.
+
+No deployment, production maintenance, credential provisioning, Access-policy or production-trigger change, live-data change, paid resource or merge of R2 PR #7 is authorized. Implement on an isolated branch; pushing the active feature branch can deploy development and requires separate authorization. Preserve existing R2 sequence. CC-TODO-019 remains an unresolved release-readiness dependency. Implementation, local tests, remote CI and isolated rehearsal must be reported separately. Next unused: CC-TODO-025 / CC-DEC-023.
+
+
 ## Global workflow adoption — 2026-10-19 Pacific
 
 Adopted Durable_CHATGPT **v1.0.0** under CC-DEC-022 / CC-TODO-024: [source commit/digest pin](policies/README.md), verified local policies, [audit and handoff/reconciliation](docs/Durable_Workflow_Adoption_20261019.md). Documentation-only adoption preserves the R2 current/history split and existing execution approvals. Source/production state remains as recorded below; this is not a new R2 feature or production release. Verify the adoption merge/sync commits and exact-head CI in GitHub.

@@ -1,5 +1,6 @@
+import {installReleaseFetch} from './release-client';
 import {PhotoInbox} from './PhotoInbox';
-import {ReleaseNotice} from './ReleaseNotice';
+import {ReleaseNotice,useReleaseEditingPaused} from './ReleaseNotice';
 import {RequestRecovery} from './RequestRecovery';
 import {ChangeRequest,downloadChangeRequests,type RequestContext} from './ChangeRequest';
 import {AppHeader} from './AppHeader';
@@ -18,6 +19,9 @@ import { Catalog } from "./Catalog";
 import { ArchiveBackup } from "./ArchiveBackup";
 import { InfrastructureVerification } from "./InfrastructureVerification";
 
+installReleaseFetch();
+
+function EditingControls({children}:{children:React.ReactNode}){const paused=useReleaseEditingPaused();return <fieldset className="maintenance-controls" disabled={paused}>{children}</fieldset>;}
 function App() {
   const [requestOpen,setRequestOpen]=useState(false),[requestContext,setRequestContext]=useState<RequestContext>({}),[requestExportError,setRequestExportError]=useState('');
 
@@ -115,13 +119,13 @@ function App() {
   if (!role) return <main style={{fontFamily:"system-ui",padding:"2rem"}}><h1>Cookie Catalog</h1><p role="status">{sessionError || "Checking your access…"}</p></main>;
   return <main className="app-shell">
     <AppHeader role={role} environment={environment} onRequest={()=>setRequestOpen(true)} />
-    {requestOpen&&<ChangeRequest context={requestContext} onClose={()=>setRequestOpen(false)} />}
+    {requestOpen&&<EditingControls><ChangeRequest context={requestContext} onClose={()=>setRequestOpen(false)} /></EditingControls>}
     {(role==='owner'||role==='editor')&&<PhotoInbox context={requestContext}/>}
-    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests(environment).catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p><RequestRecovery environment={environment}/></details>}
+    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests(environment).catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p><EditingControls><RequestRecovery environment={environment}/></EditingControls></details>}
     <Browse onContextChange={setRequestContext} version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} />
-    {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
-    {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
-    <details className="management-panel"><summary>Manage catalog and review missing details</summary>
+    {role==="owner"&&<EditingControls><RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} /></EditingControls>}
+    {role==="owner"&&<EditingControls><ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} /></EditingControls>}
+    <details className="management-panel"><summary>Manage catalog and review missing details</summary><EditingControls>
     {role === "owner" && <InfrastructureVerification development={environment==='development'} />}
     <hr />
     {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews canImport={role==="owner"} onCatalogChanged={()=>setCatalogVersion(v=>v+1)} /></details>}
@@ -132,8 +136,8 @@ function App() {
     {role!=="viewer"&&<SourceReferences onSaved={()=>setCatalogVersion(v=>v+1)} />}
     {role!=="viewer"&&<BatchAttachments onSaved={()=>setCatalogVersion(v=>v+1)} />}
     <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
-    </details>
-    {role === "owner" && <details className="management-panel"><summary>Manual archive export (advanced)</summary>
+    </EditingControls></details>
+    {role === "owner" && <details className="management-panel"><summary>Manual archive export (advanced)</summary><EditingControls>
     <ArchiveBackup />
     {environment==='development'&&<>
     <hr />
@@ -160,7 +164,7 @@ function App() {
       {backupBusy ? "Preparing…" : "Download file recovery test"}
     </button>
     </>}
-    </details>}
+    </EditingControls></details>}
     <p>{environment==='production'?'Private production catalog.':'Development testing catalog. Use production for your collection.'}</p>
   </main>;
 }

@@ -1,0 +1,20 @@
+# INACTIVE. Install only after separate production workflow/credential approval.
+name: Release Cookie Catalog
+on:
+  workflow_dispatch:
+    inputs:
+      countdown_minutes:
+        description: Minutes for both users to finish editing
+        type: number
+        default: 5
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+jobs:
+  release:
+    # Owner pins the reviewed engine commit here and in server OIDC configuration.
+    uses: JBrickey23/Cookie_Catalog/.github/workflows/release-engine.yml@REVIEWED_ENGINE_COMMIT
+    with:
+      countdown_minutes: '${{ inputs.countdown_minutes }}'
+    secrets: inherit

@@ -1,3 +1,4 @@
+import {useReleaseEditingPaused} from './ReleaseNotice';
 import React,{useEffect,useState,useRef,useCallback} from "react";
 import {MasterDetailWorkspace} from "./MasterDetailWorkspace";
 import {EntryEditor} from "./EntryEditor";
@@ -20,6 +21,7 @@ export function CutterCard({item,onOpen}:{item:BrowseItem;onOpen?:()=>void}) {
   </article>;
 }
 export function Browse({version=0,canEdit=false,canDelete=false,onContextChange}:{version?:number;canEdit?:boolean;canDelete?:boolean;onContextChange?:(context:{recordId?:string;recordName?:string;search?:string})=>void}) {
+ const editingPaused=useReleaseEditingPaused();
   const [dirty,setDirty]=useState(false),[locked,setLocked]=useState(false),[newKind,setNewKind]=useState<"shapes"|"cutters"|null>(null);
   const reportDirty=useCallback((value:boolean,busy=false)=>{setDirty(value);setLocked(busy);},[]);
   const allowChange=()=>!locked&&(!dirty||window.confirm("Discard unsaved changes before leaving this entry?"));
@@ -38,7 +40,7 @@ export function Browse({version=0,canEdit=false,canDelete=false,onContextChange}
     <label className="demo-toggle"><input type="checkbox" checked={demo} onChange={e=>{if(!allowChange())return;setDemo(e.target.checked);setSelected(null);setNewKind(null);setOffset(0);}}/> Show demonstration records</label>
     <p role="status" aria-live="polite">{busy?"Loading cutters…":error||`Showing ${items.length?offset+1:0}–${offset+items.length} of ${total} catalog entries.`}</p>
     {!busy&&!error&&items.length===0&&<p>No cutters match this search.</p>}
-    {canEdit&&<div className="browse-create"><button onClick={()=>{if(allowChange()){setSelected(null);setNewKind('cutters');}}}>New physical cutter</button><button onClick={()=>{if(allowChange()){setSelected(null);setNewKind('shapes');}}}>New shape reference</button></div>}
+    {canEdit&&<div className="browse-create"><button disabled={editingPaused} onClick={()=>{if(allowChange()){setSelected(null);setNewKind('cutters');}}}>New physical cutter</button><button disabled={editingPaused} onClick={()=>{if(allowChange()){setSelected(null);setNewKind('shapes');}}}>New shape reference</button></div>}
     <MasterDetailWorkspace detailKey={selected?.id??newKind} detail={(selected||newKind)?<>
       {newKind?<section className="cutter-detail" aria-label="New catalog entry"><div className="browse-heading"><h3>{newKind==='cutters'?'New physical cutter':'New shape reference'}</h3><button onClick={()=>{if(allowChange())setNewKind(null);}}>Close new entry</button></div><EntryEditor key={'new-'+newKind} kind={newKind} canEdit={canEdit} canDelete={false} onDirty={reportDirty} onSaved={()=>{setNewKind(null);setRefresh(v=>v+1);}} onDeleted={()=>{}}/></section>:selected&&<CutterDetails key={selected.id} item={selected} canEdit={canEdit} canDelete={canDelete} onDirty={reportDirty} onSaved={entry=>{setSelected(value=>value?{...value,...(entry.cutter?{id:entry.cutter.id,record_kind:'physical' as const,location:null,slot:entry.cutter.slot??null}:{}),name:entry.shape.name,quantity:entry.cutter?.quantity??null,width_mm:entry.cutter?.width_mm??null,height_mm:entry.cutter?.height_mm??null,reference_size_mm:entry.cutter?.reference_size_mm??null}:value);setRefresh(v=>v+1);}} onDeleted={()=>{setSelected(null);setRefresh(v=>v+1);}} onClose={()=>{if(!allowChange())return;setSelected(null);requestAnimationFrame(()=>document.getElementById("view-"+selected.id)?.focus());}}/>}
     </>:null}>

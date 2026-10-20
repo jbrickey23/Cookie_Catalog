@@ -1,3 +1,7 @@
+import {releaseHealth} from './server/release-health';
+import {buildInformation} from './server/build-information';
+import {handleReleaseMachine,requireReleaseEpoch} from './server/release-machine';
+import {verifyReleaseMachine,type MachineConfiguration} from './server/release-machine-identity';
 import {handlePhotoInbox,preparePhotoInbox} from './server/photo-inbox';
 import {withReleaseWrite,handleReleaseMaintenance,ReleaseGateError} from './server/release-maintenance';
 import {handleChangeRequests} from './server/change-requests';
@@ -22,7 +26,7 @@ import { AccessIdentityVerifier, accessIsConfigured, mayRead, mayWrite, type Acc
 import {inspectInfrastructure} from "./server/infrastructure-check";
 import {checkMissingFileRecovery} from "./server/development-missing-file-check";
 
-export interface Env extends AccessConfiguration { CATALOG_ENVIRONMENT?:string; ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
+export interface Env extends AccessConfiguration,MachineConfiguration { CF_VERSION_METADATA?:{id:string}; CATALOG_ENVIRONMENT?:string; ASSETS: Fetcher; DB: D1Database; FILES: R2Bucket }
 function json(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), {
     status, headers: { "content-type": "application/json", "cache-control": "no-store", "x-content-type-options": "nosniff" }
@@ -211,21 +215,25 @@ export async function handleApiRequest(request: Request, verifier: IdentityVerif
   // General catalog CRUD and collaborator membership remain unavailable.
   return json({ error: "Catalog API unavailable until membership and storage validation are complete" }, 503);
 }
-export async function handleReleaseGuardedApi(request:Request,verifier:IdentityVerifier,database?:D1Database,files?:R2Bucket,environment:CatalogEnvironment='development'):Promise<Response>{
+export async function handleReleaseGuardedApi(request:Request,verifier:IdentityVerifier,database?:D1Database,files?:R2Bucket,environment:CatalogEnvironment='development',buildSha=buildInformation().commit??''):Promise<Response>{
  const user=await verifier.verify(request);if(!user||!mayRead(user))return json({error:'Unauthorized'},401);
  const memo={verify:async()=>user};
  try{
-  if(new URL(request.url).pathname==='/api/release-maintenance'){if(!files)return json({error:'Release storage unavailable'},503);return await handleReleaseMaintenance(request,files,user.subject,user.role==='owner');}
+  if(new URL(request.url).pathname==='/api/release-maintenance'){if(!files)return json({error:'Release storage unavailable'},503);const response=await handleReleaseMaintenance(request,files,user.subject,user.role==='owner');if(request.method==='GET'&&response.ok)return json({...await response.json() as object,build:buildSha});return response;}
   if(['GET','HEAD','OPTIONS'].includes(request.method))return handleApiRequest(request,memo,database,files,environment);
   if(!files)return json({error:'Release safety storage unavailable'},503);
-  return await withReleaseWrite(files,()=>handleApiRequest(request,memo,database,files,environment));
+  return await withReleaseWrite(files,async()=>{await requireReleaseEpoch(request,files,buildSha);return handleApiRequest(request,memo,database,files,environment);});
  }catch(error){return json({error:error instanceof ReleaseGateError?error.message:'Release safety status unavailable. Keep your draft and retry.'},error instanceof ReleaseGateError?error.status:503);}
 }
 export default {
-  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{await scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT));await preparePhotoInbox(env.FILES);}).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
+  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(withReleaseWrite(env.FILES,async()=>{await scheduledBackups(env.DB,env.FILES,new Date(),catalogEnvironment(env.CATALOG_ENVIRONMENT));await preparePhotoInbox(env.FILES);},true).catch(error=>{if(!(error instanceof ReleaseGateError))throw error;}));},
   async fetch(request: Request, env: Env): Promise<Response> {
     const pathname = new URL(request.url).pathname;
     if (pathname === "/api" || pathname.startsWith("/api/")) {
+      if(pathname.startsWith('/api/release-automation/')){
+        const principal=await verifyReleaseMachine(request,env);if(!principal)return json({error:'Machine authorization denied'},401);
+        try{return await handleReleaseMachine(request,env.FILES,principal,{sha:buildInformation().commit??'',version:env.CF_VERSION_METADATA?.id??'',packageVersion:buildInformation().version??'',health:await releaseHealth(env.DB,env.FILES)});}catch{return json({error:'Release safety state unavailable'},503);}
+      }
       if (!accessIsConfigured(env)) return json({ error: "Authentication configuration incomplete" }, 503);
       let environment:CatalogEnvironment;
       try{environment=catalogEnvironment(env.CATALOG_ENVIRONMENT);}catch{return json({error:'Invalid catalog environment configuration'},503);}

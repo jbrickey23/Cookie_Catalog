@@ -113,12 +113,29 @@ test('reference adds linked physical inventory inline only on Save and Cancel pr
 });
 
 test('release pause disables saving without replacing the draft; saving resumes after status clears',async()=>{
- const {ReleaseNotice}=await import('../src/ReleaseNotice');const originalFetch=globalThis.fetch,originalInterval=globalThis.setInterval,originalClear=globalThis.clearInterval;let poll:(()=>void)|undefined,paused=true;
+ const {ReleaseNotice}=await import('../src/ReleaseNotice');const originalFetch=globalThis.fetch,originalInterval=globalThis.setInterval,originalClear=globalThis.clearInterval;let poll:(()=>void)|undefined,paused=false;
  globalThis.setInterval=((fn:()=>void,delay:number,...args:any[])=>{if(delay===15000){poll=fn;return -123;}return originalInterval(fn,delay,...args);}) as any;globalThis.clearInterval=((id:any)=>{if(id!==-123)originalClear(id);}) as any;
- globalThis.fetch=async(input)=>Response.json(String(input)==='/api/release-maintenance'?{active:paused}:String(input).endsWith('/vocabulary')?vocabulary:entry());
- try{render(React.createElement(ReleaseNotice,{children:React.createElement(EntryEditor,props)}));await screen.findByText(/Catalog update in progress/);await screen.findByRole('button',{name:'Change Name'});
+ globalThis.fetch=async(input)=>Response.json(String(input)==='/api/release-maintenance'?{active:paused,epoch:'release_TEST',build:'a'.repeat(40)}:String(input).endsWith('/vocabulary')?vocabulary:entry());
+ try{render(React.createElement(ReleaseNotice,{children:React.createElement(EntryEditor,props)}));await screen.findByRole('button',{name:'Change Name'});await waitFor(()=>assert.equal((screen.getByRole('button',{name:'Change Name'}) as HTMLButtonElement).disabled,false));
  fireEvent.click(screen.getByRole('button',{name:'Change Name'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST kept during release'}});
- assert.equal((screen.getByRole('button',{name:'Save changes'}) as HTMLButtonElement).disabled,true);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST kept during release');
+ paused=true;poll!();await screen.findByText(/Catalog update in progress/);assert.equal((screen.getByRole('button',{name:'Save changes'}) as HTMLButtonElement).disabled,true);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST kept during release');
  paused=false;poll!();await waitFor(()=>assert.equal((screen.getByRole('button',{name:'Save changes'}) as HTMLButtonElement).disabled,false));assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST kept during release');
+ }finally{cleanup();globalThis.fetch=originalFetch;globalThis.setInterval=originalInterval;globalThis.clearInterval=originalClear;}
+});
+
+
+test('both-user notice shows countdown, deadline blocks new editing and reopening is announced',async()=>{
+ const {ReleaseNotice}=await import('../src/ReleaseNotice');const originalFetch=globalThis.fetch,originalInterval=globalThis.setInterval,originalClear=globalThis.clearInterval,originalNow=Date.now;let tick:(()=>void)|undefined,poll:(()=>void)|undefined,clock=originalNow(),active=false,opened=false;const deadline=clock+60000;
+ Date.now=()=>clock;globalThis.setInterval=((fn:()=>void,delay:number,...args:any[])=>{if(delay===1000){tick=fn;return -124;}if(delay===15000){poll=fn;return -123;}return originalInterval(fn,delay,...args);}) as any;globalThis.clearInterval=((id:any)=>{if(id!==-123&&id!==-124)originalClear(id);}) as any;
+ globalThis.fetch=async(input)=>Response.json(String(input)==='/api/release-maintenance'?{active,epoch:'release_TEST',build:'a'.repeat(40),notice:opened?null:{startsAt:new Date(deadline).toISOString()},outcome:opened?'verified':null}:String(input).endsWith('/vocabulary')?vocabulary:entry());
+ try{render(React.createElement(ReleaseNotice,{children:React.createElement(EntryEditor,props)}));await screen.findByText(/maintenance starts in 1:00/);await waitFor(()=>assert.equal((screen.getByRole('button',{name:'Change Name'}) as HTMLButtonElement).disabled,false));clock=deadline;tick!();await screen.findByText(/Catalog update in progress/);assert.equal((screen.getByRole('button',{name:'Change Name'}) as HTMLButtonElement).disabled,true);opened=true;poll!();await screen.findByText(/Editing is available again/);assert.equal((screen.getByRole('button',{name:'Change Name'}) as HTMLButtonElement).disabled,false);
+ }finally{cleanup();Date.now=originalNow;globalThis.fetch=originalFetch;globalThis.setInterval=originalInterval;globalThis.clearInterval=originalClear;}
+});
+
+test('dirty editor keeps its draft and stays blocked after a release epoch changes',async()=>{
+ const {ReleaseNotice}=await import('../src/ReleaseNotice');const originalFetch=globalThis.fetch,originalInterval=globalThis.setInterval,originalClear=globalThis.clearInterval;let poll:(()=>void)|undefined,epoch='release_TEST';
+ globalThis.setInterval=((fn:()=>void,delay:number,...args:any[])=>{if(delay===15000){poll=fn;return -123;}return originalInterval(fn,delay,...args);}) as any;globalThis.clearInterval=((id:any)=>{if(id!==-123)originalClear(id);}) as any;
+ globalThis.fetch=async(input)=>Response.json(String(input)==='/api/release-maintenance'?{active:false,epoch,build:'a'.repeat(40)}:String(input).endsWith('/vocabulary')?vocabulary:entry());
+ try{render(React.createElement(ReleaseNotice,{children:React.createElement(EntryEditor,props)}));await screen.findByRole('button',{name:'Change Name'});fireEvent.click(screen.getByRole('button',{name:'Change Name'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST unsaved across versions'}});epoch='release_NEXT';poll!();await screen.findByText(/catalog version changed or a save outcome is uncertain/i);assert.equal((screen.getByRole('button',{name:'Save changes'}) as HTMLButtonElement).disabled,true);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST unsaved across versions');
  }finally{cleanup();globalThis.fetch=originalFetch;globalThis.setInterval=originalInterval;globalThis.clearInterval=originalClear;}
 });
