@@ -4,13 +4,15 @@ const full=value=>typeof value==='string'&&/^[a-f0-9]{40}$/.test(value);
 /** Intent must come from the reviewed trusted ref, never from candidate artifact metadata. */
 export function validateIntent(plan,evidence){
  const problems=[];
+ if(!Number.isFinite(evidence?.now)||!Array.isArray(evidence?.changedFiles))problems.push('complete current evidence');
+ if(!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(plan.baselineVersion??'')||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(plan.candidateVersion??'')||plan.baselineVersion===plan.candidateVersion)problems.push('distinct native versions');
  if(!/^[a-f0-9]{64}$/.test(plan.configHash??'')||!/^[a-f0-9]{64}$/.test(plan.artifactHash??'')||!/^\d+$/.test(plan.artifactRun??''))problems.push('digest and run format');
  if(plan.protocol!==1||!full(plan.candidateSha)||!full(plan.baselineSha)||plan.candidateSha===plan.baselineSha)problems.push('immutable commits');
- if(evidence.mainSha!==plan.candidateSha||evidence.dispatchSha!==plan.candidateSha||evidence.reviewedSha!==plan.candidateSha||!evidence.ciPassed)problems.push('reviewed exact-head intent');
- if(!evidence.singleWriter||!evidence.bridgeVerified||!evidence.backupReadinessVerified||!evidence.compatibilityReviewed)problems.push('readiness dependencies');
+ if(evidence.mainSha!==plan.candidateSha||evidence.dispatchSha!==plan.candidateSha||evidence.reviewedSha!==plan.candidateSha||evidence.ciPassed!==true)problems.push('reviewed exact-head intent');
+ if(evidence.singleWriter!==true||evidence.bridgeVerified!==true||evidence.backupReadinessVerified!==true||evidence.compatibilityReviewed!==true)problems.push('readiness dependencies');
  if(plan.configHash!==evidence.configHash||plan.artifactHash!==evidence.artifactHash||plan.artifactRun!==evidence.artifactRun||!plan.artifactRun)problems.push('artifact provenance');
  if(plan.expiresAt<=evidence.now||!Number.isFinite(plan.expiresAt))problems.push('expired intent');
- if((evidence.changedFiles??[]).some(p=>/^database\//.test(p)||/wrangler.*jsonc$|package-lock\.json$/.test(p))&&!evidence.compatibilityExceptionReviewed)problems.push('migration, binding or toolchain review');
+ if((evidence.changedFiles??[]).some(p=>/^database\//.test(p)||/wrangler.*jsonc$|package-lock\.json$/.test(p))&&evidence.compatibilityExceptionReviewed!==true)problems.push('migration, binding or toolchain review');
  if(!/^\d+\.\d+\.\d+$/.test(plan.version??'')||!/^\d+\.\d+\.\d+$/.test(plan.baselinePackageVersion??'')||compareVersions(plan.version,plan.baselinePackageVersion)<=0)problems.push('version increase');
  if(problems.length)throw Error('Release rejected: '+problems.join(', '));
  return Object.freeze(structuredClone(plan));
@@ -20,7 +22,8 @@ function actualVersion(value){if(value?.settled!==true||value.versions?.length!=
 /** Ports separate trusted credentialed transport from build code. Persist() MUST
  * write the independent recovery artifact before begin(), and append evidence
  * before each external side effect. Never retry a timed-out deployment call. */
-export async function runRelease(plan,port){
+export async function runRelease(plan,port,evidence){
+ plan=validateIntent(plan,evidence??{});
  let paused=false;
  await port.persist({phase:'prepared',plan,planHash:digest(plan)});
  try{

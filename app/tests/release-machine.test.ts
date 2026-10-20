@@ -21,7 +21,7 @@ test('both signed identities required; wrong claims, human confusion and expiry 
 test('CAS lifecycle rejects changed replay, stale ownership and false outcome; verified completion is idempotent',async()=>{
  const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("test")}}',r2Buckets:['FILES']}));
  try{const files=await mf.getR2Bucket('FILES') as any;const principal={run:'12',attempt:1,workflowSha:sha,sourceSha:sha};const id='release_'+crypto.randomUUID();let runtime={sha:baseline,version:v1,health:true};
- const call=(body:any,p=principal)=>handleReleaseMachine(new Request('https://catalog.test/api/release-automation/control',{method:'POST',body:JSON.stringify(body)}),files,p,runtime);
+ const call=(body:any,p:any=principal,finished?:any)=>handleReleaseMachine(new Request('https://catalog.test/api/release-automation/control',{method:'POST',body:JSON.stringify(body)}),files,p,runtime,finished);
  assert.equal((await handleReleaseMachine(new Request('https://catalog.test/api/workspace/cutters',{method:'POST',body:'{}'}),files,principal,runtime)).status,403);
  const begin={action:'begin',id,epoch:'initial',sequence:1,targetSha:sha,baselineSha:baseline,baselineVersion:v1,candidateVersion:v2,planHash:'a'.repeat(64)};
  assert.equal((await call(begin)).status,200);assert.equal((await call(begin)).status,200);assert.equal((await call({...begin,planHash:'b'.repeat(64)})).status,409);
@@ -30,6 +30,7 @@ test('CAS lifecycle rejects changed replay, stale ownership and false outcome; v
  runtime={sha,version:v2,health:true};assert.equal((await call(command('verify',3))).status,200);assert.equal((await call(command('finish',4))).status,200);assert.equal((await call(command('finish',4))).status,200);assert.equal((await releaseStatus(files)).active,false);
  await assert.rejects(()=>requireReleaseEpoch(new Request('https://catalog.test'),files,sha),/version changed/);await requireReleaseEpoch(new Request('https://catalog.test',{headers:{'X-Catalog-Epoch':id,'X-Catalog-Build':sha}}),files,sha);
  const id2='release_'+crypto.randomUUID();runtime={sha:baseline,version:v1,health:true};assert.equal((await call({...begin,id:id2,epoch:id})).status,200);assert.equal((await call({action:'takeover',id:id2,epoch:id2,sequence:2},{...principal,attempt:2})).status,200);assert.equal((await call({action:'recover',id:id2,epoch:id2,sequence:3})).status,403);
+ const replacement={...principal,run:'14',recovery:true};const takeover={action:'takeover',id:id2,epoch:id2,sequence:3,planHash:begin.planHash};assert.equal((await call(takeover,replacement,async()=>false)).status,403);assert.equal((await call(takeover,replacement,async(run:string,source:string)=>run==='12'&&source===sha)).status,200);assert.equal((await call({action:'recover',id:id2,epoch:id2,sequence:4},{...principal,attempt:2})).status,403);
  }finally{await mf.dispose();}
 });
 test('unknown writer failure retains registration and prevents drain',async()=>{

@@ -53,7 +53,7 @@ This implementation stops short of activating a release surface that could reach
 
 ## Checks and continuation
 
-Local verification: **183 application tests, 45 tooling tests, TypeScript/Vite build, SQLite schema smoke, 10 Cloudflare restore tests, 3 source-audit tests, synthetic import/reverse lookup, 68 Markdown files/documentation JSON, policy digests and diff whitespace passed**. Exact accepted R1 worker overlay compiled. Required exact-head PR CI is reported in the PR and final handoff; it was not assumed from these local results. Local results establish only the tested scope above. The rehearsal workflow has no production credentials, environment, Cloudflare calls or deployment command. It does not itself grant production authorization.
+Local verification: **183 application tests, 46 tooling tests, TypeScript/Vite build, SQLite schema smoke, 10 Cloudflare restore tests, 3 source-audit tests, synthetic import/reverse lookup, 68 Markdown files/documentation JSON, policy digests and diff whitespace passed**. Exact accepted R1 worker overlay compiled. Required exact-head PR CI is reported in the PR and final handoff; it was not assumed from these local results. Local results establish only the tested scope above. The rehearsal workflow has no production credentials, environment, Cloudflare calls or deployment command. It does not itself grant production authorization.
 
 Resume design discussion in ordinary Chat for the R1 quiescence/isolated-target decision and review of the production proposal. Return to Work/Codex with a bounded handoff for the remaining integration/acceptance batch. Preserve 020/022 as in progress and 019 as unresolved; do not allocate duplicate policy or feature IDs.
 
