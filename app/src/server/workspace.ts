@@ -26,7 +26,12 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
   const path=new URL(request.url).pathname.slice('/api/workspace'.length);
   if(path==='/recovery'||path.startsWith('/recovery/'))return handleRecordRecovery(request,db,files,subject,owner);
   const related=/^\/shapes\/([a-zA-Z0-9_-]{1,128})\/inventory$/.exec(path);
-  if(related&&request.method==='GET')return json({items:(await db.prepare('SELECT id,shape_id,quantity,reference_size_mm,width_mm,height_mm,slot FROM physical_cutters WHERE shape_id=? ORDER BY id LIMIT 200').bind(related[1]).all()).results});
+  if(related&&request.method==='GET'){
+   const mappings=await hasSourceMappings(db);
+   const rows=await db.prepare(`SELECT c.id,c.shape_id,c.quantity,c.origin,c.reference_size_mm,c.width_mm,c.height_mm,c.slot,l.label AS location,${sourceEvidenceSql(mappings)} AS source_evidence,s.notes AS shape_notes
+    FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id WHERE c.shape_id=? ORDER BY c.id LIMIT 201`).bind(related[1]).all<Row>();
+   return json({items:rows.results.slice(0,200).map(({source_evidence,shape_notes,...row})=>({...row,location:row.location??sourceLocation(source_evidence)??sourceLocation(shape_notes)})),truncated:rows.results.length>200});
+  }
   if(path==='/vocabulary'&&request.method==='GET')return json(await vocabulary(db));
   // Editors may create/advance their own protection point, without archive/restore access.
   if(path==='/checkpoint'&&request.method==='POST'){

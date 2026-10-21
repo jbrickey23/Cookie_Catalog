@@ -129,7 +129,7 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
  .management-panel>fieldset>label {display:block;margin:.5rem 0}
 }
 
-/* Focused workspace: two columns of image/name/location cards. */
+/* Focused workspace: compact producer-design cards. */
 .browse-workspace.expanded .cutter-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
 .browse-workspace.expanded .cutter-card {display:block;position:relative;min-width:0}
 .browse-workspace.expanded .cutter-image {aspect-ratio:4/3;min-height:0}
@@ -142,8 +142,6 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .browse-workspace.expanded .cutter-card dl>div {display:block;padding:.2rem 0;font-size:.8rem;border:0}
 .browse-workspace.expanded .cutter-card dt {display:none}
 .browse-workspace.expanded .cutter-card dd {text-align:left;margin:0;color:#52685b}
-/* The native View button covers its card; its accessible name and keyboard behavior stay. */
-.browse-workspace.expanded .view-cutter {position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0}
 .browse-workspace.expanded .cutter-card:focus-within {outline:3px solid #1769aa;outline-offset:2px}
 
 .detail-images>figure>.image-window-link {display:block;border-radius:8px;cursor:zoom-in}
@@ -228,3 +226,21 @@ input[aria-invalid="true"] {outline:2px solid #b12d24;}
 .task-add .browse-workspace.expanded.with-help {grid-template-columns:minmax(160px,.4fr) minmax(0,1fr);}
 .task-add .browse-results {display:none;}
 @media(max-width:760px){.task-add .browse-workspace.expanded.with-help{grid-template-columns:minmax(0,1fr);}}
+
+/* Unified producer-design cards: image navigation never sits beneath a card overlay. */
+.browse-workspace .design-card .view-cutter {position:static;inset:auto;opacity:1;width:auto;height:auto;margin:.5rem 0 0;padding:.45rem .7rem;border:1px solid #9cac9e;}
+.card-image-navigation,.design-gallery nav {display:flex;align-items:center;justify-content:center;gap:.7rem;}
+.card-image-navigation button {min-width:44px;min-height:44px;}
+.design-gallery {margin:.75rem 0;}
+.design-gallery figure {margin:0 auto 1rem;max-width:480px;}
+.design-gallery img {display:block;width:100%;height:300px;object-fit:contain;background:#f4f4ee;}
+.design-gallery figcaption {overflow-wrap:anywhere;font-size:.9rem;margin-top:.5rem;}
+.design-details h4 {font-size:1.1rem;margin:1rem 0 .5rem;}
+.inventory-list {padding:0;list-style:none;}
+.inventory-list li {border:1px solid #cbd5c9;border-radius:.4rem;padding:.8rem;margin:.6rem 0;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+.inventory-list li span {flex:1 1 14rem;}
+.physical-editor {border-left:3px solid #6c8a75;padding-left:1rem;}
+.search-options {display:inline-block;margin:.6rem 1rem;vertical-align:top;}
+.search-options summary {cursor:pointer;}
+.browse-workspace.expanded .design-card .ownership-status {font-size:.85rem;}
+@media(max-width:600px){.design-gallery img{height:220px;}.physical-editor{padding-left:.5rem;}.inventory-list li{display:block;}.inventory-list li span{display:block;margin:.5rem 0;}}

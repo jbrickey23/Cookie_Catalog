@@ -148,7 +148,7 @@ test('producer references stay distinct; linked inventory is physical-only and q
   input.shape.name='Do not change shared reference';assert.equal((await call(db,files,'/cutters','POST',input)).status,400);
   const related=await success(await call(db,files,'/shapes/'+a.shape.id+'/inventory'));assert.equal(related.items.length,2);
   const browse=async(q:string,kind='all')=>success(await handleApiRequest(new Request(origin+'/api/browse?q='+encodeURIComponent(q)+'&kind='+kind),owner,db,files));
-  assert.equal((await browse('"Producer A"')).items.length,2);assert.equal((await browse('Christmas Tree','reference')).items.length,2);
+  assert.equal((await browse('"Producer A"')).items.length,1);assert.equal((await browse('Christmas Tree','reference')).items.length,2);
   const before=(await db.prepare('SELECT count(*) n FROM shapes').first<any>())!.n;
   for(const url of ['example.test','https:example.test','javascript:alert(1)'])assert.equal((await call(db,files,'/shapes','POST',{shape:{name:'TEST invalid URL',source_url:url},tags:[],cutter:null})).status,400);
   assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())!.n,before);

@@ -1,5 +1,14 @@
 # Cookie Catalog — current context
 
+## Unified Search & Design Details — October 21, 2026
+
+Current CC-TODO-021 / CC-TODO-010 batch: owner-approved one result per producer-specific `shapes.id`, one Search with ownership filters, design-centered details/gallery, and edit/return via existing guarded editors. [Assessment, preferred-image boundary, implementation and acceptance](docs/Unified_Search_R2_1.md) supersedes the previous presentation checkpoint while preserving its evidence and working Add/admin/diagnostics/help behavior.
+
+**Owner-reported accepted scope:** physical Add with quantity/size/location, existing producer selection, saving a design without inventory, and workspace separation function satisfactorily. This report comes from the new handoff; original test date/device and independent Cris evidence were not supplied. Search/results/details/images/edit-and-return require owner retesting of the new candidate; no full R2.1/Cris pass inferred.
+
+No preferred-image field or existing Set default mutation exists. Gallery and deterministic associated-photo fallback are within this batch; persistent Set as default image requires a separately approved small migration/write/recovery change and is deferred, not implemented through notes/timestamps/browser storage. Image-to-decorating-design promotion is documented future work only. No schema/0005 activation, new write API, production operation, merge, service or release change. PR #12 stays draft; #14 stays unmerged planning. CC-TODO-019 and CC-TODO-023 remain open; preserve reserved 025 and next unused **CC-TODO-026 / CC-DEC-023**. Immediate continuation is verified development delivery, owner search/details/edit-and-return retest, then independent Cris; review preferred-image persistence separately.
+
+
 ## Contextual Workspace — October 21, 2026
 
 **Verified delivery:** application `b2511b3fa05de123cec23faf8d22c89161ccc673` passed exact-head CI (190 app / 33 tooling), development build and runtime source attestation; cloud Chrome synthetic creation, search, inline edit, draft and navigation smoke passed with documented limits. [Exact evidence, local-run limitation and owner/Cris checklist](docs/Contextual_Workspace_R2_1.md#exact-source-development-acceptance-checkpoint). Closing documentation has unchanged application source; its own final-head checks are on PR #7. No owner/Cris pass or 0005 activation.

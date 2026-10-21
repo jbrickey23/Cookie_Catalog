@@ -1,5 +1,9 @@
 # R2 — fast follow scope
 
+## Current unified-search refinement — October 21, 2026
+
+Owner authorizes [Unified Search & Design Details](Unified_Search_R2_1.md) under existing 021/010: one producer card, one search, physical inventory beneath design details, safe gallery/read-only query changes and existing development delivery. Earlier accepted Add/workspace behavior is preserved. Preferred-image persistence and image-to-decorating-design promotion are not authorized for implementation; migrations/0005, production, PR merges, Cookie Sets and release changes remain excluded. This does not approve all proposals in unmerged #14 or move #12 release work.
+
 ## Current Contextual Workspace authorization — October 21, 2026
 
 Owner authorizes the [R2.1 Contextual Workspace](Contextual_Workspace_R2_1.md) implementation, tests and existing development deployment under CC-TODO-021 / 010 and Issue #13. It expands the previous bounded presentation slice into task-oriented Catalog, Administration and Development & Diagnostics, using existing guarded operations. No schema/model redesign, migration 0005 activation, Cookie Sets implementation, production change, merge or unrelated release work. Unmerged [PR #14](https://github.com/JBrickey23/Cookie_Catalog/pull/14) remains a planning reference; this approval does not silently select its proposed Sets persistence or all phase priorities. Owner/Cris acceptance and all earlier recovery/release gates remain open.

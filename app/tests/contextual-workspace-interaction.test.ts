@@ -46,16 +46,16 @@ test('workspace navigation keeps draft DOM and busy controls mounted; diagnostic
  } finally {cleanup();}
 });
 
-test('task home routes directly to physical inventory and guards a dirty Add draft on task change',async()=>{
+test('unified Search routes ownership filters and guards a dirty Add draft on task change',async()=>{
  const old=globalThis.fetch,confirm=window.confirm;let accept=false;const reads:string[]=[];window.confirm=()=>accept;
  globalThis.fetch=async input=>{const path=String(input);reads.push(path);return Response.json(path.startsWith('/api/browse')?{items:[],total:0,nextOffset:null}:path.endsWith('/vocabulary')?vocabulary:reference);};
  try {
-  render(React.createElement(Browse,{contextual:true,canEdit:true}));assert(screen.getByRole('heading',{name:'What would you like to do?'}));assert.equal(screen.queryByRole('button',{name:'Cookie Sets'}),null);
-  fireEvent.click(within(screen.getByRole('navigation',{name:'Catalog tasks'})).getByRole('button',{name:'My Cutters'}));await waitFor(()=>assert(reads.some(p=>p.endsWith('kind=physical'))));
+  render(React.createElement(Browse,{contextual:true,canEdit:true}));assert(screen.getByRole('heading',{name:'Search your catalog'}));assert.equal(screen.queryByRole('button',{name:'My Cutters'}),null);
+  fireEvent.change(screen.getByLabelText('Ownership filter'),{target:{value:'owned'}});await waitFor(()=>assert(reads.some(p=>p.endsWith('ownership=owned'))));
   fireEvent.click(screen.getByRole('button',{name:'Add Something',exact:true}));fireEvent.click(screen.getByRole('button',{name:'I have a cutter'}));await screen.findByLabelText('Find an existing producer design');assert.equal(screen.queryByRole('button',{name:'Save changes'}),null);
   fireEvent.click(screen.getByRole('button',{name:'Create a new design'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST retained'}});
-  fireEvent.click(screen.getByRole('button',{name:'My Cutters',exact:true}));assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST retained');
-  accept=true;fireEvent.click(screen.getByRole('button',{name:'My Cutters',exact:true}));await waitFor(()=>assert.equal(screen.queryByRole('button',{name:'Save changes'}),null));
+  const searchTask=within(screen.getByRole('navigation',{name:'Catalog tasks'})).getByRole('button',{name:'Search',exact:true});fireEvent.click(searchTask);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST retained');
+  accept=true;fireEvent.click(searchTask);await waitFor(()=>assert.equal(screen.queryByRole('button',{name:'Save changes'}),null));
  }finally{cleanup();globalThis.fetch=old;window.confirm=confirm;}
 });
 
@@ -87,5 +87,5 @@ test('existing design chosen for later opens without a duplicate POST',async()=>
 });
 
 test('ownership labels rely on inventory evidence, preserve zero and review unknowns',()=>{
- const item:any={record_kind:'reference',inventory_count:0,image_id:'photo'};assert.equal(ownershipLabel(item),'No physical inventory recorded');assert.equal(ownershipLabel({...item,inventory_count:2}),'Physical inventory recorded');assert.equal(ownershipLabel({...item,inventory_count:undefined}),'Inventory status not yet checked');assert.equal(ownershipLabel({...item,record_kind:'physical',quantity:0}),'Inventory needs review');assert.equal(ownershipLabel({...item,review_state:'set_review'}),'Inventory needs review');
+ const item:any={record_kind:'reference',inventory_count:0,image_id:'photo'};assert.equal(ownershipLabel(item),'Saved design');assert.equal(ownershipLabel({...item,inventory_count:2}),'In my collection');assert.equal(ownershipLabel({...item,inventory_count:undefined}),'Inventory status needs review');assert.equal(ownershipLabel({...item,inventory_count:1,record_kind:'physical',quantity:0}),'In my collection');assert.equal(ownershipLabel({...item,review_state:'set_review'}),'Inventory needs review');
 });

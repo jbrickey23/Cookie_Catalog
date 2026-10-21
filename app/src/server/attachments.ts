@@ -133,12 +133,20 @@ export async function handleAttachments(request: Request, database: D1Database, 
       const id = url.searchParams.get("recordId") ?? "";
       if (!t || !ID.test(id)) return json({ error: "Choose a valid catalog record." }, 400);
       if(t.table==="physical_cutters"&&!await database.prepare("SELECT name FROM sqlite_schema WHERE name='physical_cutter_attachments'").first())return json({attachments:[],migrationRequired:true});
-      const rows = await database.prepare(`SELECT a.* FROM attachments a JOIN ${t.links} l ON l.attachment_id=a.id WHERE l.${t.column}=? ORDER BY a.created_at,a.id LIMIT 200`).bind(id).all<Attachment>();
-      const items = await Promise.all(rows.results.map(async row => ({
+      const ideas=t.table==='shapes'&&url.searchParams.get('ideas')==='true';
+      const rows = ideas ? await database.prepare(`SELECT a.*,
+        EXISTS(SELECT 1 FROM shape_attachments sa WHERE sa.shape_id=? AND sa.attachment_id=a.id) AS direct,
+        (SELECT group_concat(DISTINCT d.name||' ('||dl.status||')') FROM design_attachments da JOIN designs d ON d.id=da.design_id JOIN design_shape_links dl ON dl.design_id=d.id WHERE da.attachment_id=a.id AND dl.shape_id=?) AS decorating_ideas
+        FROM attachments a WHERE EXISTS(SELECT 1 FROM shape_attachments sa WHERE sa.shape_id=? AND sa.attachment_id=a.id)
+        OR EXISTS(SELECT 1 FROM design_attachments da JOIN design_shape_links dl ON dl.design_id=da.design_id WHERE da.attachment_id=a.id AND dl.shape_id=?)
+        ORDER BY direct DESC,CASE WHEN EXISTS(SELECT 1 FROM shape_attachments sa WHERE sa.shape_id=? AND sa.attachment_id=a.id AND sa.purpose='photo') THEN 0 ELSE 1 END,a.created_at,a.id LIMIT 201`).bind(id,id,id,id,id).all<Attachment&{direct:number;decorating_ideas:string|null}>()
+        : await database.prepare(`SELECT a.* FROM attachments a JOIN ${t.links} l ON l.attachment_id=a.id WHERE l.${t.column}=? ORDER BY a.created_at,a.id LIMIT 201`).bind(id).all<Attachment>();
+      const items = await Promise.all(rows.results.slice(0,200).map(async row => ({
         id: row.id, filename: row.filename, mediaType: row.media_type, byteSize: row.byte_size, sha256: row.sha256,
+        ...(ideas?{direct:!!(row as any).direct,decoratingIdeas:(row as any).decorating_ideas}:{}),
         available: (await bucket.head(row.storage_key)) !== null
       })));
-      return json({ attachments: items, limit: 200 });
+      return json({ attachments: items, limit: 200, truncated:rows.results.length>200 });
     }
     if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
     if (!request.headers.get("content-type")?.startsWith("multipart/form-data;")) return json({ error: "Multipart upload required" }, 415);

@@ -1,5 +1,13 @@
 # Cookie_Catalog — Decision Log
 
+## October 21, 2026 — Approved unified producer-design search (CC-TODO-021 / 010)
+
+Owner approves Search → Results → Details: one card per existing stable producer design, separate producers preserved, owned/saved filters based only on physical records, design images and My cutters beneath the selected design. No top-level independent decorating cards or automatic image-to-design promotion. Linked decorating names/tags may discover a producer design only through explicit existing compatibility links. [Assessment and evidence](docs/Unified_Search_R2_1.md).
+
+The owner reports Add/quantity/size/location, existing-design selection, save-without-stock and workspace separation satisfactory; exact test date/device and independent Cris evidence were not supplied. This narrow acceptance is retained, not repeated or promoted to a full search/details/Cris pass. New search/details/images/edit-and-return must be retested.
+
+No existing preferred-image persistence was found. Implement gallery/read-only discovery and honest deterministic fallback; do not overload notes/purpose/time or create persistence. Proposed optional associated image ID and guarded editing/archive/recovery/migration activation require a separate concrete owner approval. Promotion from image to independently useful decorating design remains deferred with proposed/unverified compatibility. No new numbered decision/task needed; reserved 025, next unused CC-TODO-026 / CC-DEC-023. Preserve all production/migration/recovery and #7/#12/#14 boundaries.
+
 ## October 21, 2026 — Approved Contextual Workspace (CC-TODO-021 / 010, Issue #13)
 
 Development implementation `b2511b3fa05de123cec23faf8d22c89161ccc673` passed required complete CI and runtime-attested synthetic Chrome smoke; see the [evidence and local-run limitations](docs/Contextual_Workspace_R2_1.md#exact-source-development-acceptance-checkpoint). Owner functional acceptance, independent Cris and physical-photo activation remain separate gates. This checkpoint is implementation/validation, not production authorization.

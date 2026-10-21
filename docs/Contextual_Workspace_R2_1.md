@@ -1,5 +1,9 @@
 # R2.1 Contextual Workspace — CC-TODO-021 / CC-TODO-010
 
+## Current continuation
+
+The owner subsequently reports Add/quantity/size/location, save-without-stock and workspace separation satisfactory, and approves [Unified Search & Design Details](Unified_Search_R2_1.md). That refinement replaces overlapping Find/My Cutters and physical-row result cards while preserving these accepted flows. The implementation/evidence below remains historical; no full R2.1/Cris acceptance or preferred-image persistence is inferred.
+
 ## Approved implementation scope — October 21, 2026
 
 The owner's Contextual Workspace handoff authorizes frontend implementation, tests and delivery to the existing development branch/PR #7. It supersedes the narrower proposed UI batch in [planning PR #14](https://github.com/JBrickey23/Cookie_Catalog/pull/14) at `aa3b68543aea2ec5eef06f47f137fc09427d8081`; it does not merge that planning PR, approve Cookie Sets persistence, activate migration 0005 or authorize production. Durable_CHATGPT v1.0.0 remains pinned without exceptions.
