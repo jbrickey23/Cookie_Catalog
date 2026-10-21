@@ -1,5 +1,13 @@
 # Cookie Catalog — current TODO
 
+## Proposed R2.1 / R2.2 / R2.3 roadmap — October 20, 2026 Pacific
+
+This owner-authorized batch is **documentation/planning reconciliation only**: [proposed milestones and dependency matrix](docs/R2_Plan.md), [independent Cris/owner R2.1 checklist](docs/R2_1_Acceptance.md), [Cookie Sets specification and schema assessment](docs/Cookie_Sets_R2.md), and [next execution handoff, not launched](docs/R2_1_Execution_Handoff.md). R2.1 usable core → R2.2 Cookie Sets → R2.3 assisted ingestion/automation is a **proposal**, not a new execution priority or release approval. The prior approved R2 scope/history and engineering evidence remain intact. Stop this worker after the docs PR/checks; no feature change, dev-branch push, deployment, migration or merge is authorized by this batch.
+
+R2 head remains `ffe35a67cbf275f3b74f0d62a292963eb2e69f66` in open PR #7; draft #12 remains isolated at `09cfa8539f53ee0e01c9c2e6820df1c04a181bb2`. Preserve their boundaries and #7's pre-existing main conflicts. Physical-photo migration 0005/live distinct-photo acceptance and independent Cris/owner core acceptance remain pending. CC-TODO-019 is unresolved and remains a production-release gate; safe migration/recovery/maintenance/rollback requirements cannot be postponed to R2.3. Last known migration state is prior-batch evidence, not a fresh cloud check here.
+
+The owner explicitly reports **initial Change Request capture accepted** in this roadmap handoff (CC-TODO-018); exact request ID/device/test date not provided. Record this narrow reported acceptance, not a fresh worker test or downstream ingestion/operational recovery completion. CC-TODO-023 independent operational recovery remains open. CC-TODO-021 includes owner-requested [Issue #13](https://github.com/JBrickey23/Cookie_Catalog/issues/13), proposed 1.5-second hover dwell within the requested 1–3 seconds; not implemented/tested. Proposed Cookie Sets needs a distinct feature record: **CC-TODO-025**, design-only. No new numbered decision for an unapproved proposal. **Next unused task CC-TODO-026; decision CC-DEC-023.** Earlier next-unused values below are historical checkpoints, not the current allocator.
+
 ## Reference and inventory UX — October 20, 2026 UTC
 
 Owner-approved CC-TODO-021, coordinated with CC-TODO-010, now targets the bounded reference/physical-inventory slice on `feature/cc-infrastructure-foundation` / PR #7. [Model, implementation, schema/recovery safeguards, validation and exact development walkthrough](docs/Reference_Inventory_UX_R2.md) is the current checkpoint for this batch. Preserve stable reference IDs, separate producer designs, grouped interchangeable quantities and distinct physical-photo ownership. No universal category parent or inferred photo dimensions/ownership.
@@ -16,20 +24,22 @@ Implementation and local validation complete: source/digest pin, unmodified poli
 
 R1 v0.1.0 released; production is the sole editing catalog. [Release evidence](docs/R1_Release_Closeout.md).
 
-| ID | Work | Status / next action |
+| ID | Work | Proposed milestone / current status and next action |
 | --- | --- | --- |
-| CC-TODO-021 | Housekeeping and UX fast fixes | Authorized October 16, 17:34 Pacific; in progress. Current/history split, stale PR review, visible environment/sign-out/Undo and Slot help. |
-| CC-TODO-019 | Backup/restore root cause and reliability | Open. Progress/lease diagnostics and sanitized timing/error-category logs added. [Investigation](docs/Backup_Reliability_R2.md). Reproduce the cloud stall and verify a fix; later successful resume is not resolution. |
-| CC-TODO-018 | Change Request ingestion | First vertical slice deployed to development (CI passed): private submit/review, owner export and revision-guarded release/TODO assignment; live dev acceptance and operational backup coverage pending. [Workflow](docs/Change_Request_Workflow.md). |
-| CC-TODO-020 | E2E push-button release automation | Read-only exact-commit/target/version/SQL preflight tool and manual build/dry-run workflow added. Machine-auth controller, recovery verification, promotion and safe rollback remain open. Release click will be authorization without another final approval. |
-| CC-TODO-022 | Release maintenance gate | Under 020: durable HTTP/scheduled write gate, admission/drain coordination, background-job checks and draft-preserving notice implemented. Machine-auth controller, safe interrupted-worker recovery and live acceptance remain open. [Checkpoint](docs/Release_Automation_R2.md). |
-| CC-TODO-010 | Photo inbox and ingestion workers | Private batch upload, durable bounded preparation queue, previews/downloads and retries implemented. [Checkpoint](docs/Photo_Inbox_R2.md). Extraction benchmark, matching, scale/confidence evidence, per-cutter approval/commit and inbox recovery remain open. |
-| CC-TODO-015 | Image standards / Canva and outlines | Deferred design input; no blanket upload rescaling/DPI restrictions approved. |
-| CC-TODO-016 | Field help content | Slot authored Ready in current UX batch; owner wording feedback remains welcome. |
-| CC-TODO-008/009 | Legacy source audit/migration | Source-specific follow-up; preserve completed imports and evidence. No standing OneNote connector implied. |
-| CC-TODO-011 | Canva/artwork interoperability | Later integration; not automatically part of R2 photo inbox. |
+| CC-TODO-021 | Housekeeping and core UX | **R2.1, open.** Existing environment/sign-out/Undo/Slot and reference/inventory implementation/browser evidence retained. Complete simplified Add a Cutter proposal review, Issue #13 dwell implementation, owner Reference & Inventory and independent Cris acceptance. None newly executed here. |
+| CC-TODO-019 | Backup/restore root cause and reliability | **Cross-phase production-release blocker, open.** Existing diagnostics retained; identify/reproduce the cloud stall's cause, verify a fix and operational evidence. Do not defer safe recovery to R2.3 or blame managed-PC tooling without evidence. |
+| CC-TODO-018 | Change Request ingestion | **R2.1 initial capture owner-accepted by this handoff only.** Existing private submit/review, export and guarded TODO/release assignment foundations retained. Downstream operational export/reconcile/planning and further assisted ingestion remain open; broader completion proposed in R2.3. See [workflow](docs/Change_Request_Workflow.md). |
+| CC-TODO-020 | E2E push-button release automation | **R2.3 full automation; earlier release gates still apply.** Preserve read-only preflight and draft #12's approved KISS/native Run workflow engineering. Exact artifact/recovery/controlled release/compatible rollback evidence is required before any earlier promotion; no automation deployment or priority change here. |
+| CC-TODO-022 | Release maintenance gate | **Under 020; cross-phase release safety.** Preserve HTTP/scheduled gate/admission/drain and draft protections. Earlier releases require real write/background coordination, safe verified reopening and approved R1 bootstrap; future full automation in R2.3 does not defer these. Draft #12 remains separate. |
+| CC-TODO-010 | Photo inbox and ingestion workers | **R2.1 physical-photo activation/live acceptance pending; R2.3 extraction/matching/approval.** Retain implemented private inbox/queue/previews/retry and physical-photo schema/automated coverage. 0005 needs authorized dev activation with verified recovery; scale/confidence, proposed catalog updates and inbox recovery remain open. |
+| CC-TODO-023 | Independent request recovery | **Enabled-data release dependency, open.** Retain checksum recovery copies, portable export/missing-key recovery and isolated source-disposed automated rehearsal. Owner off-bucket retention/operational recovery acceptance not proved; catalog archives exclude requests. Later automation is not a waiver. |
+| CC-TODO-025 | Cookie Sets | **New proposal only, R2.2.** Persistent named/editable explicitly curated producer-reference membership regardless of physical stock. [Specification/reuse assessment](docs/Cookie_Sets_R2.md); persistence recommendation awaits owner approval, no implementation/migration. |
+| CC-TODO-015 | Image standards / Canva and outlines | Deferred design input; no blanket rescaling/DPI restrictions approved. |
+| CC-TODO-016 | Field help content | Existing Slot Ready/content evidence retained. Hover timing is Issue #13 under 021; no duplicate work item. |
+| CC-TODO-008/009 | Legacy source audit/migration | Source-specific follow-up; preserve imports and evidence. No standing OneNote connector implied. |
+| CC-TODO-011 | Canva/artwork interoperability | Later integration, not automatically authorized by R2.3 or this roadmap. |
 
-[R2 scope and sequencing](docs/R2_Plan.md). Next unused ID: CC-TODO-025.
+[Proposed milestones and retained approved scope](docs/R2_Plan.md). Next unused ID: **CC-TODO-026**. Phase/product acceptance and production release gates are separate.
 
 Operational follow-ups: cadence/retention/independent copies, account recovery arrangements and an isolated disaster-recovery rehearsal. Do not restore over live production just to test it. Preserve current roles, protected main, development separation and retained recovery evidence.
 

@@ -1,0 +1,25 @@
+# Next R2.1 execution handoff — prepared, not launched
+
+**October 20, 2026 Pacific.** This is a concrete proposed Work/Codex batch for the owner to approve after reviewing [the phases](R2_Plan.md) and [Cris acceptance](R2_1_Acceptance.md). The current worker stops at documentation reconciliation. No automatic worker/session switch or feature/deployment launch is promised.
+
+## Restore before execution
+
+Repository `JBrickey23/Cookie_Catalog`; application target remains `feature/cc-infrastructure-foundation` / PR #7, inspected `ffe35a67cbf275f3b74f0d62a292963eb2e69f66`. Refresh remote heads/PRs/checks and restore bootstrap, policy v1.0.0 pin, Context, TODO, Decision Log, charter, phased plan, 021/010 UX evidence, Issue #13 and this handoff. This proposal lives in a separate `docs/` PR; do not assume it was merged into R2 or approved as an execution priority. Merging the docs into the development branch can trigger deployment and requires separate authorization.
+
+Keep draft #12's release engineering at its verified head, do not cherry-pick/overwrite it, and preserve CC-TODO-019 root-cause requirements. Read its approved KISS design if release work becomes a real dependency. Verify actual schema and recovery state only using an authorized read path; last known dev migrations were 0001–0004, with prepared 0005 unactivated.
+
+## Suggested bounded order and authorization
+
+1. **UI engineering batch — CC-TODO-021.** After explicit launch approval, implement Issue #13 (1.5 second starting dwell, cancel timer on leave/unmount/change, immediate keyboard/intentional help, existing dismissal/full-help behavior). Simplify the Add a Cutter entry/presentation per the proposed user flow by composing current Browse/EntryEditor/Focus Card; preserve reference IDs, producer separation, read-only Add to Inventory, optional files, quantities, units, URL validation, draft protection and server roles/maintenance guards. No new schema, Sets, image analysis or release-controller work. Approval must cover any intended development branch push/deployment; the current docs-only authorization does not.
+2. **Photo activation preparation — CC-TODO-010 / 021.** Inspect exact migration, archive/managed/off-provider recovery profile, existing operations and compatible rollback. Prepare a concrete operator/target/recovery checklist; use existing resources/tooling, no credentials or resources provisioned. If no verified recovery point/access exists, report that boundary and retain preparation; do not experiment with cloud data or call CC-TODO-019 solved. Actual dev activation/testing needs its own explicit operational authorization.
+3. **Owner/Cris acceptance.** On the authorized attested development candidate, run C1–C9/O1–O5 from the acceptance document. The worker can automate focused behavior and assist the owner, but cannot self-award an independent Cris pass. Reuse the documented TEST fixtures and retain real originals. Block C7 explicitly until 0005 is safely active; label observed versus reported evidence.
+4. **Production-readiness work — separately scoped.** Prepare the minimum 019/recovery/migration and 020/022 controlled-release evidence for the intended earlier release. If automation in #12 is incomplete, seek a concrete supervised procedure decision; do not replace the approved interface or waive safety by implication. No production maintenance, deployment, R1 bootstrap or PR merge is included in the UI batch.
+
+The owner may authorize a narrower next slice; completing the UI batch does not authorize later operational steps. Proposed R2.2 Cookie Sets under 025 remains design-only until separately approved. This handoff preserves approved engineering autonomy inside a launched batch and does not require repeated permission for its routine local edits/tests.
+
+## Acceptance, verification and stop conditions
+
+- Focused timer/keyboard/Escape/unmount tests; creation/duplicate/URL/read-only-reference/draft/Focus interactions; existing role, mutation and recovery regressions appropriate to the changes; TypeScript/frontend/Worker build and required CI. DOM tests do not prove live usability or a cloud migration.
+- Verify exact remote commits and actual authorized dev deployment. Record implementation, automated/local pass, remote CI/build, live browser observations, owner acceptance and Cris independent acceptance separately. Do not claim production readiness.
+- Stop for a materially different identity/schema model, paid/provider choice, missing recovery/access, known active/unknown high-risk writer, destructive operation, production change, merge, security-policy/credential provisioning or unapproved priority expansion. Preserve drafts/locks/originals; never bypass the blocker.
+- Reconcile 010/018/019/020/021/022/023 and proposed 025 without renumbering historical work. Capture exact heads/PR/checks, passed/pending acceptance and immediate continuation. Return the remaining decisions/results to ordinary design Chat. No merge of #7/#12 and no unrelated feature expansion.
