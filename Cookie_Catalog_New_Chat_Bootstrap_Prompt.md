@@ -1,5 +1,14 @@
 # Cookie Catalog — new chat bootstrap
 
+## Visual Add search and owner acceptance — October 21, 2026
+
+The owner reports **PASS** for five functional checks against verified development candidate `ebcc415383a9dfde81cd4d1dfed98b0390ad75b0`: unified producer results/ownership filters; gallery/My cutters; physical edit → Save → same design/results; unsaved Cancel/navigation draft protection; understandable existing Add workflows. This is owner-reported functional acceptance on October 21, not Cris, automated or production acceptance, and not merge approval.
+
+Remaining presentation concern: **Add Something's existing-design search needs image-backed results. A user unfamiliar with the catalog cannot reliably recognize cutters from text-only boxes.** The underlying Add flow passed. This bounded CC-TODO-021 / CC-TODO-010 correction reuses unified search cards and query; no new task/decision ID. [Current acceptance, implementation and delivery evidence](docs/Unified_Search_R2_1.md#visual-add-search-closeout--october-21-2026) supersedes earlier pending-owner statements for those five checks only.
+
+Visual picker source is implemented; local 196/196 application tests, 33/33 tooling, schema/recovery/audit/synthetic import, documentation checks and TypeScript/build passed. Complete CI/development/runtime/browser verification is pending publication at this checkpoint and must be recorded before calling the new candidate verified. Next: validate visual Add, then independent uncoached Cris **Search → Recognize → Select → Add**. Persistent default selection remains deferred; 0005 physical-photo acceptance, CC-TODO-019, CC-TODO-023 and PR #7 conflicts remain open. Production release/merges are not authorized; #12 remains draft and #14 unmerged. Preserve reserved 025; next unused task 026 / decision 023.
+
+
 ## Unified Search & Design Details — October 21, 2026
 
 **Verified development application:** `0b62c593829e276b1dfd5192c90926be62725635` passed exact-head CI (193 app / 33 tooling), development build and runtime attestation with migrations 0001–0004. Synthetic Chrome grouped-search/gallery/Add/edit-and-return smoke passed, including a browser-found stale image-count fix and draft-preserving upload retest. [Exact evidence, limitations and owner checklist](docs/Unified_Search_R2_1.md#verified-development-delivery--october-21-2026-pacific). Closing docs have unchanged application source; final-head checks are recorded on PR #7. Preferred-image persistence remains proposed/unapproved, owner/Cris retesting remains pending.

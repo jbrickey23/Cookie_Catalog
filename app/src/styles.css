@@ -244,3 +244,8 @@ input[aria-invalid="true"] {outline:2px solid #b12d24;}
 .search-options summary {cursor:pointer;}
 .browse-workspace.expanded .design-card .ownership-status {font-size:.85rem;}
 @media(max-width:600px){.design-gallery img{height:220px;}.physical-editor{padding-left:.5rem;}.inventory-list li{display:block;}.inventory-list li span{display:block;margin:.5rem 0;}}
+
+.design-picker-search {display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.design-picker-search input {flex:1;min-width:10rem}
+.shape-picker .cutter-grid {margin:1rem 0;grid-template-columns:repeat(auto-fit,minmax(min(235px,100%),1fr))}
+.shape-picker .design-card .view-cutter {min-height:44px;width:100%}

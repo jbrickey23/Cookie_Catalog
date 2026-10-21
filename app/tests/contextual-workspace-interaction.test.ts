@@ -10,7 +10,9 @@ const {WorkspaceFrame}=await import('../src/WorkspaceFrame');
 const {FieldHelp,HELP_HOVER_MS}=await import('../src/FieldHelp');
 const {Browse,ownershipLabel}=await import('../src/Browse');
 const {EntryEditor}=await import('../src/EntryEditor');
+const {DesignSearchPicker}=await import('../src/DesignSearchPicker');
 const vocabulary={shapes:[{id:'s1',name:'TEST Tree',maker:'Producer A'},{id:'s2',name:'TEST Tree',maker:'Producer B'}],tags:[],locations:[{id:'b',label:'TEST Bin'}]};
+const designResults={items:vocabulary.shapes.map((s,i)=>({...s,shape_id:s.id,inventory_count:i?0:3,image_id:i?null:'photo-a',image_name:i?null:'test.png'})),total:2,nextOffset:null};
 const reference={shape:{id:'s1',name:'TEST Tree',maker:'Producer A',source_url:'',notes:''},cutter:null,tags:[],revision:'"r1"'};
 const physical={...reference,cutter:{id:'c1',shape_id:'s1',quantity:2,origin:'unknown',location_id:'b',width_mm:null,height_mm:null,reference_size_mm:76.2,slot:'',notes:''}};
 const props={kind:'cutters' as const,guided:true,canEdit:true,canDelete:false,onDirty:()=>{},onSaved:()=>{},onDeleted:()=>{}};
@@ -61,18 +63,18 @@ test('unified Search routes ownership filters and guards a dirty Add draft on ta
 
 test('guided existing selection distinguishes producers and saves only physical details using the existing guarded API',async()=>{
  const old=globalThis.fetch;const writes:any[]=[];let result:any;
- globalThis.fetch=async(input,init)=>{if(init?.method==='POST'){writes.push({path:String(input),body:JSON.parse(String(init.body))});return Response.json(physical);}return Response.json(String(input).endsWith('/vocabulary')?vocabulary:reference);};
+ globalThis.fetch=async(input,init)=>{if(init?.method==='POST'){writes.push({path:String(input),body:JSON.parse(String(init.body))});return Response.json(physical);}return Response.json(String(input).startsWith('/api/browse')?designResults:String(input).endsWith('/vocabulary')?vocabulary:reference);};
  try{
   render(React.createElement(EntryEditor,{...props,onSaved:entry=>{result=entry;}}));await screen.findByLabelText('Find an existing producer design');
-  fireEvent.change(screen.getByLabelText('Find an existing producer design'),{target:{value:'Tree'}});assert(screen.getByRole('button',{name:'Use TEST Tree — Producer A'}));assert(screen.getByRole('button',{name:'Use TEST Tree — Producer B'}));
-  fireEvent.click(screen.getByRole('button',{name:'Use TEST Tree — Producer A'}));await screen.findByRole('group',{name:'Selected producer design (read-only)'});assert.equal(screen.queryByLabelText('Name *'),null);
+  fireEvent.change(screen.getByLabelText('Find an existing producer design'),{target:{value:'Tree'}});await screen.findByRole('button',{name:'Use this design: TEST Tree — Producer A'});assert(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer B'}));
+  fireEvent.click(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer A'}));await screen.findByRole('group',{name:'Selected producer design (read-only)'});assert.equal(screen.queryByLabelText('Name *'),null);
   fireEvent.change(screen.getByLabelText('Quantity *'),{target:{value:'2'}});fireEvent.click(screen.getByRole('button',{name:'Save changes'}));await waitFor(()=>assert(result));assert.equal(writes.length,1);assert.equal(writes[0].path,'/api/workspace/cutters');assert.equal(writes[0].body.existingShapeId,'s1');assert.equal(writes[0].body.shapeRevision,'"r1"');assert.equal(writes[0].body.cutter.quantity,2);
  }finally{cleanup();globalThis.fetch=old;}
 });
 
 test('guided design-only creation reveals collapsed invalid URL and opens persisted design without inventory',async()=>{
  const old=globalThis.fetch;let saved:any;const writes:any[]=[];
- globalThis.fetch=async(input,init)=>{if(init?.method==='POST'){writes.push(JSON.parse(String(init.body)));return Response.json(reference);}return Response.json(String(input).endsWith('/vocabulary')?vocabulary:reference);};
+ globalThis.fetch=async(input,init)=>{if(init?.method==='POST'){writes.push(JSON.parse(String(init.body)));return Response.json(reference);}return Response.json(String(input).startsWith('/api/browse')?designResults:String(input).endsWith('/vocabulary')?vocabulary:reference);};
  try{
   render(React.createElement(EntryEditor,{...props,kind:'shapes',onSaved:entry=>{saved=entry;}}));await screen.findByRole('button',{name:'Create a new design'});fireEvent.click(screen.getByRole('button',{name:'Create a new design'}));
   fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST Tree'}});const source=screen.getByText('Source link and design notes').closest('details')!;fireEvent.click(screen.getByText('Source link and design notes'));source.open=true;fireEvent.change(screen.getByLabelText('Source link'),{target:{value:'example.test'}});source.open=false;fireEvent(source,new window.Event('toggle'));
@@ -82,10 +84,51 @@ test('guided design-only creation reveals collapsed invalid URL and opens persis
 });
 
 test('existing design chosen for later opens without a duplicate POST',async()=>{
- const old=globalThis.fetch;let saved:any;const writes:string[]=[];globalThis.fetch=async(input,init)=>{if(init?.method==='POST')writes.push(String(input));return Response.json(String(input).endsWith('/vocabulary')?vocabulary:reference);};
- try{render(React.createElement(EntryEditor,{...props,kind:'shapes',onSaved:entry=>{saved=entry;}}));await screen.findByLabelText('Find an existing producer design');fireEvent.change(screen.getByLabelText('Find an existing producer design'),{target:{value:'Producer A'}});fireEvent.click(screen.getByRole('button',{name:'Use TEST Tree — Producer A'}));await waitFor(()=>assert(saved));assert.equal(saved.shape.id,'s1');assert.deepEqual(writes,[]);}finally{cleanup();globalThis.fetch=old;}
+ const old=globalThis.fetch;let saved:any;const writes:string[]=[];globalThis.fetch=async(input,init)=>{if(init?.method==='POST')writes.push(String(input));return Response.json(String(input).startsWith('/api/browse')?designResults:String(input).endsWith('/vocabulary')?vocabulary:reference);};
+ try{render(React.createElement(EntryEditor,{...props,kind:'shapes',onSaved:entry=>{saved=entry;}}));await screen.findByLabelText('Find an existing producer design');fireEvent.change(screen.getByLabelText('Find an existing producer design'),{target:{value:'Producer A'}});fireEvent.click(await screen.findByRole('button',{name:'Use this design: TEST Tree — Producer A'}));await waitFor(()=>assert(saved));assert.equal(saved.shape.id,'s1');assert.deepEqual(writes,[]);}finally{cleanup();globalThis.fetch=old;}
 });
 
 test('ownership labels rely on inventory evidence, preserve zero and review unknowns',()=>{
  const item:any={record_kind:'reference',inventory_count:0,image_id:'photo'};assert.equal(ownershipLabel(item),'Saved design');assert.equal(ownershipLabel({...item,inventory_count:2}),'In my collection');assert.equal(ownershipLabel({...item,inventory_count:undefined}),'Inventory status needs review');assert.equal(ownershipLabel({...item,inventory_count:1,record_kind:'physical',quantity:0}),'In my collection');assert.equal(ownershipLabel({...item,review_state:'set_review'}),'Inventory needs review');
+});
+
+test('Add uses unified visual results, unavailable/missing image fallbacks and reset without opening details',async()=>{
+ const old=globalThis.fetch,reads:string[]=[];let chosen='';
+ globalThis.fetch=async input=>{reads.push(String(input));return Response.json(designResults);};
+ try{
+  render(React.createElement(DesignSearchPicker,{disabled:false,label:'Find existing design',onSelect:id=>{chosen=id;}}));
+  fireEvent.change(screen.getByLabelText('Find existing design'),{target:{value:'Tree'}});
+  await screen.findByRole('button',{name:'Use this design: TEST Tree — Producer A'});
+  assert.equal(screen.getAllByRole('article').length,2);assert(reads[0].startsWith('/api/browse?q=Tree&'));assert(reads[0].endsWith('ownership=all'));
+  const image=screen.getByRole('img',{name:'TEST Tree — image 1 of 1'});assert.equal(image.getAttribute('src'),'/api/attachments/photo-a?view=image');
+  assert(screen.getByText('In my collection'));assert(screen.getByText('Saved design'));assert(screen.getByText('No image yet'));
+  assert.equal(screen.queryByRole('button',{name:/View TEST/}),null);assert.equal(screen.queryByRole('button',{name:/Next image/}),null);
+  fireEvent.error(image);assert(screen.getByText('Image unavailable'));
+  // Native button semantics support Enter/Space and touch/click without a secondary control.
+  const b=screen.getByRole('button',{name:'Use this design: TEST Tree — Producer B'});b.focus();assert.equal(document.activeElement,b);fireEvent.click(b);assert.equal(chosen,'s2');
+  fireEvent.click(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer A'}));assert.equal(chosen,'s1');
+  fireEvent.click(screen.getByRole('button',{name:'Reset search'}));assert.equal((screen.getByLabelText('Find existing design') as HTMLInputElement).value,'');assert.equal(screen.queryByRole('article'),null);assert.equal(document.activeElement,screen.getByLabelText('Find existing design'));
+ }finally{cleanup();globalThis.fetch=old;}
+});
+
+test('late picker responses cannot replace the current search and failures retain the search input',async()=>{
+ const old=globalThis.fetch;let resolveOld:(r:Response)=>void=()=>{};
+ globalThis.fetch=async input=>String(input).includes('q=old')?new Promise<Response>(resolve=>{resolveOld=resolve;}):Response.json({error:'Try another search'},{status:503});
+ try{
+  render(React.createElement(DesignSearchPicker,{disabled:false,label:'Find existing design',onSelect:()=>{throw Error('must not select');}}));
+  fireEvent.change(screen.getByLabelText('Find existing design'),{target:{value:'old'}});
+  fireEvent.change(screen.getByLabelText('Find existing design'),{target:{value:'new'}});await screen.findByText('Try another search');
+  await act(async()=>resolveOld(Response.json(designResults)));assert.equal(screen.queryByRole('article'),null);assert.equal((screen.getByLabelText('Find existing design') as HTMLInputElement).value,'new');
+ }finally{cleanup();globalThis.fetch=old;}
+});
+
+test('changing selected design requires explicit draft discard and preserves existing physical Add data on refusal',async()=>{
+ const old=globalThis.fetch,confirm=window.confirm;window.confirm=()=>false;
+ globalThis.fetch=async input=>Response.json(String(input).startsWith('/api/browse')?designResults:String(input).endsWith('/vocabulary')?vocabulary:reference);
+ try{
+  render(React.createElement(EntryEditor,props));const search=await screen.findByLabelText('Find an existing producer design');fireEvent.change(search,{target:{value:'Tree'}});
+  fireEvent.click(await screen.findByRole('button',{name:'Use this design: TEST Tree — Producer A'}));await screen.findByLabelText('Quantity *');fireEvent.change(screen.getByLabelText('Quantity *'),{target:{value:'7'}});
+  fireEvent.click(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer B'}));assert.equal((screen.getByLabelText('Quantity *') as HTMLInputElement).value,'7');assert(within(screen.getByRole('group',{name:'Selected producer design (read-only)'})).getByText('Producer A'));
+  fireEvent.click(screen.getByRole('button',{name:'Cancel changes'}));assert.equal((screen.getByLabelText('Quantity *') as HTMLInputElement).value,'1');
+ }finally{cleanup();globalThis.fetch=old;window.confirm=confirm;}
 });

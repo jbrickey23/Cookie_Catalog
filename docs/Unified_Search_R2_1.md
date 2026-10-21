@@ -1,5 +1,34 @@
 # R2.1 Unified Search & Design Details — CC-TODO-021 / CC-TODO-010
 
+## Visual Add search closeout — October 21, 2026
+
+### Owner-reported functional acceptance
+
+The owner reports all five checks **PASS on October 21, 2026**, against verified development candidate `ebcc415383a9dfde81cd4d1dfed98b0390ad75b0` (application `0b62c59`). Device details were not supplied. This is functional owner acceptance, not independent Cris, automated or production evidence, and does not authorize a merge.
+
+| Owner check | Reported result |
+| --- | --- |
+| Christmas Tree: one producer card; correct ownership labels/filters | PASS |
+| Open design: gallery and expected My cutters | PASS |
+| Edit physical cutter, Save and return to same design/results | PASS |
+| Cancel unsaved edit; navigate away/back with draft protection | PASS |
+| Existing Add Something workflows understandable/functional | PASS |
+
+**Remaining usability correction:** Add Something's existing-design search needs image-backed results. A user unfamiliar with the catalog cannot reliably recognize cutters from text-only boxes. This is a presentation concern, not a failed Add workflow. These five passes supersede corresponding pending-owner statements in older checkpoints; Cris and overall release acceptance remain open.
+
+### Bounded implementation assessment and result
+
+The old picker filtered vocabulary names/producers client-side and rendered text-only Use buttons. Unified Search already has a bounded one-row-per-`shapes.id` query with associated image metadata, ownership status and image fallback. Extract its existing `CutterCard`, `BrowseItem` and ownership label into shared `DesignCard.tsx`; retain Browse re-exports for current callers. `DesignSearchPicker.tsx` consumes the **existing `/api/browse`** query with ownership=all and its existing pagination, not a new query/model or API. EntryEditor reuses the existing guarded `selectShape` and physical Add save path; shared reference fields remain read-only.
+
+Results show the associated image or No image yet / Image unavailable, design name, producer and ownership status. The explicit native **Use this design** button works with mouse/keyboard/touch; clicking the card also selects. Add does not navigate to normal details. No carousel/secondary action is needed. The same deterministic image selection as Search is retained; no preferred-image relationship or artwork verification is invented. Search updates as typed, Reset clears/focuses search, pagination remains bounded, and late responses cannot replace the active results. Existing draft replacement requires explicit confirmation; missing images never block selection. No schema, server/write handler, cloud config, workflow, dependency or policy change.
+
+Local targeted interaction suite: 10/10 passed; full serialized application regression 196/196 passed with zero skips, 33/33 tooling, schema smoke, 11 restore helpers, 3 audit tests, synthetic import, 67 Markdown/link/docs-JSON checks, verified policy digests and TypeScript/build passed. Exact remote/development/runtime/browser checks are pending publication at this source checkpoint. Final verified results follow in the delivery record and PR #7. This correction is within existing CC-TODO-021 / 010, no new ID.
+
+### Cris independent walkthrough — pending
+
+Give Cris only the development site and this task: **“Add a cutter you recognize to the catalog, using an existing design. Then find the saved cutter again.”** Use synthetic TEST Christmas Tree fixtures and TEST shelf; do not coach control names, producer selection or clicks. Observe recognition, wrong-turn recovery, confidence about producer, save outcome and ability to find it again. Afterwards ask what was confusing. Record date/device/source and completion/friction; no pass is inferred from agent smoke or owner acceptance. Persistent default selection, physical-photo 0005 acceptance, 019 backup, 023 recovery, conflicts and production authorization remain separate gaps.
+
+
 ## Assessment and approved scope — October 21, 2026 Pacific
 
 Owner's new implementation handoff approves one producer-specific result per stable `shapes.id`, one Search with plain ownership filters, design-centered details/gallery and retained Add/workspace safeguards. The owner reports that adding physical cutters (quantity/size/location), saving designs without inventory, existing-design selection and workspace separation function satisfactorily. Record that narrow owner-reported acceptance; no independent Cris or full R2.1 pass is inferred. The earlier [Contextual Workspace evidence](Contextual_Workspace_R2_1.md) remains history.
@@ -43,7 +72,7 @@ Implementation, local/remote validation, attested development deployment and age
 
 Local validation: **192/192 application tests passed** in a serialized run (`--test-concurrency=1 --test-force-exit`); no assertion was skipped. Thirty focused query/workspace/editor/gallery interactions passed, with the three new detail/gallery tests rerun after focus cleanup. TypeScript/production build, schema smoke, 11 restore-helper tests, 3 source-audit tests, synthetic import and 33 tooling tests passed. No schema, auth, write handler, workflow, dependency, production configuration or pinned policy change. This is local evidence; exact-head CI, cloud build, runtime source and actual browser smoke are separate records below.
 
-## Owner retest — new candidate, pending
+## Earlier owner retest checklist — historical detail
 
 Use synthetic `TEST UX 20261020 Christmas Tree` references (Producer A and Producer B) or clearly named TEST records; do not change production or real originals.
 
@@ -54,7 +83,7 @@ Use synthetic `TEST UX 20261020 Christmas Tree` references (Producer A and Produ
 - [ ] Unsaved edit → try another cutter/design/results: cancel discard and keep draft; explicitly discard or Cancel as appropriate. Switch workspaces and return without losing draft. Check keyboard/mouse/touch behavior on intended devices.
 - [ ] Briefly confirm the previously owner-accepted Add paths remain satisfactory: existing/new design physical Add with quantity/size/location, design-only Save, optional files, explicit URL validation, workspace separation and help dwell/focus/Escape.
 
-Record date/device/source and friction; do not infer acceptance from this checklist. After owner confirmation, Cris independently performs uncoached Search → Results → Details and ordinary Add/edit/return tasks. CC-TODO-019, CC-TODO-023 and safe 0005 recovery/activation remain separate release prerequisites. No production readiness is claimed.
+The five owner-reported passes above supersede the corresponding pending functional status; unchecked finer-grained/device items are not invented evidence. Record date/device/source and friction for subsequent testing. Cris independently performs uncoached Search → Results → Details and ordinary Add/edit/return tasks. CC-TODO-019, CC-TODO-023 and safe 0005 recovery/activation remain separate release prerequisites. No production readiness is claimed.
 
 ## Verified development delivery — October 21, 2026 Pacific
 
@@ -88,4 +117,4 @@ Proposed engineering scope only, **not implemented/activated**:
 3. Extend exact-column archive/profile/import/restore and record Undo coverage together. Prove old profiles initialize the value to null, new profiles restore the exact selection and files, conflicting/stale choices preserve drafts, and rollback uses compatible code. Do not call a column addition operationally safe merely because it is nullable.
 4. Review migration ordering independently of prepared, unactivated 0005. Engineering approval must not silently authorize 0005, cloud activation, production, or a release. Prepare the exact target/recovery/rollback activation checklist for separate operational authorization.
 
-Immediate next owner actions: retest the new Search → Results → Details and edit/return checklist, decide whether to approve this bounded preferred-image engineering proposal, and only after functional readiness invite Cris's independent uncoached test. Keep 019/023 and photo/release prerequisites open. No new ID allocated; 025 remains reserved by unmerged #14, next unused task 026 / decision 023.
+Current continuation: validate the visual Add correction, then invite Cris's independent uncoached test. The five owner functional passes above are recorded; the bounded preferred-image engineering proposal remains a separate optional decision. Keep 019/023 and photo/release prerequisites open. No new ID allocated; 025 remains reserved by unmerged #14, next unused task 026 / decision 023.
