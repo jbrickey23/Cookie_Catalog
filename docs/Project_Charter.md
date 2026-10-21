@@ -1,5 +1,9 @@
 # Cookie_Catalog — Project Charter: Execution Governance
 
+## Current planning reconciliation — October 20, 2026 Pacific
+
+Owner authorized the [proposed phased R2 roadmap](R2_Plan.md) and durable-record reconciliation only. R2.1/R2.2/R2.3 boundaries and new execution priorities remain proposals until explicitly approved. [Prepared R2.1 handoff](R2_1_Execution_Handoff.md) is not launched. Current batch excludes feature work, migrations, any deployment and any merge; earlier UX execution/deployment authority below is historical authority for those batches, not a reason to resume it during this one. Essential recovery/migration/release safety is retained in earlier gates. Preserve all rules below rather than duplicating them as a new framework policy.
+
 ## Current authorized UX slice — October 20, 2026
 
 Owner explicitly authorized [Reference and Inventory UX](Reference_Inventory_UX_R2.md) under CC-TODO-021 / CC-TODO-010 on existing PR #7. Apply the approved producer-reference/physical-inventory model and bounded acceptance checklist. Development testing/deployment is authorized; production, merges, destructive changes, paid resources and unrelated release automation remain excluded. This does not reorder deferred R2 work or replace the existing charter/pinned operating policies.

@@ -1,5 +1,9 @@
 # Private Change Requests — R2 first slice
 
+## Narrow owner acceptance — recorded October 20, 2026 Pacific
+
+The owner's R2 phased-roadmap handoff explicitly reports **initial Change Request capture owner-accepted** (CC-TODO-018). This is reported acceptance, not an independently reproduced worker test; exact request ID, device and test date were not supplied. Retain implemented submit/review/context/receipt behavior and its existing evidence below. This acceptance does not close downstream export/reconciliation/planning, full ingestion, production promotion or CC-TODO-023 independent operational retention/recovery. [R2 phase gates and acceptance](R2_Plan.md) preserve those obligations.
+
 CC-TODO-018. R2 scenario accepted October 16, 2026. A signed-in user opens Request a change from the header. Available focused record identity/name and current search are captured at opening. Required fields: type, title (120 characters), requested change (4000) and reason (1000). Context is an advisory snapshot, not verified record provenance. Server records authenticated subject, source environment and timestamp; no private email is copied to GitHub. Inline explanations and validation precede a review step and explicit Confirm and save request.
 
 Submission retains the catalog position/draft and creates no catalog mutation. Validation/save failure preserves the request draft. Closing a populated unsaved request asks before discard; leaving the page uses the browser unsaved-change warning. The request is not saved locally across a browser restart; explicit save is needed for durable persistence. A stable per-form UUID and payload fingerprint make response-loss retries idempotent; changed payloads cannot overwrite an existing request.
@@ -22,4 +26,4 @@ An automated isolated rehearsal creates a request, exports a verified bundle, di
 
 ## Still pending
 
-Live authenticated development acceptance, production promotion and operational export/reconcile trial remain pending. Screenshot attachments and full application-version capture are not in this first slice. Add request-prefix recovery/export verification before calling the entire ingestion feature release-complete. Follow-up UI only on demonstrated need. No delivery date is promised by submission.
+Initial capture is owner-accepted as recorded above. Acceptance of downstream export/reconcile/planning and operational recovery, production promotion and the operational export/reconcile trial remain pending. Screenshot attachments and full application-version capture are not in this first slice. Add request-prefix recovery/export verification before calling the entire ingestion feature release-complete. Follow-up UI only on demonstrated need. No delivery date is promised by submission.
