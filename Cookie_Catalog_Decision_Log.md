@@ -2,6 +2,8 @@
 
 ## October 21, 2026 — Approved Contextual Workspace (CC-TODO-021 / 010, Issue #13)
 
+Development implementation `b2511b3fa05de123cec23faf8d22c89161ccc673` passed required complete CI and runtime-attested synthetic Chrome smoke; see the [evidence and local-run limitations](docs/Contextual_Workspace_R2_1.md#exact-source-development-acceptance-checkpoint). Owner functional acceptance, independent Cris and physical-photo activation remain separate gates. This checkpoint is implementation/validation, not production authorization.
+
 Owner explicitly authorizes a substantial task-oriented frontend refactor and development testing/delivery on existing PR #7: Catalog home/Find/Add/My Cutters, separate Administration and Development & Diagnostics, stable progressive disclosure, existing guarded operations, 1.5-second incidental-hover help and immediate intentional access. This supersedes the narrower proposed UI batch in unmerged PR #14, preserving its planning/history rather than merging it or approving Sets schema. [Pre-code assessment and current evidence](docs/Contextual_Workspace_R2_1.md).
 
 Retain the accepted producer/inventory model, current roles and backend maintenance/revision checks; mounted workspace state preserves drafts. No production, PR merge, cloud migration (including 0005), new import engine, infrastructure, paid service or release-controller work. Owner and independent Cris acceptance remain separate subsequent gates. Existing work items suffice; reserve 025 from #14, next unused CC-TODO-026 / CC-DEC-023. No new numbered decision is necessary for this bounded implementation refinement. Earlier dated scope/numbering statements below describe their historical checkpoints.

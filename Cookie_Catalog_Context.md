@@ -2,6 +2,8 @@
 
 ## Contextual Workspace — October 21, 2026
 
+**Verified delivery:** application `b2511b3fa05de123cec23faf8d22c89161ccc673` passed exact-head CI (190 app / 33 tooling), development build and runtime source attestation; cloud Chrome synthetic creation, search, inline edit, draft and navigation smoke passed with documented limits. [Exact evidence, local-run limitation and owner/Cris checklist](docs/Contextual_Workspace_R2_1.md#exact-source-development-acceptance-checkpoint). Closing documentation has unchanged application source; its own final-head checks are on PR #7. No owner/Cris pass or 0005 activation.
+
 The owner-authorized R2.1 Contextual Workspace handoff is the active CC-TODO-021 batch, coordinated with CC-TODO-010 / Issue #13. It authorizes presentation/component refactoring and existing development delivery on `feature/cc-infrastructure-foundation` / PR #7. [Assessment, implementation, validation and owner/Cris handoff](docs/Contextual_Workspace_R2_1.md) is the current checkpoint; earlier reference/inventory evidence below remains history.
 
 Catalog now separates Find Something, Add Something and My Cutters from Administration and Development & Diagnostics. Existing persistence, stable producer IDs, permissions, revisions, maintenance safeguards and drafts remain authoritative. Issue #13 uses 1.5-second pointer dwell, immediate intentional help and cancellation. Implementation/local checks, remote CI, runtime source and browser smoke are distinct; consult the specialized checkpoint for the latest verified status. Owner functional acceptance and independent Cris usability are still pending, not full R2.1 completion.
