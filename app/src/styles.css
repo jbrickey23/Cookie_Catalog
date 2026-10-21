@@ -206,3 +206,25 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 .invalid-field {border-left:4px solid #b12d24;padding-left:12px;}
 .field-error {color:#9b251d;font-weight:600;}
 input[aria-invalid="true"] {outline:2px solid #b12d24;}
+
+/* Contextual workspaces retain their mounted draft state while hidden. */
+[hidden] { display:none !important; }
+.workspace-nav,.task-nav {display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0;padding:.65rem;background:#f0f4ef;border-radius:.6rem;}
+.workspace-nav button,.task-nav button {min-height:44px;padding:.6rem .9rem;}
+.workspace-nav [aria-current],.task-nav [aria-current] {background:#245d42;color:white;border-color:#245d42;}
+.workspace-content:focus,#browse-title:focus {outline:none;}
+.workspace-content:focus-visible,#browse-title:focus-visible {outline:3px solid #a36d26;outline-offset:4px;}
+.task-cards {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:1rem;margin:1.4rem 0;}
+.task-cards button {display:flex;flex-direction:column;align-items:start;gap:.75rem;text-align:left;padding:1.5rem;border:1px solid #adc2ad;background:#fff;border-radius:.7rem;min-height:140px;}
+.task-cards strong {font-size:1.25rem;color:#245d42;}
+.task-cards span {line-height:1.5;}
+.catalog-home {padding:1.5rem 0;}
+.record-section {padding:.8rem;margin:.8rem 0;border:1px solid #d6dfd5;border-radius:.4rem;}
+.record-section>summary {font-weight:600;cursor:pointer;min-height:30px;}
+.ownership-status {font-weight:600;color:#245d42;}
+.workspace-return {padding:.8rem;background:#f0f4ef;}
+@media(max-width:600px){.workspace-nav button,.task-nav button {flex:1 1 130px;}.task-cards button{min-height:100px;}.record-section{padding:.5rem;}}
+.task-add .browse-workspace.expanded {grid-template-columns:minmax(0,1fr);}
+.task-add .browse-workspace.expanded.with-help {grid-template-columns:minmax(160px,.4fr) minmax(0,1fr);}
+.task-add .browse-results {display:none;}
+@media(max-width:760px){.task-add .browse-workspace.expanded.with-help{grid-template-columns:minmax(0,1fr);}}

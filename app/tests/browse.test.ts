@@ -23,7 +23,7 @@ test("viewer browsing is bounded, read-only, searchable, and compatible before a
   for(let i=0;i<26;i++)await db.prepare("INSERT INTO physical_cutters(id,shape_id) VALUES (?,'s')").bind("p"+String(i).padStart(2,"0")).run();
   await db.prepare("INSERT INTO physical_cutters(id,shape_id) VALUES ('d','demo')").run();
   const get=(query="",method="GET")=>handleApiRequest(new Request("https://catalog.test/api/browse"+query,{method}),viewer,db);
-  const first=await (await get()).json() as any;assert.equal(first.items.length,24);assert.equal(first.total,26);assert.equal(first.nextOffset,24);assert.equal(first.items[0].reference_size_mm,null);
+  const first=await (await get()).json() as any;assert.equal(first.items.length,24);assert.equal(first.total,26);assert.equal(first.nextOffset,24);assert.equal(first.items[0].reference_size_mm,null);assert.equal(first.items[0].inventory_count,26);
   const next=await (await get("?offset=24")).json() as any;assert.equal(next.items.length,2);assert.equal(next.nextOffset,null);
   assert.equal((await (await get("?q=100%25")).json() as any).items.length,24);
   assert.equal((await (await get("?q=%25missing")).json() as any).items.length,0);
@@ -35,7 +35,7 @@ test("viewer browsing is bounded, read-only, searchable, and compatible before a
   const current=await (await get()).json() as any;assert.equal(current.items[0].reference_size_mm,95.25);assert.equal(current.items[0].slot,"A");assert.equal(current.items[0].source_bin,null);
   await db.prepare("INSERT INTO shapes(id,name,notes) VALUES ('ref','TEST source reference',?)").bind(JSON.stringify({source:{sectionPath:"Reference bin"},reviewState:"not_printed"})).run();
   const references=await (await get("?kind=reference&q=Reference%20bin")).json() as any;
-  assert.equal(references.items.length,1);assert.equal(references.total,1);assert.equal(references.items[0].record_kind,"reference");assert.equal(references.items[0].quantity,null);assert.equal(references.items[0].review_state,"not_printed");
+  assert.equal(references.items.length,1);assert.equal(references.total,1);assert.equal(references.items[0].record_kind,"reference");assert.equal(references.items[0].inventory_count,0);assert.equal(references.items[0].quantity,null);assert.equal(references.items[0].review_state,"not_printed");
   assert.equal((await (await get("?kind=physical&offset=24")).json() as any).items.length,2);
   assert.equal((await get("?kind=invalid")).status,400);
   assert.equal((await db.prepare("SELECT count(*) AS n FROM physical_cutters").first<any>())?.n,27);

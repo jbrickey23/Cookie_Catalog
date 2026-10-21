@@ -1,5 +1,9 @@
 # Cookie_Catalog — Project Charter: Execution Governance
 
+## Current Contextual Workspace authorization — October 21, 2026
+
+Owner authorizes the [R2.1 Contextual Workspace](Contextual_Workspace_R2_1.md) implementation, tests and existing development deployment under CC-TODO-021 / 010 and Issue #13. It expands the previous bounded presentation slice into task-oriented Catalog, Administration and Development & Diagnostics, using existing guarded operations. No schema/model redesign, migration 0005 activation, Cookie Sets implementation, production change, merge or unrelated release work. Unmerged [PR #14](https://github.com/JBrickey23/Cookie_Catalog/pull/14) remains a planning reference; this approval does not silently select its proposed Sets persistence or all phase priorities. Owner/Cris acceptance and all earlier recovery/release gates remain open.
+
 ## Current authorized UX slice — October 20, 2026
 
 Owner explicitly authorized [Reference and Inventory UX](Reference_Inventory_UX_R2.md) under CC-TODO-021 / CC-TODO-010 on existing PR #7. Apply the approved producer-reference/physical-inventory model and bounded acceptance checklist. Development testing/deployment is authorized; production, merges, destructive changes, paid resources and unrelated release automation remain excluded. This does not reorder deferred R2 work or replace the existing charter/pinned operating policies.

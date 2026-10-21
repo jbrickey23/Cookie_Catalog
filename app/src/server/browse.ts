@@ -27,7 +27,7 @@ export async function browseCatalog(request: Request, db: D1Database): Promise<R
     const filter=`WHERE (?=1 OR substr(upper(r.name),1,5)!='DEMO ')`+terms.map(()=>" AND "+termFilter).join("");
     const parameters=[url.searchParams.get("demo")==="true"?1:0,...terms.flatMap(term=>[term,term,term,term,term])];
     const count=await db.prepare(`SELECT count(*) AS total FROM (${base}) r ${filter}`).bind(...parameters).first<{total:number}>();
-    const rows=await db.prepare(`SELECT r.*,a.id AS image_id,a.filename AS image_name FROM (${base}) r
+    const rows=await db.prepare(`SELECT r.*,(SELECT count(*) FROM physical_cutters stock WHERE stock.shape_id=r.shape_id) AS inventory_count,a.id AS image_id,a.filename AS image_name FROM (${base}) r
       LEFT JOIN attachments a ON a.id=(SELECT a2.id FROM shape_attachments sa JOIN attachments a2 ON a2.id=sa.attachment_id
         WHERE sa.shape_id=r.shape_id AND a2.media_type IN ('image/png','image/jpeg','image/webp') ORDER BY a2.created_at,a2.id LIMIT 1)
       ${filter} ORDER BY r.name COLLATE NOCASE,r.id LIMIT 25 OFFSET ?`).bind(...parameters,offset).all();

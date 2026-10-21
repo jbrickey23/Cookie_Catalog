@@ -1,5 +1,11 @@
 # Cookie_Catalog — Decision Log
 
+## October 21, 2026 — Approved Contextual Workspace (CC-TODO-021 / 010, Issue #13)
+
+Owner explicitly authorizes a substantial task-oriented frontend refactor and development testing/delivery on existing PR #7: Catalog home/Find/Add/My Cutters, separate Administration and Development & Diagnostics, stable progressive disclosure, existing guarded operations, 1.5-second incidental-hover help and immediate intentional access. This supersedes the narrower proposed UI batch in unmerged PR #14, preserving its planning/history rather than merging it or approving Sets schema. [Pre-code assessment and current evidence](docs/Contextual_Workspace_R2_1.md).
+
+Retain the accepted producer/inventory model, current roles and backend maintenance/revision checks; mounted workspace state preserves drafts. No production, PR merge, cloud migration (including 0005), new import engine, infrastructure, paid service or release-controller work. Owner and independent Cris acceptance remain separate subsequent gates. Existing work items suffice; reserve 025 from #14, next unused CC-TODO-026 / CC-DEC-023. No new numbered decision is necessary for this bounded implementation refinement. Earlier dated scope/numbering statements below describe their historical checkpoints.
+
 ## October 20, 2026 — Approved reference/inventory model and UX slice (CC-TODO-021 / CC-TODO-010)
 
 Status: owner approved implementation and established development deployment; no production or PR merge approval. Reuse shapes as distinct producer references, stable IDs with editable descriptions, and physical_cutters as zero-or-more inventory records. Quantity groups interchangeable copies; size/geometry/location/tracking differences may justify separate physical records. Color/material are optional, not automatic identity boundaries. Reference images normally depict finished cookies; actual cutter photographs belong only to the relevant physical record. Similar producer designs remain separate searchable/tagged references. No universal category parent or automatic merge.

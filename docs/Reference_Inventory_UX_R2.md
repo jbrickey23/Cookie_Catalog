@@ -1,5 +1,9 @@
 # R2 reference and inventory UX — CC-TODO-021 / CC-TODO-010
 
+## Current presentation continuation
+
+The October 21 owner-authorized [Contextual Workspace batch](Contextual_Workspace_R2_1.md) refines the presentation and task flows on PR #7. The model, prior synthetic evidence and migration/recovery boundaries below remain intact. This does not award owner/Cris acceptance or activate 0005.
+
 ## Approval and boundaries — October 20, 2026 UTC
 
 Owner approved this bounded implementation on `feature/cc-infrastructure-foundation` / open PR #7, including the established development deployment. Production, PR merges, originals/data migration, authentication changes, release automation and paid resources are excluded. This is Work/Codex execution under the unchanged Durable_CHATGPT v1.0.0 pin, not a new framework or feature track. Next unused IDs remain CC-TODO-025 / CC-DEC-023.

@@ -1,5 +1,14 @@
 # Cookie Catalog — current TODO
 
+## Contextual Workspace — October 21, 2026
+
+The owner-authorized R2.1 Contextual Workspace handoff is the active CC-TODO-021 batch, coordinated with CC-TODO-010 / Issue #13. It authorizes presentation/component refactoring and existing development delivery on `feature/cc-infrastructure-foundation` / PR #7. [Assessment, implementation, validation and owner/Cris handoff](docs/Contextual_Workspace_R2_1.md) is the current checkpoint; earlier reference/inventory evidence below remains history.
+
+Catalog now separates Find Something, Add Something and My Cutters from Administration and Development & Diagnostics. Existing persistence, stable producer IDs, permissions, revisions, maintenance safeguards and drafts remain authoritative. Issue #13 uses 1.5-second pointer dwell, immediate intentional help and cancellation. Implementation/local checks, remote CI, runtime source and browser smoke are distinct; consult the specialized checkpoint for the latest verified status. Owner functional acceptance and independent Cris usability are still pending, not full R2.1 completion.
+
+Planning PR #14 at `aa3b68543aea2ec5eef06f47f137fc09427d8081` remains unmerged. This handoff approves the Contextual Workspace implementation, not every proposed phase/persistence decision in #14. Cookie Sets remains unimplemented; preserve its reserved CC-TODO-025. **Next unused CC-TODO-026 / CC-DEC-023**; no duplicate IDs allocated here. No 0005 activation, production, PR merges, new import engine or release-architecture changes. CC-TODO-019 backup root cause and CC-TODO-023 operational independent recovery remain unresolved. Draft #12 stays isolated. Immediate continuation: verify the attested dev candidate, then owner functional sanity check and independent Cris walkthrough; authorize photo migration/recovery separately.
+
+
 ## Reference and inventory UX — October 20, 2026 UTC
 
 Owner-approved CC-TODO-021, coordinated with CC-TODO-010, now targets the bounded reference/physical-inventory slice on `feature/cc-infrastructure-foundation` / PR #7. [Model, implementation, schema/recovery safeguards, validation and exact development walkthrough](docs/Reference_Inventory_UX_R2.md) is the current checkpoint for this batch. Preserve stable reference IDs, separate producer designs, grouped interchangeable quantities and distinct physical-photo ownership. No universal category parent or inferred photo dimensions/ownership.

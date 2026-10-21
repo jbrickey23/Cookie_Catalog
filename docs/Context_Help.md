@@ -1,5 +1,9 @@
 # Context help — first-release optional enhancement
 
+## Current R2 behavior — Issue #13 / CC-TODO-021
+
+The [Contextual Workspace](Contextual_Workspace_R2_1.md) implements a 1.5-second initial pointer dwell. Leaving, Escape, field/context changes and unmount cancel pending help. Keyboard focus and an ordinary explicit ? click reveal quick help immediately; Full documentation (or modified ? link) retains the authenticated separate guide. Existing help-rail dismissal and field drafts remain. Deterministic timer tests cover the boundary/cancellation and intentional access; final browser/owner evidence is tracked in the workspace checkpoint. Earlier immediate-hover/click wording below describes the original release implementation.
+
 Hover a focused-card field label or its ? link to see a short explanation and example. Keyboard users can focus the ? link; Escape dismisses the explanation. The popup remains available while using its Full documentation link. Click ? or Full documentation to open the authenticated HTML field guide in a separate tab/window at `/api/help/fields#FIELD`. Closing it returns to the same catalog card. No hover request, record write or draft discard occurs.
 
 `app/src/field-help.ts` is the shared content/status registry used by both quick help and the complete HTML page. `quickHelp: Ready` means authored brief/example/details are available; it is not a claim of owner content approval. `Missing` shows a friendly placeholder and remains a tracked content item. A test requires a registry entry for every focused inline field plus Tags and complete content for every Ready entry. Unknown future fields must be registered explicitly.

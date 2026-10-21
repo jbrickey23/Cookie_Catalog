@@ -12,8 +12,8 @@ const sections: Record<string,{label:string;fields:Field[]}> = {
 };
 const defaults:Record<string,string>={quantity:"1",origin:"unknown",status:"proposed",use_type:"standard",mirrored:"0"};
 function title(row:Row) { return String(row.name ?? row.label ?? row.design_name ?? row.shape_name ?? row.id); }
-export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolean}) {
-  const [kind,setKind]=useState("shapes"),[rows,setRows]=useState<Row[]>([]),[query,setQuery]=useState("");
+export function Catalog({onSaved,canEdit=true,initialKind="shapes"}:{onSaved:()=>void;canEdit?:boolean;initialKind?:string}) {
+  const [kind,setKind]=useState(initialKind),[rows,setRows]=useState<Row[]>([]),[query,setQuery]=useState("");
   const [lookups,setLookups]=useState<Record<string,Row[]>>({shapes:[],designs:[],locations:[]});
   const [sourceBin,setSourceBin]=useState<string|null>(null);
   const [sizingFields,setSizingFields]=useState(false);
@@ -39,7 +39,7 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     const entries=await Promise.all((["shapes","designs","locations"] as const).map(async section=>[section,await catalogChoices(section)] as const));
     setLookups(Object.fromEntries(entries));
   }
-  useEffect(()=>{setBusy(true);Promise.all([load("shapes",""),choices()]).catch(error=>setStatus(error.message)).finally(()=>setBusy(false));},[]);
+  useEffect(()=>{setBusy(true);Promise.all([load(initialKind,""),choices()]).catch(error=>setStatus(error.message)).finally(()=>setBusy(false));},[]);
   function reset() {setSourceBin(null);setDirty(false);setRevision("");setEditing("");setActiveName("");setValues({...defaults});}
   async function switchSection(section:string) {
     if(dirty&&!window.confirm("Switch sections and discard unsaved form changes?"))return;
@@ -77,9 +77,9 @@ export function Catalog({onSaved,canEdit=true}:{onSaved:()=>void;canEdit?:boolea
     }catch(error){setStatus((error as Error).message);}finally{setBusy(false);}
   }
   return <section>
-    <h2>Catalog records</h2>
-    <p>Add a cutter shape and design, record where a physical cutter lives, then map designs to compatible shapes. Sizes are in millimeters.</p>
-    <label>Browse <select disabled={busy} value={kind} onChange={event=>switchSection(event.target.value)}>{Object.entries(sections).map(([key,section])=><option value={key} key={key}>{section.label}</option>)}</select></label>
+    <h2>{kind==='locations'?'Manage storage locations':'Advanced catalog records'}</h2>
+    <p>Manage named storage locations here. Use Catalog → Add Something for ordinary cutter entry. Advanced record types preserve the full catalog model; measurements are in millimeters.</p>
+    <details><summary>Advanced record types</summary><label>Browse <select disabled={busy} value={kind} onChange={event=>switchSection(event.target.value)}>{Object.entries(sections).map(([key,section])=><option value={key} key={key}>{section.label}</option>)}</select></label></details>
     <form onSubmit={event=>search(event)} style={{margin:"12px 0"}}>
       <label>Search record metadata <input value={query} maxLength={120} disabled={busy} onChange={event=>setQuery(event.target.value)} /></label>{" "}
       <button disabled={busy}>Search</button>
