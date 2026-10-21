@@ -2,6 +2,8 @@
 
 ## Unified Search & Design Details — October 21, 2026
 
+**Verified development application:** `0b62c593829e276b1dfd5192c90926be62725635` passed exact-head CI (193 app / 33 tooling), development build and runtime attestation with migrations 0001–0004. Synthetic Chrome grouped-search/gallery/Add/edit-and-return smoke passed, including a browser-found stale image-count fix and draft-preserving upload retest. [Exact evidence, limitations and owner checklist](docs/Unified_Search_R2_1.md#verified-development-delivery--october-21-2026-pacific). Closing docs have unchanged application source; final-head checks are recorded on PR #7. Preferred-image persistence remains proposed/unapproved, owner/Cris retesting remains pending.
+
 Current CC-TODO-021 / CC-TODO-010 batch: owner-approved one result per producer-specific `shapes.id`, one Search with ownership filters, design-centered details/gallery, and edit/return via existing guarded editors. [Assessment, preferred-image boundary, implementation and acceptance](docs/Unified_Search_R2_1.md) supersedes the previous presentation checkpoint while preserving its evidence and working Add/admin/diagnostics/help behavior.
 
 **Owner-reported accepted scope:** physical Add with quantity/size/location, existing producer selection, saving a design without inventory, and workspace separation function satisfactorily. This report comes from the new handoff; original test date/device and independent Cris evidence were not supplied. Search/results/details/images/edit-and-return require owner retesting of the new candidate; no full R2.1/Cris pass inferred.

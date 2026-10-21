@@ -2,6 +2,8 @@
 
 ## October 21, 2026 — Approved unified producer-design search (CC-TODO-021 / 010)
 
+Implementation `8784ed9` and browser-found upload-refresh correction `0b62c593829e276b1dfd5192c90926be62725635` are remotely committed; final application passed 193 app / 33 tooling CI and runtime-attested synthetic Chrome smoke. [Evidence and concrete preferred-image proposal](docs/Unified_Search_R2_1.md#verified-development-delivery--october-21-2026-pacific). This establishes development validation, not owner/Cris acceptance or migration/production authority.
+
 Owner approves Search → Results → Details: one card per existing stable producer design, separate producers preserved, owned/saved filters based only on physical records, design images and My cutters beneath the selected design. No top-level independent decorating cards or automatic image-to-design promotion. Linked decorating names/tags may discover a producer design only through explicit existing compatibility links. [Assessment and evidence](docs/Unified_Search_R2_1.md).
 
 The owner reports Add/quantity/size/location, existing-design selection, save-without-stock and workspace separation satisfactory; exact test date/device and independent Cris evidence were not supplied. This narrow acceptance is retained, not repeated or promoted to a full search/details/Cris pass. New search/details/images/edit-and-return must be retested.
