@@ -20,6 +20,34 @@
 The earlier help-rail behavior below is historical and superseded by this authorized correction. Existing content readiness remains unchanged. The proposed selected-design focus UX is excluded. Preserve 0005 physical-photo acceptance, CC-TODO-019 backup and CC-TODO-023 recovery gaps; PR #7 conflicts remain open.
 
 
+## Verified development evidence — October 22, 2026
+
+Application **`0ccd4a86844e1fd494e538695f25627078ca0a39`**, tree `151a68cdfdd9f147538cf76cd913c5c7b22dbc50`, published through an expected-head lease on the existing development branch. [Required sqlite CI](https://github.com/JBrickey23/Cookie_Catalog/actions/runs/39809968658/job/119933266857) passed **202/202 application and 33/33 tooling**, schema/11 restore helpers/3 audits/synthetic import/67 Markdown-link-JSON/TypeScript/build. Local full 202 and final focused 34/build passed separately; no assertion skipped. [Cloudflare development build](https://github.com/JBrickey23/Cookie_Catalog/runs/119934360306) **`08285c3e-333e-4ab1-b92e-5d8d4442cae1`**, Worker version `730ab46e-7eb5-4523-b9b5-41e04e277d78`, passed. Authenticated read-only infrastructure independently attested the full application commit, feature branch, Cloudflare build source, Node v24.21.0, checks passed, migrations 0001–0004 only and zero FK violations.
+
+Changed application files: FieldHelp.tsx, MasterDetailWorkspace.tsx (help presentation/context only), styles.css; three interaction test files. Existing help registry/content, Browse/Add/EntryEditor behavior, server/API, dependencies, schema, workflows and cloud configuration are unchanged. Prior Add owner passes remain accepted; proposed selected-design focus work is outside this batch.
+
+### Measured desktop layout
+
+Actual Chrome viewport **1363×936 CSS px**. Read-only DOM `getBoundingClientRect()` before opening Quantity help, while open, and after Escape measured the following. ScrollY stayed 2077 for all three snapshots.
+
+| Control | Left / top / width / height (CSS px, same in all 3 snapshots) | Maximum open/close delta |
+| --- | --- | --- |
+| BIN/location value | 401.109375 / 397.53125 / 314.75 / 40 | 0 px |
+| Quantity value | 401.109375 / 447.125 / 314.75 / 40 | 0 px |
+| Origin value | 401.109375 / 496.71875 / 314.75 / 40 | 0 px |
+| Reference-size value | 401.109375 / 546.3125 / 314.75 / 40 | 0 px |
+| Detail panel | 114 / -1353.90625 / 641.65625 / 2287.984375 | 0 px |
+
+The popup was a fixed BODY child at left 262.578125 / top 485.53125 / width 304 / height 148.484375, inside the viewport. These coordinates, not screenshot appearance alone, support desktop layout stability. [Raw sanitized measurements and interaction observations](evidence/Context_Help_20261022.json) · [Actual synthetic-only overlay screenshot](evidence/Context_Help_20261022.jpg).
+
+### Actual browser interactions and limits
+
+- Native pointer placement used zero-distance scroll at the visible trigger, without a click or trigger focus. Clean trial: hovered/closed at 40 ms; early departure at 99 ms kept it closed. New sustained trial: closed at 29 ms, visible at **1537 ms** from pointer-command invocation (includes dispatch/observation latency). Entering popup kept it open without trigger focus; leaving both dismissed. Exact 1500 ms boundary and 120 ms transit grace also passed deterministic tests.
+- Immediate focus/activation opened help. Tab entered Close help, then Full documentation; forward Tab left the popup to Change Quantity and dismissed it. Outside click and Escape each produced no popup. The existing authenticated full guide opened at `/api/help/fields#quantity` and was read, then closed.
+- On existing TEST A cutter (slot TEST Visual Add 20261021, 63.5 mm), a temporary quantity **7** survived help/full-guide and Administration → Catalog switching. Workspace change removed help. Cancel restored persisted **2**; no Save, database write, attachment/original change, backup/restore/schedule action or production operation was performed.
+- **Actual narrow-viewport browser acceptance is unverified.** The supplied browser API exposes no resize/viewport setting; documented Ctrl+plus / Ctrl+equal inputs left measured dimensions unchanged at 1363×936. No unsupported browser API, dependency, app CSS override or fake screenshot was used. Narrow 320×200 clamp/flip/height behavior is unit-tested with controlled rectangles; that is not a substitute for real narrow layout measurements. Owner should repeat the same adjacent-control check in a narrow window. This coverage gap prevents claiming the entire requested browser matrix passed.
+- Owner corrected-help acceptance and independent Cris acceptance remain pending; Issue #13 stays open. PR #7 conflicts and release/0005/019/023 obligations remain. No production/merge readiness claim. Closing documentation/evidence changes no application source; final-head CI/build/runtime state is recorded on PR #7 without a self-referential commit loop.
+
 ## Earlier R2 behavior — Issue #13 / CC-TODO-021 (historical)
 
 The [Contextual Workspace](Contextual_Workspace_R2_1.md) implements a 1.5-second initial pointer dwell. Leaving, Escape, field/context changes and unmount cancel pending help. Keyboard focus and an ordinary explicit ? click reveal quick help immediately; Full documentation (or modified ? link) retains the authenticated separate guide. Existing help-rail dismissal and field drafts remain. Deterministic timer tests cover the boundary/cancellation and intentional access; final browser/owner evidence is tracked in the workspace checkpoint. Earlier immediate-hover/click wording below describes the original release implementation.

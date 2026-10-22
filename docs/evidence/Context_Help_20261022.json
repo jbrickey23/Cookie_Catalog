@@ -1,0 +1,270 @@
+{
+  "datePacific": "2026-10-22",
+  "applicationCommit": "0ccd4a86844e1fd494e538695f25627078ca0a39",
+  "environment": "development",
+  "desktop": {
+    "before": {
+      "controls": {
+        "Change BIN / location": {
+          "bottom": 437.53125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 397.53125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 397.53125
+        },
+        "Change Origin": {
+          "bottom": 536.71875,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 496.71875,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 496.71875
+        },
+        "Change Quantity": {
+          "bottom": 487.125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 447.125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 447.125
+        },
+        "Change Reference size (mm)": {
+          "bottom": 586.3125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 546.3125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 546.3125
+        }
+      },
+      "panel": {
+        "bottom": 934.078125,
+        "height": 2287.984375,
+        "left": 114,
+        "right": 755.65625,
+        "top": -1353.90625,
+        "width": 641.65625,
+        "x": 114,
+        "y": -1353.90625
+      },
+      "popup": null,
+      "popupParent": null,
+      "popupPosition": null,
+      "viewport": {
+        "height": 936,
+        "scrollY": 2077,
+        "width": 1363
+      }
+    },
+    "during": {
+      "controls": {
+        "Change BIN / location": {
+          "bottom": 437.53125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 397.53125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 397.53125
+        },
+        "Change Origin": {
+          "bottom": 536.71875,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 496.71875,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 496.71875
+        },
+        "Change Quantity": {
+          "bottom": 487.125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 447.125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 447.125
+        },
+        "Change Reference size (mm)": {
+          "bottom": 586.3125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 546.3125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 546.3125
+        }
+      },
+      "panel": {
+        "bottom": 934.078125,
+        "height": 2287.984375,
+        "left": 114,
+        "right": 755.65625,
+        "top": -1353.90625,
+        "width": 641.65625,
+        "x": 114,
+        "y": -1353.90625
+      },
+      "popup": {
+        "bottom": 634.015625,
+        "height": 148.484375,
+        "left": 262.578125,
+        "right": 566.578125,
+        "top": 485.53125,
+        "width": 304,
+        "x": 262.578125,
+        "y": 485.53125
+      },
+      "popupParent": "BODY",
+      "popupPosition": "fixed",
+      "viewport": {
+        "height": 936,
+        "scrollY": 2077,
+        "width": 1363
+      }
+    },
+    "after": {
+      "controls": {
+        "Change BIN / location": {
+          "bottom": 437.53125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 397.53125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 397.53125
+        },
+        "Change Origin": {
+          "bottom": 536.71875,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 496.71875,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 496.71875
+        },
+        "Change Quantity": {
+          "bottom": 487.125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 447.125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 447.125
+        },
+        "Change Reference size (mm)": {
+          "bottom": 586.3125,
+          "height": 40,
+          "left": 401.109375,
+          "right": 715.859375,
+          "top": 546.3125,
+          "width": 314.75,
+          "x": 401.109375,
+          "y": 546.3125
+        }
+      },
+      "panel": {
+        "bottom": 934.078125,
+        "height": 2287.984375,
+        "left": 114,
+        "right": 755.65625,
+        "top": -1353.90625,
+        "width": 641.65625,
+        "x": 114,
+        "y": -1353.90625
+      },
+      "popup": null,
+      "popupParent": null,
+      "popupPosition": null,
+      "viewport": {
+        "height": 936,
+        "scrollY": 2077,
+        "width": 1363
+      }
+    },
+    "maxDeltaOpenPx": 0,
+    "maxDeltaClosePx": 0
+  },
+  "hover": {
+    "earlySample": {
+      "elapsedMs": 40,
+      "hovered": true,
+      "notes": 0
+    },
+    "earlyCancel": {
+      "elapsedMs": 99,
+      "notes": 0
+    },
+    "beforeOpen": {
+      "elapsedMs": 29,
+      "notes": 0
+    },
+    "afterOpen": {
+      "elapsedMs": 1537,
+      "notes": 1
+    },
+    "transit": {
+      "notes": 1,
+      "popupHovered": true,
+      "triggerFocused": false
+    },
+    "pointerDeparture": {
+      "notes": 0
+    },
+    "method": "Native pointer placement using zero-distance scroll; no click or trigger focus. Elapsed times start at API invocation; input dispatch latency is included."
+  },
+  "keyboard": {
+    "keyboardEnter": {
+      "active": "Close help",
+      "notes": 1
+    },
+    "keyboardLink": {
+      "active": "Full documentation",
+      "notes": 1
+    },
+    "keyboardExit": {
+      "active": "Change Quantity",
+      "notes": 0
+    },
+    "outsideResult": {
+      "notes": 0
+    },
+    "escapeResult": {
+      "notes": 0
+    }
+  },
+  "draft": {
+    "draftAfterDoc": "7",
+    "helpAfterWorkspace": 0,
+    "draftAfterWorkspace": "7",
+    "quantityAfterCancel": "2",
+    "writeAction": "None; TEST draft staged and canceled"
+  },
+  "documentationUrl": "https://cookie-catalog-dev.j-brickey.workers.dev/api/help/fields#quantity",
+  "narrowViewport": {
+    "status": "unverified in actual browser",
+    "reason": "Browser API exposes no resize/viewport control. Ctrl+plus and Ctrl+equal did not change the measured 1363x936 viewport; no hidden APIs or dependencies used.",
+    "automated": "320x200 placement clamps/flips/max-height verified in DOM tests; not real layout evidence"
+  },
+  "acceptance": {
+    "ownerCorrectedHelp": "pending",
+    "cris": "pending",
+    "issue13": "keep open"
+  }
+}
