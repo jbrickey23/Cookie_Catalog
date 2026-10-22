@@ -240,3 +240,12 @@ input[aria-invalid="true"] {outline:2px solid #b12d24;}
 .design-picker-search input {flex:1;min-width:10rem}
 .shape-picker .cutter-grid {margin:1rem 0;grid-template-columns:repeat(auto-fit,minmax(min(235px,100%),1fr))}
 .shape-picker .design-card .view-cutter {min-height:44px;width:100%}
+
+.selected-design-summary {margin:1rem 0}
+.selected-design-summary .design-card {display:flex;align-items:center;gap:.75rem;padding:.5rem;box-shadow:none}
+.selected-design-summary .cutter-image {width:88px;height:88px;flex:none}
+.selected-design-summary .cutter-image img {width:100%;height:100%;object-fit:contain}
+.selected-design-summary .cutter-card-body {padding:.25rem;min-width:0}
+.selected-design-summary .cutter-card-body h3 {margin:0;font-size:1rem}
+.selected-design-summary .cutter-card-body p {margin:.25rem 0}
+.selected-design-summary>button {margin-top:.5rem;min-height:44px}

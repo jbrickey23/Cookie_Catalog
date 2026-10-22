@@ -1,5 +1,16 @@
 # Context help — first-release optional enhancement
 
+## Owner acceptance and 1200 ms refinement — October 22, 2026
+
+The owner retested verified development `c501b677fe327fdb607613fd7d11b00070e44bfa` and reports **dismissal PASS, layout stability PASS, general interaction PASS**. The dwell feels slightly too long. These are owner-reported results, not Cris, production, or new narrow-viewport measurements. Previous pending-owner statements for those three behaviors are superseded; the narrow-browser gap remains accurately recorded.
+
+Approved bounded refinement: **1200 ms initial hover**, replacing 1500 ms. FieldHelp's only behavior-code change is the dwell constant; immediate intentional focus/activation, 120 ms pointer transit, departure/outside/Escape/Close dismissal, full documentation, fixed positioning and draft preservation stay unchanged. Timer tests assert no popup at 1199 ms and open at 1200 ms, with prior interaction regressions retained. No help redesign/content/dependency/navigation/persistence change.
+
+Local focused 36/build passed; new-timing remote/development/browser verification is pending publication. Keep Issue #13 open and traceable for shortened timing acceptance and the existing real narrow-viewport coverage gap. The owner's three passes do not authorize merging PR #7 or production. [Selected-design batch/evidence](Unified_Search_R2_1.md#selected-design-focus-and-help-dwell--october-22-2026).
+
+Earlier 1500 ms implementation and measured 1537 ms browser observations below are retained historical evidence; they must not be presented as validation of the new 1200 ms dwell.
+
+
 ## Dismissal and layout correction — October 22, 2026
 
 **Owner observations:** R2 hover delay approximately 1–3 seconds is acceptable. Help stays open after moving/clicking elsewhere and opening help shifts nearby fields. These are owner-reported defects, not new automated or Cris evidence. Keep Issue #13 open for owner verification after the correction; no new task/decision ID.

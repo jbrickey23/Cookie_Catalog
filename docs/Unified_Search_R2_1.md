@@ -1,5 +1,24 @@
 # R2.1 Unified Search & Design Details — CC-TODO-021 / CC-TODO-010
 
+## Selected design focus and help dwell — October 22, 2026
+
+Owner approves a focused second stage for **Add Something → I have a cutter** under existing 021/010, plus Issue #13 dwell 1500 → **1200 ms**. Existing producer-design identity and physical relationships are unchanged. The current owner-reported help acceptance is recorded in [Context help](Context_Help.md#owner-acceptance-and-1200-ms-refinement--october-22-2026); Cris and this new candidate's owner acceptance remain separate.
+
+### Assessment and implementation
+
+The current picker already uses unified `/api/browse` and DesignCard, but EntryEditor left the entire picker visible after selection and showed extra reference details beside physical inputs. Reuse it, do not add a query/model/gallery system. DesignSearchPicker passes its existing image-bearing result alongside the stable ID. EntryEditor still reads the current reference/revision through the existing API and saves inventory through the existing guarded physical path.
+
+- Before selection: the same visual producer results, status, image fallback, pagination, Reset and Use this design. No result-per-physical-record duplication.
+- After selection: picker/search controls are hidden, not unmounted. A compact shared DesignCard shows one representative image/fallback, current name/producer/status and Change design; no carousel or full gallery. Shared source/tag/reference-edit panels are omitted only for this existing-design Add stage. **Your physical cutter** contains the existing physical fields/optional sections and Save/Cancel.
+- Change design returns to the existing query/results while retaining the physical draft and selected photograph in the mounted form. Return to my cutter, or choosing the same design, preserves everything without a destructive reset. Choosing a different design requires explicit confirmation naming physical details and selected photograph; refusal or failed fetch keeps the old draft. Only successful confirmed replacement resets it, including the native file chooser, preventing an old photograph being silently attached to a new design.
+- Cancel of this new physical Add discards the unsaved creation and returns to the retained picker query. Save opens the persisted normal record through the existing parent. Existing Add-from-details, edit, create-new-design and design-only behavior remain. No schema, persistence, permissions, maintenance/revision protection, query/server/write handler, gallery elsewhere or dependency change.
+- Help code changes only `HELP_HOVER_MS=1200`; its accepted overlay, 120 ms transit, focus/keyboard, dismissal, documentation and draft behavior are retained.
+
+Local targeted **36/36 interaction regressions and TypeScript/build passed**. Tests cover visible picker, hidden results/compact summary and fallback, physical form/focus, Change/query/same-design return, quantity/size/location/notes/file preservation, refused/approved replacement, Cancel and one existing-design physical POST with no attachment/reference POST. Existing D1 shared-design/multiple-cutter and no-duplicate tests remain required. Exact **1199 ms closed / 1200 ms open** timer assertions retain dismissal/position/draft tests. Full local regression passed 204/204 app and 33/33 tooling, schema/11 restore helpers/3 audits/synthetic import/67 documentation checks. Required remote/development/browser results remain pending publication at this checkpoint.
+
+Owner retest: recognize/select a TEST design, confirm only compact summary + Your physical cutter, stage physical values, Change and return safely, decline a different-design replacement, then Cancel or Save a synthetic record and reopen it. Try shortened help and its accepted dismissals. Actual narrow viewport remains unverified unless a supported browser capability is available; do not turn prior owner layout PASS into invented narrow-device measurements. No Cris, merge or production pass.
+
+
 ## Visual Add search closeout — October 21, 2026
 
 ### Owner-reported functional acceptance

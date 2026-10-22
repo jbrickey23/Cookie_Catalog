@@ -16,8 +16,8 @@ test('only the question mark starts dwell; early departure cancels; pointer popu
  t.mock.timers.enable({apis:['setTimeout']});
  try{
   render(help());fireEvent.mouseEnter(screen.getByText('Slot',{exact:true}));act(()=>t.mock.timers.tick(HELP_HOVER_MS));assert.equal(popup(),null);
-  fireEvent.mouseEnter(trigger());act(()=>t.mock.timers.tick(1499));assert.equal(popup(),null);fireEvent.mouseLeave(trigger());act(()=>t.mock.timers.tick(2000));assert.equal(popup(),null);
-  fireEvent.mouseEnter(trigger());act(()=>t.mock.timers.tick(1500));assert(popup());
+  fireEvent.mouseEnter(trigger());act(()=>t.mock.timers.tick(1199));assert.equal(popup(),null);fireEvent.mouseLeave(trigger());act(()=>t.mock.timers.tick(2000));assert.equal(popup(),null);
+  fireEvent.mouseEnter(trigger());act(()=>t.mock.timers.tick(1200));assert(popup());
   fireEvent.mouseLeave(trigger());act(()=>t.mock.timers.tick(HELP_TRANSIT_MS-1));assert(popup());fireEvent.mouseEnter(popup()!);act(()=>t.mock.timers.tick(1));assert(popup());
   fireEvent.mouseLeave(popup()!);act(()=>t.mock.timers.tick(HELP_TRANSIT_MS));assert.equal(popup(),null);act(()=>t.mock.timers.tick(2000));assert.equal(popup(),null);
  }finally{cleanup();t.mock.timers.reset();}

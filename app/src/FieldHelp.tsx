@@ -2,7 +2,7 @@ import React,{createContext,useCallback,useContext,useEffect,useId,useLayoutEffe
 import {createPortal} from 'react-dom';
 import {helpForField} from './field-help';
 export const FieldHelpContext=createContext<{active:string|null;show:React.Dispatch<React.SetStateAction<string|null>>}|null>(null);
-export const HELP_HOVER_MS=1500;
+export const HELP_HOVER_MS=1200;
 export const HELP_TRANSIT_MS=120;
 export function FieldHelp({field,children}:{field:string;children:React.ReactNode}){
  const help=helpForField(field),[localOpen,setLocalOpen]=useState(false),tip=useId(),shared=useContext(FieldHelpContext);

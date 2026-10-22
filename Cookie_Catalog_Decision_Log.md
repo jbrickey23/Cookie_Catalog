@@ -1,5 +1,14 @@
 # Cookie_Catalog — Decision Log
 
+## Selected design focus and 1.2-second help — October 22, 2026
+
+Owner authorizes this bounded CC-TODO-021 / CC-TODO-010 / Issue #13 refinement on existing PR #7. After existing-design selection, hide the mounted visual picker, show one compact design summary and **Your physical cutter**. Change design preserves query and draft; only confirmed replacement discards physical details/photo. Same-design return preserves values. No new model/query/API, preferred-image field, dependency, schema, gallery change elsewhere, conflict resolution or production authority.
+
+Owner reports dismissal, layout stability and general help interaction **PASS** against `c501b677fe327fdb607613fd7d11b00070e44bfa`; asks for slightly shorter dwell. Device/narrow-viewport evidence was not supplied. Approved dwell is now **1,200 ms**; prior 1,500 ms evidence remains history, not the current target. New timing and selected-design flow need their own validation/owner acceptance. [Current UX evidence](docs/Unified_Search_R2_1.md#selected-design-focus-and-help-dwell--october-22-2026) · [Help acceptance/timing](docs/Context_Help.md#owner-acceptance-and-1200-ms-refinement--october-22-2026).
+
+Local 204/204 application tests, 36 focused regressions, 33 tooling, schema/11 restore helpers/3 audits/synthetic import, docs checks and TypeScript/build passed; exact remote CI/deployment/runtime/browser evidence remains pending publication. Issue #13 stays open for the new timing and accurate narrow-browser coverage. Preserve five October 21 owner passes, Cris pending, default-image/0005/019/023 gates, PR #7 conflicts, isolated draft #12 and unmerged #14. No new IDs; reserved 025; next unused task 026 / decision 023. Immediate continuation: validate/deploy development, owner retest, then independent Cris. No production or merge approval.
+
+
 ## Context-help dismissal and layout — October 22, 2026
 
 Owner reports the existing 1–3 second hover timing is acceptable, but sticky help and shifting fields are defects. Issue #13 / CC-TODO-021 authorizes a bounded FieldHelp correction on PR #7: retain 1,500 ms dwell/content and existing workflows, use an anchored overlay, dismiss on pointer/focus departure/outside click/Escape, and verify actual desktop/narrow layout coordinates. No Add selection/focus redesign, persistence/API, dependency, cloud configuration, production or merge authority.
