@@ -93,12 +93,12 @@ test('intentional field help links to full HTML help, tracks gaps and preserves 
  }finally{cleanup();globalThis.fetch=original;}
 });
 
-test('focused context help occupies a separate left rail without covering or losing the draft',async()=>{
+test('focused context help floats outside the unchanged workspace without losing the draft',async()=>{
  const original=globalThis.fetch;
  globalThis.fetch=async input=>{const path=String(input);return Response.json(path.startsWith('/api/browse')?{items:[{id:'c1',shape_id:'s1',name:'TEST Star',record_kind:'physical'}],total:1,nextOffset:null}:path.startsWith('/api/attachments')?{attachments:[]}:path.endsWith('/vocabulary')?vocabulary:entry());};
  try{
   render(React.createElement(Browse,{canEdit:true,canDelete:true}));fireEvent.click(await screen.findByRole('button',{name:'View TEST Star'}));fireEvent.click(await screen.findByRole('button',{name:'Change Name'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST rail draft'}});const trigger=screen.getByRole('link',{name:'Help for BIN / location'});fireEvent.focus(trigger);
-  const rail=screen.getByRole('complementary',{name:'Context help'}),card=screen.getByLabelText('Viewing TEST Star'),workspace=card.closest('.browse-workspace')!;assert.equal(workspace.firstElementChild,rail);assert.equal(card.contains(rail),false);assert(workspace.classList.contains('with-help'));fireEvent.mouseLeave(trigger.closest('.field-help-label')!);assert(screen.getByRole('note',{name:'BIN / location quick help'}));assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST rail draft');assert.equal(within(rail).getByRole('link',{name:'Full documentation'}).getAttribute('href'),'/api/help/fields#bin');fireEvent.click(within(rail).getByRole('button',{name:'Close help'}));assert.equal(screen.queryByRole('complementary',{name:'Context help'}),null);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST rail draft');
+  const card=screen.getByLabelText('Viewing TEST Star'),workspace=card.closest('.browse-workspace')!,tip=screen.getByRole('note',{name:'BIN / location quick help'});assert.equal(card.contains(tip),false);assert.equal(tip.parentElement,document.body);assert.equal(workspace.classList.contains('with-help'),false);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST rail draft');assert.equal(within(tip).getByRole('link',{name:'Full documentation'}).getAttribute('href'),'/api/help/fields#bin');fireEvent.click(within(tip).getByRole('button',{name:'Close help'}));assert.equal(screen.queryByRole('note'),null);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST rail draft');
  }finally{cleanup();globalThis.fetch=original;}
 });
 

@@ -1,5 +1,12 @@
 # Cookie_Catalog — Decision Log
 
+## Context-help dismissal and layout — October 22, 2026
+
+Owner reports the existing 1–3 second hover timing is acceptable, but sticky help and shifting fields are defects. Issue #13 / CC-TODO-021 authorizes a bounded FieldHelp correction on PR #7: retain 1,500 ms dwell/content and existing workflows, use an anchored overlay, dismiss on pointer/focus departure/outside click/Escape, and verify actual desktop/narrow layout coordinates. No Add selection/focus redesign, persistence/API, dependency, cloud configuration, production or merge authority.
+
+Source correction is implemented. Local full regression passed 202/202 application tests; final focused keyboard/dismissal/positioning regressions passed 34/34, TypeScript/build, 33/33 tooling, schema/11 restore helpers/3 audits/synthetic import and 67 documentation checks passed. Exact remote CI/development/runtime/browser verification remains pending publication at this checkpoint. [Root cause, implementation and current evidence](docs/Context_Help.md#dismissal-and-layout-correction--october-22-2026). Issue #13 remains open until owner verification. Preserve the five October 21 owner functional passes, independent Cris pending, default-image deferral, 0005/019/023 and unresolved #7 conflicts. No duplicate IDs; reserved 025, next unused task 026 / decision 023. Immediate continuation: validate development help, then owner retest; selected-design focus improvement stays outside this batch.
+
+
 ## Visual Add search and owner acceptance — October 21, 2026
 
 The owner reports **PASS** for five functional checks against verified development candidate `ebcc415383a9dfde81cd4d1dfed98b0390ad75b0`: unified producer results/ownership filters; gallery/My cutters; physical edit → Save → same design/results; unsaved Cancel/navigation draft protection; understandable existing Add workflows. This is owner-reported functional acceptance on October 21, not Cris, automated or production acceptance, and not merge approval.

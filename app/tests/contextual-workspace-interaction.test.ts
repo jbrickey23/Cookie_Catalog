@@ -23,7 +23,7 @@ test('help waits 1500 ms, cancels transit/Escape/context/unmount and supports im
  try {
   const view=render(React.createElement(FieldHelp,{field:'Slot'},'Slot'));
   const trigger=()=>screen.getByRole('link',{name:/Help for/});
-  const wrapper=()=>trigger().closest('.field-help-label')!;
+  const wrapper=()=>trigger();
   fireEvent.mouseEnter(wrapper());act(()=>t.mock.timers.tick(HELP_HOVER_MS-1));assert.equal(screen.queryByRole('note'),null);
   fireEvent.mouseLeave(wrapper());act(()=>t.mock.timers.tick(1));assert.equal(screen.queryByRole('note'),null);
   fireEvent.mouseEnter(wrapper());act(()=>t.mock.timers.tick(HELP_HOVER_MS));assert(screen.getByRole('note'));assert.equal(screen.getByRole('link',{name:'Full documentation'}).getAttribute('href'),'/api/help/fields#slot');

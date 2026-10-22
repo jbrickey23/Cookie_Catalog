@@ -167,18 +167,11 @@ input[type=search] {font:inherit;padding:.7rem;border:1px solid #9cac9e;border-r
 
 .field-help-label {position:relative;display:inline-flex;align-items:baseline;gap:.35rem;max-width:100%}
 .field-help-trigger {display:inline-grid;place-items:center;flex:none;width:1.3rem;height:1.3rem;border:1px solid #829786;border-radius:50%;color:#365944;text-decoration:none;font-size:.8rem;font-weight:650}
-.field-help-popover {position:absolute;z-index:4;top:100%;left:0;width:19rem;max-width:calc(100vw - 4.5rem);padding:.8rem;border:1px solid #829786;border-radius:8px;background:#fff;box-shadow:0 4px 16px #233e3126;font-size:.85rem;line-height:1.45;font-weight:400}
+.field-help-popover {position:fixed;z-index:1000;box-sizing:border-box;width:19rem;max-width:calc(100vw - 16px);overflow:auto;padding:.8rem;border:1px solid #829786;border-radius:8px;background:#fff;box-shadow:0 4px 16px #233e3126;font-size:.85rem;line-height:1.45;font-weight:400}
+.field-help-popover .help-close {float:right;margin:0 0 .25rem .5rem;padding:.15rem .45rem;min-width:32px;min-height:32px;font-size:1rem}
 .field-help-popover>span {display:block;margin-bottom:.5rem}
 .field-help-popover a {color:#1769aa;display:inline-block;padding:.2rem 0}
 @media(max-width:760px){.field-help-trigger{width:1.6rem;height:1.6rem}}
-
-/* Quick help has its own left rail so it never covers focused values. */
-.browse-workspace.expanded.with-help {grid-template-columns:minmax(10rem,13rem) minmax(0,1.4fr) minmax(14rem,1fr)}
-.field-help-rail {position:sticky;top:1rem;align-self:start;min-width:0;padding:.85rem;background:#fff;border:1px solid #829786;border-radius:10px;font-size:.85rem;line-height:1.5;box-sizing:border-box}
-.field-help-heading h3 {font-size:1rem;margin:0 0 .5rem}
-.field-help-heading button {font-size:.8rem;padding:.35rem .5rem}
-.field-help-rail a {color:#1769aa;display:inline-block;padding:.25rem 0}
-@media(max-width:760px){.browse-workspace.expanded.with-help{grid-template-columns:1fr}.field-help-rail{position:static}}
 
 /* Housekeeping: visible environment and account/recovery controls. */
 .app-header {display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
@@ -223,9 +216,7 @@ input[aria-invalid="true"] {outline:2px solid #b12d24;}
 .workspace-return {padding:.8rem;background:#f0f4ef;}
 @media(max-width:600px){.workspace-nav button,.task-nav button {flex:1 1 130px;}.task-cards button{min-height:100px;}.record-section{padding:.5rem;}}
 .task-add .browse-workspace.expanded {grid-template-columns:minmax(0,1fr);}
-.task-add .browse-workspace.expanded.with-help {grid-template-columns:minmax(160px,.4fr) minmax(0,1fr);}
 .task-add .browse-results {display:none;}
-@media(max-width:760px){.task-add .browse-workspace.expanded.with-help{grid-template-columns:minmax(0,1fr);}}
 
 /* Unified producer-design cards: image navigation never sits beneath a card overlay. */
 .browse-workspace .design-card .view-cutter {position:static;inset:auto;opacity:1;width:auto;height:auto;margin:.5rem 0 0;padding:.45rem .7rem;border:1px solid #9cac9e;}
