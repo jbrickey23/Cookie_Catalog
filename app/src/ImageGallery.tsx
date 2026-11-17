@@ -21,3 +21,15 @@ export function ImageGallery({files,label}:{files:GalleryFile[];label:string}){
   {images.length>1&&<nav aria-label={label+' navigation'}><button onClick={()=>setIndex(i=>(i+images.length-1)%images.length)}>Previous image</button><span role="status" aria-live="polite">Image {Math.min(index+1,images.length)} of {images.length}</span><button onClick={()=>setIndex(i=>(i+1)%images.length)}>Next image</button></nav>}
  </section>;
 }
+
+
+/** All associated photos are exposed together. No caption/download/carousel controls. */
+export function ImageThumbnails({files,label}:{files:GalleryFile[];label:string}){
+ const images=files.filter(isImage);
+ return <section className="image-thumbnail-strip" aria-label={label}>{images.length?images.map(file=><Thumbnail key={file.id} file={file}/>):<p>No photographs attached.</p>}</section>;
+}
+function Thumbnail({file}:{file:GalleryFile}){
+ const [failed,setFailed]=useState(false);
+ const kind=file.photoKind==='physical'?'Physical cutter photograph':'Design photograph';
+ return <ImageWindowLink id={file.id} filename={file.filename}>{file.available&&!failed?<img loading="lazy" src={'/api/attachments/'+encodeURIComponent(file.id)+'?view=image'} alt={kind+': '+file.filename} title={kind+': '+file.filename} onError={()=>setFailed(true)}/>:<span role="img" aria-label={kind+' unavailable: '+file.filename}>Image unavailable</span>}</ImageWindowLink>;
+}

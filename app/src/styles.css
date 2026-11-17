@@ -274,3 +274,24 @@ input[aria-invalid="true"] {outline:2px solid #b12d24;}
 
 .browse-results {container-type:inline-size;}
 @container (max-width:700px){.browse-workspace .catalog-result-card,.browse-workspace:not(.expanded) .catalog-result-card,.browse-workspace.expanded .catalog-result-card{grid-template-columns:100px minmax(0,1fr);grid-template-areas:"image information" "inventory inventory" "photos photos";}.catalog-result-card .representative-image{width:100px;height:100px;}.card-photographs .design-gallery figure{flex-wrap:wrap;}}
+
+/* Owner correction: all photos visible, and four reference rows in the center. */
+.image-thumbnail-strip {display:flex;flex-wrap:wrap;align-items:flex-start;gap:.55rem;margin:.5rem 0;}
+.image-thumbnail-strip .image-window-link {display:flex;width:80px;height:80px;align-items:center;justify-content:center;border:1px solid #dce1d8;border-radius:8px;overflow:hidden;}
+.image-thumbnail-strip img {display:block;width:100%;height:100%;object-fit:contain;}
+.image-thumbnail-strip [role=img] {font-size:.75rem;padding:.25rem;}
+.image-thumbnail-strip .image-window-link:focus-visible {outline:3px solid #1769aa;outline-offset:3px;}
+.representative-image>a {display:block;width:100%;height:100%;}
+.card-reference-table {width:100%;table-layout:fixed;border-collapse:collapse;}
+.card-reference-table td {padding:.3rem 0;border-bottom:1px solid #edf0e9;}
+.card-reference-table .inline-field {display:grid;grid-template-columns:5.5rem minmax(0,1fr);gap:.3rem;align-items:start;margin:0;}
+.card-reference-table .inline-field label {font-weight:600;}
+.card-reference-table .inline-value {min-width:0;overflow-wrap:anywhere;text-align:left;padding:.25rem;background:transparent;border-color:transparent;white-space:pre-wrap;}
+.card-reference-table input,.card-reference-table textarea {width:100%;min-width:0;box-sizing:border-box;}
+.card-reference-table .field-error {grid-column:1/-1;}
+.card-reference-table .source-window-link {display:inline-block;margin-left:5.8rem;font-size:.85rem;}
+.reference-card-editor .pending-save {flex-wrap:wrap;gap:.4rem;}
+.reference-card-editor .draft-hint {font-size:.8rem;flex-basis:100%;}
+.reference-card-editor>p:empty {display:none;}
+.inline-editor-section {margin:.75rem 0;}
+.card-reference-table td,.card-reference-table .inline-field>span {overflow-wrap:anywhere;white-space:pre-wrap;}

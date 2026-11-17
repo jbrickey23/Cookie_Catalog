@@ -1,5 +1,14 @@
 # Cookie_Catalog — Decision Log
 
+## Result-card thumbnails and inline reference details — November 17, 2026 Pacific
+
+Owner requested a bounded correction against development `2e65b337b8cec9adf11732d272899d76b2f93899`: show **all image thumbnails together**, each opening its existing read-only image window; remove result-card photo captions/download links/carousel buttons/counters; rename inventory to **Cutters in Inventory**; show **Name, Producer, Link, Notes** as an always-visible inline-edit table in the card's center. The supplied screenshots are owner observations/placement instructions, not acceptance of this correction.
+
+[Current implementation, draft safeguards, validation and retest](docs/R2_1_Cris_Retest_20261116.md#thumbnail-and-inline-table-correction--november-17-2026). Reuse ImageWindowLink and the same revision/origin/maintenance/recovery-protected EntryEditor. All thumbnail API pages load into one strip, with partial-load errors reported. No new endpoint, write model, dependency, schema, role change or image-default selection. The former Additional details/source/Tags design disclosures are now always visible in the opened design; other existing catalog/physical workflows remain. Saving a card updates it in place, preserving other drafts; leaving results requires explicit discard and waits for busy saves.
+
+Current-head validation/publication evidence is recorded on PR #7 after verification. Actual authenticated browser/render measurements and owner/Cris acceptance for this correction are **not claimed**; the prior worker browser reached Access sign-in and this batch does not repeat the blocked authentication flow. Earlier passing CI and owner results retain their original source/provenance. Existing development deployment is authorized; production, migration 0005 activation, private roles/Access, PR merges/conflict resolution and paid resources remain excluded. Pending 0005/019/023, independent narrow/browser/Cris checks, default-image persistence and draft #12 limitations remain. No new IDs (025 reserved; next task 026 / decision 023). Stop/checkpoint if the owner reports 25% weekly usage; no quota telemetry is available.
+
+
 ## R2.1 front-of-catalog corrections — November 16, 2026 Pacific
 
 New owner-authorized CC-TODO-021 / CC-TODO-010 batch: imperial UI with exact metric preservation; separate Viewer/Owner/Admin capabilities (owner explicitly approved distinct Admin after audit found the prior equivalence); simplified search controls; annotated result-card placement; existing development deployment only. No PR conflict resolution, main/#7/#12 merge, production change, migration activation, private membership/Access edit or real-data testing.
