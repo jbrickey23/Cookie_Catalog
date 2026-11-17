@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import {test} from 'node:test';
+import {test,beforeEach} from 'node:test';
 import React from 'react';
 import {JSDOM} from 'jsdom';
 const dom=new JSDOM('<!doctype html><html><body></body></html>',{url:'https://catalog.test'});
 Object.assign(globalThis,{window:dom.window,document:dom.window.document,HTMLElement:dom.window.HTMLElement,Node:dom.window.Node,MutationObserver:dom.window.MutationObserver,IS_REACT_ACT_ENVIRONMENT:true,requestAnimationFrame:(fn:()=>void)=>{fn();return 0;}});
+beforeEach(()=>{window.history.replaceState(null,'','/');window.scrollTo=()=>{};});
 Object.defineProperty(globalThis,'navigator',{value:dom.window.navigator,configurable:true});
 const {render,screen,fireEvent,waitFor,within,cleanup}=await import('@testing-library/react');
 const {CutterCard}=await import('../src/DesignCard');

@@ -1,5 +1,13 @@
 # Cookie Catalog — current context
 
+## Native browser Back/Forward correction — November 17, 2026 Pacific
+
+Owner reports that browser/mouse Back does nothing after opening a design and explicitly requires normal browser navigation. Baseline PR #7 `28b81368da64c077b34038d680374e5e547a84ae`. Root cause: design opening changed React state without a history entry or popstate restoration. Implemented a scoped native History API hook for design/results navigation, preserving search/filter/page and result position, returning focus, and sharing the existing dirty/busy navigation guard. No router dependency, API, schema, private configuration or production change. Initial direct links close to results safely; pending startup reads cannot reopen a design after Back. Browser Back and Forward do not replay writes or serialize unsaved drafts.
+
+[Behavior, verification limits and owner retest](docs/R2_1_Cris_Retest_20261116.md#native-browser-backforward--november-17-2026). Full local run: 217 application and 33 tooling tests pass, schema smoke/11 restore/3 audit/synthetic import, 69-document link/JSON check and TypeScript/build; final four history interactions pass after return-focus/history-write refinements. Exact remote CI/development build evidence is added to PR #7 once verified. Browser control returned **not allowed** this session, so actual mouse/keyboard/device acceptance and live runtime-source attestation remain unverified; do not retry the same blocked browser path or call DOM simulation live acceptance.
+
+Remain on existing 021/010, no new IDs. Preserve prior owner acceptance provenance and open Cris/narrow-browser/0005/019/023, default-image and #12 limitations. PR #7 conflicts, merge/release and production approval are untouched. Existing development-only workflow is authorized. Immediate next step: owner refreshes development, searches, opens a design, uses mouse/browser Back then Forward, and checks dirty-draft refusal. Weekly quota is not observable; stop/checkpoint on a reported 25% boundary.
+
 ## Result-card thumbnails and inline reference details — November 17, 2026 Pacific
 
 Owner requested a bounded correction against development `2e65b337b8cec9adf11732d272899d76b2f93899`: show **all image thumbnails together**, each opening its existing read-only image window; remove result-card photo captions/download links/carousel buttons/counters; rename inventory to **Cutters in Inventory**; show **Name, Producer, Link, Notes** as an always-visible inline-edit table in the card's center. The supplied screenshots are owner observations/placement instructions, not acceptance of this correction.
