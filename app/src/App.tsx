@@ -1,3 +1,4 @@
+import {formatInches} from './measurements';
 import {PhotoInbox} from './PhotoInbox';
 import {WorkspaceFrame} from './WorkspaceFrame';
 import {RequestRecovery} from './RequestRecovery';
@@ -21,17 +22,18 @@ import { InfrastructureVerification } from "./InfrastructureVerification";
 export function App() {
   const [requestOpen,setRequestOpen]=useState(false),[requestContext,setRequestContext]=useState<RequestContext>({}),[requestExportError,setRequestExportError]=useState('');
 
-  const [role,setRole] = useState<"owner"|"editor"|"viewer"|null>(null);
+  const [role,setRole] = useState<"admin"|"owner"|"editor"|"viewer"|null>(null);
   const [environment,setEnvironment]=useState<'development'|'production'>('development');
   const [sessionError,setSessionError] = useState("");
   useEffect(() => {
     fetch("/api/session",{cache:"no-store"}).then(async response => {
-      const body = await response.json() as {environment?: "development"|"production";role?: "owner"|"editor"|"viewer"};
-      if (!response.ok || !["owner","editor","viewer"].includes(body.role ?? "")) throw Error("Sign in again to open the catalog.");
+      const body = await response.json() as {environment?: "development"|"production";role?: "admin"|"owner"|"editor"|"viewer"};
+      if (!response.ok || !["admin","owner","editor","viewer"].includes(body.role ?? "")) throw Error("Sign in again to open the catalog.");
       setEnvironment(body.environment==='production'?'production':'development');
       setRole(body.role!);
     }).catch(() => setSessionError("Your session could not be verified. Refresh and sign in again."));
   },[]);
+  const adminPage=window.location.pathname==='/api/admin';
   const [catalogVersion,setCatalogVersion] = useState(0);
   const [result, setResult] = useState<string>("");
   const [storageResult, setStorageResult] = useState<string>("");
@@ -87,7 +89,7 @@ export function App() {
         setResult("Database connected, but the demonstration record differs from the expected test values.");
       } else {
         const r = body.record;
-        setResult(`Passed: ${r.design} → ${r.shape}, ${r.width_mm} × ${r.height_mm} mm.`);
+        setResult(`Passed: ${r.design} → ${r.shape}, ${formatInches(r.width_mm)} × ${formatInches(r.height_mm)}.`);
       }
     } catch {
       setResult("The check could not complete. Sign in again and retry.");
@@ -117,33 +119,33 @@ export function App() {
     <AppHeader role={role} environment={environment} onRequest={()=>setRequestOpen(true)} />
     {requestOpen&&<ChangeRequest context={requestContext} onClose={()=>setRequestOpen(false)} />}
     <WorkspaceFrame role={role}
-      catalog={<Browse onContextChange={setRequestContext} version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="owner"} contextual />}
+      catalog={<Browse onContextChange={setRequestContext} version={catalogVersion} canEdit={role!=="viewer"} canDelete={role==="admin"||role==="owner"} contextual />}
       administration={<>
-    <h2>Administration</h2><p>Backups, storage locations and supported catalog care. Your catalog task stays open when you switch workspaces.</p>
-    {role==="owner"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
-    {role==="owner"&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
+    <h2>{adminPage?'Administration':'Catalog tools'}</h2><p>{adminPage?'Administrative operations require Admin access.':'Manage storage locations, catalog records, source files and prepared reviews. Your catalog draft stays in this tab.'}</p>
+    {adminPage&&role==="admin"&&<ManagedBackups onRestored={()=>setCatalogVersion(v=>v+1)} />}
+    {(role==="owner"||role==="admin")&&<RecordRecovery version={catalogVersion} onRestored={()=>setCatalogVersion(v=>v+1)} />}
     <details className="management-panel"><summary>Storage locations and advanced catalog records</summary><Catalog initialKind="locations" canEdit={role!=="viewer"} onSaved={()=>setCatalogVersion(v=>v+1)} /></details>
-    {(role==='owner'||role==='editor')&&<PhotoInbox context={requestContext}/>}
+    {(role==='admin'||role==='owner'||role==='editor')&&<PhotoInbox context={requestContext}/>}
 
-    {role==='owner'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests(environment).catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p><RequestRecovery environment={environment}/></details>}
+    {adminPage&&role==='admin'&&<details className="management-panel"><summary>Request reconciliation</summary><p>Download private user requests for reconciliation and release planning. Keep this export private.</p><button onClick={()=>{setRequestExportError('');void downloadChangeRequests(environment).catch(e=>setRequestExportError(e.message));}}>Download change requests</button><p role="status">{requestExportError}</p><RequestRecovery environment={environment}/></details>}
 
     <details className="management-panel"><summary>Review missing details, source files and prepared imports</summary><p>Prepared source-manifest import is supported here after review. It is separate from restoring a backup; general catalog import is not offered.</p>
 
     <hr />
-    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews canImport={role==="owner"} onCatalogChanged={()=>setCatalogVersion(v=>v+1)} /></details>}
+    {role!=="viewer"&&<details><summary>Import preparation workspace</summary><ImportReview enableSavedReviews canImport={role==="admin"} onCatalogChanged={()=>setCatalogVersion(v=>v+1)} /></details>}
     <Readiness key={"review-"+catalogVersion} />
     <hr />
 
     <hr />
     {role!=="viewer"&&<SourceReferences onSaved={()=>setCatalogVersion(v=>v+1)} />}
     {role!=="viewer"&&<BatchAttachments onSaved={()=>setCatalogVersion(v=>v+1)} />}
-    <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "owner"} />
+    <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "admin"||role === "owner"} />
     </details>
-    {role === "owner" && <details className="management-panel"><summary>Manual archive export (advanced)</summary>
+    {adminPage&&role === "admin" && <details className="management-panel"><summary>Manual archive export (advanced)</summary>
     <ArchiveBackup />
     </details>}
     </>}
-    diagnostics={role==='owner'&&<>
+    diagnostics={adminPage&&role==='admin'&&<>
     <h2>Development &amp; Diagnostics</h2><p>Technical checks are separate from everyday catalog work. Existing server permissions still apply.</p>
     <InfrastructureVerification development={environment==='development'} />
     {environment==='development'&&<>

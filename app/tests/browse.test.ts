@@ -39,6 +39,15 @@ test('unified search groups producers before pagination, matches linked ideas an
   for(let i=0;i<26;i++)await db.prepare('INSERT INTO shapes(id,name) VALUES (?,?)').bind('page'+i,'TEST page '+String(i).padStart(2,'0')).run();const first=await find('TEST page');assert.equal(first.total,26);assert.equal(first.items.length,24);assert.equal(first.nextOffset,24);const second=await (await get('?q=TEST%20page&offset=24')).json() as any;assert.equal(second.items.length,2);assert.equal(second.nextOffset,null);
   assert.equal((await get('?offset=-1')).status,400);assert.equal((await get('?ownership=invalid')).status,400);assert.equal((await get('?kind=invalid')).status,400);assert.equal((await get('','POST')).status,405);assert.equal((await get('?q=%22unclosed')).status,400);assert.equal((await get('?q=a+b+c+d+e+f+g+h+i')).status,400);assert.equal((await find("%_' OR 1=1")).total,0);
   const noIdentity:IdentityVerifier={verify:async()=>null};assert.equal((await handleApiRequest(new Request('https://catalog.test/api/browse'),noIdentity,db,files)).status,401);
+  const cardInventory=(await find('Christmas Tree')).items[0].inventory;assert.equal(cardInventory.length,3);assert.equal(cardInventory.find((c:any)=>c.id==='medium').location,'TEST Bin 6');
+  const photos=()=>handleApiRequest(new Request('https://catalog.test/api/attachments?kind=shape&recordId=a&catalogPhotos=true'),viewer,db,files);
+  const legacyPhotos=await (await photos()).json() as any;assert.equal(legacyPhotos.physicalPhotosEnabled,false);assert.deepEqual(legacyPhotos.attachments.map((p:any)=>p.photoKind),['design','design']);
+  await migrate('0005_physical_photographs.sql');await db.prepare("INSERT INTO physical_cutter_attachments VALUES ('medium','idea-image','photo')").run();
+  const combined=await (await photos()).json() as any;assert.deepEqual(combined.attachments.map((p:any)=>p.id),['early','late','idea-image']);assert.deepEqual(combined.attachments.map((p:any)=>p.photoKind),['design','design','physical']);
   assert.equal((await db.prepare('SELECT count(*) n FROM physical_cutters').first<any>())!.n,3);assert.equal((await db.prepare('SELECT count(*) n FROM attachments').first<any>())!.n,4);
+  await db.batch(Array.from({length:201},(_,i)=>db.prepare("INSERT INTO attachments(id,storage_key,filename,media_type,created_at) VALUES (?,?,?,'image/png','2026-10-22')").bind('photo'+i,'TEST/'+i,'TEST '+i+'.png')));
+  await db.batch(Array.from({length:201},(_,i)=>db.prepare("INSERT INTO shape_attachments VALUES('a',?,'photo')").bind('photo'+i)));
+  const firstPhotos=await (await photos()).json() as any;assert.equal(firstPhotos.attachments.length,200);assert.equal(firstPhotos.nextOffset,200);assert(firstPhotos.attachments.every((p:any)=>p.photoKind==='design'));
+  const lastPhotos=await (await handleApiRequest(new Request('https://catalog.test/api/attachments?kind=shape&recordId=a&catalogPhotos=true&offset=200'),viewer,db,files)).json() as any;assert.equal(lastPhotos.attachments.length,4);assert.equal(lastPhotos.nextOffset,null);assert.equal(lastPhotos.attachments.at(-1).photoKind,'physical');
  }finally{await runtime.dispose();}
 });

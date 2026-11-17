@@ -133,6 +133,18 @@ export async function handleAttachments(request: Request, database: D1Database, 
       const id = url.searchParams.get("recordId") ?? "";
       if (!t || !ID.test(id)) return json({ error: "Choose a valid catalog record." }, 400);
       if(t.table==="physical_cutters"&&!await database.prepare("SELECT name FROM sqlite_schema WHERE name='physical_cutter_attachments'").first())return json({attachments:[],migrationRequired:true});
+      if(t.table==='shapes'&&url.searchParams.get('catalogPhotos')==='true'){
+        const offset=Number(url.searchParams.get('offset')??0);
+        if(!Number.isSafeInteger(offset)||offset<0||offset>100000)return json({error:'Choose a valid photograph page.'},400);
+        const physical=!!await database.prepare("SELECT name FROM sqlite_schema WHERE type='table' AND name='physical_cutter_attachments'").first();
+        const rows=await database.prepare(`SELECT a.*,min(p.photo_kind) AS photo_kind FROM attachments a JOIN (
+          SELECT sa.attachment_id,0 AS photo_kind FROM shape_attachments sa WHERE sa.shape_id=?
+          ${physical?"UNION ALL SELECT ca.attachment_id,1 AS photo_kind FROM physical_cutter_attachments ca JOIN physical_cutters c ON c.id=ca.cutter_id WHERE c.shape_id=?":''}
+        ) p ON p.attachment_id=a.id WHERE a.media_type IN ('image/png','image/jpeg','image/webp')
+        GROUP BY a.id ORDER BY min(p.photo_kind),a.created_at,a.id LIMIT 201 OFFSET ?`).bind(id,...(physical?[id]:[]),offset).all<Attachment&{photo_kind:number}>();
+        const attachments=await Promise.all(rows.results.slice(0,200).map(async row=>({id:row.id,filename:row.filename,mediaType:row.media_type,available:!!await bucket.head(row.storage_key),photoKind:row.photo_kind===0?'design':'physical'})));
+        return json({attachments,nextOffset:rows.results.length>200?offset+200:null,physicalPhotosEnabled:physical});
+      }
       const ideas=t.table==='shapes'&&url.searchParams.get('ideas')==='true';
       const rows = ideas ? await database.prepare(`SELECT a.*,
         EXISTS(SELECT 1 FROM shape_attachments sa WHERE sa.shape_id=? AND sa.attachment_id=a.id) AS direct,

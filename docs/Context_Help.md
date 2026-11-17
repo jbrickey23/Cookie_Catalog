@@ -1,5 +1,14 @@
 # Context help — first-release optional enhancement
 
+## Owner acceptance closeout — October 22, 2026
+
+The owner reports **PASS** for the six selected-design/help acceptance checks on the current development candidate identified as `3ab43dd9610708d244147536a8e6e9677a96d537` (application `664a0920c6ad306c79cad3c90a0d4300e3910a4d`). Specifically, context help functions correctly without shifting fields. **1200 ms dwell remains slightly longer than preferred, but acceptable and nonblocking.** No further timing change is authorized by this assessment.
+
+This satisfies Issue #13's owner-acceptance gate for corrected help; close the issue as completed with the owner's evidence and this scope explanation. Previous keep-open/pending-owner language is historical. **Independent actual narrow-browser verification remains unperformed**, not silently passed: no new device/viewport dimensions or measurements were supplied. Earlier 320×200 deterministic placement tests and desktop measurements remain their original evidence classes. The worker's prior sign-in/runtime-source/browser blocker is not retroactively converted into an automated/live-worker pass. Owner acceptance, prior automated checks and independent Cris acceptance are distinct.
+
+Cris's uncoached walkthrough remains pending. 0005, CC-TODO-019/023, release automation/integration readiness, preferred-image deferral and production/merge boundaries remain unchanged. [Assessment and no-deployment publication boundary](PR7_Conflict_Assessment_20261022.md).
+
+
 ## Owner acceptance and 1200 ms refinement — October 22, 2026
 
 The owner retested verified development `c501b677fe327fdb607613fd7d11b00070e44bfa` and reports **dismissal PASS, layout stability PASS, general interaction PASS**. The dwell feels slightly too long. These are owner-reported results, not Cris, production, or new narrow-viewport measurements. Previous pending-owner statements for those three behaviors are superseded; the narrow-browser gap remains accurately recorded.

@@ -6,11 +6,11 @@ import {handleApiRequest} from '../src/worker';
 import {startManagedBackup,advanceManagedBackup,completeBackup} from '../src/server/managed-backups';
 import type {IdentityVerifier} from '../src/server/access-identity';
 const origin='https://catalog.example.test';
-const identity=(role:'owner'|'editor'|'viewer'):IdentityVerifier=>({verify:async()=>({subject:role,email:role+'@example.test',role})});
-const owner=identity('owner');
+const identity=(role:'admin'|'owner'|'editor'|'viewer'):IdentityVerifier=>({verify:async()=>({subject:role,email:role+'@example.test',role})});
+const owner=identity('admin');
 async function env(){const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'workspace'},r2Buckets:['FILES']}));const db=await runtime.getD1Database('DB') as unknown as D1Database,files=await runtime.getR2Bucket('FILES') as unknown as R2Bucket;const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql','0005_physical_photographs.sql'];for(const name of names){const sql=readFileSync('../database/migrations/'+name,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}await db.prepare('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)').run();await db.batch(names.map((n,i)=>db.prepare('INSERT INTO d1_migrations VALUES(?,?,?)').bind(i+1,n,'TEST')));return {runtime,db,files};}
 function request(path:string,method='GET',value?:unknown,revision?:string,backup?:string){return new Request(origin+'/api/workspace'+path,{method,headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'workspace',...(revision?{'if-match':revision}:{}),...(backup?{'x-catalog-backup':backup}:{})},...(value===undefined?{}:{body:JSON.stringify(value)})});}
-async function checkpoint(db:D1Database,files:R2Bucket){let job=await startManagedBackup(db,files,'owner','pre-change');while(job.status!=='complete')job=await advanceManagedBackup(files,job.id);return job.id;}
+async function checkpoint(db:D1Database,files:R2Bucket){let job=await startManagedBackup(db,files,'admin','pre-change');while(job.status!=='complete')job=await advanceManagedBackup(files,job.id);return job.id;}
 const cutter=()=>({location_id:null,quantity:1,origin:'unknown',reference_size_mm:95.25,width_mm:null,height_mm:null,slot:null,notes:null});
 const draft=(name='TEST new shape')=>({shape:{name,maker:null,source_url:null,notes:'notes'},tags:[],cutter:cutter()});
 async function call(db:D1Database,files:R2Bucket,path:string,method='GET',value?:unknown,revision?:string,backup?:string,verifier=owner){return handleApiRequest(request(path,method,value,revision,backup),verifier,db,files);}
@@ -152,5 +152,15 @@ test('producer references stay distinct; linked inventory is physical-only and q
   const before=(await db.prepare('SELECT count(*) n FROM shapes').first<any>())!.n;
   for(const url of ['example.test','https:example.test','javascript:alert(1)'])assert.equal((await call(db,files,'/shapes','POST',{shape:{name:'TEST invalid URL',source_url:url},tags:[],cutter:null})).status,400);
   assert.equal((await db.prepare('SELECT count(*) n FROM shapes').first<any>())!.n,before);
+ }finally{await runtime.dispose();}
+});
+
+test('catalog Owner creates, reads, updates and deletes a cutter while admin backups stay denied',async()=>{
+ const {runtime,db,files}=await env();const catalogOwner=identity('owner');try{
+  const created=await success(await call(db,files,'/cutters','POST',draft('TEST Owner CRUD'),undefined,undefined,catalogOwner),201);
+  const read=await success(await call(db,files,'/cutters/'+created.cutter.id,'GET',undefined,undefined,undefined,catalogOwner));assert.equal(read.cutter.quantity,1);
+  const changed=await success(await call(db,files,'/cutters/'+created.cutter.id,'PUT',{...draft('TEST Owner CRUD'),cutter:{...cutter(),quantity:2}},read.revision,undefined,catalogOwner));assert.equal(changed.cutter.quantity,2);
+  await success(await call(db,files,'/cutters/'+created.cutter.id,'DELETE',{approved:true},changed.revision,undefined,catalogOwner));
+  assert.equal((await handleApiRequest(new Request(origin+'/api/backups'),catalogOwner,db,files)).status,403);
  }finally{await runtime.dispose();}
 });

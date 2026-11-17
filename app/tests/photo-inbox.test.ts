@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {handleReleaseGuardedApi} from '../src/worker';
 import {preparePhotoInbox} from '../src/server/photo-inbox';
-const identity=(role:'owner'|'editor'|'viewer'='owner')=>({verify:async()=>({role,subject:'TEST '+role,email:null})});
+const identity=(role:'admin'|'editor'|'viewer'='admin')=>({verify:async()=>({role,subject:'TEST '+role,email:null})});
 const id='a1234567-1234-4123-8123-123456789abc',origin='https://catalog.test';
 const png=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
 const upload=(bytes:Uint8Array=png,filename='TEST cutter.png')=>new Request(origin+'/api/photo-inbox',{method:'POST',headers:{Origin:origin,'X-Cookie-Catalog-Check':'photo-inbox','X-Photo-Id':id,'X-Photo-Filename':encodeURIComponent(filename),'X-Photo-Context':encodeURIComponent('TEST focused cutter')},body:bytes});

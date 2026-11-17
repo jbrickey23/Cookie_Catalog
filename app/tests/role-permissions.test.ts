@@ -27,7 +27,7 @@ test("verified editors create catalog records/upload originals; viewers read/sea
     assert.equal((await handleApiRequest(new Request(origin+"/api/attachments/"+file.id),identity("viewer"),db,files)).status,200);
     const remove=()=>new Request(origin+"/api/attachments/"+file.id,{method:"DELETE",headers:{Origin:origin,"X-Cookie-Catalog-Check":"attachments"}});
     for(const role of ["viewer","editor"] as const)assert.equal((await handleApiRequest(remove(),identity(role),db,files)).status,403);
-    assert.equal((await handleApiRequest(remove(),identity("owner"),db,files)).status,200);
+    assert.equal((await handleApiRequest(remove(),identity("admin"),db,files)).status,200);
   }finally{await runtime.dispose();}
 });
 test("every development/maintenance path denies non-owners before any resource access",async()=>{

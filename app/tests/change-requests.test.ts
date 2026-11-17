@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {handleApiRequest} from '../src/worker';
 import type {IdentityVerifier} from '../src/server/access-identity';
-const identity=(role:'owner'|'editor'|'viewer'='owner',subject='TEST owner'):IdentityVerifier=>({verify:async()=>({role,subject,email:null})});
+const identity=(role:'admin'|'editor'|'viewer'='admin',subject='TEST owner'):IdentityVerifier=>({verify:async()=>({role,subject,email:null})});
 const draft={id:'a1234567-1234-4123-8123-123456789abc',type:'bug',title:'TEST summary',description:'TEST detail',reason:'TEST outcome',approved:true,context:{recordId:'TEST record',recordName:'TEST cutter',search:'TEST'}};
 const req=(body:unknown=draft,headers:Record<string,string>={})=>new Request('https://catalog.test/api/change-requests',{method:'POST',headers:{Origin:'https://catalog.test','content-type':'application/json','X-Cookie-Catalog-Check':'change-request',...headers},body:JSON.stringify(body)});
 test('requests save privately without catalog DB, survive repeat submission and are owner-exportable only',async()=>{

@@ -6,7 +6,7 @@ import {handleApiRequest} from "../src/worker";
 import {checkMissingFileRecovery} from "../src/server/development-missing-file-check";
 import {sha256} from "../src/server/development-backup";
 import type {IdentityVerifier} from "../src/server/access-identity";
-const owner:IdentityVerifier={verify:async()=>({subject:"owner",email:"owner@example.test",role:"owner"})};
+const owner:IdentityVerifier={verify:async()=>({subject:"admin",email:"owner@example.test",role:"admin"})};
 const url="https://catalog.example.test/api/dev/missing-file-check";
 const request=()=>new Request(url,{method:"POST",headers:{Origin:"https://catalog.example.test","X-Cookie-Catalog-Check":"missing-file"}});
 async function env() {

@@ -1,3 +1,4 @@
+import {mayAdmin} from './access-identity';
 import {requestId,requestHash,validateRequestRecord} from '../request-backup';
 import type {AuthenticatedUser} from './access-identity';
 import type {CatalogEnvironment} from '../catalog-environment';
@@ -18,7 +19,7 @@ const reply=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status
 function text(value:unknown,max:number,required=false){if(typeof value!=='string'||value.length>max||value.includes('\0')||(required&&!value.trim()))throw Error('Check the required text and field length limits.');return value.trim();}
 export async function handleChangeRequests(request:Request,files:R2Bucket,user:AuthenticatedUser,environment:CatalogEnvironment){
  if(request.method==='GET'){
-  if(user.role!=='owner')return reply({error:'Owner access required'},403);
+  if(!mayAdmin(user))return reply({error:'Admin access required'},403);
   const params=new URL(request.url).searchParams,history=params.get('history');
   if(history!==null){
    if(!validId(history))return reply({error:'Invalid request ID'},400);
@@ -35,7 +36,7 @@ export async function handleChangeRequests(request:Request,files:R2Bucket,user:A
  if(request.headers.get('Origin')!==new URL(request.url).origin||request.headers.get('X-Cookie-Catalog-Check')!=='change-request')return reply({error:'Same-origin request required'},403);
  if(!request.headers.get('content-type')?.startsWith('application/json'))return reply({error:'JSON required'},415);
  const missingRecovery=request.method==='POST'&&new URL(request.url).searchParams.get('recover')==='missing';
- if(missingRecovery&&user.role!=='owner')return reply({error:'Owner access required'},403);
+ if(missingRecovery&&!mayAdmin(user))return reply({error:'Admin access required'},403);
  const bodyLimit=missingRecovery?65536:16384;
  let body:any;try{const reader=request.body?.getReader();let size=0,raw='';const decoder=new TextDecoder('utf-8',{fatal:true});try{if(reader)for(;;){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>bodyLimit){await reader.cancel();return reply({error:'Request exceeds the supported size'},413);}raw+=decoder.decode(part.value,{stream:true});}raw+=decoder.decode();}finally{reader?.releaseLock();}body=JSON.parse(raw);}catch{return reply({error:'Invalid request JSON'},400);}
  if(!body||typeof body!=='object'||Array.isArray(body))return reply({error:'Request JSON must be an object'},400);
@@ -49,7 +50,7 @@ export async function handleChangeRequests(request:Request,files:R2Bucket,user:A
   }catch{return reply({error:'Missing request recovery could not be completed. Retry safely with the same record.'},503);}
  }
  if(request.method==='PATCH'){
-  if(user.role!=='owner')return reply({error:'Owner access required'},403);
+  if(!mayAdmin(user))return reply({error:'Admin access required'},403);
   if(!validId(body.id))return reply({error:'Invalid request ID'},400);
   if(body.restoreSha256!==undefined){
    if(!/^[a-f0-9]{64}$/.test(body.restoreSha256)||body.approved!==true)return reply({error:'Review and approve a valid recovery copy.'},400);

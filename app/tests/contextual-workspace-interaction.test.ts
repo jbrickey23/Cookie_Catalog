@@ -39,26 +39,18 @@ test('help waits 1200 ms, cancels transit/Escape/context/unmount and supports im
 
 test('workspace navigation keeps draft DOM and busy controls mounted; diagnostics retains owner boundary',()=>{
  try {
-  const view=render(React.createElement(WorkspaceFrame,{role:'owner',catalog:React.createElement('label',{},'Draft',React.createElement('input',{defaultValue:'', 'aria-label':'Draft'})),administration:React.createElement('button',{},'Review backup status'),diagnostics:React.createElement('button',{},'Technical check')}));
+  const view=render(React.createElement(WorkspaceFrame,{role:'admin',catalog:React.createElement('label',{},'Draft',React.createElement('input',{defaultValue:'', 'aria-label':'Draft'})),administration:React.createElement('button',{},'Review backup status'),diagnostics:React.createElement('button',{},'Technical check')}));
   const input=screen.getByLabelText('Draft');fireEvent.change(input,{target:{value:'Keep me'}});
   assert.equal(screen.queryByRole('button',{name:'Review backup status'}),null);
-  fireEvent.click(screen.getByRole('button',{name:'Administration'}));assert(screen.getByRole('button',{name:'Review backup status'}));assert.equal(screen.queryByRole('textbox',{name:'Draft'}),null);
+  fireEvent.click(screen.getByRole('button',{name:'Catalog tools'}));assert(screen.getByRole('button',{name:'Review backup status'}));assert.equal(screen.queryByRole('textbox',{name:'Draft'}),null);
   fireEvent.click(screen.getByRole('button',{name:'Return to catalog'}));assert.equal(screen.getByLabelText('Draft'),input);assert.equal((input as HTMLInputElement).value,'Keep me');
   view.rerender(React.createElement(WorkspaceFrame,{role:'viewer',catalog:'Read only catalog',administration:'Read only details',diagnostics:'Secret'}));assert.equal(screen.queryByRole('button',{name:'Development & Diagnostics'}),null);assert.equal(screen.queryByText('Secret'),null);
  } finally {cleanup();}
 });
 
-test('unified Search routes ownership filters and guards a dirty Add draft on task change',async()=>{
- const old=globalThis.fetch,confirm=window.confirm;let accept=false;const reads:string[]=[];window.confirm=()=>accept;
- globalThis.fetch=async input=>{const path=String(input);reads.push(path);return Response.json(path.startsWith('/api/browse')?{items:[],total:0,nextOffset:null}:path.endsWith('/vocabulary')?vocabulary:reference);};
- try {
-  render(React.createElement(Browse,{contextual:true,canEdit:true}));assert(screen.getByRole('heading',{name:'Search your catalog'}));assert.equal(screen.queryByRole('button',{name:'My Cutters'}),null);
-  fireEvent.change(screen.getByLabelText('Ownership filter'),{target:{value:'owned'}});await waitFor(()=>assert(reads.some(p=>p.endsWith('ownership=owned'))));
-  fireEvent.click(screen.getByRole('button',{name:'Add Something',exact:true}));fireEvent.click(screen.getByRole('button',{name:'I have a cutter'}));await screen.findByLabelText('Find an existing producer design');assert.equal(screen.queryByRole('button',{name:'Save changes'}),null);
-  fireEvent.click(screen.getByRole('button',{name:'Create a new design'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST retained'}});
-  const searchTask=within(screen.getByRole('navigation',{name:'Catalog tasks'})).getByRole('button',{name:'Search',exact:true});fireEvent.click(searchTask);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST retained');
-  accept=true;fireEvent.click(searchTask);await waitFor(()=>assert.equal(screen.queryByRole('button',{name:'Save changes'}),null));
- }finally{cleanup();globalThis.fetch=old;window.confirm=confirm;}
+test('unified Search retains submission/filter/reset while redundant global task buttons are absent',async()=>{
+ const old=globalThis.fetch;const reads:string[]=[];globalThis.fetch=async input=>{reads.push(String(input));return Response.json({items:[],total:0,nextOffset:null});};
+ try{render(React.createElement(Browse,{contextual:true,canEdit:true}));assert.equal(screen.queryByRole('button',{name:'Add Something',exact:true}),null);assert.equal(screen.queryByRole('navigation',{name:'Catalog tasks'}),null);assert(screen.getByRole('button',{name:'Search',exact:true}));fireEvent.change(screen.getByLabelText('Ownership filter'),{target:{value:'owned'}});await waitFor(()=>assert(reads.some(p=>p.endsWith('ownership=owned'))));fireEvent.change(screen.getByLabelText('Search by name, bin or tag'),{target:{value:'Tree'}});fireEvent.click(screen.getByRole('button',{name:'Search',exact:true}));await waitFor(()=>assert(reads.some(p=>p.includes('q=Tree'))));fireEvent.click(screen.getByRole('button',{name:'Reset filters'}));await waitFor(()=>assert.equal((screen.getByLabelText('Ownership filter') as HTMLSelectElement).value,'all'));}finally{cleanup();globalThis.fetch=old;}
 });
 
 test('guided existing selection distinguishes producers and saves only physical details using the existing guarded API',async()=>{
@@ -142,9 +134,9 @@ test('selected Add focuses one compact design and physical form; Change preserve
   fireEvent.click(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer A'}));const summary=await screen.findByRole('group',{name:'Selected producer design (read-only)'});
   assert.equal(screen.queryByRole('region',{name:'Choose an existing design'}),null);assert.equal(screen.queryByRole('searchbox'),null);assert.equal(screen.queryByRole('button',{name:/Use this design:/}),null);assert.equal(screen.queryByText('Source link and design notes'),null);assert.equal(screen.queryByText('Tags',{exact:true}),null);
   assert.equal(screen.getAllByRole('article').length,1);assert.equal(within(summary).getByRole('img').getAttribute('src'),'/api/attachments/photo-a?view=image');assert(within(summary).getByText('Producer A'));assert(screen.getByRole('group',{name:'Your physical cutter'}));assert.equal(document.activeElement,screen.getByLabelText('Quantity *'));
-  fireEvent.change(screen.getByLabelText('Quantity *'),{target:{value:'7'}});fireEvent.change(screen.getByLabelText('Reference size (mm)'),{target:{value:'70'}});fireEvent.change(screen.getByLabelText('BIN / location'),{target:{value:'b'}});
+  fireEvent.change(screen.getByLabelText('Quantity *'),{target:{value:'7'}});fireEvent.change(screen.getByLabelText('Reference size (inches)'),{target:{value:'70'}});fireEvent.change(screen.getByLabelText('BIN / location'),{target:{value:'b'}});
   fireEvent.click(screen.getByRole('button',{name:'Change design'}));assert.equal((screen.getByLabelText('Find an existing producer design') as HTMLInputElement).value,'Tree');assert.equal(screen.queryByRole('group',{name:'Your physical cutter'}),null);
-  fireEvent.click(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer A'}));await screen.findByRole('group',{name:'Your physical cutter'});assert.equal(confirmations,0);assert.equal((screen.getByLabelText('Quantity *') as HTMLInputElement).value,'7');assert.equal((screen.getByLabelText('Reference size (mm)') as HTMLInputElement).value,'70');assert.equal((screen.getByLabelText('BIN / location') as HTMLSelectElement).value,'b');
+  fireEvent.click(screen.getByRole('button',{name:'Use this design: TEST Tree — Producer A'}));await screen.findByRole('group',{name:'Your physical cutter'});assert.equal(confirmations,0);assert.equal((screen.getByLabelText('Quantity *') as HTMLInputElement).value,'7');assert.equal((screen.getByLabelText('Reference size (inches)') as HTMLInputElement).value,'70');assert.equal((screen.getByLabelText('BIN / location') as HTMLSelectElement).value,'b');
   fireEvent.click(screen.getByRole('button',{name:'Cancel changes'}));assert(screen.getByRole('searchbox',{name:'Find an existing producer design'}));assert.equal(screen.queryByRole('group',{name:'Your physical cutter'}),null);
  }finally{cleanup();globalThis.fetch=old;window.confirm=confirm;}
 });

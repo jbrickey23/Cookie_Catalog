@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {handleApiRequest} from '../src/worker';
 import {createRequestBackup,parseRequestBackup,requestHash} from '../src/request-backup';
-const owner={verify:async()=>({role:'owner' as const,subject:'TEST owner',email:null})};
+const owner={verify:async()=>({role:'admin' as const,subject:'TEST owner',email:null})};
 const viewer={verify:async()=>({role:'viewer' as const,subject:'TEST viewer',email:null})};
 const bucket=()=>new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("test")}}',r2Buckets:['FILES']}));
 const post=(body:unknown,suffix='')=>new Request('https://catalog.test/api/change-requests'+suffix,{method:'POST',headers:{Origin:'https://catalog.test','content-type':'application/json','X-Cookie-Catalog-Check':'change-request'},body:JSON.stringify(body)});

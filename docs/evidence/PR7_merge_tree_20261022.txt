@@ -1,0 +1,27 @@
+ff0b5c5467eb1f3ed6df68191597f4a6dd27ff4c
+100644 6ff7c57c330901d0d873f642b0c943199aeb8e77 1	Cookie_Catalog_Context.md
+100644 d82780728efa2acb5de93832a6f623c4e1098296 2	Cookie_Catalog_Context.md
+100644 09362e414db7986eb3695fa4c1361085e85e1881 3	Cookie_Catalog_Context.md
+100644 9736687a4c1210198c45f93d547c5770d66c86f7 1	Cookie_Catalog_Decision_Log.md
+100644 0bb78454ca871a7b218e568baf344d7ad42d3f41 2	Cookie_Catalog_Decision_Log.md
+100644 d9045262304dbdd12dad933782d2af050e659ce5 3	Cookie_Catalog_Decision_Log.md
+100644 2fb994e5d880aa0bd14a1df83414454730e7a115 1	Cookie_Catalog_New_Chat_Bootstrap_Prompt.md
+100644 7e6a371e753dcb2185f19b08f6fb3fc1dc6d2a1b 2	Cookie_Catalog_New_Chat_Bootstrap_Prompt.md
+100644 162e8447c9ffac785c69e5a82f5299c36e3be45e 3	Cookie_Catalog_New_Chat_Bootstrap_Prompt.md
+100644 7bf5df9d08f633177093947541aa969f73a3232d 1	Cookie_Catalog_TODO.md
+100644 9e36b86ebb9f5c62eda2872674bc5576d3075137 2	Cookie_Catalog_TODO.md
+100644 c59d1649c0fe1237298d42b9aa769074239bf890 3	Cookie_Catalog_TODO.md
+100644 c17871ff782bbf2fd8100f9b9b39ba4325925fb4 1	README.md
+100644 eeda5000a55b48b7595c8f2a8a69b03f84afcd0f 2	README.md
+100644 0835cc999dd12ad0c2adb1633d22341089015b70 3	README.md
+
+Auto-merging Cookie_Catalog_Context.md
+CONFLICT (content): Merge conflict in Cookie_Catalog_Context.md
+Auto-merging Cookie_Catalog_Decision_Log.md
+CONFLICT (content): Merge conflict in Cookie_Catalog_Decision_Log.md
+Auto-merging Cookie_Catalog_New_Chat_Bootstrap_Prompt.md
+CONFLICT (content): Merge conflict in Cookie_Catalog_New_Chat_Bootstrap_Prompt.md
+Auto-merging Cookie_Catalog_TODO.md
+CONFLICT (content): Merge conflict in Cookie_Catalog_TODO.md
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md

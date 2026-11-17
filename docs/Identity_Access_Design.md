@@ -1,5 +1,14 @@
 # CC-TODO-005 — Development identity and access
 
+## Distinct Admin approved — November 16, 2026 Pacific
+
+The R2.1 owner approved separating catalog Owner from Admin after the required audit found both previously shared role `owner`. Existing RS256 Access JWT verification, issuer/audience/expiry/type checks and private membership map are reused; no JWT custom claim/header/client parameter grants a role. The bootstrap `OWNER_EMAIL` remains the administrative recovery identity and now resolves to `admin`. Explicit private map roles are `admin`, `owner`, `editor` (legacy limited create/update, no automatic promotion), `viewer`. Configured owner entries are catalog Owners, not inferred admins. No secrets, Access allow policies, account assignments or credentials are changed by this code batch. An intended additional admin must be explicitly assigned `admin` by the owner privately; no real email belongs in GitHub.
+
+Viewer reads/searches/downloads only. Owner/Admin can create/read/update/delete catalog entries and attachments, subject to existing revision, relationship, recovery-write and maintenance guards. Owner retains catalog tools and record Undo; the small automatic protection write used by ordinary saves is not a grant of administrative backup/restore. Admin alone accesses backups/restores, archive/cleanup/diagnostics, release control and request reconciliation. The separate **/api/admin** HTML page is verified server-side before the app shell is served; APIs also enforce capability independently. No CSS-only permission boundary. Root catalog has no operational panels; Owner retains location/source/review/attachment/catalog work in Catalog tools. P1/acceptance evidence: [Cris retest checkpoint](R2_1_Cris_Retest_20261116.md).
+
+Older statements equating Admin with Owner below describe the previous model and are superseded. Rollback of this code requires reviewing any separately changed private membership roles first; old code rejects an explicit `admin` membership entry. No such private map change is performed here. The bootstrap recovery identity retains access in both versions. Schema/data/archive formats are unchanged.
+
+
 ## Reconciled activation status — October 14 Pacific
 
 Owner reported saving the exact-email Access allow list and deploying CATALOG_MEMBERS Secret. Existing-owner Admin / Owner and separate viewer read-only/search/details/original download acceptance passed. The second configured admin's own sign-in is pending. Role code and full tests/build/development Workers Build passed. Earlier sections describing activation as entirely pending are historical. Account emails/secrets remain private; account recovery, intended-device specificity and the parked alternate-email denial test are not closed by these passes.

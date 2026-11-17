@@ -11,7 +11,7 @@ import {sha256} from "../src/server/development-backup";
 import {archiveStream} from "../src/archive-format";
 import type {IdentityVerifier} from "../src/server/access-identity";
 const origin="https://catalog.example.test";
-const owner:IdentityVerifier={verify:async()=>({subject:"owner",email:"owner@example.test",role:"owner"})};
+const owner:IdentityVerifier={verify:async()=>({subject:"admin",email:"owner@example.test",role:"admin"})};
 async function env() {
   const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:"archive"},r2Buckets:["FILES"]}));
   const db=await runtime.getD1Database("DB") as unknown as D1Database,bucket=await runtime.getR2Bucket("FILES") as unknown as R2Bucket;

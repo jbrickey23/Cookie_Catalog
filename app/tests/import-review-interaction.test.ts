@@ -78,7 +78,7 @@ test("local review edits measurements/files, splits page items and downloads a r
     fireEvent.click(screen.getByRole("button",{name:"Describe another item from this page"}));
     await screen.findByText(/4 source items/);
     fireEvent.change(screen.getByLabelText("Item type"),{target:{value:"design"}});
-    assert.equal(screen.queryByLabelText("Storage location"),null);assert.equal(screen.queryByLabelText("Width (mm)"),null);
+    assert.equal(screen.queryByLabelText("Storage location"),null);assert.equal(screen.queryByLabelText("Width (inches)"),null);
     fireEvent.click(screen.getByRole("button",{name:"Download reviewed manifest"}));
     const split=JSON.parse(await downloaded!.text());assert.equal(split.items.length,4);assert.equal(new Set(split.items.map((i:any)=>i.sourceKey)).size,4);assert.equal(split.items[3].source.pageId,split.items[0].source.pageId);assert.equal(split.items[3].kind,"design");
     assert.equal(calls,0);

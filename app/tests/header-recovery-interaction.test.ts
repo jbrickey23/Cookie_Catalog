@@ -12,7 +12,7 @@ test('header recovery shortcut opens saved changes without discarding an existin
  const original=globalThis.fetch;const methods:string[]=[];
  globalThis.fetch=async(_url,init)=>{methods.push(init?.method??'GET');return Response.json({changes:[{id:'test',at:'2026-10-17T00:00:00Z',kind:'cutters',method:'PUT'}]});};
  try{
- render(React.createElement(React.Fragment,null,React.createElement(AppHeader,{role:'owner',environment:'production'}),React.createElement('input',{'aria-label':'Draft',defaultValue:'keep me'}),React.createElement(RecordRecovery,{version:0,onRestored:()=>{}})));
+ render(React.createElement(React.Fragment,null,React.createElement(AppHeader,{role:'admin',environment:'production'}),React.createElement('input',{'aria-label':'Draft',defaultValue:'keep me'}),React.createElement(RecordRecovery,{version:0,onRestored:()=>{}})));
  assert(screen.getByText('Production · Your live catalog'));
  const signout=screen.getByRole('link',{name:'Sign out'});assert.equal(signout.getAttribute('href'),'/cdn-cgi/access/logout');assert.match(signout.getAttribute('title')!,/other protected/);
  fireEvent.click(screen.getByRole('button',{name:'Undo saved changes'}));await screen.findByRole('button',{name:'Review change'});

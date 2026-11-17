@@ -13,7 +13,7 @@ import {validateManifest,type StagingManifest} from "../src/staging.mjs";
 import {importPreview} from "../src/import-preview";
 import type {IdentityVerifier} from "../src/server/access-identity";
 const origin="https://catalog.example.test",id="review_"+"a".repeat(32);
-const owner:IdentityVerifier={verify:async()=>({subject:"owner",email:"owner@example.test",role:"owner"})};
+const owner:IdentityVerifier={verify:async()=>({subject:"admin",email:"owner@example.test",role:"admin"})};
 const files=["0001_initial.sql","0002_variants_components.sql","0003_import_reviews.sql"];
 async function environment(reviews=true){
   const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:"reviews"},r2Buckets:["FILES"]}));

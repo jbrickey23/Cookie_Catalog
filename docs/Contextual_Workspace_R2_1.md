@@ -1,5 +1,9 @@
 # R2.1 Contextual Workspace — CC-TODO-021 / CC-TODO-010
 
+## Current front-of-catalog batch — November 16, 2026 Pacific
+
+[Current owner-authorized correction, exact-metric/role safeguards, result-card layout and Cris checklist](R2_1_Cris_Retest_20261116.md). Earlier accepted checkpoints remain history; this candidate is not yet owner/Cris accepted. No production, migration or merge authority.
+
 ## Current continuation
 
 The owner subsequently reports Add/quantity/size/location, save-without-stock and workspace separation satisfactory, and approves [Unified Search & Design Details](Unified_Search_R2_1.md). That refinement replaces overlapping Find/My Cutters and physical-row result cards while preserving these accepted flows. The implementation/evidence below remains historical; no full R2.1/Cris acceptance or preferred-image persistence is inferred.

@@ -76,20 +76,20 @@ test("backup endpoint enforces owner, method and origin before reading resources
   let reads = 0;
   const db = { prepare: () => { reads++; throw new Error("private"); } } as unknown as D1Database;
   const url = "https://catalog.example.test/api/dev/backup";
-  const verifier = (role: "owner" | "editor" | "viewer" | null): IdentityVerifier => ({ verify: async () => role ? { subject: "demo", email: "demo@example.test", role } : null });
+  const verifier = (role: "admin" | "editor" | "viewer" | null): IdentityVerifier => ({ verify: async () => role ? { subject: "demo", email: "demo@example.test", role } : null });
   const headers = { Origin: "https://catalog.example.test", "X-Cookie-Catalog-Check": "backup" };
   for (const [role, status] of [[null, 401], ["editor", 403], ["viewer", 403]] as const) {
     assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers }), verifier(role), db, bucket())).status, status);
   }
-  assert.equal((await handleApiRequest(new Request(url), verifier("owner"), db, bucket())).status, 405);
-  assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers: { ...headers, Origin: "https://other.example.test" } }), verifier("owner"), db, bucket())).status, 403);
-  assert.equal((await handleApiRequest(new Request(url, { method: "POST" }), verifier("owner"), db, bucket())).status, 403);
+  assert.equal((await handleApiRequest(new Request(url), verifier("admin"), db, bucket())).status, 405);
+  assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers: { ...headers, Origin: "https://other.example.test" } }), verifier("admin"), db, bucket())).status, 403);
+  assert.equal((await handleApiRequest(new Request(url, { method: "POST" }), verifier("admin"), db, bucket())).status, 403);
   assert.equal(reads, 0);
-  const response = await handleApiRequest(new Request(url, { method: "POST", headers }), verifier("owner"), database(), bucket());
+  const response = await handleApiRequest(new Request(url, { method: "POST", headers }), verifier("admin"), database(), bucket());
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.ok(response.headers.get("content-disposition")?.startsWith("attachment;"));
-  const failure = await handleApiRequest(new Request(url, { method: "POST", headers }), verifier("owner"), database("query-failure"), bucket());
+  const failure = await handleApiRequest(new Request(url, { method: "POST", headers }), verifier("admin"), database("query-failure"), bucket());
   assert.equal(failure.status, 503);
   assert.ok(!(await failure.text()).includes("private database error"));
 });

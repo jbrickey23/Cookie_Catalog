@@ -1,5 +1,9 @@
 # R2 reference and inventory UX — CC-TODO-021 / CC-TODO-010
 
+## Current front-of-catalog batch — November 16, 2026 Pacific
+
+[Current owner-authorized correction, exact-metric/role safeguards, result-card layout and Cris checklist](R2_1_Cris_Retest_20261116.md). Earlier accepted checkpoints remain history; this candidate is not yet owner/Cris accepted. No production, migration or merge authority.
+
 ## Current presentation continuation
 
 The October 21 owner-authorized [Contextual Workspace batch](Contextual_Workspace_R2_1.md) refines the presentation and task flows on PR #7. The model, prior synthetic evidence and migration/recovery boundaries below remain intact. This does not award owner/Cris acceptance or activate 0005.

@@ -10,9 +10,9 @@ export const cutterFields:FieldSpec[]=[
  {key:'location_id',label:'BIN / location',editor:'select',source:'locations',createAllowed:false},
  {key:'quantity',label:'Quantity',editor:'number',required:true,step:'1',createAllowed:false},
  {key:'origin',label:'Origin',editor:'select',source:'origin',required:true,createAllowed:false},
- {key:'reference_size_mm',label:'Reference size (mm)',editor:'number',step:'any',createAllowed:false},
- {key:'width_mm',label:'Width (mm)',editor:'number',step:'any',createAllowed:false},
- {key:'height_mm',label:'Height (mm)',editor:'number',step:'any',createAllowed:false},
+ {key:'reference_size_mm',label:'Reference size (inches)',editor:'number',step:'any',createAllowed:false},
+ {key:'width_mm',label:'Width (inches)',editor:'number',step:'any',createAllowed:false},
+ {key:'height_mm',label:'Height (inches)',editor:'number',step:'any',createAllowed:false},
  {key:'slot',label:'Slot',editor:'text',max:200,createAllowed:false},
  {key:'notes',label:'Cutter notes',editor:'textarea',max:4000,createAllowed:false}
 ];

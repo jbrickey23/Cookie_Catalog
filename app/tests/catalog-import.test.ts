@@ -11,7 +11,7 @@ import { createDevelopmentBackup } from '../src/server/development-backup';
 import type { IdentityVerifier } from '../src/server/access-identity';
 import type { StagingManifest } from '../src/staging.mjs';
 const origin = 'https://catalog.example.test', id = 'review_' + 'b'.repeat(32);
-const owner: IdentityVerifier = { verify: async () => ({ subject: 'test-owner', email: 'owner@example.test', role: 'owner' }) };
+const owner: IdentityVerifier = { verify: async () => ({ subject: 'test-owner', email: 'owner@example.test', role: 'admin' }) };
 function request(suffix: string, value: unknown = {}, revision = '"review-1"') { return new Request(origin + '/api/import-reviews/' + id + '/' + suffix, { method: 'POST', headers: { Origin: origin, 'content-type': 'application/json', 'X-Cookie-Catalog-Check': 'import-review', 'If-Match': revision }, body: JSON.stringify(value) }); }
 function manifest(): StagingManifest { return { format: 'cookie-catalog-staging', version: 1, sourceNamespace: 'test-import', items: [{ sourceKey: 'physical', kind: 'physical_cutter', name: "TEST Tree 雪 O'Brien", source: { pageId: 'test-page' }, facts: { location: 'Unverified bin' }, catalog: { referenceSizeMm: 101.6, slot: 'A' } }, { sourceKey: 'design', kind: 'design', name: 'TEST design', source: { pageId: 'test-design' } }, { sourceKey: 'file', kind: 'printable_asset', name: 'TEST file', source: { pageId: 'test-file' } }, { sourceKey: 'not-owned', kind: 'physical_cutter', name: 'TEST unowned', source: { pageId: 'test-unowned' }, catalog: { ownership: 'not_owned' } }] }; }
 async function environment(imports = true, m = manifest()) {

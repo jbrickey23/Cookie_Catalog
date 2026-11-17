@@ -1,5 +1,27 @@
 # R2.1 Unified Search & Design Details — CC-TODO-021 / CC-TODO-010
 
+## Current front-of-catalog batch — November 16, 2026 Pacific
+
+[Current owner-authorized correction, exact-metric/role safeguards, result-card layout and Cris checklist](R2_1_Cris_Retest_20261116.md). Earlier accepted checkpoints remain history; this candidate is not yet owner/Cris accepted. No production, migration or merge authority.
+
+## Owner acceptance closeout — October 22, 2026
+
+The owner reports **PASS for all six checks** against the development candidate identified at handoff as `3ab43dd9610708d244147536a8e6e9677a96d537`, with application source `664a0920c6ad306c79cad3c90a0d4300e3910a4d`:
+
+1. Existing-design visual search works.
+2. Selection hides search results and focuses the physical-cutter form.
+3. Change design and return preserve the draft.
+4. Replacing a selected design protects unsaved changes.
+5. Physical-cutter Save/reopen works.
+6. Context help functions correctly without shifting fields.
+
+The owner considers 1200 ms hover dwell slightly long but **acceptable/nonblocking**. No further dwell change is included. These are owner-reported functional results dated October 22, not this worker's browser measurements/runtime attestation, independent Cris acceptance or production/merge approval. Prior pending-owner statements for this slice are superseded; prior October 21 five-check passes remain accepted. The earlier automated 204 app / 33 tooling/build/CI results and worker browser authentication blocker retain their original provenance.
+
+**Still open:** independent Cris walkthrough, independent actual narrow-browser help verification, physical-photo migration 0005 activation/acceptance, CC-TODO-019 backup reliability, CC-TODO-023 operational independent recovery, PR #7 integration/release readiness and release-automation limitations. Preferred-image persistence remains deferred. Issue #13 can close for its corrected-help scope without claiming narrow-device coverage. [Exact conflict assessment and separate proposed implementation handoff](PR7_Conflict_Assessment_20261022.md). This reconciliation does not resolve conflicts or authorize deployment.
+
+**Cris, uncoached:** ask her to find a familiar design, recognize it, and add a synthetic TEST cutter. Observe where she hesitates; do not demonstrate the route first. Record her device, tested candidate, outcome and friction separately from the owner's passes. No Cris result has been reported.
+
+
 ## Selected design focus and help dwell — October 22, 2026
 
 Owner approves a focused second stage for **Add Something → I have a cutter** under existing 021/010, plus Issue #13 dwell 1500 → **1200 ms**. Existing producer-design identity and physical relationships are unchanged. The current owner-reported help acceptance is recorded in [Context help](Context_Help.md#owner-acceptance-and-1200-ms-refinement--october-22-2026); Cris and this new candidate's owner acceptance remain separate.

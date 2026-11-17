@@ -27,12 +27,12 @@ function request(jwt?: string, path = "/api/session", method = "GET") {
 test("accepts a signed owner token and returns an uncached session", async () => {
   const jwt = await token();
   assert.deepEqual(await verifier.verify(request(jwt)), {
-    subject: "synthetic-owner", email: "owner@example.test", role: "owner"
+    subject: "synthetic-owner", email: "owner@example.test", role: "admin"
   });
   const response = await handleApiRequest(request(jwt), verifier);
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.deepEqual(await response.json(), { authenticated: true, email: "owner@example.test", role: "owner", environment: "development" });
+  assert.deepEqual(await response.json(), { authenticated: true, email: "owner@example.test", role: "admin", environment: "development" });
 });
 test("missing JWT and spoofed email headers are rejected", async () => {
   const spoof = new Request("https://catalog.example.test/api/session", {
@@ -86,7 +86,7 @@ test("optional membership uses only verified subject/email, rejects claimed role
   const memberVerifier=new AccessIdentityVerifier(config,keys,{resolve:async(subject,email)=>{
     calls++;return active&&subject==="member-subject"&&email==="member@example.test"?"editor":null;
   }});
-  const memberToken=await token({sub:"member-subject",email:"Member@Example.Test",role:"owner"});
+  const memberToken=await token({sub:"member-subject",email:"Member@Example.Test",role:"admin"});
   assert.equal((await memberVerifier.verify(request(memberToken)))?.role,"editor");
   active=false;assert.equal(await memberVerifier.verify(request(memberToken)),null);
   assert.equal(await memberVerifier.verify(request(await token({sub:"other",email:"member@example.test"}))),null);
@@ -98,8 +98,8 @@ test("optional membership uses only verified subject/email, rejects claimed role
 test("membership outages and invalid resolver roles fail closed while owner bootstrap stays available",async()=>{
   const broken=new AccessIdentityVerifier(config,keys,{resolve:async()=>{throw Error("membership unavailable");}});
   assert.equal(await broken.verify(request(await token({sub:"member",email:"member@example.test"}))),null);
-  assert.equal((await broken.verify(request(await token())))?.role,"owner");
-  const invalid=new AccessIdentityVerifier(config,keys,{resolve:async()=>"owner" as never});
+  assert.equal((await broken.verify(request(await token())))?.role,"admin");
+  const invalid=new AccessIdentityVerifier(config,keys,{resolve:async()=>"admin" as never});
   assert.equal(await invalid.verify(request(await token({sub:"member",email:"member@example.test"}))),null);
 });
 
@@ -161,11 +161,11 @@ test("storage mutation requires a verified owner, POST, origin and custom header
 
 test("private membership grants owner-equivalent admin and viewer after JWT verification and observes revocation", async () => {
   const privateConfig = {...config, CATALOG_MEMBERS: JSON.stringify([
-    {email:"admin@example.test",role:"owner"}, {email:"viewer@example.test",role:"viewer"}
+    {email:"admin@example.test",role:"admin"}, {email:"viewer@example.test",role:"viewer"}
   ])};
   const configured = new AccessIdentityVerifier(privateConfig,keys);
-  assert.equal((await configured.verify(request(await token({email:"Admin@Example.Test",sub:"admin"}))))?.role,"owner");
-  const viewerJwt = await token({email:"viewer@example.test",sub:"viewer",role:"owner"});
+  assert.equal((await configured.verify(request(await token({email:"Admin@Example.Test",sub:"admin"}))))?.role,"admin");
+  const viewerJwt = await token({email:"viewer@example.test",sub:"viewer",role:"admin"});
   assert.equal((await configured.verify(request(viewerJwt)))?.role,"viewer");
   assert.equal((await handleApiRequest(request(viewerJwt,"/api/dev/archive","POST"),configured)).status,403);
   assert.equal((await handleApiRequest(request(viewerJwt,"/api/catalog/shapes","POST"),configured)).status,403);
@@ -175,16 +175,16 @@ test("private membership grants owner-equivalent admin and viewer after JWT veri
   assert.equal(await configured.verify(request(await token({email:"admin@example.test"},(await generateKeyPair("RS256")).privateKey))),null);
   privateConfig.CATALOG_MEMBERS = "[]";
   assert.equal(await configured.verify(request(viewerJwt)),null,"removal revokes subsequent requests despite unexpired JWT");
-  assert.equal((await configured.verify(request(await token())))?.role,"owner");
+  assert.equal((await configured.verify(request(await token())))?.role,"admin");
 });
 test("malformed, duplicate or invalid private memberships fail closed without resolver fallback", async () => {
   const jwt = await token({email:"member@example.test"});
-  for (const value of ["broken", "{}", "null", JSON.stringify([{email:"member@example.test",role:"admin"}]),
-    JSON.stringify([{email:"member@example.test",role:"viewer"},{email:"MEMBER@example.test",role:"owner"}]),
-    JSON.stringify([{email:"member@example.test",role:"owner",extra:true}]),
-    JSON.stringify([{email:"member@example.test",role:"viewer"},{email:"bad",role:"owner"}])]) {
+  for (const value of ["broken", "{}", "null", JSON.stringify([{email:"member@example.test",role:"superuser"}]),
+    JSON.stringify([{email:"member@example.test",role:"viewer"},{email:"MEMBER@example.test",role:"admin"}]),
+    JSON.stringify([{email:"member@example.test",role:"admin",extra:true}]),
+    JSON.stringify([{email:"member@example.test",role:"viewer"},{email:"bad",role:"admin"}])]) {
     const configured = new AccessIdentityVerifier({...config,CATALOG_MEMBERS:value},keys,{resolve:async()=>"editor"});
     assert.equal(await configured.verify(request(jwt)),null);
-    assert.equal((await configured.verify(request(await token())))?.role,"owner");
+    assert.equal((await configured.verify(request(await token())))?.role,"admin");
   }
 });

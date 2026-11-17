@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {catalogEnvironment} from '../src/catalog-environment';
 import worker,{handleApiRequest} from '../src/worker';
 import {archiveStream,archiveHash} from '../src/archive-format';
-const owner={verify:async()=>({subject:'owner',email:'owner@example.test',role:'owner' as const})};
+const owner={verify:async()=>({subject:'admin',email:'owner@example.test',role:'admin' as const})};
 test('environment defaults preserve development; invalid configuration fails closed',async()=>{
  assert.equal(catalogEnvironment(undefined),'development');assert.equal(catalogEnvironment('production'),'production');assert.throws(()=>catalogEnvironment('prod'));
  const session=await handleApiRequest(new Request('https://catalog.example.test/api/session'),owner,undefined,undefined,'production');assert.equal((await session.json() as any).environment,'production');

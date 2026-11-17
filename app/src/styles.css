@@ -249,3 +249,28 @@ input[aria-invalid="true"] {outline:2px solid #b12d24;}
 .selected-design-summary .cutter-card-body h3 {margin:0;font-size:1rem}
 .selected-design-summary .cutter-card-body p {margin:.25rem 0}
 .selected-design-summary>button {margin-top:.5rem;min-height:44px}
+
+/* Owner-specified desktop: image left, information center, inventory top right,
+   photographs lower left. Rules are scoped to catalog result cards. */
+.browse-workspace .catalog-result-card,.browse-workspace:not(.expanded) .catalog-result-card,.browse-workspace.expanded .catalog-result-card {display:grid;grid-template-columns:168px minmax(180px,1fr) minmax(250px,1fr);grid-template-areas:"image information inventory" "photos photos inventory";gap:12px;padding:12px;cursor:default;min-width:0;}
+.catalog-result-card .representative-image {grid-area:image;width:168px;height:168px;min-height:0;aspect-ratio:1;margin:0;}
+.catalog-result-card .design-information {grid-area:information;padding:0;min-width:0;overflow-wrap:anywhere;}
+.catalog-result-card .card-inventory {grid-area:inventory;min-width:0;overflow:auto;max-height:300px;}
+.card-inventory table {border-collapse:collapse;width:100%;text-align:left;}
+.card-inventory caption {text-align:left;font-weight:700;margin-bottom:.5rem;}
+.card-inventory th,.card-inventory td {padding:.4rem;border-bottom:1px solid #dce1d8;overflow-wrap:anywhere;}
+.card-inventory .bin-link {font-weight:750;font-size:1.05rem;}
+.catalog-result-card .card-photographs {grid-area:photos;min-width:0;}
+.card-photographs h4 {margin:.25rem 0;}
+.card-photographs .design-gallery figure {display:flex;align-items:center;gap:.75rem;margin:0;max-width:none;}
+.card-photographs .design-gallery img {width:80px;height:80px;min-width:80px;border-radius:8px;}
+.card-photographs .design-gallery figcaption {margin:0;}
+.card-photographs .design-gallery nav {justify-content:flex-start;margin-top:.5rem;}
+.catalog-result-card a {text-underline-offset:3px;}
+.catalog-result-card a:focus-visible {outline:3px solid #1769aa;outline-offset:3px;}
+.browse-search {max-width:900px;}
+.browse-search .ownership-filter {display:flex;align-items:center;gap:.4rem;white-space:nowrap;font-weight:400;margin:0;}
+@media(max-width:800px){.browse-workspace .catalog-result-card,.browse-workspace:not(.expanded) .catalog-result-card,.browse-workspace.expanded .catalog-result-card{grid-template-columns:100px minmax(0,1fr);grid-template-areas:"image information" "inventory inventory" "photos photos";}.catalog-result-card .representative-image{width:100px;height:100px;}.card-photographs .design-gallery figure{flex-wrap:wrap;}}
+
+.browse-results {container-type:inline-size;}
+@container (max-width:700px){.browse-workspace .catalog-result-card,.browse-workspace:not(.expanded) .catalog-result-card,.browse-workspace.expanded .catalog-result-card{grid-template-columns:100px minmax(0,1fr);grid-template-areas:"image information" "inventory inventory" "photos photos";}.catalog-result-card .representative-image{width:100px;height:100px;}.card-photographs .design-gallery figure{flex-wrap:wrap;}}

@@ -4,15 +4,17 @@ import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from "jose";
 export interface AuthenticatedUser {
   subject: string;
   email: string | null;
-  role: "owner" | "editor" | "viewer";
+  role: "admin" | "owner" | "editor" | "viewer";
 }
 export interface IdentityVerifier {
   verify(request: Request): Promise<AuthenticatedUser | null>;
 }
-export function mayRead(user: AuthenticatedUser | null): boolean { return user !== null && ["owner","editor","viewer"].includes(user.role); }
+export function mayRead(user: AuthenticatedUser | null): boolean { return user !== null && ["admin","owner","editor","viewer"].includes(user.role); }
 export function mayWrite(user: AuthenticatedUser | null): boolean {
-  return user !== null && (user.role === "owner" || user.role === "editor");
+  return user !== null && (["admin","owner","editor"].includes(user.role));
 }
+export function mayAdmin(user:AuthenticatedUser|null):boolean{return user?.role==="admin";}
+export function mayDelete(user:AuthenticatedUser|null):boolean{return user!==null&&["admin","owner"].includes(user.role);}
 export class DenyAllIdentityVerifier implements IdentityVerifier {
   async verify(_request: Request): Promise<null> { return null; }
 }
@@ -35,7 +37,7 @@ export function accessIsConfigured(config: AccessConfiguration): boolean {
 }
 
 /** Private deployment configuration; never accept membership from client/JWT role claims.
- * Admin is represented by owner, matching the owner's approved equal permissions.
+ * Admin is a distinct private membership role; bootstrap recovery remains admin.
  * Invalid maps deny all configured members, leaving bootstrap recovery available.
  */
 export function configuredMemberRole(raw: string | undefined, email: string): AuthenticatedUser["role"] | null {
@@ -49,7 +51,7 @@ export function configuredMemberRole(raw: string | undefined, email: string): Au
           || Object.keys(entry).sort().join(",") !== "email,role") return null;
       const {email: address, role} = entry;
       if (typeof address !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)
-          || !["owner", "editor", "viewer"].includes(role)) return null;
+          || !["admin", "owner", "editor", "viewer"].includes(role)) return null;
       const normalized = address.toLowerCase();
       if (members.has(normalized)) return null;
       members.set(normalized, role);
@@ -85,7 +87,7 @@ export class AccessIdentityVerifier implements IdentityVerifier {
           || typeof payload.email !== "string" || !payload.email.trim()
           || typeof payload.iat !== "number" || payload.iat > Math.floor(Date.now() / 1000) + 5) return null;
       const email = payload.email.trim().toLowerCase();
-      if (email === this.config.OWNER_EMAIL!.trim().toLowerCase()) return { subject: payload.sub, email, role: "owner" };
+      if (email === this.config.OWNER_EMAIL!.trim().toLowerCase()) return { subject: payload.sub, email, role: "admin" };
       // Explicit private configuration takes precedence over the optional legacy adapter.
       if (this.config.CATALOG_MEMBERS !== undefined) {
         const role = configuredMemberRole(this.config.CATALOG_MEMBERS, email);

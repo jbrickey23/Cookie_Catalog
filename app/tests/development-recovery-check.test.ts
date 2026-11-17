@@ -84,13 +84,13 @@ test("cleanup failure never returns a successful package", async () => {
 });
 test("recovery test rejects unauthenticated, non-owner and cross-origin requests before writes", async () => {
   const url = "https://catalog.example.test/api/dev/recovery-check";
-  const verifier = (role: "owner" | "editor" | null): IdentityVerifier => ({ verify: async () => role ? { subject: "demo", email: "demo@example.test", role } : null });
+  const verifier = (role: "admin" | "editor" | null): IdentityVerifier => ({ verify: async () => role ? { subject: "demo", email: "demo@example.test", role } : null });
   const database = { prepare() { throw new Error("Should not read or write"); } } as unknown as D1Database;
   const bucket = {} as R2Bucket;
   const headers = { Origin: "https://catalog.example.test", "X-Cookie-Catalog-Check": "recovery" };
   assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers }), verifier(null), database, bucket)).status, 401);
   assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers }), verifier("editor"), database, bucket)).status, 403);
-  assert.equal((await handleApiRequest(new Request(url), verifier("owner"), database, bucket)).status, 405);
-  assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers: { ...headers, Origin: "https://other.example.test" } }), verifier("owner"), database, bucket)).status, 403);
-  assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers: { Origin: headers.Origin } }), verifier("owner"), database, bucket)).status, 403);
+  assert.equal((await handleApiRequest(new Request(url), verifier("admin"), database, bucket)).status, 405);
+  assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers: { ...headers, Origin: "https://other.example.test" } }), verifier("admin"), database, bucket)).status, 403);
+  assert.equal((await handleApiRequest(new Request(url, { method: "POST", headers: { Origin: headers.Origin } }), verifier("admin"), database, bucket)).status, 403);
 });

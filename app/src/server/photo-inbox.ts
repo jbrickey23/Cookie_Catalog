@@ -18,7 +18,7 @@ export async function handlePhotoInbox(request:Request,files:R2Bucket,user:Authe
    if(match![2])return reply({error:'Method not allowed'},405);return reply({...item,createdBy:undefined,revision:object.httpEtag});
   }
   if(request.method!=='POST')return reply({error:'Method not allowed'},405);
-  if(!['owner','editor'].includes(user.role))return reply({error:'Editing access required'},403);
+  if(!['admin','owner','editor'].includes(user.role))return reply({error:'Editing access required'},403);
   if(request.headers.get('Origin')!==url.origin||request.headers.get('X-Cookie-Catalog-Check')!=='photo-inbox')return reply({error:'Same-origin photo request required'},403);
   if(match){if(match[2]!=='retry')return reply({error:'Method not allowed'},405);const object=await files.get(key(match[1]));if(!object)return reply({error:'Photo item not found'},404);const item=await object.json<Item>();if(item.status==='ready-for-review')return reply({id:item.id,status:item.status});const token=crypto.randomUUID();const saved=await files.put(key(item.id),JSON.stringify({...item,queueToken:token,status:'queued',errorCode:undefined}),{onlyIf:{etagMatches:object.etag}});if(!saved)return reply({error:'Photo changed; refresh before retrying'},409);await files.put(queue(item.id,token),'queued');return reply({id:item.id,status:'queued'});}
   const id=request.headers.get('X-Photo-Id')??'';if(!validId(id))return reply({error:'Invalid photo upload identity'},400);

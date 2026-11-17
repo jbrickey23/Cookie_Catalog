@@ -4,7 +4,7 @@ import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {withReleaseWrite,releaseStatus,handleReleaseMaintenance} from '../src/server/release-maintenance';
 import {handleReleaseGuardedApi} from '../src/worker';
 const mf=()=>new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("test")}}',r2Buckets:['FILES']}));
-const owner={verify:async()=>({role:'owner' as const,subject:'TEST owner',email:null})};
+const owner={verify:async()=>({role:'admin' as const,subject:'TEST owner',email:null})};
 const request=(body:unknown)=>new Request('https://catalog.test/api/release-maintenance',{method:'POST',headers:{Origin:'https://catalog.test','X-Cookie-Catalog-Check':'release-maintenance','content-type':'application/json'},body:JSON.stringify(body)});
 const sha='a'.repeat(40);
 test('release gate drains admitted writes, blocks all new mutation routes, preserves reads and records explicit unlock',async()=>{

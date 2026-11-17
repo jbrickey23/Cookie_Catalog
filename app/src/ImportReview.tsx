@@ -1,3 +1,4 @@
+import {InchInput} from './InchInput';
 import {recordedLocation} from './source-location';
 import {SavedImportReviews} from "./SavedImportReviews";
 import React,{useEffect,useState} from "react";
@@ -69,7 +70,7 @@ export function ImportReview({enableSavedReviews=false,canImport=false,onCatalog
           setDirty(true);setDraft({...draft,items:[...draft.items,copy]});setSelected(draft.items.length);setMessage("Another draft item created from this page. Classify it and assign only its own files; no live record was created.");
         }}>Describe another item from this page</button>
         {["physical_cutter","printable_asset"].includes(item.kind)&&<fieldset><legend>Dimensions</legend>
-          {(["widthMm","heightMm"] as const).map(key=><p key={key}><label>{key==="widthMm"?"Width (mm)":"Height (mm)"} <input type="number" min="0.001" max="10000" step="any" value={item.facts?.[key]??""} onChange={e=>update(item=>{item.facts??={};if(e.target.value==="")delete item.facts[key];else item.facts[key]=Number(e.target.value);})} /></label></p>)}
+          {(["widthMm","heightMm"] as const).map(key=><p key={key}><label>{key==="widthMm"?"Width (inches)":"Height (inches)"} <InchInput key={item.sourceKey+key} value={item.facts?.[key]} onChange={mm=>update(item=>{item.facts??={};if(mm===undefined)delete item.facts[key];else item.facts[key]=mm;})}/></label></p>)}
           <p>Record orientation and how you measured in the dimension review notes. A scale photo alone does not establish verified dimensions.</p>
         </fieldset>}
         {item.kind==="physical_cutter"&&<p><label>Storage location <input maxLength={4000} value={item.facts?.location??recordedLocation(item)??""} onChange={e=>update(item=>{item.facts??={};item.facts.location=e.target.value;})} /></label></p>}
@@ -77,7 +78,7 @@ export function ImportReview({enableSavedReviews=false,canImport=false,onCatalog
           <p><label>Ownership <select value={item.catalog?.ownership??"unknown"} onChange={e=>update(item=>{item.catalog??={};item.catalog.ownership=e.target.value as "unknown"|"owned"|"not_owned";})}><option value="unknown">Unknown / needs checking</option><option value="owned">Owned</option><option value="not_owned">Not owned / not purchased</option></select></label></p>
           <p><label>Print status <select value={item.catalog?.printStatus??"unknown"} onChange={e=>update(item=>{item.catalog??={};item.catalog.printStatus=e.target.value as "unknown"|"printed"|"not_printed"|"not_applicable";})}><option value="unknown">Unknown / needs checking</option><option value="printed">Printed</option><option value="not_printed">Not printed</option><option value="not_applicable">Not applicable</option></select></label></p>
           {item.kind==="physical_cutter"&&<><p><label>Physical quantity (blank means unknown) <input type="number" min="0" max="100000" step="1" value={item.catalog?.quantity??""} onChange={e=>update(item=>{item.catalog??={};if(e.target.value==="")delete item.catalog.quantity;else item.catalog.quantity=Number(e.target.value);})} /></label></p><p><label>Slot (optional) <input maxLength={200} value={item.catalog?.slot??""} onChange={e=>update(item=>{item.catalog??={};item.catalog.slot=e.target.value;})} /></label></p></>}
-          <p><label>Reference size — longest edge (inches) <input type="number" min="0.001" step="any" value={item.catalog?.referenceSizeMm===undefined?"":Number((item.catalog.referenceSizeMm/25.4).toFixed(8))} onChange={e=>update(item=>{item.catalog??={};if(e.target.value==="")delete item.catalog.referenceSizeMm;else item.catalog.referenceSizeMm=Number(e.target.value)*25.4;})} /></label></p>
+          <p><label>Reference size — longest edge (inches) <InchInput key={item.sourceKey+'reference'} value={item.catalog?.referenceSizeMm} onChange={mm=>update(item=>{item.catalog??={};if(mm===undefined)delete item.catalog.referenceSizeMm;else item.catalog.referenceSizeMm=mm;})}/></label></p>
           <p><label>Original size label / units <input maxLength={200} value={item.catalog?.originalSizeLabel??""} onChange={e=>update(item=>{item.catalog??={};item.catalog.originalSizeLabel=e.target.value;})} /></label></p>
           <p>A 4 by 2 inch cookie has a 4 inch reference size. Keep oriented measured width/height separately. Do not use packaging or assembled-set dimensions for an individual cutter.</p>
         </fieldset>}

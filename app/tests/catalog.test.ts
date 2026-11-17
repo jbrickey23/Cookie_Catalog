@@ -5,7 +5,7 @@ import {Miniflare,convertV4MiniflareOptions} from "miniflare";
 import {handleApiRequest} from "../src/worker";
 import type {IdentityVerifier} from "../src/server/access-identity";
 const origin="https://catalog.example.test";
-const owner:IdentityVerifier={verify:async()=>({subject:"owner",email:"owner@example.test",role:"owner"})};
+const owner:IdentityVerifier={verify:async()=>({subject:"admin",email:"owner@example.test",role:"admin"})};
 function write(kind:string,record:unknown,id?:string,revision?:string) {
   return new Request(origin+"/api/catalog/"+kind+(id?"/"+id:""),{method:id?"PUT":"POST",headers:{"content-type":"application/json",Origin:origin,"X-Cookie-Catalog-Check":"catalog",...(revision?{"If-Match":revision}:{})},body:JSON.stringify(record)});
 }

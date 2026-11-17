@@ -4,7 +4,7 @@ import {test} from "node:test";
 import {Miniflare,convertV4MiniflareOptions} from "miniflare";
 import {handleApiRequest} from "../src/worker";
 import type {IdentityVerifier} from "../src/server/access-identity";
-const owner:IdentityVerifier={verify:async()=>({subject:"owner",email:"owner@example.test",role:"owner"})};
+const owner:IdentityVerifier={verify:async()=>({subject:"admin",email:"owner@example.test",role:"admin"})};
 const url="https://catalog.example.test/api/dev/infrastructure-check";
 async function env() {
   const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:"infra"},r2Buckets:["FILES"]}));

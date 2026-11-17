@@ -5,7 +5,7 @@ import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { handleApiRequest } from "../src/worker";
 import type { IdentityVerifier } from "../src/server/access-identity";
 const origin = "https://catalog.example.test";
-const owner: IdentityVerifier = { verify: async () => ({ subject: "owner", email: "owner@example.test", role: "owner" }) };
+const owner: IdentityVerifier = { verify: async () => ({ subject: "admin", email: "owner@example.test", role: "admin" }) };
 const png = Uint8Array.from(Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9u0AAAAASUVORK5CYII=", "base64"));
 const stl = new TextEncoder().encode("solid test\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid test");
 async function env() {
