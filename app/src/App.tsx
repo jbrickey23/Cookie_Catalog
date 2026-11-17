@@ -139,7 +139,7 @@ export function App() {
     <hr />
     {role!=="viewer"&&<SourceReferences onSaved={()=>setCatalogVersion(v=>v+1)} />}
     {role!=="viewer"&&<BatchAttachments onSaved={()=>setCatalogVersion(v=>v+1)} />}
-    <Attachments key={catalogVersion} canEdit={role !== "viewer"} canManage={role === "admin"||role === "owner"} />
+    <Attachments key={catalogVersion} canCleanup={adminPage&&role==='admin'} canEdit={role !== "viewer"} canManage={role === "admin"||role === "owner"} />
     </details>
     {adminPage&&role === "admin" && <details className="management-panel"><summary>Manual archive export (advanced)</summary>
     <ArchiveBackup />

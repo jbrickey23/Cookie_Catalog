@@ -3,7 +3,7 @@ import {catalogChoices} from "./catalog-choices";
 type RecordOption = { id: string; name: string };
 type Item = { id: string; filename: string; byteSize: number; available: boolean };
 type Orphan = { id: string; byteSize: number; uploadedAt: string; removable: boolean };
-export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canManage?:boolean}) {
+export function Attachments({canEdit=true,canManage=true,canCleanup=canManage}:{canEdit?:boolean;canManage?:boolean;canCleanup?:boolean}) {
   const [targets, setTargets] = useState<{ shapes: RecordOption[]; designs: RecordOption[] }>({ shapes: [], designs: [] });
   const [kind, setKind] = useState("shape");
   const [recordId, setRecordId] = useState("");
@@ -112,7 +112,7 @@ export function Attachments({canEdit=true,canManage=true}:{canEdit?:boolean;canM
         <button disabled={busy} onClick={() => remove(item.id)}>Delete original</button>{" "}
         <button disabled={busy} onClick={() => setConfirmId("")}>Cancel</button></p>}
     </li>)}</ul>
-    {canManage && <>
+    {canCleanup && <>
     <p>Use Catalog backup below for larger backups: up to 1 GiB of originals and 1,000 files. The older small JSON backup remains limited to 4 MiB total and 25 files.</p>
     <h3>Storage cleanup</h3>
     <p>Check for originals left without catalog metadata after an interrupted operation. Cleanup is manual; files younger than 24 hours are kept.</p>

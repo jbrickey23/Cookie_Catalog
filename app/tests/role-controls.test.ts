@@ -11,6 +11,8 @@ test("viewer controls retain browsing without create, upload or maintenance",()=
   const files=renderToStaticMarkup(React.createElement(Attachments,{canEdit:false,canManage:false}));
   assert.match(files,/Private files/);
   assert.doesNotMatch(files,/type="file"|Save private file|Storage cleanup|Check unlinked files/);
+  const catalogOwnerFiles=renderToStaticMarkup(React.createElement(Attachments,{canEdit:true,canManage:true,canCleanup:false}));
+  assert.match(catalogOwnerFiles,/Save private file/);assert.doesNotMatch(catalogOwnerFiles,/Storage cleanup|Check unlinked files/);
   const ownerFiles=renderToStaticMarkup(React.createElement(Attachments,{canEdit:true,canManage:true}));
   assert.match(ownerFiles,/Save private file/);
   assert.match(ownerFiles,/Check unlinked files/);

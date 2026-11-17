@@ -10,10 +10,11 @@ export function ImageWindowLink({id,filename,children}:{id:string;filename:strin
 }
 /** Gallery position is local presentation, not a saved preferred-image choice. */
 export function ImageGallery({files,label}:{files:GalleryFile[];label:string}){
- const images=files.filter(isImage),[index,setIndex]=useState(0),[failed,setFailed]=useState(false);
+ const images=files.filter(isImage),[position,setPosition]=useState<{key:string|undefined;index:number}>({key:undefined,index:0}),[failed,setFailed]=useState(false);
+ const key=images[0]?.id,index=position.key===key?position.index:0;
+ const setIndex=(change:(value:number)=>number)=>setPosition(previous=>({key,index:change(previous.key===key?previous.index:0)}));
  const file=images[Math.min(index,Math.max(0,images.length-1))];
  useEffect(()=>{setFailed(false);},[file?.id]);
- useEffect(()=>{setIndex(0);},[files[0]?.id]);
  return <section className="design-gallery" aria-label={label}>
   {file?<figure>{file.available&&!failed?<ImageWindowLink id={file.id} filename={file.filename}><img src={'/api/attachments/'+encodeURIComponent(file.id)+'?view=image'} alt={file.filename} onError={()=>setFailed(true)}/></ImageWindowLink>:<p>Image unavailable. Its association is retained.</p>}
    <figcaption>{file.photoKind==='physical'?'Physical cutter photograph':file.direct===false?'Decorating idea: '+file.decoratingIdeas:label==='Physical cutter photographs'?'Physical cutter photograph':'Design image'}{file.decoratingIdeas&&file.direct!==false?' · Also linked to '+file.decoratingIdeas:''} · {file.filename}{file.available&&<> · <a href={'/api/attachments/'+encodeURIComponent(file.id)}>Download original</a></>}</figcaption></figure>:<p>No images attached. Digital files and recorded cutters are listed separately.</p>}
