@@ -1,5 +1,9 @@
 # Cookie Catalog — new chat bootstrap
 
+## Restore the R2.1 location addition · November 17, 2026 Pacific
+
+Refresh open PR #7 and its checks on `feature/cc-infrastructure-foundation`. Restore the [location implementation and validation](docs/R2_1_UX_Consolidation.md#physical-location-management), source `5377e7fa92f78b1231cdf0832c825d652ba03815` and [Cris’s location checklist](docs/R2_1_Cris_Retest_20261116.md#physical-locations). This addition extends the already delivered search/detail candidate at `b28fbbe`. The next acceptance step is Cris’s development walkthrough. The v1.0.0 policy digests match the repository manifest and protected-main copies. Existing PR conflicts, production promotion and migration 0005 remain outside this handoff.
+
 ## Restore the R2.1 consolidated candidate — November 17, 2026 Pacific
 
 Refresh PR #7 (`feature/cc-infrastructure-foundation`), CI and its development check. Start with the [R2.1 delivery and retest](docs/R2_1_UX_Consolidation.md#implementation-and-verification), the five linked annotations, and [implementation `bba7105`](https://github.com/JBrickey23/Cookie_Catalog/commit/bba710552adb3a5226537d7c57939644f7f9db73). The previous 25% reserve was withdrawn. Check for newer evidence on the PR before repeating any work. Next acceptance is the independent Cris walkthrough. Keep R1, the existing PR conflicts, migration 0005 and backup/recovery gates separate.

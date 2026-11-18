@@ -484,3 +484,16 @@ The local application suite passed 220/220 and tooling passed 33/33. SQLite sche
 2. Compare the design on the left with all cutters on the right. Follow one cutter name, then its BIN. Confirm the BIN shows other designs stored there. Mouse Back should restore your place.
 3. On a TEST record, stage notes on one cutter and save a fractional size on another. Check the first draft, Cancel, and reopen the saved record.
 4. Enter a bare source URL and existing/new semicolon-separated tags. Try Tab, Cancel, Save and reopen. Check the same layout on a narrow screen.
+
+## Physical location management
+
+The November 17 owner addition extends the consolidated UX candidate on PR #7. [Implementation 5377e7f](https://github.com/JBrickey23/Cookie_Catalog/commit/5377e7fa92f78b1231cdf0832c825d652ba03815) uses the existing locations table, physical cutter foreign key and backup format. There is no schema migration or backfill.
+
+- BIN 1 through BIN 50 and Classes are offered alongside stored names. Opening the selector performs no writes. Saving a missing preset resolves it to a durable catalog ID. The pencil creates or reuses a named location and can rename a selected custom location. A rename changes the shared label immediately. Cutter assignment takes effect on Save.
+- Name matching accounts for capitalization, spacing and common numbered BIN punctuation. Leading zeros remain significant. An exact stored spelling disambiguates existing equivalent labels. Creation and rename guard against concurrent changes. Cutters keep their location IDs when a shared label changes.
+- Each physical save requires one effective location. OneNote assignments continue to apply when the explicit field is empty. A historical record with neither value stays readable until the user chooses its location on a physical save. Import review holds a new unlocated physical record for an explicit choice and retains its original source evidence.
+- Search and detail cards link to the whole selected location across designs. Reassigning a record moves its full quantity. Other physical copies, source notes and recovery snapshots retain their existing relationships.
+
+Local validation passed 224 application tests, 33 tooling tests, the schema smoke check, 11 restore-helper tests, three OneNote audit tests, synthetic import, TypeScript and the development-targeted build. Focused checks covered final edits, including concurrent duplicate creation. An initial parallel local run lost a Miniflare loopback connection. The suite passed with bounded concurrency. Local Chromium could not start because the host denied its socket. Automated DOM and database fixtures cover the workflows; authenticated development browser acceptance and Cris’s independent walkthrough are pending.
+
+See the [current PR and publication checks](https://github.com/JBrickey23/Cookie_Catalog/pull/7/checks) and the [location retest](R2_1_Cris_Retest_20261116.md#physical-locations).

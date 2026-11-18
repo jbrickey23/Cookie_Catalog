@@ -1,5 +1,17 @@
 # R2.1 front-of-catalog correction and Cris retest
 
+## Physical locations
+
+Run these checks on [development](https://cookie-catalog-dev.j-brickey.workers.dev/) using TEST records. Record the candidate revision from PR #7, browser, viewport and observed result. Continue with the existing [search, detail, photos and tags walkthrough](R2_1_UX_Consolidation.md#cris-retest).
+
+1. Add a physical cutter to a TEST design. Open the location dropdown and find BIN 1, BIN 50 and Classes. Type part of a name, use the arrow keys and Enter to select Classes, then save quantity 3. Reload and confirm the same record shows Classes and quantity 3.
+2. Add a second physical record to the same design in BIN 1. Add a TEST cutter from another design to Classes. Follow Classes from the search card and then from cutter details. Both links should show both Classes records and exclude BIN 1. Check that the Name and location fields stay side by side and Classes reads as a named location.
+3. On the first record, use the location pencil to create a uniquely prefixed TEST custom name. Save the cutter and reload. From another record, enter the same name with different capitalization and extra spaces. Confirm it resolves to the existing choice. Cancel that cutter's reassignment and check its original location.
+4. Rename the TEST custom location with the pencil. Reopen its assigned cutter, then move it to BIN 50 and save. Follow BIN 50 and the old location. Confirm the entire quantity moved, the sibling stayed in BIN 1, and the stored name can still be selected for another cutter.
+5. Inspect an imported cutter read-only. Check its recorded OneNote spelling, including leading zeros where present. On synthetic records, verify a new cutter cannot save without one location and that keyboard and dropdown selection work at a narrow viewport.
+
+Independent Cris results are pending.
+
 ## Current development candidate — November 17, 2026 Pacific
 
 Use the [consolidated implementation and Cris checklist](R2_1_UX_Consolidation.md#implementation-and-verification). The owner confirmed mouse Back on the earlier `42b4dc6` build. The earlier checkpoints below retain their historical scope.

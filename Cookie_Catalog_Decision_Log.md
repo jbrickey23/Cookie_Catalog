@@ -1,5 +1,9 @@
 # Cookie_Catalog — Decision Log
 
+## One active physical location · November 17, 2026 Pacific
+
+Under the existing R2.1 UX authority, a cutter's quantity shares its single location. Stock kept elsewhere uses a separate physical inventory record. Predefined choices are available immediately. Explicit selection can create a missing preset in the existing locations table. A custom rename retains its ID and changes the shared label. Opening a record never seeds or renumbers locations. Source evidence remains available when a cutter has an imported assignment. An existing cutter with no recorded location requires a choice on its next physical save. See the [location implementation and validation](docs/R2_1_UX_Consolidation.md#physical-location-management).
+
 ## R2.1 consolidation under existing UX authority — November 17, 2026 Pacific
 
 The approved annotations supersede the earlier click-any-thumbnail-to-open behavior. Thumbnail selection is temporary; only the displayed image opens its original. Cutter names follow the shared producer design, while their links address individual physical records. Renaming is available in the design editor. A BIN link identifies a location across designs. Compact cutter saves update only the submitted physical fields and retain revision and recovery checks. [R2.1 delivery and retest](docs/R2_1_UX_Consolidation.md#implementation-and-verification). No schema decision or new decision ID.

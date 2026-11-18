@@ -1,5 +1,9 @@
 # Cookie Catalog — current context
 
+## R2.1 physical locations · November 17, 2026 Pacific
+
+The owner approved this addition before Cris's next acceptance test. PR #7 implementation `5377e7f` extends the consolidated candidate on `b28fbbe`. Add, cutter-detail and advanced forms now share one selector for numbered BINs, Classes and custom locations. Existing location IDs, OneNote evidence and per-cutter recovery are preserved. See the [location implementation and validation](docs/R2_1_UX_Consolidation.md#physical-location-management) and [Cris’s location checklist](docs/R2_1_Cris_Retest_20261116.md#physical-locations).
+
 ## Search and detail consolidation — November 17, 2026 Pacific
 
 The owner authorized development publication and withdrew the weekly reserve. Restored PR #7 at `42b4dc6`, whose required CI and development deployment succeeded. The owner confirmed mouse Back on that build. The consolidated handoff and all five owner annotations were recovered before editing.

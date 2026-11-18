@@ -1,5 +1,9 @@
 # Cookie Catalog — current TODO
 
+## R2.1 physical locations · November 17, 2026 Pacific
+
+CC-TODO-021 / CC-TODO-010 now include the owner-approved location selector and shared-name management. Implementation `5377e7f` is on the PR #7 development branch. Local automated validation passed. Record independent acceptance using [Cris’s location checklist](docs/R2_1_Cris_Retest_20261116.md#physical-locations), alongside the existing search, detail-card, photo and tag checks. The [location implementation and validation](docs/R2_1_UX_Consolidation.md#physical-location-management) identifies the development receipts and remaining acceptance evidence.
+
 ## R2.1 retest — November 17, 2026 Pacific
 
 CC-TODO-021 / CC-TODO-010: the consolidated UX batch is implemented in [implementation `bba7105`](https://github.com/JBrickey23/Cookie_Catalog/commit/bba710552adb3a5226537d7c57939644f7f9db73). Review exact-head CI/development deployment on PR #7, then run the [R2.1 delivery and retest](docs/R2_1_UX_Consolidation.md#implementation-and-verification). Owner-reported Back passed on the prior build. Independent Cris acceptance, authenticated desktop/narrow verification, migration 0005, CC-TODO-019/023 and release integration remain open. No new task ID.
