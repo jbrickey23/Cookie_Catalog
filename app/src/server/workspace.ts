@@ -1,3 +1,4 @@
+import {binKey} from '../inventory';
 import type {CatalogEnvironment} from '../catalog-environment';
 import {body,validate} from './catalog';
 import {hasSourceMappings,sourceEvidenceSql} from './source-location';
@@ -26,11 +27,16 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
   const path=new URL(request.url).pathname.slice('/api/workspace'.length);
   if(path==='/recovery'||path.startsWith('/recovery/'))return handleRecordRecovery(request,db,files,subject,owner);
   const related=/^\/shapes\/([a-zA-Z0-9_-]{1,128})\/inventory$/.exec(path);
-  if(related&&request.method==='GET'){
+  if((related||path==='/inventory')&&request.method==='GET'){
+   const params=new URL(request.url).searchParams,after=params.get('after')??'',bin=params.get('bin')?.trim();
+   if(after&&!idPattern.test(after)||!related&&(!bin||bin.length>200))return json({error:'Invalid inventory selection.'},400);
    const mappings=await hasSourceMappings(db);
-   const rows=await db.prepare(`SELECT c.id,c.shape_id,c.quantity,c.origin,c.reference_size_mm,c.width_mm,c.height_mm,c.slot,l.label AS location,${sourceEvidenceSql(mappings)} AS source_evidence,s.notes AS shape_notes
-    FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id WHERE c.shape_id=? ORDER BY c.id LIMIT 201`).bind(related[1]).all<Row>();
-   return json({items:rows.results.slice(0,200).map(({source_evidence,shape_notes,...row})=>({...row,location:row.location??sourceLocation(source_evidence)??sourceLocation(shape_notes)})),truncated:rows.results.length>200});
+   const rows=await db.prepare(`SELECT c.*,s.name,l.label AS location,${sourceEvidenceSql(mappings)} AS source_evidence,s.notes AS shape_notes
+    FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id LEFT JOIN locations l ON l.id=c.location_id
+    WHERE c.id>? ${related?'AND c.shape_id=?':''} ORDER BY c.id LIMIT 201`).bind(after,...(related?[related[1]]:[])).all<Row>();
+   const page=rows.results.slice(0,200);
+   const items=page.map(({source_evidence,shape_notes,...row})=>({...row,location:row.location??sourceLocation(source_evidence)??sourceLocation(shape_notes)}));
+   return json({items:related?items:items.filter(r=>r.location&&binKey(r.location)===binKey(bin!)),truncated:rows.results.length>200,nextCursor:rows.results.length>200?page[199].id:null});
   }
   if(path==='/vocabulary'&&request.method==='GET')return json(await vocabulary(db));
   // Editors may create/advance their own protection point, without archive/restore access.
@@ -47,7 +53,7 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
   const [,kind,id]=match;
   const previous=id?await state(db,kind,id):null;
   if(id&&!previous)return json({error:'Entry not found.'},404);
-  if(request.method==='GET'&&previous){const mappings=await hasSourceMappings(db);const evidence=previous.cutter?await db.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence FROM physical_cutters c WHERE c.id=?`).bind(id).first<{evidence:string}>():null;return json({...previous,sizes:(await db.prepare('SELECT id,label,target_width_mm,target_height_mm FROM shape_size_variants WHERE shape_id=? ORDER BY label LIMIT 200').bind(previous.shape.id).all()).results,revision:await token(previous),sourceBin:sourceLocation(evidence?.evidence??previous.shape.notes)});}
+  if(request.method==='GET'&&previous){const mappings=await hasSourceMappings(db);const evidence=previous.cutter?await db.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence FROM physical_cutters c WHERE c.id=?`).bind(id).first<{evidence:string}>():null;return json({...previous,sizes:(await db.prepare('SELECT id,label,target_width_mm,target_height_mm FROM shape_size_variants WHERE shape_id=? ORDER BY label LIMIT 200').bind(previous.shape.id).all()).results,revision:await token(previous),sourceBin:sourceLocation(evidence?.evidence)??sourceLocation(previous.shape.notes)});}
   if(!['POST','PUT','DELETE'].includes(request.method)||request.method==='POST'&&id||request.method!=='POST'&&!id)return json({error:'Method not allowed.'},405);
   if(previous&&request.headers.get('if-match')!==await token(previous))return json({error:'This entry changed. Your draft is kept. Compare with the latest record before saving.'},412);
   if(request.method==='DELETE'&&!owner)return json({error:'Owner approval is required to delete entries.'},403);
@@ -66,6 +72,15 @@ export async function handleWorkspace(request:Request,db:D1Database,files:R2Buck
    for(const t of tables){if(!/^[a-z_][a-z0-9_]*$/.test(t.name))throw Error('Unsupported relationship.');const links=(await db.prepare('PRAGMA foreign_key_list('+t.name+')').all<{table:string;from:string;to:string}>()).results;for(const link of links.filter(l=>l.table===table&&l.to==='id')){if(!/^[a-z_][a-z0-9_]*$/.test(link.from))throw Error('Unsupported relationship.');references.push(`SELECT 1 FROM ${t.name} WHERE ${link.from}=?`);}}
    if(references.length)statements.push(db.prepare(`SELECT CASE WHEN ${references.map(sql=>'NOT EXISTS('+sql+')').join(' AND ')} THEN 1 ELSE json('entry has relationships') END`).bind(...references.map(()=>id)));
    statements.push(db.prepare('DELETE FROM '+table+' WHERE id=?').bind(id));
+  }else if(previous?.cutter&&Object.hasOwn(input,'physicalChanges')){
+   const changes=input.physicalChanges;
+   if(Object.keys(input).length!==1||!changes||typeof changes!=='object'||Array.isArray(changes))return json({error:'Invalid cutter changes.'},400);
+   const keys=Object.keys(changes);
+   if(!keys.length||keys.some(k=>!['quantity','location_id','reference_size_mm','notes'].includes(k)))return json({error:'Unsupported physical cutter field.'},400);
+   const values=validate('physical_cutters',changes,keys);
+   if(values.location_id&&!await db.prepare('SELECT id FROM locations WHERE id=?').bind(values.location_id).first())return json({error:'Select an existing BIN/location.'},400);
+   statements.push(db.prepare('UPDATE physical_cutters SET '+keys.map(k=>k+'=?').join(',')+' WHERE id=?').bind(...keys.map(k=>values[k]),id));
+   recoveryAfter={...previous,cutter:{...previous.cutter,...values}};
   }else{
    if(Object.keys(input).some(k=>!['shape','cutter','tags','existingShapeId','shapeRevision'].includes(k)))return json({error:'Unsupported entry fields.'},400);
    const vocab=await vocabulary(db,!previous&&!input.existingShapeId);let target=previous;

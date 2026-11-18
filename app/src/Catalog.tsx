@@ -1,3 +1,4 @@
+import {sourceAddress} from './reference-validation';
 import {isDimension,dimensionValue,inchesInput,formatInches} from './measurements';
 import React, { useEffect, useState } from "react";
 import {catalogChoices} from "./catalog-choices";
@@ -58,7 +59,7 @@ export function Catalog({onSaved,canEdit=true,initialKind="shapes"}:{onSaved:()=
       const record:Record<string,string|number|null>={};
       for(const field of activeFields) {
         const value=values[field.key]??"";
-        record[field.key]=isDimension(field.key)?dimensionValue(value,originalDimensions[field.key]):value===""?null:field.type==="number" || field.key==="mirrored"?Number(value):value;
+        record[field.key]=field.type==="url"?sourceAddress(value)||null:isDimension(field.key)?dimensionValue(value,originalDimensions[field.key]):value===""?null:field.type==="number" || field.key==="mirrored"?Number(value):value;
       }
       const response=await fetch("/api/catalog/"+kind+(editing?"/"+editing:""),{method:editing?"PUT":"POST",headers:{"content-type":"application/json","X-Cookie-Catalog-Check":"catalog",...(editing?{"If-Match":revision}:{})},body:JSON.stringify(record)});
       const body=await response.json() as {error?:string;record:Row;revision:string};
@@ -117,7 +118,7 @@ export function Catalog({onSaved,canEdit=true,initialKind="shapes"}:{onSaved:()=
             {options.map(row=><option key={String(row.id)} value={String(row.id)}>{title(row)}</option>)}
           </select>:field.choices?<select disabled={busy} value={value} onChange={event=>change(event.target.value)}>{field.choices.map(choice=><option key={choice} value={choice}>{field.key==="mirrored"?(choice==="1"?"Yes":"No"):choice}</option>)}</select>
             :field.type==="textarea"?<textarea disabled={busy} maxLength={4000} value={value} onChange={event=>change(event.target.value)} />
-            :<input disabled={busy} required={field.required} type={isDimension(field.key)?"text":field.type??"text"} step={field.type==="number"?"any":undefined} maxLength={field.type==="url"?2000:200} value={value} onChange={event=>change(event.target.value)} />}
+            :<input disabled={busy} required={field.required} type={isDimension(field.key)||field.type==="url"?"text":field.type??"text"} inputMode={field.type==="url"?"url":undefined} step={field.type==="number"?"any":undefined} maxLength={field.type==="url"?2000:200} value={value} onChange={event=>change(event.target.value)} />}
         </label></div>;
       })}
       {canEdit && <button disabled={busy}>{busy?"Working…":editing?"Save changes":"Create record"}</button>}

@@ -5,6 +5,6 @@ export function MasterDetailWorkspace({detail,detailKey,children}:{detail:React.
  const [help,setHelp]=useState<string|null>(null),expanded=!!detail;
  useEffect(()=>{setHelp(null);},[detailKey,expanded]);
  return <FieldHelpContext.Provider value={{active:help,show:setHelp}}><div className={expanded?'browse-workspace expanded':'browse-workspace'}>
-  {expanded&&<div className="browse-detail-column">{detail}</div>}<div className="browse-results" aria-label="Catalog results">{children}</div>
+  {expanded&&<div className="browse-detail-column">{detail}</div>}<div className="browse-results" hidden={expanded} aria-label="Catalog results">{children}</div>
  </div></FieldHelpContext.Provider>;
 }

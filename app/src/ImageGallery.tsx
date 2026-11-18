@@ -8,28 +8,50 @@ export function ImageWindowLink({id,filename,children}:{id:string;filename:strin
   event.preventDefault();window.open(url,'_blank','popup=yes,width=500,height=500,noopener,noreferrer');
  }}>{children}</a>;
 }
-/** Gallery position is local presentation, not a saved preferred-image choice. */
-export function ImageGallery({files,label}:{files:GalleryFile[];label:string}){
- const images=files.filter(isImage),[position,setPosition]=useState<{key:string|undefined;index:number}>({key:undefined,index:0}),[failed,setFailed]=useState(false);
- const key=images[0]?.id,index=position.key===key?position.index:0;
- const setIndex=(change:(value:number)=>number)=>setPosition(previous=>({key,index:change(previous.key===key?previous.index:0)}));
- const file=images[Math.min(index,Math.max(0,images.length-1))];
- useEffect(()=>{setFailed(false);},[file?.id]);
- return <section className="design-gallery" aria-label={label}>
-  {file?<figure>{file.available&&!failed?<ImageWindowLink id={file.id} filename={file.filename}><img src={'/api/attachments/'+encodeURIComponent(file.id)+'?view=image'} alt={file.filename} onError={()=>setFailed(true)}/></ImageWindowLink>:<p>Image unavailable. Its association is retained.</p>}
-   <figcaption>{file.photoKind==='physical'?'Physical cutter photograph':file.direct===false?'Decorating idea: '+file.decoratingIdeas:label==='Physical cutter photographs'?'Physical cutter photograph':'Design image'}{file.decoratingIdeas&&file.direct!==false?' · Also linked to '+file.decoratingIdeas:''} · {file.filename}{file.available&&<> · <a href={'/api/attachments/'+encodeURIComponent(file.id)}>Download original</a></>}</figcaption></figure>:<p>No images attached. Digital files and recorded cutters are listed separately.</p>}
-  {images.length>1&&<nav aria-label={label+' navigation'}><button onClick={()=>setIndex(i=>(i+images.length-1)%images.length)}>Previous image</button><span role="status" aria-live="polite">Image {Math.min(index+1,images.length)} of {images.length}</span><button onClick={()=>setIndex(i=>(i+1)%images.length)}>Next image</button></nav>}
- </section>;
+export function CatalogPhotos({id,label,fallback=[],revision,extra=[],onPhysicalSupport}:{onPhysicalSupport?:(enabled:boolean)=>void;id:string;label:string;revision?:number|string;fallback?:{id:string;filename:string}[];extra?:GalleryFile[]}){
+ const [photos,setPhotos]=useState<GalleryFile[]>([]),[photoStatus,setPhotoStatus]=useState('');
+ useEffect(()=>{
+  const controller=new AbortController();
+  setPhotos([]);setPhotoStatus('Loading photographs…');
+  async function load(){
+   const all=new Map<string,GalleryFile>();
+   let offset=0;
+   try{
+    while(!controller.signal.aborted){
+     const response=await fetch('/api/attachments?kind=shape&recordId='+encodeURIComponent(id)+'&catalogPhotos=true&offset='+offset,{cache:'no-store',signal:controller.signal});
+     if(!response.ok)throw Error();
+     const page=await response.json() as {attachments:GalleryFile[];nextOffset?:number;physicalPhotosEnabled?:boolean};
+     if(controller.signal.aborted)return;
+     if(!Array.isArray(page.attachments))throw Error();
+     if(typeof page.physicalPhotosEnabled==='boolean')onPhysicalSupport?.(page.physicalPhotosEnabled);
+     for(const photo of page.attachments)all.set(photo.id,photo);
+     setPhotos([...all.values()]);
+     if(page.nextOffset==null){setPhotoStatus('');return;}
+     if(!Number.isSafeInteger(page.nextOffset)||page.nextOffset<=offset||page.nextOffset>100000)throw Error();
+     offset=page.nextOffset;
+    }
+   }catch{if(!controller.signal.aborted)setPhotoStatus('Photographs could not all load. Refresh to retry.');}
+  }
+  void load();
+  return ()=>controller.abort();
+ },[id,revision,onPhysicalSupport]);
+
+ const direct=photos.length?photos:fallback.map(f=>({...f,mediaType:'image/png',available:true}));
+ const unique=new Map<string,GalleryFile>();
+ for(const file of [...direct,...extra])if(!unique.has(file.id))unique.set(file.id,file);
+ const merged=[...unique.values()].sort((a,b)=>Number(a.photoKind==='physical')-Number(b.photoKind==='physical'));
+ return <><PhotoViewer label={label} files={merged}/>{photoStatus&&<p role="status">{photoStatus}</p>}</>;
 }
-
-
-/** All associated photos are exposed together. No caption/download/carousel controls. */
-export function ImageThumbnails({files,label}:{files:GalleryFile[];label:string}){
+export function PhotoViewer({files,label}:{files:GalleryFile[];label:string}){
  const images=files.filter(isImage);
- return <section className="image-thumbnail-strip" aria-label={label}>{images.length?images.map(file=><Thumbnail key={file.id} file={file}/>):<p>No photographs attached.</p>}</section>;
+ const [selected,setSelected]=useState('');
+ const current=images.find(file=>file.id===selected)??images[0];
+ return <div className="photo-viewer" role="region" aria-label={label}>
+  <div className="representative-image">{current?.available?<ImageWindowLink id={current.id} filename={current.filename}><Photo key={current.id} file={current}/></ImageWindowLink>:<span>{current?'Image unavailable':'No photographs attached.'}</span>}</div>
+  <div className="image-thumbnail-strip card-photographs">{images.filter(file=>file!==current).map(file=><button type="button" key={file.id} aria-label={'Display '+file.filename} onClick={()=>setSelected(file.id)}><Photo file={file}/></button>)}</div>
+ </div>;
 }
-function Thumbnail({file}:{file:GalleryFile}){
+function Photo({file}:{file:GalleryFile}){
  const [failed,setFailed]=useState(false);
- const kind=file.photoKind==='physical'?'Physical cutter photograph':'Design photograph';
- return <ImageWindowLink id={file.id} filename={file.filename}>{file.available&&!failed?<img loading="lazy" src={'/api/attachments/'+encodeURIComponent(file.id)+'?view=image'} alt={kind+': '+file.filename} title={kind+': '+file.filename} onError={()=>setFailed(true)}/>:<span role="img" aria-label={kind+' unavailable: '+file.filename}>Image unavailable</span>}</ImageWindowLink>;
+ return file.available&&!failed?<img loading="lazy" src={'/api/attachments/'+encodeURIComponent(file.id)+'?view=image'} alt={file.filename} title={file.photoKind==='physical'?'Physical cutter photograph':file.decoratingIdeas??'Design photograph'} onError={()=>setFailed(true)}/>:<span>Image unavailable</span>;
 }

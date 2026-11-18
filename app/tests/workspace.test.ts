@@ -164,3 +164,24 @@ test('catalog Owner creates, reads, updates and deletes a cutter while admin bac
   assert.equal((await handleApiRequest(new Request(origin+'/api/backups'),catalogOwner,db,files)).status,403);
  }finally{await runtime.dispose();}
 });
+
+test('exact BIN spans designs, excludes neighboring bins, and physical-only updates preserve the shared design and legacy values',async()=>{
+ const {runtime,db,files}=await env();
+ try{
+  await db.exec("INSERT INTO shapes(id,name) VALUES('a','TEST A'),('b','TEST B'); INSERT INTO locations(id,label) VALUES('two','Bin 2'),('twenty','Bin 20'); INSERT INTO physical_cutters(id,shape_id,location_id,quantity,width_mm,origin,slot) VALUES('first','a','two',2,64.123456789,NULL,'Legacy'),('other','b',NULL,1,NULL,'printed',NULL),('near','b','twenty',5,NULL,NULL,NULL)");
+  await db.prepare('UPDATE shapes SET notes=? WHERE id=?').bind(JSON.stringify({source:{sectionPath:'Notebook / Bin #2'}}),'b').run();
+  const inventory=await success(await call(db,files,'/inventory?bin=Bin%202'));
+  assert.deepEqual(inventory.items.map((r:any)=>r.id),['first','other']);assert.equal(inventory.nextCursor,null);
+  const before=await success(await call(db,files,'/cutters/first')),sibling=await success(await call(db,files,'/cutters/other'));
+  const change={physicalChanges:{quantity:4,reference_size_mm:63.5}};
+  assert.equal((await call(db,files,'/cutters/first','PUT',change,before.revision,undefined,identity('viewer'))).status,403);
+  await success(await call(db,files,'/cutters/first','PUT',change,before.revision,undefined,identity('owner')));
+  const after=await success(await call(db,files,'/cutters/first'));assert.deepEqual(after.cutter,{...before.cutter,...change.physicalChanges});assert.deepEqual(after.shape,before.shape);assert.deepEqual(after.tags,before.tags);
+  assert.equal((await success(await call(db,files,'/cutters/other'))).revision,sibling.revision);assert.equal((await call(db,files,'/cutters/first','PUT',change,before.revision)).status,412);
+  assert.equal((await call(db,files,'/cutters/first','PUT',{physicalChanges:{shape_id:'b'}},after.revision)).status,400);
+  await db.batch(Array.from({length:201},(_,i)=>db.prepare("INSERT INTO physical_cutters(id,shape_id,quantity) VALUES(?,'a',1)").bind('row'+String(i).padStart(3,'0'))));
+  const first=await success(await call(db,files,'/shapes/a/inventory'));
+  const rest=await success(await call(db,files,'/shapes/a/inventory?after='+first.nextCursor));
+  assert.equal(new Set([...first.items,...rest.items].map(r=>r.id)).size,202);
+ }finally{await runtime.dispose();}
+});

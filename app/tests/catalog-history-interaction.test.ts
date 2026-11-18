@@ -46,9 +46,9 @@ test('native history protects dirty drafts and busy saves, restores the declined
  }finally{cleanup();globalThis.fetch=original;}
 });
 
-test('design-to-design Back/Forward and return-to-results use the same history, with listeners removed on unmount',async()=>{
+test('successive design visits and Back/Forward and return-to-results use the same history, with listeners removed on unmount',async()=>{
  fixtures();try{
-  render(React.createElement(Browse));await open('a');await open('b');assert.equal(window.location.search,'?design=b');await move(-1);await screen.findByRole('region',{name:'Viewing TEST a'});await move(1);await screen.findByRole('region',{name:'Viewing TEST b'});
+  render(React.createElement(Browse));await open('a');assert.equal(screen.queryByRole('link',{name:/Open design details for TEST b/}),null);await move(-1);await open('b');assert.equal(window.location.search,'?design=b');await move(-1);await screen.findByRole('link',{name:/Open design details for TEST a/});await move(1);await screen.findByRole('region',{name:'Viewing TEST b'});
   fireEvent.click(screen.getByRole('button',{name:'Back to results'}));await waitFor(()=>assert(!screen.queryByRole('region',{name:/Viewing TEST/})));assert.equal(window.location.search,'');
   cleanup();const n=requests.length;await move(1);assert.equal(requests.length,n,'unmounted history listener does not fetch or render');
  }finally{cleanup();globalThis.fetch=original;}
@@ -59,5 +59,23 @@ test('direct links close safely; remount restores the history snapshot; late lin
   window.history.replaceState(null,'','/?design=a');render(React.createElement(Browse));await screen.findByRole('region',{name:'Viewing TEST a'});fireEvent.click(screen.getByRole('button',{name:'Back to results'}));await waitFor(()=>assert(!screen.queryByRole('region',{name:'Viewing TEST a'})));assert.equal(window.location.search,'');
   await open('b');cleanup();const reads=globalThis.fetch,replies:((value:Response)=>void)[]=[];globalThis.fetch=async(input,init)=>String(input)==='/api/workspace/shapes/b'?await new Promise<Response>(r=>replies.push(r)):reads(input,init);
   render(React.createElement(Browse));await screen.findByRole('region',{name:'Viewing TEST b'});await waitFor(()=>assert(replies.length>0));await move(-1);await waitFor(()=>assert(!screen.queryByRole('region',{name:/Viewing TEST/})));assert.equal(window.location.search,'');await act(async()=>{for(const reply of replies)reply(Response.json(entry('b')));});assert(!screen.queryByRole('region',{name:/Viewing TEST/}));
+ }finally{cleanup();globalThis.fetch=original;}
+});
+
+test('BIN links discard incompatible search filters and Back restores the original results',async()=>{
+ fixtures();const read=globalThis.fetch;const lookups:string[]=[];
+ globalThis.fetch=async(input,init)=>{
+  const path=String(input);
+  if(path.startsWith('/api/workspace/inventory?')){lookups.push(path);return Response.json({items:['a','b'].map(id=>({id:'c'+id,shape_id:id,name:'TEST '+id,quantity:1,location:'Bin 2'}))});}
+  if(path.startsWith('/api/browse'))return Response.json({items:[{...items[0],inventory_count:1,inventory:[{id:'ca',name:'TEST a',location:'Bin 2',quantity:1}]}],total:1,nextOffset:null});
+  return read(input,init);
+ };
+ try{
+  render(React.createElement(Browse));await screen.findByRole('link',{name:'Show all cutters in Bin 2'});
+  fireEvent.change(screen.getByLabelText('Search by name, bin or tag'),{target:{value:'TEST a'}});fireEvent.click(screen.getByRole('button',{name:'Search'}));
+  fireEvent.click(await screen.findByRole('link',{name:'Show all cutters in Bin 2'}));
+  const results=await screen.findByRole('region',{name:'Inventory in Bin 2'});assert((await within(results).findByRole('link',{name:'TEST b'})).getAttribute('href')==='/?design=b&cutter=cb');
+  assert.equal(lookups[0],'/api/workspace/inventory?bin=Bin%202');assert.equal(new URLSearchParams(window.location.search).get('bin'),'Bin 2');
+  await move(-1);await screen.findByRole('link',{name:'Show all cutters in Bin 2'});assert.equal((screen.getByLabelText('Search by name, bin or tag') as HTMLInputElement).value,'TEST a');
  }finally{cleanup();globalThis.fetch=original;}
 });

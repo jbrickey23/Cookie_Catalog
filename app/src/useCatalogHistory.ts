@@ -1,10 +1,10 @@
 import {useEffect,useRef} from 'react';
 import type {BrowseItem} from './DesignCard';
-export interface CatalogView {selected:BrowseItem|null;newKind:'shapes'|'cutters'|null;task:string;query:string;search:string;ownership:string;demo:boolean;offset:number}
+export interface CatalogView {bin?:string|null;selected:BrowseItem|null;newKind:'shapes'|'cutters'|null;task:string;query:string;search:string;ownership:string;demo:boolean;offset:number}
 interface Entry {session:string;index:number;root:number;view:CatalogView;url:string;scroll:number;resultsScroll:number}
 const key='cookieCatalogNavigation';
-const route=(view:CatalogView)=>view.selected?.shape_id??null;
-const urlFor=(view:CatalogView)=>{const url=new URL(window.location.href);url.searchParams.delete('design');url.searchParams.delete('cutter');if(view.selected){url.searchParams.set('design',view.selected.shape_id);if(view.selected.focus_cutter_id)url.searchParams.set('cutter',view.selected.focus_cutter_id);}return url.pathname+url.search+url.hash;};
+const route=(view:CatalogView)=>view.selected?'design:'+view.selected.shape_id+'/'+(view.selected.focus_cutter_id??''):view.bin?'bin:'+view.bin:null;
+const urlFor=(view:CatalogView)=>{const url=new URL(window.location.href);url.searchParams.delete('bin');if(view.bin&&!view.selected)url.searchParams.set('bin',view.bin);url.searchParams.delete('design');url.searchParams.delete('cutter');if(view.selected){url.searchParams.set('design',view.selected.shape_id);if(view.selected.focus_cutter_id)url.searchParams.set('cutter',view.selected.focus_cutter_id);}return url.pathname+url.search+url.hash;};
 /** Scope history to catalog design navigation; never serialize drafts or add a router. */
 export function useCatalogHistory(view:CatalogView,restore:(view:CatalogView)=>void,allowChange:()=>boolean,loading=false){
  const latest=useRef({view,restore,allowChange});latest.current={view,restore,allowChange};
@@ -43,10 +43,10 @@ export function useCatalogHistory(view:CatalogView,restore:(view:CatalogView)=>v
   });return;}
   const changed=route(previous.view)!==route(view),loadedLink=initialDesign.current&&view.selected?.shape_id===initialDesign.current;
   const next={...previous,view,url:urlFor(view)};
-  if(changed&&view.selected&&!loadedLink){
+  if(changed&&(view.selected||view.bin)&&!loadedLink){
    // Capture the results entry before opening the design, including unsent search text.
    write({...previous,view:previous.view.selected?previous.view:{...previous.view,newKind:null,task:'find'}});
-   write({...next,index:previous.index+1,root:previous.view.selected?previous.root:previous.index,scroll:0,resultsScroll:0},true);
+   write({...next,index:previous.index+1,root:view.selected&&previous.view.selected?previous.root:previous.index,scroll:0,resultsScroll:0},true);
   }else if(!initialDesign.current||view.selected){
    const old=previous.view;
    // Keep query keystrokes in memory; persist once on navigation/search, not every render.

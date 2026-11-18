@@ -70,9 +70,9 @@ test('guided design-only creation reveals collapsed invalid URL and opens persis
  globalThis.fetch=async(input,init)=>{if(init?.method==='POST'){writes.push(JSON.parse(String(init.body)));return Response.json(reference);}return Response.json(String(input).startsWith('/api/browse')?designResults:String(input).endsWith('/vocabulary')?vocabulary:reference);};
  try{
   render(React.createElement(EntryEditor,{...props,kind:'shapes',onSaved:entry=>{saved=entry;}}));await screen.findByRole('button',{name:'Create a new design'});fireEvent.click(screen.getByRole('button',{name:'Create a new design'}));
-  fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST Tree'}});const source=screen.getByText('Source link and design notes').closest('details')!;fireEvent.click(screen.getByText('Source link and design notes'));source.open=true;fireEvent.change(screen.getByLabelText('Source link'),{target:{value:'example.test'}});source.open=false;fireEvent(source,new window.Event('toggle'));
+  fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST Tree'}});const source=screen.getByText('Source link and design notes').closest('details')!;fireEvent.click(screen.getByText('Source link and design notes'));source.open=true;fireEvent.change(screen.getByLabelText('Source link'),{target:{value:'invalid address'}});source.open=false;fireEvent(source,new window.Event('toggle'));
   fireEvent.click(screen.getByRole('button',{name:'Save changes'}));await waitFor(()=>assert.equal(source.open,true));await waitFor(()=>assert.equal(document.activeElement,screen.getByLabelText('Source link')));assert.equal(writes.length,0);assert.equal((screen.getByLabelText('Name *') as HTMLInputElement).value,'TEST Tree');
-  fireEvent.change(screen.getByLabelText('Source link'),{target:{value:'https://example.test'}});fireEvent.click(screen.getByRole('button',{name:'Save changes'}));await waitFor(()=>assert(saved));assert.equal(writes.length,1);assert.equal(writes[0].cutter,null);assert.equal(saved.cutter,null);
+  fireEvent.change(screen.getByLabelText('Source link'),{target:{value:'example.test'}});fireEvent.click(screen.getByRole('button',{name:'Save changes'}));await waitFor(()=>assert(saved));assert.equal(writes.length,1);assert.equal(writes[0].cutter,null);assert.equal(saved.cutter,null);
  }finally{cleanup();globalThis.fetch=old;}
 });
 

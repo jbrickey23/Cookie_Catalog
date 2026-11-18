@@ -1,4 +1,9 @@
 import {shapeFields,cutterFields} from './inline-fields';
+/** Supply HTTPS only for a recognizable hostname. Other input goes through normal validation. */
+export function sourceAddress(value:string){
+ const text=value.trim();
+ return /^(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:[/?#]|$)/i.test(text)?'https://'+text:text;
+}
 export function entryError(shape:Record<string,any>,cutter:Record<string,any>|null,referenceLocked=false):{group:'shape'|'cutter';key:string;message:string}|null{
  for(const [group,row,specs] of [['shape',shape,shapeFields],['cutter',cutter,cutterFields]] as const){
   if(!row||group==='shape'&&referenceLocked)continue;
