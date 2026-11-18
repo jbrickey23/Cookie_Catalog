@@ -1,3 +1,4 @@
+import {locationKey} from '../locations';
 import {assertFreshBackup,completeBackup} from './managed-backups';
 import {recordedLocation} from '../source-location';
 import { sourceReference, suggestion } from '../quick-classification';
@@ -85,6 +86,7 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
     const mappings = (await db.prepare(mappingSql).bind(saved.manifest.sourceNamespace).all<Row>()).results;
     if (mappings.length > 10000)
         throw new InputError('This source namespace exceeds the import mapping limit.');
+    const plannedLocations = locations.map(row=>({id:String(row.id),label:String(row.label)}));
     const rows = [];
     for (const choice of selected) {
         const item = saved.manifest.items.find(i => i.sourceKey === choice.sourceKey);
@@ -142,10 +144,23 @@ async function plan(db: D1Database, id: string, selected: ImportChoice[], owners
         const key = await digest([saved.manifest.sourceNamespace, item.sourceKey]);
         const shapeId = item.kind === 'physical_cutter' ? (target?.shape_id ?? sourceShape?.id ?? choice.shapeId ?? (differentKnownSizes && sameName.length === 1 ? sameName[0].id : groupedShapeId ?? 'shape_import_' + key)) : null;
         const targetId = target?.id ?? (item.kind === 'design' ? 'design_import_' : 'cutter_import_') + key;
-        const locationLabel = recordedLocation(item);
-        if (locationLabel && locationLabel.length > 200)
-            reasons.push('The recorded location label exceeds 200 characters.');
-        const locationId = locationLabel ? (locations.find(l => l.label === locationLabel)?.id ?? 'location_import_' + await digest(locationLabel)) : null;
+        let locationLabel = recordedLocation(item), locationId:string|null=null;
+        if (choice.action==='create' && item.kind==='physical_cutter') {
+            if (!locationLabel || locationLabel.length>200) reasons.push('Record one storage location of 1–200 characters before creating physical inventory.');
+            else {
+                const key=locationKey(locationLabel), matches=plannedLocations.filter(l=>locationKey(l.label)===key);
+                const existing=matches.find(l=>l.label===locationLabel) ?? (matches.length===1?matches[0]:undefined);
+                if(existing){locationId=existing.id;locationLabel=existing.label;}
+                else if(matches.length>1)reasons.push('Several stored locations match. Specify the exact stored label.');
+                else {
+                    // An imported location may since have been renamed. Its ID still belongs to that location.
+                    locationId='location_import_'+await digest(locationLabel);
+                    if(plannedLocations.some(l=>l.id===locationId))locationId='location_import_'+await digest([locationLabel,key,item.sourceKey,saved.manifest.sourceNamespace]);
+                    if(plannedLocations.some(l=>l.id===locationId))reasons.push('Location identity conflict. Review the saved location before importing.');
+                    else plannedLocations.push({id:locationId,label:locationLabel});
+                }
+            }
+        }
         rows.push({ sourceKey: item.sourceKey, name: item.name, kind: item.kind, status: reasons.length ? 'blocked' : 'ready', reasons, targetId, candidates,
             choice, itemHash, item, shapeId, locationLabel, locationId });
     }

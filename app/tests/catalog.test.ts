@@ -190,3 +190,26 @@ test("a concurrent edit after precondition evaluation is rejected atomically",as
     assert.equal(response.status,412);assert.equal((await db.prepare("SELECT notes FROM shapes WHERE id=?").bind(shape.id).first<any>())?.notes,"concurrent edit");
   }finally{await runtime.dispose();}
 });
+
+test('location management reuses equivalent names, protects presets, and renames in place with revision checks',async()=>{
+ const {runtime,db}=await env();
+ try{
+  const createOrUse=async(label:string)=>{
+   const req=write('locations',{label});req.headers.set('Prefer','resolution=reuse');
+   const res=await handleApiRequest(req,owner,db);
+   assert([200,201].includes(res.status),await res.clone().text());return res.json() as Promise<any>;
+  };
+  const initial=await createOrUse('Craft Drawer');
+  const duplicate=await createOrUse(' craft   DRAWER ');assert.equal(duplicate.record.id,initial.record.id);
+  const bin=await createOrUse('Bin #5');assert.equal((await createOrUse('BIN 5')).record.id,bin.record.id);
+  assert.equal((await handleApiRequest(write('locations',{label:'Move'},bin.record.id,bin.revision),owner,db)).status,400);
+  const classes=await createOrUse('classes');assert.equal(classes.record.label,'Classes');assert.equal((await createOrUse('classes')).record.id,classes.record.id);
+  const renamed=await handleApiRequest(write('locations',{label:'Cutting room'},initial.record.id,initial.revision),owner,db);
+  assert.equal(renamed.status,200);const updated=await renamed.json() as any;assert.equal(updated.record.id,initial.record.id);
+  assert.equal((await handleApiRequest(write('locations',{label:'Lost update'},initial.record.id,initial.revision),owner,db)).status,412);
+  const later=await createOrUse('Shelf');assert.equal((await handleApiRequest(write('locations',{label:'CUTTING room'},later.record.id,later.revision),owner,db)).status,409);
+  const racing=await Promise.all([createOrUse('Teaching room'),createOrUse('TEACHING room')]);
+  assert.equal(racing[0].record.id,racing[1].record.id);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM locations').first<any>())?.count,5);
+ }finally{await runtime.dispose();}
+});

@@ -231,7 +231,7 @@ test('22-table import audit and mappings survive TAR/helper validation and both 
 });
 test('same shape in 3 inch and 3.25 inch sizes uses two cutter records of quantity one, not two identical cutters', async () => {
     const m = manifest();
-    m.items = [{ ...m.items[0], facts: {}, catalog: { referenceSizeMm: 76.2 } }, { ...m.items[0], sourceKey: 'other-size', facts: {}, catalog: { referenceSizeMm: 82.55 } }];
+    m.items = [{ ...m.items[0], facts: {location:'TEST Drawer'}, catalog: { referenceSizeMm: 76.2 } }, { ...m.items[0], sourceKey: 'other-size', facts: {location:'TEST Drawer'}, catalog: { referenceSizeMm: 82.55 } }];
     const { runtime, db } = await environment(true, m);
     try {
         const choices = [{ sourceKey: 'physical', action: 'create' }, { sourceKey: 'other-size', action: 'create' }];
@@ -409,5 +409,20 @@ test('OneNote bins assign new imports and existing source-only locations across 
   assert.equal((await get('/api/workspace/shapes/'+physical.shape_id+'/inventory')).items[0].location,'Bin 009');
   assert.equal((await get('/api/readiness')).items[0].facts.location,'Bin 009');
   assert.equal((await get('/api/catalog/physical_cutters')).records[0].location_label,'Bin 009');
+ }finally{await runtime.dispose();}
+});
+
+test('new imports reuse named locations and retain source spelling; unlocated stock requires review', async()=>{
+ const m=manifest();
+ m.items=[{...m.items[0],facts:{location:' cLaSsEs '}},{...m.items[0],sourceKey:'missing',name:'TEST Other',facts:{}}];
+ const {runtime,db}=await environment(true,m);
+ try{
+  await db.prepare("INSERT INTO locations(id,label) VALUES('classes','Classes')").run();
+  const options=[{sourceKey:'physical',action:'create'}],plan=await prepare(db,options);
+  assert.equal(plan.ready,1);assert.equal((await apply(db,plan,options)).status,201);
+  assert.equal(await count(db,'locations'),1);assert.equal(await db.prepare('SELECT location_id FROM physical_cutters').first('location_id'),'classes');
+  const evidence=await db.prepare('SELECT item_json FROM catalog_source_mappings').first<string>('item_json');
+  assert.deepEqual(JSON.parse(evidence!).facts,m.items[0].facts);
+  const missing=await prepare(db,[{sourceKey:'missing',action:'create'}]);assert.equal(missing.ready,0);assert.match(JSON.stringify(missing),/one storage location/);
  }finally{await runtime.dispose();}
 });

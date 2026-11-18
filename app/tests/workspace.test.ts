@@ -8,10 +8,10 @@ import type {IdentityVerifier} from '../src/server/access-identity';
 const origin='https://catalog.example.test';
 const identity=(role:'admin'|'owner'|'editor'|'viewer'):IdentityVerifier=>({verify:async()=>({subject:role,email:role+'@example.test',role})});
 const owner=identity('admin');
-async function env(){const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'workspace'},r2Buckets:['FILES']}));const db=await runtime.getD1Database('DB') as unknown as D1Database,files=await runtime.getR2Bucket('FILES') as unknown as R2Bucket;const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql','0005_physical_photographs.sql'];for(const name of names){const sql=readFileSync('../database/migrations/'+name,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}await db.prepare('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)').run();await db.batch(names.map((n,i)=>db.prepare('INSERT INTO d1_migrations VALUES(?,?,?)').bind(i+1,n,'TEST')));return {runtime,db,files};}
+async function env(){const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:"export default {fetch(){return new Response('test')}}",d1Databases:{DB:'workspace'},r2Buckets:['FILES']}));const db=await runtime.getD1Database('DB') as unknown as D1Database,files=await runtime.getR2Bucket('FILES') as unknown as R2Bucket;const names=['0001_initial.sql','0002_variants_components.sql','0003_import_reviews.sql','0004_catalog_imports.sql','0005_physical_photographs.sql'];for(const name of names){const sql=readFileSync('../database/migrations/'+name,'utf8').replace(/^--.*$/gm,'');await db.batch(sql.split(';').map(s=>s.trim()).filter(Boolean).map(s=>db.prepare(s)));}await db.prepare('CREATE TABLE d1_migrations(id INTEGER PRIMARY KEY,name TEXT,applied_at TEXT)').run();await db.batch(names.map((n,i)=>db.prepare('INSERT INTO d1_migrations VALUES(?,?,?)').bind(i+1,n,'TEST')));await db.prepare("INSERT INTO locations(id,label) VALUES('test-location','TEST Drawer')").run();return {runtime,db,files};}
 function request(path:string,method='GET',value?:unknown,revision?:string,backup?:string){return new Request(origin+'/api/workspace'+path,{method,headers:{Origin:origin,'content-type':'application/json','X-Cookie-Catalog-Check':'workspace',...(revision?{'if-match':revision}:{}),...(backup?{'x-catalog-backup':backup}:{})},...(value===undefined?{}:{body:JSON.stringify(value)})});}
 async function checkpoint(db:D1Database,files:R2Bucket){let job=await startManagedBackup(db,files,'admin','pre-change');while(job.status!=='complete')job=await advanceManagedBackup(files,job.id);return job.id;}
-const cutter=()=>({location_id:null,quantity:1,origin:'unknown',reference_size_mm:95.25,width_mm:null,height_mm:null,slot:null,notes:null});
+const cutter=()=>({location_id:'test-location',quantity:1,origin:'unknown',reference_size_mm:95.25,width_mm:null,height_mm:null,slot:null,notes:null});
 const draft=(name='TEST new shape')=>({shape:{name,maker:null,source_url:null,notes:'notes'},tags:[],cutter:cutter()});
 async function call(db:D1Database,files:R2Bucket,path:string,method='GET',value?:unknown,revision?:string,backup?:string,verifier=owner){return handleApiRequest(request(path,method,value,revision,backup),verifier,db,files);}
 async function success(response:Response,status=200){assert.equal(response.status,status,await response.clone().text());return response.json() as Promise<any>;}
@@ -183,5 +183,29 @@ test('exact BIN spans designs, excludes neighboring bins, and physical-only upda
   const first=await success(await call(db,files,'/shapes/a/inventory'));
   const rest=await success(await call(db,files,'/shapes/a/inventory?after='+first.nextCursor));
   assert.equal(new Set([...first.items,...rest.items].map(r=>r.id)).size,202);
+ }finally{await runtime.dispose();}
+});
+
+test('a cutter quantity moves as one assignment; exact named links, sibling records and undo survive reopening',async()=>{
+ const {runtime,db,files}=await env();
+ try{
+  await db.exec("INSERT INTO locations(id,label) VALUES ('classes','Classes'),('extra','Classes Annex'),('padded','Bin 001'),('one','BIN 1'); INSERT INTO shapes(id,name) VALUES ('tree','Tree'),('star','Star'); INSERT INTO physical_cutters(id,shape_id,location_id,quantity) VALUES ('a','tree','one',4),('b','tree','padded',2),('c','star','classes',3),('d','star','extra',1)");
+  const rows=async(label:string)=>(await success(await call(db,files,'/inventory?bin='+encodeURIComponent(label)))).items.map((row:any)=>row.id);
+  await db.prepare("INSERT INTO physical_cutters(id,shape_id,quantity) VALUES('legacy','tree',7)").run();
+  const legacy=await success(await call(db,files,'/cutters/legacy'));
+  assert.equal((await call(db,files,'/cutters/legacy','PUT',{physicalChanges:{quantity:8}},legacy.revision)).status,400);
+  assert.deepEqual((await success(await call(db,files,'/cutters/legacy'))).cutter,legacy.cutter);
+  const opened=await success(await call(db,files,'/cutters/a'));
+  const update=(location_id:unknown,revision=opened.revision)=>call(db,files,'/cutters/a','PUT',{physicalChanges:{location_id}},revision);
+  assert.equal((await update(['classes','extra'])).status,400);
+  assert.equal((await update(null)).status,400);
+  assert.equal((await call(db,files,'/cutters','POST',{...draft(),cutter:{...cutter(),location_id:null}})).status,400);
+  const saved=await success(await update('classes'));
+  assert.deepEqual((await success(await call(db,files,'/cutters/a'))).cutter,{...opened.cutter,location_id:'classes'});
+  assert.deepEqual(await rows('Classes'),['a','c']);assert.deepEqual(await rows('Classes Annex'),['d']);
+  assert.deepEqual(await rows('BIN 1'),[]);assert.deepEqual(await rows('Bin 001'),['b']);
+  const recovery=await success(await call(db,files,'/recovery/'+saved.recoveryId));
+  await success(await call(db,files,'/recovery/'+saved.recoveryId,'POST',{approved:true},recovery.revision));
+  assert.deepEqual(await rows('BIN 1'),['a']);assert.deepEqual(await rows('Classes'),['c']);
  }finally{await runtime.dispose();}
 });

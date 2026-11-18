@@ -2,7 +2,7 @@ import React from 'react';
 import {FieldHelp} from './FieldHelp';
 import {BinLink,CutterLink} from './InventoryLinks';
 import {formatInches} from './measurements';
-import {type InventoryRow} from './inventory';
+import {binDisplay,type InventoryRow} from './inventory';
 
 export const cardFields=[
  {key:'location_id',label:'BIN ID',help:'BIN / location'},
@@ -15,8 +15,9 @@ export function CutterTable({row,onOpen,onBin,onEdit,editor}:{row:InventoryRow;o
  const cell=(field:typeof cardFields[number])=>{
   const input=editor?.(field.key);
   const value=field.key==='location_id'?<BinLink location={row.location} onOpen={onBin}/>:field.key==='reference_size_mm'?formatInches(row.reference_size_mm):row[field.key]??'Not recorded';
-  return <td colSpan={field.key==='notes'?2:1}><FieldHelp field={field.help}>{field.label}</FieldHelp>
-   {input??<div>{value} {onEdit&&<button type="button" className="field-pencil" aria-label={'Change '+field.label} onClick={()=>onEdit(field.key)}>✎</button>}</div>}</td>;
+  const label=field.key==='location_id'&&row.location&&binDisplay(row.location)===row.location?'Location':field.label;
+  return <td colSpan={field.key==='notes'?2:1}><FieldHelp field={field.help}>{label}</FieldHelp>
+   {input??<div>{value} {onEdit&&<button type="button" className="field-pencil" aria-label={'Change '+label} onClick={()=>onEdit(field.key)}>✎</button>}</div>}</td>;
  };
  return <table className="physical-card-table" aria-label={'Physical cutter '+row.id}><tbody>
   <tr><td><strong>Name</strong><div><CutterLink id={row.id} shape={row.shape_id} name={row.name} onOpen={onOpen}/></div></td>{cell(cardFields[0])}</tr>

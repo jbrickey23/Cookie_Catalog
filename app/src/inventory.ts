@@ -2,9 +2,6 @@ export type InventoryRow = {
  id:string; shape_id:string; name:string; location:string|null; quantity:number;
  reference_size_mm:number|null; notes:string|null;
 };
-export function binKey(label:string){
- return label.trim().replace(/^bin\s*[#-]?\s*(\d+[a-z]?)$/i,'Bin $1').toLowerCase();
-}
 export function binDisplay(label:string){return /^bin\s*[#-]?\s*(\d+[a-z]?)$/i.exec(label.trim())?.[1]??label;}
 export const cutterHref=(shape:string,id:string)=>'/?design='+encodeURIComponent(shape)+'&cutter='+encodeURIComponent(id);
 

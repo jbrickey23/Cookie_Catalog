@@ -1,3 +1,4 @@
+import {isPreset,presetLabel,locationKey,type Location} from '../locations';
 import {sourceLocation} from '../source-location';
 import {hasSourceMappings,sourceEvidenceSql,sourceSectionSql} from './source-location';
 type Value = string | number | null;
@@ -113,8 +114,8 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
       const mappings=kind==="physical_cutters"&&await hasSourceMappings(database);
       if(id) {
         const record=await database.prepare("SELECT * FROM "+kind+" WHERE id=?").bind(id).first<Record<string,unknown>>();
-        const evidence=record&&kind==="physical_cutters"?await database.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence FROM physical_cutters c WHERE c.id=?`).bind(id).first<{evidence:string}>():null;
-        return record ? recordResponse(kind,record,200,{...(kind==="physical_cutters"?{sourceBin:sourceLocation(evidence?.evidence)}:{})}):json({error:"Record not found."},404);
+        const evidence=record&&kind==="physical_cutters"?await database.prepare(`SELECT ${sourceEvidenceSql(mappings)} AS evidence,s.notes FROM physical_cutters c JOIN shapes s ON s.id=c.shape_id WHERE c.id=?`).bind(id).first<{evidence:string;notes:string}>():null;
+        return record ? recordResponse(kind,record,200,{...(kind==="physical_cutters"?{sourceBin:sourceLocation(evidence?.evidence)??sourceLocation(evidence?.notes)}:{})}):json({error:"Record not found."},404);
       }
       const q=(url.searchParams.get("q")??"").trim();
       if(q.length>120)return json({error:"Search is limited to 120 characters."},400);
@@ -140,6 +141,44 @@ export async function handleCatalog(request: Request, database: D1Database): Pro
     for(const [field,table] of [["shape_id","shapes"],["design_id","designs"],["location_id","locations"]] as const) {
       if(values[field] && !await database.prepare("SELECT id FROM "+table+" WHERE id=?").bind(values[field]).first())
         return json({error:"Linked "+table+" record not found."},404);
+    }
+    if(kind==="physical_cutters" && !values.location_id){
+      const evidence=previous && await database.prepare(`SELECT ${sourceEvidenceSql(await hasSourceMappings(database))} AS evidence,s.notes FROM physical_cutters c JOIN shapes s ON s.id=? WHERE c.id=?`).bind(values.shape_id,id).first<{evidence:string;notes:string}>();
+      if(!evidence || !(sourceLocation(evidence.evidence) || sourceLocation(evidence.notes)))return json({error:"Choose one storage location."},400);
+    }
+    if(kind==="locations"){
+      const label=String(values.label),key=locationKey(label);
+      if(previous && label!==previous.label && (isPreset(String(previous.label)) || isPreset(label)))
+        return json({error:"Predefined locations have fixed names. Choose another custom name."},400);
+      const snapshotSql="SELECT json_group_array(json_object('id',id,'label',label)) AS snapshot FROM (SELECT id,label FROM locations ORDER BY id)";
+      const snapshot=await database.prepare(snapshotSql).first<string>('snapshot');
+      const rows=JSON.parse(snapshot!) as Location[];
+      const reuse=!id && request.headers.get("prefer")==="resolution=reuse";
+      const matches=(rows:Location[])=>rows.filter(row=>locationKey(row.label)===key && row.id!==id);
+      async function reuseExisting(rows:Location[]){
+        const exact=rows.find(row=>row.label===label) ?? (rows.length===1?rows[0]:undefined);
+        if(!exact)return null;
+        const record=await database.prepare("SELECT * FROM locations WHERE id=? AND label=?").bind(exact.id,exact.label).first<Record<string,unknown>>();
+        return record?recordResponse(kind,record):null;
+      }
+      const matching=matches(rows);
+      if(matching.length && (!previous || previous.label!==label)){
+        if(reuse){const existing=await reuseExisting(matching);if(existing)return existing;}
+        return json({error:"A matching location exists. Select its existing name."},409);
+      }
+      // Serialize the name check with the write, including concurrent case/spacing variants.
+      const saved=id
+        ? await database.prepare(`UPDATE locations SET label=?,notes=? WHERE id=? AND label IS ? AND notes IS ? AND parent_id IS ? AND (${snapshotSql})=? RETURNING *`)
+          .bind(label,values.notes,id,previous!.label,previous!.notes,previous!.parent_id,snapshot).first<Record<string,unknown>>()
+        : await database.prepare(`INSERT INTO locations(id,label,notes) SELECT ?,?,? WHERE (${snapshotSql})=? RETURNING *`)
+          .bind("locations_"+crypto.randomUUID().replaceAll("-",""),presetLabel(label)??label,values.notes,snapshot).first<Record<string,unknown>>();
+      if(saved)return recordResponse(kind,saved,id?200:201);
+      if(reuse){
+        const current=await database.prepare(snapshotSql).first<string>('snapshot');
+        const winner=await reuseExisting(matches(JSON.parse(current!)));
+        if(winner)return winner;
+      }
+      return json({error:"The location list changed. Reopen the selector before saving."},412);
     }
     const recordId=id ?? kind+"_"+crypto.randomUUID().replace(/-/g,"");
     let saved:Record<string,unknown>|null;

@@ -1,3 +1,6 @@
+import {LocationSelector} from './LocationSelector';
+import type {Location} from './locations';
+import {resolveLocation} from './location-client';
 import {sourceAddress} from './reference-validation';
 import {isDimension,dimensionValue,inchesInput,formatInches} from './measurements';
 import React, { useEffect, useState } from "react";
@@ -43,6 +46,10 @@ export function Catalog({onSaved,canEdit=true,initialKind="shapes"}:{onSaved:()=
     setLookups(Object.fromEntries(entries));
   }
   useEffect(()=>{setBusy(true);Promise.all([load(initialKind,""),choices()]).catch(error=>setStatus(error.message)).finally(()=>setBusy(false));},[]);
+  useEffect(()=>{
+    const saved=(event:Event)=>{const row=(event as CustomEvent<Location>).detail;setLookups(v=>({...v,locations:[...v.locations.filter(l=>l.id!==row.id),row]}));};
+    window.addEventListener('location-saved',saved);return()=>window.removeEventListener('location-saved',saved);
+  },[]);
   function reset() {setSourceBin(null);setDirty(false);setRevision("");setEditing("");setActiveName("");setValues({...defaults});setOriginalDimensions({});}
   async function switchSection(section:string) {
     if(dirty&&!window.confirm("Switch sections and discard unsaved form changes?"))return;
@@ -61,11 +68,16 @@ export function Catalog({onSaved,canEdit=true,initialKind="shapes"}:{onSaved:()=
         const value=values[field.key]??"";
         record[field.key]=field.type==="url"?sourceAddress(value)||null:isDimension(field.key)?dimensionValue(value,originalDimensions[field.key]):value===""?null:field.type==="number" || field.key==="mirrored"?Number(value):value;
       }
-      const response=await fetch("/api/catalog/"+kind+(editing?"/"+editing:""),{method:editing?"PUT":"POST",headers:{"content-type":"application/json","X-Cookie-Catalog-Check":"catalog",...(editing?{"If-Match":revision}:{})},body:JSON.stringify(record)});
+      if(kind==="physical_cutters" && record.location_id){const location=await resolveLocation(String(record.location_id));if(location)record.location_id=location.id;}
+      const response=await fetch("/api/catalog/"+kind+(editing?"/"+editing:""),{method:editing?"PUT":"POST",headers:{"content-type":"application/json","X-Cookie-Catalog-Check":"catalog",...(kind==="locations"&&!editing&&!record.notes?{Prefer:"resolution=reuse"}:{}),...(editing?{"If-Match":revision}:{})},body:JSON.stringify(record)});
       const body=await response.json() as {error?:string;record:Row;revision:string};
       if(!response.ok)throw Error(body.error??"Record could not save.");
+      if(kind==="locations"){
+        window.dispatchEvent(new window.CustomEvent('location-saved',{detail:body.record}));
+        setValues({label:String(body.record.label),notes:String(body.record.notes??"")});
+      }
       setEditing(String(body.record.id));setActiveName(recordName(body.record,activeName));setRevision(body.revision);setDirty(false);
-      await Promise.all([load(),choices()]);onSaved();setStatus("Saved. Refresh or search to retrieve this record.");
+      await Promise.all([load(),choices()]);onSaved();setStatus(kind==="locations"&&!editing&&response.status===200?"Opened the existing location.":"Saved. Refresh or search to retrieve this record.");
     }catch(error){setStatus((error as Error).message);}finally{setBusy(false);}
   }
   async function edit(row:Row) {
@@ -112,6 +124,7 @@ export function Catalog({onSaved,canEdit=true,initialKind="shapes"}:{onSaved:()=
       {activeFields.map(field=>{
         const value=values[field.key]??"",change=(next:string)=>{setDirty(true);setValues(previous=>({...previous,[field.key]:next}));};
         const options=field.lookup?lookups[field.lookup]:[];
+        if(field.key==='location_id'&&canEdit)return <div key={field.key}><span>{field.label}</span><LocationSelector label={field.label} value={value} source={sourceBin} disabled={busy} locations={options.map(row=>({id:String(row.id),label:String(row.label)}))} onChange={change} onBusy={setBusy}/></div>;
         return <div key={field.key} style={{margin:"10px 0"}}><label>{field.label}{field.required?" *":""}<br />
           {field.lookup?<select required={field.required} disabled={busy} value={value} onChange={event=>change(event.target.value)}>
             <option value="">{field.key==="location_id"&&sourceBin?"Use OneNote bin ("+sourceBin+")":"Choose a record"}</option>{value && !options.some(row=>row.id===value) && <option value={value}>Current record ({value})</option>}

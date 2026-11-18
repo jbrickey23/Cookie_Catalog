@@ -109,7 +109,7 @@ test('reference adds linked physical inventory inline only on Save and Cancel pr
  globalThis.fetch=async(input,init)=>{const path=String(input);if(init?.method==='POST'){writes.push({path,body:JSON.parse(String(init.body))});return Response.json(entry());}return Response.json(path.startsWith('/api/browse')?{items:[{id:'s1',shape_id:'s1',name:'TEST Star',record_kind:'reference',source_bin:'Bin 007'}],total:1,nextOffset:null}:path.startsWith('/api/attachments')?{attachments:[]}:path.endsWith('/inventory')?{items:writes.length?[{...entry().cutter,name:'TEST Star'}]:[]}:path.endsWith('/vocabulary')?vocabulary:reference);};
  try{
   render(React.createElement(Browse,{canEdit:true,canDelete:true}));fireEvent.click(await screen.findByRole('link',{name:'Open design details for TEST Star'}));fireEvent.click(await screen.findByRole('button',{name:'Change Name'}));fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST unsaved reference'}});fireEvent.click(screen.getByRole('button',{name:'Add a cutter'}));assert.equal((within(screen.getByRole('region',{name:'Design information'})).getByLabelText('Name *') as HTMLInputElement).value,'TEST unsaved reference');accept=true;await screen.findByRole('group',{name:'Physical inventory'});assert.equal(writes.length,0);fireEvent.click(within(screen.getByRole('region',{name:'Add a cutter to this design'})).getByRole('button',{name:'Cancel changes'}));await screen.findByRole('button',{name:'Add a cutter'});assert.equal(screen.queryByRole('group',{name:'Physical inventory'}),null);assert.equal(writes.length,0);
-  fireEvent.click(screen.getByRole('button',{name:'Add a cutter'}));await screen.findByRole('group',{name:'Physical inventory'});fireEvent.click(within(screen.getByRole('region',{name:'Add a cutter to this design'})).getByRole('button',{name:'Save changes'}));await waitFor(()=>assert.equal(writes.length,1));assert.equal(writes[0].path,'/api/workspace/cutters');assert.equal(writes[0].body.existingShapeId,'s1');assert.equal(writes[0].body.shapeRevision,'"revision-1"');assert.equal(writes[0].body.shape.name,'TEST Star');assert.deepEqual(writes[0].body.tags,[{id:'t1'}]);await screen.findByRole('button',{name:'Delete physical record'});assert(screen.getByRole('button',{name:'Add another size or copy'}));
+  fireEvent.click(screen.getByRole('button',{name:'Add a cutter'}));await screen.findByRole('group',{name:'Physical inventory'});fireEvent.click(screen.getByRole('button',{name:'Show location choices'}));fireEvent.click(screen.getByRole('option',{name:'Bin 001'}));fireEvent.click(within(screen.getByRole('region',{name:'Add a cutter to this design'})).getByRole('button',{name:'Save changes'}));await waitFor(()=>assert.equal(writes.length,1));assert.equal(writes[0].path,'/api/workspace/cutters');assert.equal(writes[0].body.existingShapeId,'s1');assert.equal(writes[0].body.shapeRevision,'"revision-1"');assert.equal(writes[0].body.shape.name,'TEST Star');assert.deepEqual(writes[0].body.tags,[{id:'t1'}]);await screen.findByRole('button',{name:'Delete physical record'});assert(screen.getByRole('button',{name:'Add another size or copy'}));
  }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
 });
 
@@ -149,7 +149,7 @@ test('new physical entry selects a producer reference or visibly starts a new de
  try{
   render(React.createElement(Browse,{canEdit:true}));fireEvent.click(await screen.findByRole('button',{name:'New physical cutter'}));await screen.findByLabelText('Name *');
   fireEvent.change(screen.getByLabelText('Reference (producer design)'),{target:{value:'Producer A'}});fireEvent.click(await screen.findByRole('button',{name:'Use this design: TEST Star — TEST Producer A'}));await screen.findByRole('group',{name:'Selected producer design (read-only)'});
-  fireEvent.click(screen.getByRole('button',{name:'Create a new reference'}));await screen.findByText('New reference selected. Enter its name and producer below.');fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST new design'}});fireEvent.change(screen.getByLabelText('Maker'),{target:{value:'TEST Producer B'}});fireEvent.change(screen.getByLabelText('Quantity *'),{target:{value:'2'}});fireEvent.click(screen.getByRole('button',{name:'Save changes'}));
+  fireEvent.click(screen.getByRole('button',{name:'Create a new reference'}));await screen.findByText('New reference selected. Enter its name and producer below.');fireEvent.change(screen.getByLabelText('Name *'),{target:{value:'TEST new design'}});fireEvent.change(screen.getByLabelText('Maker'),{target:{value:'TEST Producer B'}});fireEvent.click(screen.getByRole('button',{name:'Show location choices'}));fireEvent.click(screen.getByRole('option',{name:'Bin 001'}));fireEvent.change(screen.getByLabelText('Quantity *'),{target:{value:'2'}});fireEvent.click(screen.getByRole('button',{name:'Save changes'}));
   await screen.findByLabelText('Viewing TEST new design');await screen.findByRole('heading',{name:'Cutters in Inventory'});assert.equal(writes.length,1);assert.equal(writes[0].existingShapeId,undefined);assert.equal(writes[0].cutter.quantity,2);assert.equal(writes[0].shape.source_url,'');assert(screen.getByRole('button',{name:'Add a cutter'}));
  }finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
 });
@@ -164,4 +164,42 @@ test('closing a confirmed photograph draft clears the workspace guard before ano
  const original=globalThis.fetch,confirm=window.confirm;let confirmations=0;window.confirm=()=>{confirmations++;return true;};
  globalThis.fetch=async input=>{const path=String(input);return Response.json(path.startsWith('/api/browse')?{items:[{id:'c1',shape_id:'s1',name:'TEST Star',record_kind:'physical'}],total:1,nextOffset:null}:path.startsWith('/api/attachments')?{attachments:[]}:path.endsWith('/inventory')?{items:[{...entry().cutter,name:'TEST Star',location:'Bin 007'}]}:path.endsWith('/vocabulary')?vocabulary:entry());};
  try{render(React.createElement(Browse,{canEdit:true}));fireEvent.click(await screen.findByRole('link',{name:'Open design details for TEST Star'}));await screen.findByRole('button',{name:'Change Name'});fireEvent.change(screen.getByLabelText('Add physical cutter photograph (optional)'),{target:{files:[new File(['test'],'test.png',{type:'image/png'})]}});fireEvent.click(screen.getByRole('button',{name:'Back to results'}));await waitFor(()=>assert(!screen.queryByLabelText('Viewing TEST Star')));assert.equal(confirmations,1);fireEvent.click(screen.getByRole('button',{name:'New reference'}));await screen.findByLabelText('Name *');assert.equal(confirmations,1,'closed draft must not prompt a second time');}finally{cleanup();globalThis.fetch=original;window.confirm=confirm;}
+});
+
+test('location selector offers all presets, accepts keyboard and dropdown choices, and reopens a custom location by ID',async()=>{
+ const original=globalThis.fetch,writes:any[]=[];
+ let current=entry(),locations=[...vocabulary.locations];
+ globalThis.fetch=async(input,init)=>{
+  const path=String(input);
+  if(path.endsWith('/vocabulary'))return Response.json({...vocabulary,locations});
+  if(path==='/api/catalog/locations'){
+   const data=JSON.parse(String(init?.body));assert.equal(data.label,'Back room');
+   locations=[...locations,{id:'custom',label:'Back room'}];
+   return Response.json({record:{id:'custom',label:'Back room',notes:null},revision:'"location"'});
+  }
+  if(init?.method==='PUT'){
+   const body=JSON.parse(String(init.body));writes.push(body);
+   current={...current,cutter:{...current.cutter,...body.cutter}};
+  }
+  return Response.json(current);
+ };
+ try{
+  const view=render(React.createElement(EntryEditor,props));
+  const box=await screen.findByRole('combobox',{name:'BIN / location'});
+  fireEvent.click(screen.getByRole('button',{name:'Show location choices'}));
+  for(let n=1;n<=50;n++)assert(screen.getByRole('option',{name:'BIN '+n}));
+  assert(screen.getByRole('option',{name:'Bin 001'}));
+  fireEvent.change(box,{target:{value:'clas'}});fireEvent.keyDown(box,{key:'ArrowDown'});fireEvent.keyDown(box,{key:'Enter'});
+  assert.equal((box as HTMLInputElement).value,'Classes');
+  fireEvent.click(screen.getByRole('button',{name:'Show location choices'}));fireEvent.click(screen.getByRole('option',{name:'Bin 001'}));
+  assert.equal((box as HTMLInputElement).value,'Bin 001');
+  fireEvent.click(screen.getByRole('button',{name:'Manage custom locations'}));
+  fireEvent.change(screen.getByLabelText('Custom location name'),{target:{value:'Back room'}});
+  fireEvent.click(screen.getByRole('button',{name:'Create or use location'}));
+  await waitFor(()=>assert.equal((box as HTMLInputElement).value,'Back room'));
+  fireEvent.click(screen.getByRole('button',{name:'Save changes'}));await waitFor(()=>assert.equal(writes.length,1));
+  assert.equal(writes[0].cutter.location_id,'custom');view.unmount();
+  render(React.createElement(EntryEditor,props));
+  assert.equal(((await screen.findByRole('combobox',{name:'BIN / location'})) as HTMLInputElement).value,'Back room');
+ }finally{cleanup();globalThis.fetch=original;}
 });
