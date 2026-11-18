@@ -1,5 +1,12 @@
 # Cookie Catalog — current context
 
+## Search and detail consolidation — November 17, 2026 Pacific
+
+The owner authorized development publication and withdrew the weekly reserve. Restored PR #7 at `42b4dc6`, whose required CI and development deployment succeeded. The owner confirmed mouse Back on that build. The consolidated handoff and all five owner annotations were recovered before editing.
+
+Under CC-TODO-021 / 010, [implementation `bba7105`](https://github.com/JBrickey23/Cookie_Catalog/commit/bba710552adb3a5226537d7c57939644f7f9db73) implements the remaining card, photograph, exact-BIN and tag work. Local validation passed. [R2.1 delivery and retest](docs/R2_1_UX_Consolidation.md#implementation-and-verification) records scope, evidence and outstanding acceptance. The publishing revision’s CI and Cloudflare evidence belong to [PR #7](https://github.com/JBrickey23/Cookie_Catalog/pull/7).
+
+
 ## Native browser Back/Forward correction — November 17, 2026 Pacific
 
 Owner reports that browser/mouse Back does nothing after opening a design and explicitly requires normal browser navigation. Baseline PR #7 `28b81368da64c077b34038d680374e5e547a84ae`. Root cause: design opening changed React state without a history entry or popstate restoration. Implemented a scoped native History API hook for design/results navigation, preserving search/filter/page and result position, returning focus, and sharing the existing dirty/busy navigation guard. No router dependency, API, schema, private configuration or production change. Initial direct links close to results safely; pending startup reads cannot reopen a design after Back. Browser Back and Forward do not replay writes or serialize unsaved drafts.

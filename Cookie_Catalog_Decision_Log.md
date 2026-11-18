@@ -1,5 +1,10 @@
 # Cookie_Catalog — Decision Log
 
+## R2.1 consolidation under existing UX authority — November 17, 2026 Pacific
+
+The approved annotations supersede the earlier click-any-thumbnail-to-open behavior. Thumbnail selection is temporary; only the displayed image opens its original. Cutter names follow the shared producer design, while their links address individual physical records. Renaming is available in the design editor. A BIN link identifies a location across designs. Compact cutter saves update only the submitted physical fields and retain revision and recovery checks. [R2.1 delivery and retest](docs/R2_1_UX_Consolidation.md#implementation-and-verification). No schema decision or new decision ID.
+
+
 ## Native browser Back/Forward correction — November 17, 2026 Pacific
 
 Owner reports that browser/mouse Back does nothing after opening a design and explicitly requires normal browser navigation. Baseline PR #7 `28b81368da64c077b34038d680374e5e547a84ae`. Root cause: design opening changed React state without a history entry or popstate restoration. Implemented a scoped native History API hook for design/results navigation, preserving search/filter/page and result position, returning focus, and sharing the existing dirty/busy navigation guard. No router dependency, API, schema, private configuration or production change. Initial direct links close to results safely; pending startup reads cannot reopen a design after Back. Browser Back and Forward do not replay writes or serialize unsaved drafts.

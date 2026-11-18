@@ -1,5 +1,10 @@
 # Cookie Catalog — new chat bootstrap
 
+## Restore the R2.1 consolidated candidate — November 17, 2026 Pacific
+
+Refresh PR #7 (`feature/cc-infrastructure-foundation`), CI and its development check. Start with the [R2.1 delivery and retest](docs/R2_1_UX_Consolidation.md#implementation-and-verification), the five linked annotations, and [implementation `bba7105`](https://github.com/JBrickey23/Cookie_Catalog/commit/bba710552adb3a5226537d7c57939644f7f9db73). The previous 25% reserve was withdrawn. Check for newer evidence on the PR before repeating any work. Next acceptance is the independent Cris walkthrough. Keep R1, the existing PR conflicts, migration 0005 and backup/recovery gates separate.
+
+
 ## Native browser Back/Forward correction — November 17, 2026 Pacific
 
 Owner reports that browser/mouse Back does nothing after opening a design and explicitly requires normal browser navigation. Baseline PR #7 `28b81368da64c077b34038d680374e5e547a84ae`. Root cause: design opening changed React state without a history entry or popstate restoration. Implemented a scoped native History API hook for design/results navigation, preserving search/filter/page and result position, returning focus, and sharing the existing dirty/busy navigation guard. No router dependency, API, schema, private configuration or production change. Initial direct links close to results safely; pending startup reads cannot reopen a design after Back. Browser Back and Forward do not replay writes or serialize unsaved drafts.

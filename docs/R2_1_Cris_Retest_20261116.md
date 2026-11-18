@@ -1,5 +1,10 @@
 # R2.1 front-of-catalog correction and Cris retest
 
+## Current development candidate — November 17, 2026 Pacific
+
+Use the [consolidated implementation and Cris checklist](R2_1_UX_Consolidation.md#implementation-and-verification). The owner confirmed mouse Back on the earlier `42b4dc6` build. The earlier checkpoints below retain their historical scope.
+
+
 ## Native browser Back/Forward — November 17, 2026
 
 Owner observation against `28b8136`: using the browser Back action (including the mouse Back binding) does nothing from design details. This is not a request to remap mouse buttons. Source inspection confirmed only component state changed; opening a design did not push history and Browse had no popstate restoration. Owner explicitly requires default browser behavior. This bounded correction stays under 021/010 on existing PR #7, with development-only publication.
